@@ -6,3 +6,7 @@
 /config/main.php
 /update/sql/exec
 /documents/smarty/compiled
+/documents/statistics/
+/documents/cache/
+/logs/
+/documents/eve_vippy_20150515.sql
