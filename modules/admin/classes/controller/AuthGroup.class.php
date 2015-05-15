@@ -57,6 +57,8 @@ namespace admin\controller
 				return "";
 
 
+			\AppRoot::title($authgroup->name);
+
 			if (\Tools::REQUEST("deletealliance"))
 			{
 				$authgroup->removeAlliance(\Tools::REQUEST("deletealliance"));
@@ -145,12 +147,10 @@ namespace admin\controller
 				$curdate = $authgroup->getSubscription()->fromdate;
 				while (date("Ym", strtotime($curdate)) <= date("Ym"))
 				{
-					if ($authgroup->getSubscription()->amount > 0)
-					{
-						$months[] = array("month" 	=> \Tools::getFullMonth(date("m",strtotime($curdate)))." ".date("Y",strtotime($curdate)),
-										"due"		=> $authgroup->getSubscription()->getAmount(),
-										"amount"	=> $authgroup->getSubscription()->getPayed($curdate));
-					}
+					$months[] = array("month" 	=> \Tools::getFullMonth(date("m",strtotime($curdate)))." ".date("Y",strtotime($curdate)),
+									"due"		=> $authgroup->getSubscription()->getAmount(),
+									"amount"	=> $authgroup->getSubscription()->getPayed($curdate));
+
 					$curdate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($curdate))+1,date("d",strtotime($curdate)),date("Y",strtotime($curdate))));
 				}
 				$tpl->assign("monthsdue", $months);

@@ -154,109 +154,136 @@
 	</form>
 	<div style="clear:both;"></div>
 
-{if $App->user->getIsSysAdmin() && $authgroup->id > 0} 
-	<div>
-		<table class="sectionoverview">
-			<tr>
-				<th>Subscriptions</th>
-				<th>Amount</th>
-				<th>Valid From</th>
-				<th>Valid Untill</th>
-			</tr>
-		{foreach from=$authgroup->getSubscriptions() key=s item=subscription}
-			<tr class="{if $s%2==0}even{else}odd{/if}">
-				<td>
-					{$subscription->description}
-				</td>
-				<td style="text-align: right;">
-					{$subscription->amount} p/month &nbsp;
-				</td>
-				<td>
-					{$subscription->fromdate|date_full}
-				</td>
-				<td>
-				{if $subscription->tilldate != null}
-					{$subscription->tilldate|date_full}					
-				{/if}
-				</td>
-			</tr>
-		{/foreach}
-		</table>
-	</div>
-{/if}
 </div>
 
 {if $authgroup->getSubscription() != null}
 <div class="content">
 	<h2>Subscription</h2>
+
 	<div style="float: left; width: 35%;">
 		<div style="padding: 10px;">
-			<div style="font-weight: bold;">
-				<u>{$authgroup->getSubscription()->description}</u>
-			</div>
-			<div style="font-weight: bold; padding: 5px;">
-			{if $authgroup->getSubscription()->amount != 0}
-				{$authgroup->getSubscription()->amount}m ISK a Month.
-			{else}
-				Free
-			{/if}
-			</div>
-		</div>
-		<div style="padding: 10px;">
+			<h3>BALANCE</h3>
 			<div style="padding: 5px;">
 		{if $monthsdue|@count > 0}
 				{assign var=totaldue value=0}
-				<table style="width: 100%;">
+				<table class="sectionoverview">
 					<tr>
 						<th>Month</th>
-						<th style="text-align: right;">Cost</th>
-						<th style="text-align: right;">Received</th>
-						<th style="text-align: right;">Due</th>
+						<th style="width: 70px;">Cost</th>
+						<th style="width: 70px;">Received</th>
+						<th style="width: 70px;">Due</th>
 					</tr>
-			{foreach from=$monthsdue item=due}
-					<tr>
-						<th>{$due.month}</th>
-						<td style="width: 100px; text-align: right;">{$due.due|valuta}</td>
-						<td style="text-align: right;">{$due.amount|valuta}</td>
-						<td style="text-align: right;">{($due.due-$due.amount)|valuta}</td>
+			{foreach from=$monthsdue key=i item=due}
+					<tr class="{if $i%2==0}even{else}odd{/if}">
+						<td><b>{$due.month}</b></td>
+						<td style="width: 100px; text-align: right;">{$due.due|valuta:1}</td>
+						<td style="text-align: right;">{$due.amount|valuta:1}</td>
+						<td style="text-align: right;">{($due.due-$due.amount)|valuta:1}</td>
 					</tr>
 				{assign var=totaldue value=$totaldue+($due.due-$due.amount)}
 			{/foreach}
-				</table>
-				<br />
-				<table style="width: 100%;">
 					<tr>
-						<td><h3>TOTAL DUE<h3></td>
-						<td style="text-align: right;">
-							<h3>{$totaldue|valuta}</h3>
+						<td colspan="3" style="text-align: right;">
+						{if $totaldue < 0}
+							<b>TOTAL ADVANCE</b>
+						{else}
+							<b>TOTAL DUE</b>
+						{/if}
+							 &nbsp;
 						</td>
+						<th style="text-align: right;">
+							<h3>							
+						{if $totaldue < 0}
+								<span style="color: #00ff00;"> + {($totaldue*-1)|valuta:1}</span>
+						{else}
+							{if $totaldue == 0}
+								<span style="color: #00ff00;">{$totaldue|valuta:1}</span>
+							{else}
+								{$totaldue|valuta:1}
+							{/if}								
+						{/if}
+							</h3>
+						</th>
 					</tr>
 				</table>
 		{/if}
 			</div>
 		</div>
 	</div>
-{if $authgroup->getSubscription()->amount != 0}
-	<div style="float: right; width: 60%;">
-		<table class="sectionoverview">
-			<tr>
-				<th class="large" colspan="2">Payments</th>
-				<th>By</th>		
-				<th>Description</th>		
-			</tr>
-		{foreach from=$authgroup->getPayments() key=i item=transaction}
-			<tr class="{if $i%2==0}even{else}odd{/if}">
-				<td>{$transaction->date|date_full}</td>
-				<td style="text-align: right; {if $transaction->amount > 0}color: #00ff00;{/if}">
-					{$transaction->amount|valuta} &nbsp;
-				</td>
-				<td>{$transaction->getFromCharacter()->name}</td>
-				<td>{$transaction->description}</td>
-			</tr>
-		{/foreach}
-		</table>
+	<div style="float: right; width: 60%;">	
+		<div style="padding: 10px;">
+			<h3>Subscriptions</h3>
+			<table class="sectionoverview">
+				<tr>
+					<th>Description</th>
+					<th>Amount</th>
+					<th>Start</th>
+					<th>End</th>
+				</tr>
+			{foreach from=$authgroup->getSubscriptions() key=s item=subscription}
+				<tr class="{if $s%2==0}even{else}odd{/if}">
+					<td>
+						{$subscription->description}
+					{if $subscription->isActive()}
+						<img src="images/default/accept.png" align="right">
+					{/if}
+					</td>
+					<td style="text-align: right;">
+					{if $subscription->amount <= 0}
+						Free
+					{else}
+						{$subscription->amount}m &nbsp; (<i>per month</i>)
+					{/if}
+					 	&nbsp;
+					</td>
+					<td>
+						{$subscription->fromdate|date_full}
+					</td>
+					<td>
+					{if $subscription->tilldate != null}
+						{$subscription->tilldate|date_full}
+					{else}
+						<i>No end date</i>					
+					{/if}
+					</td>
+				</tr>
+			{/foreach}
+			</table>
+		</div>
+		<div style="padding: 10px;">
+			<h3>Payments</h3>
+			<table class="sectionoverview">
+				<tr>
+					<th>Date</th>
+					<th>Amount</th>
+					<th>By</th>		
+					<th>Description</th>		
+				</tr>
+		{if $authgroup->getPayments()|@count > 0}
+			{foreach from=$authgroup->getPayments() key=i item=transaction}
+				<tr class="{if $i%2==0}even{else}odd{/if}">
+					<td>
+						{$transaction->date|date_full}
+						- 
+						{$transaction->date|date_time}						
+					</td>
+					<td style="text-align: right; {if $transaction->amount > 0}color: #00ff00;{/if}">
+						{$transaction->amount|valuta} &nbsp;
+					</td>
+					<td>{$transaction->getFromCharacter()->name}</td>
+					<td>{$transaction->description}</td>
+				</tr>
+			{/foreach}
+		{else}
+				<tr class="even">
+					<td colspan="4">
+						<i>No payments detected</i>
+					</td>
+				</tr>
+		{/if}
+			</table>
+		</div>
 	</div>
-{/if}
 	<div style="clear:both;"></div>
 </div>
 

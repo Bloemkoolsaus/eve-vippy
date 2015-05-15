@@ -43,6 +43,11 @@ namespace admin\controller\console
 						$transaction->description = str_replace("DESC:","",(string)$row["reason"]);
 						$transaction->date = date("Y-m-d H:i:s", strtotime((string)$row["date"]));
 
+						// Check of vippy in de omschrijving voor komt.
+						if (strpos(strtolower($transaction->description), "vippy") === false)
+							continue;
+
+
 						if ((int)$row["refTypeID"] == 10)
 						{
 							$transaction->toCharacterID = (string)$row["ownerID2"];
