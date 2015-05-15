@@ -75,6 +75,9 @@ function generateMap(data)
 	generateSystems(data.wormholes);	
 
 	resizeMap();
+	$(window).resize(function() {
+		resizeMap();
+	});
 
     // add the layer to the stage
     stage.add(layer);
@@ -108,7 +111,6 @@ function resizeMap()
 
 	$("#signatureMapContainer").height(maxHeight+20);
 	$("#filler").height($("#signatureMapContainer").height()-15);
-	
 }
 
 function generateConnections(data)

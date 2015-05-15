@@ -5,3 +5,4 @@
 /config/db.php
 /config/main.php
 /update/sql/exec
+/documents/smarty/compiled

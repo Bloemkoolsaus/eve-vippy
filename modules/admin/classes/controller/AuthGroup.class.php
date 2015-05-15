@@ -24,7 +24,7 @@ namespace admin\controller
 				$section->addElement("Last Active","active","id",'\\admin\\elements\\AuthGroup\\Activity');
 				$section->allowEdit = true;
 
-				if (!\User::getUSER()->getIsSysAdmin())
+				if (!\User::getUSER()->getIsSysAdmin() || !\Tools::REQUEST("admin"))
 				{
 					$section->allowNew = false;
 					$section->allowDelete = false;
