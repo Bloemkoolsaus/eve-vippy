@@ -1,0 +1,7 @@
+/.buildpath
+/.project
+/.settings/org.eclipse.php.core.prefs
+/.settings/org.eclipse.wst.common.project.facet.core.xml
+/config/db.php
+/config/main.php
+/update/sql/exec

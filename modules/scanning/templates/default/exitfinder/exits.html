@@ -1,0 +1,35 @@
+{if $system == null}
+<div class="error">
+	System not found
+</div>
+{else}
+<div style="padding: 5px;">
+	<div>
+		<b><u>Closest exits from {$system->name}</u></b>
+	</div>
+	<div style="padding-top: 10px;">
+{foreach from=$exits item=systems}
+	{foreach from=$systems item=system}
+		<div>
+			<div style="float: left; width: 150px; white-space: nowrap; overflow: hidden;">
+				<span style="color: {$system.system->getClassColor()}"><b>{$system.system->getClass(1)}</b></span>
+				&nbsp;<b>{$system.system->name}</b>
+				-
+				<span style="color: #444444;">{$system.wormhole->name}</span>
+			</div>
+			<div style="float: left; width: 80px;">
+				{$system.distance} jumps
+			</div>
+			<div style="float: left; width: 100px;">
+				<button type="button" class="small" style="width: 26px; height: 24px; margin: 1px;" 
+						onclick="setDestination('{$system.system->id}'); return false;">
+					<img src="images/eve/route.png" style="margin: 0px;">
+				</button>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	{/foreach}
+{/foreach}
+	</div>
+</div>
+{/if}

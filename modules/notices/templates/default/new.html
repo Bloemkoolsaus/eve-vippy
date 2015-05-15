@@ -1,0 +1,49 @@
+{if isset($errors) && $errors|@count > 0}
+	<div class="error">
+		{foreach from=$errors item=error}
+			<div>{$error}</div>
+		{/foreach}
+	</div>
+{/if}
+<div style="text-align: left;">
+	<h2>Create new Notice</h2>
+	<form method="post" action="index.php?module=notices&section=map&action=new">
+	<input type="hidden" name="addnotice" value="{if isset($systemid)}{$systemid}{else}true{/if}" />
+	<input type="hidden" name="redirect" id="redirect" value="{if isset($redirect)}{$redirect}{/if}" />
+	<div class='message'>
+		<div style="padding: 5px;">
+			This notification will showup for everyone that has 
+			{if isset($systemname)}`{$systemname}`{else}the selected SolarSystem{/if} 
+			on their (<i>active</i>) VIPPY chain.
+		</div>
+	</div>
+	<div class="form">
+		<label class="field" style="width: 100px;">Type:</label>
+		<select name="type">
+			{foreach from=$types item=type}
+				<option value="{$type.id}">{$type.name}</option>
+			{/foreach}
+		</select>
+	</div>
+	<div class="form">
+		<label class="field" style="width: 100px;">SolarSystem:</label>
+		<input type="text" name="system" id="addnoticesystemname" style="width: 350px;" value="{if isset($systemname)}{$systemname}{/if}" />
+	</div>
+	<div class="form">
+		<label class="field" style="width: 100px;">Title:</label>
+		<input type="text" name="title" style="width: 350px;" />
+	</div>
+	<div class="form">
+		<label class="field" style="width: 100px;">Details:</label>
+		<textarea name="body" style="width: 350px; height: 50px;"></textarea>
+	</div>
+	<div class="form">
+		<label class="field" style="width: 100px;">Expire Date:</label>
+		<input type="text" name="expdate" style="width: 150px;" value="{$expdate}" /> (<i>YYYY-mm-dd</i>)
+	</div>
+	<div class="form" style="text-align: right; padding: 10px;">
+		<button type="button" onclick="cancelCreateSystemNotice()">Cancel</button>
+		<button type="submit">Save</button>
+	</div>
+	</form>
+</div>

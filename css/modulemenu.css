@@ -1,0 +1,29 @@
+ul.modulemenu {
+	float: left;
+	list-style: none;
+	margin: 0px;
+	margin-top: 10px;
+	margin-bottom: 20px;
+	padding: 0px;
+	background-color: #DDDDDD;
+}
+
+ul.modulemenu li {
+	float: left;
+	text-align: left;
+	padding: 6px;
+}
+
+ul.modulemenu li.selected {
+	background-color: #FFDA77;
+}
+
+ul.modulemenu li a {
+	text-decoration: none;
+	color: #000000;
+}
+
+ul.modulemenu li a:hover {
+	text-decoration: underline;
+	color: #0000FF;
+}

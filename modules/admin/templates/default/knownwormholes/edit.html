@@ -1,0 +1,41 @@
+<div class="content">
+	<h1>{$system->name} - {$wormhole->name}</h1>
+{if isset($errors) && $errors|@count > 0}
+	<div class="error">
+		{foreach from=$errors item=error}
+			<div>{$error}</div>
+		{/foreach}
+	</div>
+{/if}
+</div>
+<div class="content">
+	<form method="post" action="index.php?module=admin&section=knownwormholes&action=edit&id={$wormhole->systemID}">
+	<input type="hidden" name="id" value="{$wormhole->systemID}" />
+	<input type="hidden" name="save" value="1" />
+	<input type="hidden" name="redirecturl" value="{$redirecturl}"/>
+	<div class="form">
+		<label class="field">Solarsystem</label>
+		<label class="label"><input type="text" name="systemname" value="{$system->name}" /></label>
+	</div>
+	<div class="form">
+		<label class="field">Displayname</label>
+		<label class="label"><input type="text" name="name" value="{$wormhole->name}" /></label>
+	</div>
+	<div class="form">
+		<label class="field">Status</label>
+		<label class="label">
+			<select name="status">
+				<option value="2" {if $wormhole->status>=2}selected{/if}>Alliance System</option>
+				<option value="1" {if $wormhole->status==1}selected{/if}>Friendly System</option>
+				<option value="0" {if $wormhole->status==0}selected{/if}>Neutral System</option>
+				<option value="-1" {if $wormhole->status==-1}selected{/if}>Hostile System</option>
+				<option value="-2" {if $wormhole->status<=-2}selected{/if}>Dangerous System</option>
+			</select>
+		</label>
+	</div>
+	<div class="form" style="width: 300px; text-align: right; padding-top: 20px;">
+		<button type="submit">Save</button>	
+	</div>
+	</form>
+	<div style="clear:both;"></div>
+</div>

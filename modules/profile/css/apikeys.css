@@ -1,0 +1,13 @@
+div.contenttxt[data-apikey] .valid,
+div.contenttxt[data-apikey] .invalid {
+	padding-left: 20px;
+	background-repeat: no-repeat;
+}
+div.contenttxt[data-apikey] .valid {
+	color: #55dd55;
+	background-image: url(../../../images/eve/apply.png);
+}
+div.contenttxt[data-apikey] .invalid {
+	color: #cc0000;
+	background-image: url(../../../images/eve/cross.png);
+}

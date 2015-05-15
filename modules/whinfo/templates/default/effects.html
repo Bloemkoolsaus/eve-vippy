@@ -1,0 +1,33 @@
+<div class="content">
+	<h1>System Effects</h1>
+
+{foreach from=$effects item=effect}
+{if $effect->getAttributes()|@count > 0}
+	<div class="table left">
+		<div style="padding: 10px;">
+			<h3>{$effect->name}</h3>
+			<div style="padding: 10px;">
+				<img src="images/wheffects/{$effect->name|strtolower|replace:' ':'-'}.jpg" align="left" style="margin-right: 15px; height: 100px; border-radius: 5px; border: solid 1px #333333;">
+		{foreach from=$effect->getAttributes() item=attribute}
+			{if $attribute->bonus}		
+				<div style="color: #339933;">
+					+ {$attribute->title}
+				</div>
+			{/if}
+		{/foreach}
+		{foreach from=$effect->getAttributes() item=attribute}
+			{if !$attribute->bonus}		
+				<div style="color: #CC2222;">
+					- {$attribute->title}
+				</div>
+			{/if}
+		{/foreach}
+			</div>
+		</div>
+	</div>
+{/if}
+{/foreach}
+	<div style="clear:both;"></div>
+</div>
+
+<div style="clear:both;"></div>

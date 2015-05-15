@@ -1,0 +1,9 @@
+<div class="form">
+	<u>Distance to trade hubs</u>
+</div>	
+{foreach from=$tradehubs item=system}
+<div class='form'>
+	<label class='field'>&nbsp;{$system.name}</label>
+	<label class='value' style='width: 30px;'>{$system.jumps}</label>
+</div>
+{/foreach}

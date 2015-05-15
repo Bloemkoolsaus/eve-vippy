@@ -1,0 +1,22 @@
+<form method="post" action="">
+<input type="hidden" name="save" value="1" />
+
+{foreach from=$titles item=title}
+	<div class="form">
+		<label class="field" style="width: 200px;">{$title.corp} / {$title.name}</label>
+		<select name="title{$title.id}">
+			<option value="0">-- geen --</option>
+			{foreach from=$groups item=group}
+				<option value="{$group.id}" {if $group.id == $title.group}selected{/if}>{$group.name}</option>
+			{/foreach}
+		</select>
+	</div>
+{/foreach}
+
+<div style="clear:both;"></div>
+<div style="text-align: right; width: 350px;">
+	<br />
+	<br />
+	<button type="submit">Opslaan</button>
+</div>
+</form>

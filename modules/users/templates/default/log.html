@@ -1,0 +1,36 @@
+
+<table class="sectionoverview">
+	<tr>
+		<th>Action</th>
+		<th>Details</th>
+		<th>Location</th>
+		<th>Date</th>
+	</tr>
+{foreach from=$user->getUserLog() key=l item=log}
+	<tr class="{if $l%2==0}even{else}odd{/if}">
+		<td>
+			{$log->getAction()}
+		</td>
+		<td>
+			{$log->getDescription()}
+		</td>
+		<td>
+			&nbsp; {$log->ipAddress} 
+		{if $log->getLocation() != null}
+			&nbsp; | &nbsp;
+			<img src="images/flags/16/{$log->getLocation()->country->code|strtolower}.png" align="left" />
+			&nbsp;
+			{if $log->getLocation()->city->name}{$log->getLocation()->city->name},{/if}
+			{if $log->getLocation()->country->name}{$log->getLocation()->country->name}{/if}
+		{/if}
+		</td>
+		<td>
+		{if $log->logDate == $log->lastDate}
+			{$log->logDate|date_full} &nbsp; &nbsp; {$log->logDate|date_time}
+		{else}
+			{$log->logDate|date_full} &nbsp; &nbsp; {$log->logDate|date_time} &nbsp; - &nbsp; {$log->lastDate|date_time}
+		{/if}
+		</td>
+	</tr>
+{/foreach}
+</table>

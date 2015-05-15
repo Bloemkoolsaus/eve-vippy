@@ -1,0 +1,322 @@
+body {
+	font-family: "Trebuchet MS",MetaBlack,sans-serif;	
+	font-size: 11px;
+	color: #CCCCCC;
+	text-align: center;
+	margin: 0px;
+	padding: 0px;
+	background-image: url(../images/default/background.jpg);
+	background-attachment:fixed;
+}
+
+h1 {
+	font-family: "Trebuchet MS",MetaBlack,sans-serif;	
+	font-size: 26px;
+	color: #EEEEEE;
+	margin: 0px;
+	margin-top: 15px;
+	margin-bottom: 20px;
+	padding: 0px;
+	border-bottom: solid 1px #CCCCCC;
+}
+
+h2 {
+	font-family: "Trebuchet MS",MetaBlack,sans-serif;	
+	font-size: 18px;
+	color: #EEEEEE;
+	margin: 0px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+	padding: 0px;
+	border-bottom: solid 1px #CCCCCC;	
+}
+
+h3 {
+	font-size: 14px;
+	color: #EEEEEE;
+	margin: 0px;
+	padding: 0px;
+}
+
+h4 {
+	font-size: 12px;
+	color: #EEEEEE;
+	margin: 0px;
+	padding: 0px;
+}
+
+a {
+	color: #FFAA00;
+}
+
+a:hover {
+	color: #FFCC11;
+}
+
+a:visited {
+	color: #FFAA00;
+}
+
+#header {
+    position: relative;
+	padding: 0px;
+	margin: 0px;
+}
+
+#infoheader {
+	background-color: #555555 !important;	
+	margin-bottom: 1px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+#infoheaderbar {
+	width: 95%;	
+	max-width: 980px;
+	text-align: left;
+	margin: 0 auto;
+	font-weight: bold;
+	color: #FFFFFF;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+div#infoheader-name {
+	float: left; 
+	width: 48%; 
+	text-align: left;
+}
+div#infoheader-info {
+	float: right; 
+	width: 48%; 
+	text-align: right;
+}
+
+@media (max-width: 350px) {
+	div#infoheader-name {
+		float: none;
+		width: 100%;
+	}
+	div#infoheader-info {
+		float: none;
+		display: none;
+	}
+}
+
+#maincontainer {
+	width: 95%;
+	max-width: 1200px;
+	text-align: left;
+	margin: 0 auto;
+	margin-top: 0px;
+	padding: 0px;
+}
+
+#maincontent {
+	margin: 0 auto;
+}
+@media (max-width: 550px) {	
+	#maincontainer {
+		width: 100%;
+	}
+}
+
+div.content {
+    position: relative;
+	background: none repeat scroll 0 0 rgba(10, 10, 10, 0.6);
+	padding: 10px;
+	margin: 0px;
+}
+
+div.clear {
+	clear: both;
+}
+
+div#loginform {
+	margin: 0 auto;
+	width: 600px;
+	margin-top: 100px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+div#loginform div.loginSubForm {
+	margin: 0 auto;
+	width: 400px;
+}
+
+div#registerPage {
+	margin: 0 auto;
+	width: 700px;
+	margin-top: 100px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+div#registerPage div.registerSubForm {
+	margin: 0 auto;
+	width: 600px;	
+}
+div#registerPage div.registerSubForm label.field {
+	width: 100px !important;
+}
+div#registerPage div.registerSubForm label.value {
+	width: 230px !important;
+}
+div#registerPage div.registerSubForm label.value input {
+	width: 99% !important;
+}
+
+div#registerform {
+	float: left;
+	width: 60%;
+}
+div#registertext {
+	float: right;
+	width: 38%;
+}
+
+div#loginform div.form label.value,
+div#loginform div.form label.value input,
+div#registerform div.form label.value,
+div#registerform div.form label.value input {
+	width: 250px;
+}
+
+div#loginform div.form label.field,
+div#registerform div.form label.field {
+	width: 140px;
+}
+
+table.sectionoverview {
+	width: 100%;
+}
+
+table.sectionoverview tr th,
+table.sectionoverview tr td {
+	text-align: left;
+	padding: 3px;
+}
+
+table.sectionoverview tr th {
+	background-color: #232323;
+	color: #FFFFFF;
+}
+
+table.sectionoverview tr th.large {
+	font-size: 15px;
+	text-shadow: 1px 1px 1px #555555;
+}
+
+table.sectionoverview tr th img {
+	margin-left: 10px;
+}
+
+table.sectionoverview tr th input {
+	width: 60px;    
+	color: #FFFFFF;
+	font-family: Arial;
+	font-size: 11px;
+	margin: 1px;
+	padding: 1px;
+}
+
+table.sectionoverview tr.even {
+	background-color: #444444;	
+}
+
+table.sectionoverview tr.odd {
+	background-color: #555555;	
+}
+
+table.sectionoverview tr.redtxt {
+	color: #FF0000;
+}
+table.sectionoverview tr.bluetxt {
+	color: #0000FF;
+}
+table.sectionoverview tr.redbg {
+	background-color: #DD2222;
+	color: #FFFFFF;
+}
+table.sectionoverview tr.bluebg {
+	background-color: #444488;
+	color: #FFFFFF;
+}
+
+table.sectionoverview tr.even:hover,
+table.sectionoverview tr.odd:hover {
+	color: #FFFFFF !important;
+	background-color: #FF9A1E;
+	background: -webkit-linear-gradient(#FFAA00, #DD8800);
+	background: -moz-linear-gradient(#FFAA00, #DD8800);	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFAA00',endColorstr='#DD8800',GradientType=0);	
+	cursor: pointer;
+}
+
+table.sectionoverview tr.odd:hover td a,
+table.sectionoverview tr.even:hover td a {
+	color: #FFFFFF !important;
+}
+
+table.nohover tr.even:hover,
+table.nohover tr.odd:hover {
+	color: inherit !important;
+	cursor: default !important;
+	background: none !important;
+}
+table.nohover tr.even:hover {
+	background-color: #444444 !important;
+}
+table.nohover tr.odd:hover {
+	background-color: #555555 !important;
+}
+
+table.sectionoverview img {
+	border: 0px;
+}
+
+table.sectionoverview tr td.buttons {
+	padding: 1px;
+	text-align: center;
+	width: 50px;
+}
+
+table.sectionoverview tr td.tablebuttons {
+	padding: 1px;
+	text-align: right;
+}
+
+div.searchoverview {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+table.sectionoverview tr td.tablebuttons div.pageinfo {
+	float: left; 
+	width: 45%; 
+	font-weight: bold; 
+	text-align: left;
+}
+
+table.sectionoverview tr td.tablebuttons div.pageselection {
+	float: right; 
+	width: 45%;
+}
+
+table.sectionoverview tr td.tablebuttons div.pageselection a {
+	text-decoration: none;
+}
+
+pre {
+	text-align: left;
+}
+
+pre.changelog
+{
+	font-family: Consolas;
+	font-size: 11px;
+}
+pre.changelog h3
+{
+	font-family: Consolas;
+	font-size: 15px;
+}

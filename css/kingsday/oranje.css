@@ -1,0 +1,33 @@
+body {
+	background-image:	url(../../images/oranje/background.jpg),
+						url(../../images/oranje/alexander.png),
+						url(../../images/oranje/maxima.png);
+	background-position: center top, left top, right top;
+}
+
+
+#infoheader {
+	background: linear-gradient(#FF0000, #FFFFFF, #0000FF);	
+	background-repeat: repeat-x;
+}
+#infoheaderbar {
+	color: #222222;
+	background: none repeat scroll 0 0 rgba(255, 200, 00, 0.6);
+	padding: 2px;
+}
+#menucontainer {
+	background-color: #CC8800;
+	background: linear-gradient(#FFAA00, #CC8800);		
+}
+li.mainmenu a {
+	color: #FFFFFF;
+	text-decoration: none;	
+}
+li.mainmenu,
+li.mainmenu:hover {
+	border-right: solid 1px #FFFFFF;	
+}
+li.mainmenu.first,
+li.mainmenu.first:hover {
+	border-left: solid 1px #FFFFFF;	
+}

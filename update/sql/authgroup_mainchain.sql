@@ -1,0 +1,1 @@
+alter table user_auth_groups add column mainchain int(11) unsigned default null;

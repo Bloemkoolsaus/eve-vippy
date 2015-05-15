@@ -1,0 +1,13 @@
+table.sectionoverview td.tablebuttons {
+	text-align: right;
+}
+table.sectionoverview td.tablebuttons div.pageinfo {
+	float: left; 
+	width: 48%;
+	text-align: left;
+}
+table.sectionoverview td.tablebuttons div.pageselection {
+	float: right; 
+	width: 48%;
+	text-align: right;
+}

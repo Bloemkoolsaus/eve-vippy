@@ -1,0 +1,51 @@
+div.tabs {
+	border-bottom: solid 2px #555555;
+	margin-bottom: 10px;
+}
+
+div.tabs ul {
+	list-style: none;
+	margin: 0 auto;	
+	padding: 0px;
+}
+
+div.tabs ul li {
+	float: left;
+	
+	margin: 3px;
+	margin-bottom: 0px;
+	
+	padding: 0px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	padding-left: 15px;
+	padding-right: 15px;
+	
+	background-color: #555555;
+	background: -webkit-linear-gradient(#555555, #111111);
+	background: -moz-linear-gradient(#555555, #111111);	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#555555',endColorstr='#111111',GradientType=0);
+	
+	border: solid 1px #555555;
+	border-bottom: solid 0px;
+	border-radius: 3px 3px 0px 0px;
+}
+
+div.tabs ul li:hover {
+	background-color: #EA8400 !important;
+	background: -webkit-linear-gradient(#EA8400, #FF9A1E);
+	background: -moz-linear-gradient(#EA8400, #FF9A1E);	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#EA8400',endColorstr='#FF9A1E',GradientType=0);	
+	text-shadow: 0 1px 2px #FF7100;
+	cursor: pointer;	
+	border: solid 1px #EA8400;
+	border-bottom: solid 0px;
+}
+
+div.tabs ul li a {
+	color: #FFFFFF;
+	font-size: 12px;
+	font-weight: bold;
+	text-decoration: none;
+	text-transform: uppercase;	
+}

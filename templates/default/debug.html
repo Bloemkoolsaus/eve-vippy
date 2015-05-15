@@ -1,0 +1,85 @@
+<div style="clear: both;"></div>
+
+<style>
+div#debugcontainer { 
+	width: 99%;
+	margin: 0 auto;
+	margin-top: 50px;
+	text-align: left;
+	border: solid 1px #000000;
+	border-radius: 4px; 
+	background-color: #FFFFFF;
+	font-family: Courier New;
+	font-size: 8pt;
+	color: #000000;
+}
+div#debugErrors {
+	font-family: Consolas, Courier New;
+	font-size: 10pt;
+	color: #EEEEEE; 
+	font-weight: bold; 
+	background-color: #CC0000; 
+	padding: 5px;
+}
+div#debugcontainer h1,
+div#debugcontainer h2,
+div#debugcontainer h3 {
+	font-family: Arial;
+	color: #000000;
+	margin: 2px;
+	padding: 0px;
+}
+div.debugLine { 
+	margin: 1px;
+	padding: 1px;
+}
+div.debugLine.even {
+	background-color: #EEEEEE;
+}
+div.debugLine.odd {
+	background-color: #DDDDDD;
+}
+div.debugLine div.time {
+	float: left; 
+	width: 100px; 
+	text-align: right; 
+	padding-right: 10px;
+}
+div.debugVar div.time {
+	width: 150px; 
+}
+div.debugLine div.msg {
+	float: left; 
+	width: 800px; 
+}
+</style>
+<div id="debugcontainer">
+	<h1>DEBUGGER</h1>
+
+{if $errors|@count > 0}
+	<div id="debugErrors">
+		{$errors|@count} errors occured
+	</div>
+{/if}
+	
+{foreach from=$debug key=t item=value}
+	<div class="debugLine {if $t%2==0}even{else}odd{/if}">
+		<div class="time">{$value.time}:</div>
+		<div class="msg">{$value.msg}</div>
+		<div style="clear:both;"></div>
+	</div>
+{/foreach}
+{foreach from=$systemvars key=t item=svars}
+	<div style="clear:both;"/>
+	<br />
+	<h2>{$svars.name}</h2>
+{foreach from=$svars.vars key=i item=var}
+	<div class="debugLine debugVar {if $i%2==0}even{else}odd{/if}">
+		<div class="time">{$i}:</div>
+		<div class="msg">{$var}</div>
+		<div style="clear:both;"></div>
+	</div>
+{/foreach}
+{/foreach}
+	<div style="clear:both;"/>
+</div>

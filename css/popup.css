@@ -1,0 +1,90 @@
+#disabledPage,
+#disabledPageTransparent {
+	background-color: #111122;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+	opacity: 0.8;
+	display: none;
+	z-index: 49;
+}
+#disabledPageTransparent {
+	background-color: transparent;
+}
+
+#popup {
+	border: solid 3px #555555;
+	border-radius: 8px;
+	background-color: #222222;
+	width: 400px;
+	height: 150px;
+	display: none;
+	position: absolute;
+	top: 50px;
+	left: 50px;
+	box-shadow: 4px 4px 10px #111111;
+	z-index: 50;
+}
+
+#popupHeader {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	text-align: right;
+	background-color: #555555;
+	background-image: -moz-linear-gradient(center top , #888888 0%, #555555 100%) !important;	
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888',endColorstr='#555555',GradientType=0);
+}
+
+#popupHeader a {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#popupCloseBttn {
+	border-color: #A57760 #852005 #852005 #A57760;
+	background-color: #C12C00;
+	background-image: url(../images/default/ui/button.red.png);
+	background-image: -moz-linear-gradient(center top , #F93600 0%, #AB2900 100%);
+	text-shadow: 0 1px 2px #F93600;
+	height: 18px;
+
+   	font-size: 10px;
+   	padding: 0px;
+}
+
+#popupCloseBttn:hover {
+	border-color: #DD8800 #DD5100 #DD5100 #DD8800;
+	background-color: #FFAA00;
+	background-image: url(../images/default/ui/button.hover.png);
+	background-image: -moz-linear-gradient(center top , #FF9A1E 0%, #EA8400 100%);
+   text-shadow: 0 1px 2px #FF7100;	
+}
+
+#popup div.form {
+	margin: 2px;
+	width: 99%;
+}
+
+#popup div.form label.field {
+	width: 25%;
+	text-align: left;
+}
+#popup div.form label.value {
+	width: 70%;
+	text-align: left;
+}
+#popup div.form label.value input,
+#popup div.form label.value textarea,
+#popup div.form label.value select {
+	width: 99%;
+}
+
+#popup h2 {
+	text-align: left;
+}

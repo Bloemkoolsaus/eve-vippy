@@ -1,0 +1,32 @@
+{if $loggedInUser->loggedIn()}
+<div id="header">
+	<div id="infoheader">
+		<div id="infoheaderbar">
+			<div id="infoheader-name">
+				Welcome: {$loggedInUser->getFullname()}
+			</div>
+			<div id="infoheader-info">
+			{if isset($location)}
+				<span="currentSolarSytem">{$location}</span>
+			{/if}
+			{if isset($today)}
+				{$today}
+			{/if}
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div id="menucontainer">
+		{$mainmenu}
+	</div>
+{if isset($newPatchNotes)}
+	<div id="menuNotifications">
+		<div>
+			New updates since your last visit!
+			&nbsp; 
+			<a href="index.php?module=admin&section=changelog">Patch-notes</a>
+		</div>
+	</div>
+{/if}
+</div>
+{/if}

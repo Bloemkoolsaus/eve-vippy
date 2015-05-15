@@ -1,0 +1,24 @@
+<div style="padding: 15px;">
+	<h3>Online Pilots</h3>
+	<div style="text-align: left;">
+		<div style="font-weight: bold;">This list shows the location of all active pilots.</div>
+		<div style="padding-left: 20px; font-style: italic;">- Pilots in a system that is on a chain wich you do not have access to will not be shown for security concerns.</div>
+		<div style="padding-left: 20px; font-style: italic;">- Please note that pilots that do <u>NOT</u> have VIPPY open will not show.</div>
+	</div>
+	<div style="text-align: left; margin-top: 20px; overflow: auto; height: 250px;">
+		<table>
+			<tr>
+				<th style="padding-right: 15px;"><u>Solarsystem</u></th>
+				<th style="padding-right: 15px;"><u>Corp</u></th>
+				<th style="padding-right: 15px;"><u>Pilot</u></th>
+			</tr>
+			{foreach from=$characters item=char}
+				<tr>
+					<th style="padding-right: 15px;">{$char.system}</th>
+					<th style="padding-right: 15px;">[{$char.ticker}]</th>
+					<td>{$char.pilot}</td>
+				</tr>
+			{/foreach}
+		</table>
+	</div>
+</div>

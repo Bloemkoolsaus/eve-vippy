@@ -1,0 +1,1 @@
+alter table mapwormholeconnections add column allowcapitals tinyint(1) default 0 after frigatehole;

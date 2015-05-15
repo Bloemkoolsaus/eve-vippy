@@ -1,0 +1,48 @@
+<table class="sectionoverview">
+	<tr>
+		<th>System</th>
+		<th>Wormhole</th>
+		<th>Radar</th>
+		<th>Ladar</th>
+		<th>Magnetometric</th>
+		<th>Gravi</th>
+	</tr>
+	{foreach from=$systems key=i item=system}
+		<tr class="{if $i%2==0}even{else}odd{/if}">
+			<td><h3>{$system.name}</h3></td>
+			{foreach from=$system.sigs key=typename item=sigtype}
+				{if $typename|strtolower == "wormhole"}
+					<td>
+						{foreach from=$sigtype.sigs key=k item=sig}
+							{$sig.id} {if $sig.info|@strlen > 0}(<i>{$sig.info}</i>){/if}<br />
+						{/foreach}
+					</td>
+				{elseif $typename|strtolower == "radar"}
+					<td>
+						{foreach from=$sigtype.sigs key=k item=sig}
+							{$sig.id} {if $sig.info|@strlen > 0}(<i>{$sig.info}</i>){/if}
+						{/foreach}
+					</td>
+				{elseif $typename|strtolower == "ladar"}
+					<td>
+						{foreach from=$sigtype.sigs key=k item=sig}
+							{$sig.id} {if $sig.info|@strlen > 0}(<i>{$sig.info}</i>){/if}
+						{/foreach}
+					</td>
+				{elseif $typename|strtolower == "magnetometric"}
+					<td>
+						{foreach from=$sigtype.sigs key=k item=sig}
+							{$sig.id} {if $sig.info|@strlen > 0}(<i>{$sig.info}</i>){/if}
+						{/foreach}
+					</td>
+				{elseif $typename|strtolower == "gravimetric"}
+					<td>
+						{foreach from=$sigtype.sigs key=k item=sig}
+							{$sig.id} {if $sig.info|@strlen > 0}(<i>{$sig.info}</i>){/if}
+						{/foreach}
+					</td>
+				{/if}
+			{/foreach}	
+		</tr>
+	{/foreach}
+</table>

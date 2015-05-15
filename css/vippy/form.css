@@ -1,0 +1,109 @@
+input, textarea, select {
+	font-family: Arial;	
+	font-size: 12px;
+	font-weight: normal;
+	color: #DDDDDD;
+	border-radius: 3px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #444444;	
+	background-color: rgba(10, 10, 10, 0.5);
+	padding: 3px;
+	padding-left: 5px;
+	padding-right: 5px;	
+}
+input {
+	height: 14px;
+}
+input:focus, textarea:focus, select:focus {
+	outline: none; /* Chrome */
+	border-color: rgba(255, 200, 100, 0.7);
+    box-shadow: 0 0 2px #ffaa00 !important;
+    -webkit-box-shadow: 0 0 3px #ffaa00;
+}
+
+div.form {
+	float: left;
+	width: 100%;
+	margin-bottom: 4px;	
+}
+
+div.form label {
+	float: left;
+	padding: 1px;
+}
+
+div.data label {
+	margin-right: 1px;
+}
+
+div.form label.field {
+	width: 120px;
+}
+div.form label.field.small {
+	width: 100px;
+}
+
+div.nomargin label.field {
+	margin: 0px;
+}
+
+div.form label.value,
+div.form div.value {
+	width: 300px;
+}
+
+div.form div.value {
+	float: left;
+}
+
+div.form .buttons {
+	width: 450px;
+	text-align: right;
+	margin-top: 15px;
+}
+
+div.form input, 
+div.form select, 
+div.form textarea {
+	font-family: Calibri;
+	font-size: 12px;
+}
+
+div.form label.value input {
+	width: 290px;
+}
+div.form label.value select {
+	width: 260px;
+}
+
+div.form label.value input.checkbox {
+	width: 20px;
+}
+
+div.form label.value input.small {
+	width: 150px;
+}
+
+div.form label.value textarea {
+	width: 290px;
+	height: 100px;
+}
+
+input.blurred {
+	font-style: italic;
+	color: #888888;
+}
+
+div.head label {
+	font-weight: bold;
+}
+div.form label.right {
+	text-align: right;
+}
+div.form label.left {
+	text-align: left;
+}
+div.form label.center {
+	text-align: center;
+}

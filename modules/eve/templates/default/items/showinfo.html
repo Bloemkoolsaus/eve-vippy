@@ -1,0 +1,15 @@
+<div id="showinfo" style="padding: 15px; text-align: left;">
+	<div>
+		<h2>{$item->name}</h2>
+	</div>
+	<div>
+		<img src="https://image.eveonline.com/Type/{$item->id}_64.png" align="left" 
+			style="margin-right: 10px; border-radius: 5px;" />
+		{$item->getDescription()}
+	</div>
+	<div style="clear:both;"></div>
+	<div style="text-align: right; margin-top: 50px;">
+		Estimated price (eve-central): &nbsp;&nbsp;
+		<b>{$item->getPrice()|valuta}</b>
+	</div>
+</div>

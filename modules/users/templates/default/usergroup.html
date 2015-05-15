@@ -1,0 +1,67 @@
+<div class="content">
+	<h1>Usergroup: {$usergroup->name}</h1>
+{if $errors|@count > 0}
+	<div class="error">
+	{foreach from=$errors key=e item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+{/if}
+</div>
+
+<div class="content">
+	<form method="post" action="" name="formEditUserGroup">
+	<input type="hidden" name="save" value="true" />
+	<input type="hidden" name="id" value="{$usergroup->id}"/>
+	
+	<div style="margin-top: 25px;">
+		<div class="form">
+			<label class="field">Naam:</label>
+			<input type="text" name="name" value="{$usergroup->name}" />
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	
+	<div style="margin-top: 25px;">
+		<div style="float: left; width: 45%;">
+			<h2>Members</h2>
+			<ul>
+			{foreach from=$usergroup->getUsers() item=user}
+				<li>
+					{$user->getFullname()}
+					<a href="index.php?module=users&action=edit&id={$user->id}"><img src="images/default/view.png" style="border: 0px; height: 12px;"></a>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+		<div style="float: right; width: 45%;">
+			<h2>Permissions</h2>
+			{foreach from=$permissions key=module item=rights}
+			<div>
+				<div><b><u>{$module|ucfirst}</u></b></div>
+				<div style="padding-left: 5px;">
+				{foreach from=$rights item=right}				
+					<div>
+						<input type="checkbox" id="{$module}.{$right.name}" name="{$module}_{$right.name}" 
+								{if $usergroup->hasright($module,$right.name)}checked{/if} />
+						<label for="{$module}.{$right.name}">{$right.title}</label>
+					</div>
+				{/foreach}
+				</div>
+			</div>
+			<br />
+			{/foreach}
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	
+	<div class="form">
+		<div class="buttons">
+			<button type="button" onclick="history.go(-1)">Annuleren</button>
+			<button type="submit">Opslaan</button>
+		</div>
+	</div>
+	
+	</form>
+	<div style="clear:both;"></div>
+</div>

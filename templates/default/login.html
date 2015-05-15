@@ -1,0 +1,56 @@
+<div id="loginform" class="content">
+	<div class="loginSubForm">
+		<form method="post" action="">
+		<input type="hidden" name="doLogin" value="true"/>
+		<h1>
+			<img src="images/eve/undock.png" style="height: 32px;" align="left">
+			&nbsp; Login
+		</h1>
+		{if isset($loginmsg)}
+			<div class="form" style="color: red;">{$loginmsg}</div>
+		{/if}
+		<div class="form">
+			<label class="field">Username:</label>
+			<label class="value"><input type="text" name="username" value="" /></label>
+		</div>
+		<div class="form">
+			<label class="field">Password:</label>
+			<label class="value"><input type="password" name="password" value="" /></label>
+		</div>
+		<div class="form">
+			<label class="field">&nbsp;</label>
+			<label class="value"><input type="checkbox" name="remember" style="width: 20px;" /> Always stay logged in</label>
+		</div>
+		<div class="form" style="text-align: right;">
+			<br />
+			<button type="button" onclick="document.location='index.php?register=1';return false;">Register</button>
+			<button type="submit">Login</button>
+		</div>
+		</form>
+	</div>
+	<div class="loginSubForm">
+		<form method="post" action="">
+		<input type="hidden" name="forgotPW" value="true"/>
+		{if isset($forgotpwerror)}	
+			<div class="form" style="color: red;">{$forgotpwerror}</div>
+		{/if}
+		{if isset($forgotpwmsg)}	
+			<div class="form" style="color: green;">{$forgotpwmsg}</div>
+		{/if}
+		<div id="forgotPwLink" class="form">
+			<a href="#" onclick="$('#forgotPwLink').hide();$('[rel=forgotPwForm]').show();return false;">Forgot password?</a>
+		</div>
+		<div rel="forgotPwForm" class="form" style="display:none;">
+			<br />
+			<b>What is your email address?</b><br />
+			<label class="field">Email:</label>
+			<label class="value"><input type="text" name="email" value="" /></label>
+		</div>
+		<div rel="forgotPwForm" class="form" style="display: none; text-align: right;">
+			<br />
+			<button type="submit">Send password</button>
+		</div>
+		</form>
+	</div>
+	<div style="clear:both;"></div>
+</div>

@@ -1,0 +1,232 @@
+<div style="padding: 10px;">
+	<h2>
+		{$connection->getFromWormhole()->name}
+		<span style="font-size: 14px;">({$connection->getFromSystem()->name})</span>
+		&nbsp; &gt; &nbsp;
+		{$connection->getToWormhole()->name}
+		<span style="font-size: 14px;">({$connection->getToSystem()->name})</span>
+	</h2>
+
+	<div id="editConnectionContainer">
+	
+		<form method="post" name="formEditConnection" action="index.php?module=scanning&section=map&action=editconnection">
+		<input type="hidden" name="connectionid" value="{$connection->id}" />
+		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
+		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
+		
+		<div style="float: left; width: 350px;">		
+			<div class="form">
+				<label class="field">Mass:</label>
+				<label class="value">
+					<select name="mass" id="mass">
+						<option value="0" {if $connection->mass==0}selected{/if}>Not Reduced</option>
+						<option value="1" {if $connection->mass==1}selected{/if}>Reduced</option>
+						<option value="2" {if $connection->mass==2}selected{/if}>Critical</option>
+					</select>
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">End of Life:</label>
+				<label class="value">
+					<input type="checkbox" name="eol" style="width: 15px; margin: 0px; padding: 0px;" {if $connection->eol>0}checked{/if}>
+					&nbsp; <i>Mark wormhole End-of Life.</i>
+				</label>
+			</div>
+			
+			<div style="clear:both;"></div>
+			<br />
+			
+		{if $connection->getFromSystem()->isKSpace() && $connection->getToSystem()->isKSpace()}
+			<div class="form">
+				<label class="field">Normal Gates:</label>
+				<label class="value">
+					<input type="checkbox" name="normalgates" style="width: 15px; margin: 0px; padding: 0px;" {if $connection->normalgates>0}checked{/if}>
+					&nbsp; <i>Mark this system as a connection through normal jumpgates, instead of a wormhole.</i>
+				</label>
+			</div>
+		{/if}
+			<div class="form">
+				<label class="field">Frigate Hole:</label>
+				<label class="value">
+					<input type="checkbox" name="frigatehole" style="width: 15px; margin: 0px; padding: 0px;" {if $connection->frigateHole>0}checked{/if}>
+					&nbsp; <i>Frigate / Destroyer only wormhole.</i>
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">Capital Hole:</label>
+				<label class="value">
+					<input type="checkbox" name="allowcapitals" style="width: 15px; margin: 0px; padding: 0px;" {if $connection->allowCapitals>0}checked{/if}>
+					&nbsp; <i>Wormhole allows capitals to jump.</i>
+				</label>
+			</div>
+			
+			<div style="clear:both;"></div>
+			<br />
+			
+			<div class="form">
+				<label class="field">Connection Type:</label>
+				<div class="field" style="text-align: left;">
+					<div style="float: left; width: 120px; margin-left: 20px;">
+						<div>
+							{$connection->getFromWormhole()->name}
+							(<i>{$connection->getFromSystem()->name}</i>)
+						</div>
+						<div>
+							<select name="fromtype">
+								<option value="0">K162</option>
+							{foreach from=$whtypes item=type}
+								<option value="{$type.id}" {if $type.id == $connection->fromWHTypeID}selected{/if}>{$type.name}</option>
+							{/foreach}
+							</select>
+						</div>
+					</div>
+					<div style="float: left; width: 100px;">
+						<div>
+							{$connection->getToWormhole()->name}
+							(<i>{$connection->getToSystem()->name}</i>)
+						</div>
+						<div>
+							<select name="totype">
+								<option value="0">K162</option>
+							{foreach from=$whtypes item=type}
+								<option value="{$type.id}" {if $type.id == $connection->toWHTypeID}selected{/if}>{$type.name}</option>
+							{/foreach}
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="float: right; width: 230px; text-align: right;">
+			<div style="margin: 3px;">
+				<button class="small" type="button" onclick="manuallyAddMass();" style="width: 180px;">
+					<img src="images/eve/mass.png" align="left">
+					Manually Add Mass
+				</button>
+			</div>
+			<div style="margin: 3px;">
+				<button class="small" type="button" onclick="$('#editConnectionContainer').hide();$('#deleteConnectionContainer').show();" style="width: 180px;">
+					<img src="images/eve/cross.png" align="left">
+					Delete Connection
+				</button>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+		
+		<div style="clear:both;"></div>
+		<br />
+		<br />
+		
+		<div style="float: left; width: 350px;">	
+			<div class="form" style="text-align: right;">
+				<button class="small" type="submit" style="width: 140px;">
+					<img src="images/default/save.png" align="left">
+					Save
+				</button>
+			</div>
+		</div>
+		
+		<div style="clear:both;"></div>
+		<br />
+		<br />
+		
+		</form>
+	</div>
+	
+	<div id="addMassContainer" style="display: none; text-align: left;">
+		<div style="text-align: left; margin: 5px;">
+			<h3>
+				<img src="images/eve/mass.png" align="left">
+				&nbsp; Manually add Mass
+			</h3>
+		</div>
+		<form method="post" name="formDeleteConnection" action="index.php?module=scanning&section=map&action=editconnection">
+		<input type="hidden" name="connectionid" value="{$connection->id}" />
+		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
+		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
+		<input type="hidden" name="addmass" value="1" />
+		<div style="float: left; width: 320px;">
+			<div style="padding: 5px;">
+				<div style="float: left; width: 70%;">
+					<b>Ship Type:</b>
+				</div>
+				<div style="float: left; width: 25%;">
+					<b>Nr of Jumps:</b>
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<div id="addMassRecords"></div>
+			<div style="clear:both;"></div>
+			<div style="text-align: right;">
+				<br />
+				<a href="#" onclick="addMassRecord(); return false;">Add Shiptype</a>
+			</div>
+		</div>
+		<div style="float: right;">
+			<ul>
+				<li><i>A round trip from one ship, counts as 2!</i></li>
+				<li><i>10 ships making a single trip count as 10</i></li>
+				<li><i>10 ships making a round trip count as 20</i></li>
+			</ul>
+		</div>	
+		<div style="clear:both;"></div>
+		<div class="form" style="text-align: right;">
+			<br />
+			<button class="small" type="submit" style="width: 140px;">
+				<img src="images/default/save.png" align="left">
+				Save
+			</button>
+		</div>		
+		</form>
+	</div>
+	
+	<div id="deleteConnectionContainer" style="display: none;">
+		<form method="post" name="formDeleteConnection" action="index.php?module=scanning&section=map&action=editconnection">
+		<input type="hidden" name="connectionid" value="{$connection->id}" />
+		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
+		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
+		<input type="hidden" name="delete" value="1" />
+		
+		<br />
+		<br />
+		<div style="text-align: center; font-size: 14px; font-weight: bold;">
+			Do you want to delete this connection?
+		</div>
+		<div style="text-align: center; padding: 5px;">
+			<button class="small" type="button" onclick="$('#deleteConnectionContainer').hide();$('#editConnectionContainer').fadeIn();">
+				Ooops.
+			</button>
+			&nbsp;
+			<button class="small" type="submit">
+				Yes, DELETE
+			</button>
+		</div>
+		
+		</form>
+	</div>
+</div>
+
+
+<script id="addShipMassTpl" type="text/template">
+<div style="padding: 5px;">
+	<div style="float: left; width: 70%;">
+		<select name="ship[]" style="width: 98%;">
+			<option value="0>">-- Select a Ship class or type --</option>
+			<optgroup label="Ship-Class">
+			{foreach from=$shiptypes item=type}
+				<option value="group{$type->id}">{$type->name}</option>
+			{/foreach}
+			</optgroup>
+			<optgroup label="Ship-Type">
+			{foreach from=$ships item=ship}
+				<option value="ship{$ship->id}">{$ship->name}</option>
+			{/foreach}
+			</optgroup>
+		</select>
+	</div>
+	<div style="float: left; width: 70px; text-align: center;">
+		<input type="text" name="amount[]" value="1" style="width: 30px; text-align: center;">
+	</div>
+</div>
+<div style="clear:both;"></div>
+</script>

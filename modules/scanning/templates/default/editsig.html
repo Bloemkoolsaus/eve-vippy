@@ -1,0 +1,35 @@
+<div style="padding: 10px;">
+	<form method="post" action="Javascript: saveEditSignature();">
+	<input type="hidden" id="id" value="{$id}"/>
+	<div class="form">
+		<label class="field">Signature:</label>
+		<label class="value"><input type="text" id="editSigId" value="{$sigid}" /></label>
+	</div>
+	<div class="form">
+		<label class="field">Type:</label>
+		<label class="value">
+			<select id="editSigType">
+				<option value="Wormhole" {if $type == 'Wormhole'}selected{/if}>Wormhole</option>
+				<option value="Magnetometric" {if $type == 'Magnetometric'}selected{/if}>Magnetometric</option>
+				<option value="Gravimetric" {if $type == 'Gravimetric'}selected{/if}>Gravimetric</option>
+				<option value="Ladar" {if $type == 'Ladar'}selected{/if}>Ladar</option>
+				<option value="Radar" {if $type == 'Radar'}selected{/if}>Radar</option>
+			</select>
+		</label>
+	</div>
+	<div class="form">
+		<label class="field">Info:</label>
+		<label class="value"><input type="text" id="editSigInfo" value="{$info}" /></label>
+	</div>
+	{if $type == 'Wormhole'}
+	<div class="form">
+		<label class="field">Destination:</label>
+		<label class="value"><input type="text" id="editSigDest" value="{$dest}" /></label>
+	</div>
+	{/if}
+	<div class="form" style="text-align: right;">
+		<br />
+		<button class="small" type="submit">Save</button>
+	</div>
+	</form>
+</div>

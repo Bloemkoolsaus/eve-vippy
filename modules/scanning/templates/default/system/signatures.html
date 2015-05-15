@@ -1,0 +1,193 @@
+<input type="hidden" id="sigsSortBy" value="{$sortby}"/>
+<input type="hidden" id="sigsSortDir" value="{$sortdir}"/>
+
+<h2 style="margin-bottom: 1px;">
+	<div style="float: left; padding-top: 10px;">
+		<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+		{$system->name} - {$wormhole->name} | {$signatures|@count} signatures
+	</div>
+	<div style="clear:both;"></div>
+</h2>
+
+{if $wormhole->fullScanDate != null}
+<div id="signaturesFullyscanned">
+{if $wormhole->getFullyScannedByUser() != null}
+	<b>Marked fully scanned:</b> &nbsp;
+	<i>{$wormhole->fullScanDate|date_age} ago</i>
+	&nbsp; &nbsp;
+	<b>By:</b> &nbsp;
+	<i>{$wormhole->getFullyScannedByUser()->getFullname()}</i>
+{else}
+	<b>Not recently scanned</b>
+{/if}
+</div>
+{/if}
+
+<table id="signatureTable" class="sectionoverview" style="margin-top: 5px;">
+	<tr>
+		<th class="sigID" style="cursor: pointer;" onclick="sortSigList('sigid');">
+			ID
+		{if $sortby == "sigid"}
+			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+		{/if}
+		</th>
+		<th class="sigType" style="cursor: pointer;" onclick="sortSigList('sigtype');">
+			Type
+		{if $sortby == "sigtype"}
+			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+		{/if}
+		</th>
+		<th class="sigInfo">
+			Info
+		</th>
+		<th class="sigStrength">
+		</th>
+		<th class="sigUpdate" style="cursor: pointer;" onclick="sortSigList('scandate');">
+			Last Update
+		{if $sortby == "scandate"}
+			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+		{/if}
+		</th>
+		<th class="sigControls">&nbsp;</th>
+	</tr>
+{foreach from=$signatures key=s item=sig}
+	<form method="post" name="formEditSig{$sig.id}" action="Javascript: saveEditSig('{$sig.id}')">
+	<tr id="signatureList{$sig.id}" class="odd {$sig.sigtype}">
+		<td onclick="editSig('{$sig.id}');">
+			<div id="siglist{$sig.id}id">{$sig.sigid|upper}</div>
+			<div id="sigedit{$sig.id}id" style="display:none;">
+				<input type="text" id="siginput{$sig.id}id" style="width: 40px;" value="{$sig.sigid|strtoupper}" />
+			</div>
+
+			<!-- Extra info popup -->
+			<div id="sigInfo{$sig.id}" class="sigInfo">
+				<div class="header"></div>
+				<div class="content contentleft">
+				{if $sig.whtypeid > 0}
+					<div style="margin-left: 10px; margin-right: 10px;">
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+								<th>Wormhole:</th>
+								<td>
+									{$sig.whtypename} 
+									(<i>to {$sig.whtypeto}</i>)
+								</td>
+							</tr>
+							<tr>
+								<th>Lifetime:</th>
+								<td>{$sig.lifetime} hours</td>
+							</tr>
+							<tr>
+								<th>Mass:</th>
+								<td>
+									{$sig.maxmass} Gg
+									&nbsp;
+									(<i>max per jump: {$sig.jumpmass} Gg</i>)
+								</td>
+							</tr>
+						</table>
+					</div>
+					<br />
+				{/if}
+					<div style="margin-left: 10px; margin-right: 10px;">
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+								<th>Age:</th>
+								<td>{$sig.createdate}</td>
+							</tr>
+							<tr>
+								<th>Last Updated:</th>
+								<td>{$sig.updatedate} ago</td>
+							</tr>
+						</table>
+					</div>
+					<br />
+					<div style="margin-left: 10px; margin-right: 10px;">
+						<table cellspacing="0" cellpadding="0">
+							<tr>
+								<th>Scanned By:</th>
+								<td>{$sig.scannedby}</td>
+							</tr>
+							<tr>
+								<th>Last Updated By:</th>
+								<td>{$sig.lastupdateby}</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="footer"></div>
+			</div>
+			<!-- /Extra info popup -->
+		</td>
+		<td onclick="editSig('{$sig.id}');">
+			<div id="siglist{$sig.id}type">
+		{$sig.sigtype|strtoupper}
+			{if $sig.whtypeid > 0}
+				&nbsp;&nbsp;(<i>{$sig.whtypename}</i>)
+			{if $sig.whtypeto > 0}
+			 	to {$sig.whtypeto}
+			{/if}
+		{/if}
+			</div>
+			<div id="sigedit{$sig.id}type" style="display:none;">
+				<select id="siginput{$sig.id}type" style="width: 65px;">
+					<option value=""></option>
+					<option value="wh" {if $sig.sigtype|upper == "WH"}selected{/if}>WH</option>
+					<option value="data" {if $sig.sigtype|upper == "DATA"}selected{/if}>Data</option>
+					<option value="gas" {if $sig.sigtype|upper == "GAS"}selected{/if}>Gas</option>
+					<option value="ore" {if $sig.sigtype|upper == "ORE"}selected{/if}>Ore</option>
+					<option value="relic" {if $sig.sigtype|upper == "RELIC"}selected{/if}>Relic</option>
+					<option value="combat" {if $sig.sigtype|upper == "COMBAT"}selected{/if}>Combat</option>
+					<option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
+				</select>
+			{if $sig.sigtype == 'wh'}
+				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
+					<option value=""></option>
+					<option value="9999" {if $sig.whtypeid} == 9999}selected{/if}>K162</option>
+				{foreach from=$system->getWormholeTypes() item=type}
+					<option value="{$type.id}" {if $type.id == $sig.whtypeid}selected{/if}>
+						{$type.type} (to {$type.to})
+					</option>
+				{/foreach}
+				</select>
+			{/if}
+			</div>
+		</td>
+		<td onclick="editSig('{$sig.id}');">
+			<div id="siglist{$sig.id}info">
+				{$sig.siginfo}
+			</div>
+			<div id="sigedit{$sig.id}info" style="display:none;">
+				<input type="text" id="siginput{$sig.id}info" style="width: 97%;" value="{$sig.siginfo}" />
+			</div>
+		</td>
+		<td class="sigStrength" onclick="editSig('{$sig.id}');" style="width: 60px;">
+			<div id="siglist{$sig.id}signalstrength" style="text-align: right;">
+			{if $sig.signalstrength > 0}
+				{$sig.signalstrength|round}%
+			{/if}
+			</div>
+			<div id="sigedit{$sig.id}signalstrength" style="display:none;">
+				<input type="text" id="siginput{$sig.id}signalstrength" style="width: 97%;" value="{$sig.signalstrength}" />
+			</div>
+		</td>
+		<td class="sigUpdate" onclick="editSig('{$sig.id}');">
+			{$sig.updatedate} ago
+		</td>
+		<td style="text-align: center;">
+			<div id="siglist{$sig.id}buttons">
+				<img src="images/default/information.png" style="height: 12px;" onmouseover="showSigInfo('{$sig.id}')" onmouseout="hideSigInfo('{$sig.id}')" />
+				<img src="images/default/edit.png" style="height: 12px;" onclick="editSig('{$sig.id}');"/>
+				<img src="images/default/cross.png" style="height: 12px;" onclick="removeSig('{$sig.id}');" />
+			</div>
+			<div id="sigedit{$sig.id}buttons" style="display:none;">
+				<img src="images/default/save.png" onclick="document.formEditSig{$sig.id}.submit();" />
+			</div>
+		</td>
+	</tr>
+	</form>
+{/foreach}
+</table>
+<div style="text-align: right; padding: 10px;">
+	<a href="index.php?module=scanning&section=sigs&action=deleteall&id={$wormhole->id}">Delete all Signatures</a>
+</div>

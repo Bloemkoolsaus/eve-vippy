@@ -1,0 +1,119 @@
+<div class="content">
+	<h1>The logs show nothing</h1>
+</div>
+
+<div class="content">
+	<form method="post">
+	<div style="float: left; width: 200px;">
+		<div>
+			<b><u>Filter Logs</u></b>
+		</div>
+		<div style="padding: 5px;">
+			<div>
+				<input type="radio" name="filter" value="all" {if $filter == 'all'}checked{/if}>
+				ALL
+			</div>
+			<div>
+				<input type="radio" name="filter" value="login" {if $filter == 'login'}checked{/if}>
+				Logins
+			</div>
+			<div>
+				<input type="radio" name="filter" value="exceptions" {if $filter == 'exceptions'}checked{/if}>
+				Exceptions
+			</div>
+			<div>
+				<input type="radio" name="filter" value="deletewhs" {if $filter == 'deletewhs'}checked{/if}>
+				Wormhole Deletes
+			</div>
+		</div>	
+	</div>
+	
+	<div style="float: left; width: 220px;">
+		<div>
+			<b><u>Select Date</u></b>
+		</div>
+		<div style="padding: 5px;">
+			<div class="form">
+				<label class="field" style="width: 50px;">From:</label>
+				<input type="text" name="sdate" value="{$sdate|date_date}" style="width: 100px;" rel="datepicker">
+			</div>
+			<div class="form">
+				<label class="field" style="width: 50px;">Till:</label>
+				<input type="text" name="edate" value="{$edate|date_date}" style="width: 100px;" rel="datepicker">
+			</div>
+		</div>
+	</div>
+	<div style="float: left; width: 200px;">
+		<div>
+			<b><u>Search User / Pilot</u></b>
+		</div>
+		<div style="padding: 5px;">
+			<input type="text" name="search" value="{$search}">
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	
+	<div style="text-align: right; padding: 5px;">
+		<button type="submit">Show Logs</button>
+	</div>
+	</form>	
+	<div style="clear:both;"></div>
+	<br />
+</div>
+
+<div class="content">
+	<div>
+		<div>* If there is a pilot in the details, it was an IGB session!</div>
+	</div>
+	
+	<div style="clear:both;"></div>
+	<br />
+	
+	<div>
+		<table class="sectionoverview">
+			<tr>
+				<th>User</th>
+				<th>Action</th>
+				<th>Details</th>
+				<th>Location</th>
+				<th>Date</th>
+			</tr>
+	{foreach from=$logs key=l item=log}
+			<tr class="{if $l%2==0}even{else}odd{/if}">
+				<td>
+					{$log->getUser()->getFullName()}
+					<a href="index.php?module=users&action=edit&id={$log->userID}" target="_blank"><img src="images/default/view.png" align="right"></a>
+				</td>
+				<td>
+				{if $log->getIcon() !== null}
+					<img src="{$log->getIcon()}" title="{$log->getLevel()}" alt="{$log->getLevel()}" align="left">&nbsp;
+				{/if}
+					{$log->getAction()}
+				</td>
+				<td>
+					{$log->getDescription()}
+				</td>
+				<td>
+					&nbsp; {$log->getIPAddress()} 
+				{if $log->getLocation() != null}
+					&nbsp; | &nbsp;
+					<img src="images/flags/16/{$log->getLocation()->country->code|strtolower}.png" align="left" />
+					&nbsp;
+					{if $log->getLocation()->city->name}{$log->getLocation()->city->name},{/if}
+					{if $log->getLocation()->country->name}{$log->getLocation()->country->name}{/if}
+				{else}
+					<img src="images/flags/16/xx.png" align="left" />
+				{/if}
+				</td>
+				<td>
+				{if $log->logDate == $log->lastDate}
+					{$log->logDate|date_full} &nbsp; &nbsp; {$log->logDate|date_time}
+				{else}
+					{$log->logDate|date_full} &nbsp; &nbsp; {$log->logDate|date_time} &nbsp; - &nbsp; {$log->lastDate|date_time}
+				{/if}
+				</td>
+			</tr>
+	{/foreach}
+		</table>
+	</div>
+</div>

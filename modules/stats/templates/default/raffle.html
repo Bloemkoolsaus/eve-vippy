@@ -1,0 +1,77 @@
+<div class="content">
+	<h1>
+		<img src="images/default/stats.png" style="width: 32px;" align="left">
+		&nbsp;Monthly Raffle: {$month}
+		<div style="float: right; width: 400px; text-align: right; margin-top: -5px;">
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&section=raffle&date={$sdate}&month=-1'">
+				<img src="images/default/left.png" align="left" />
+				Previous Month
+			</button>
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&section=raffle&date={$sdate}&month=1'">
+				Next Month
+				<img src="images/default/right.png" align="right" />
+			</button>
+		</div>
+	</h1>
+	<div style="clear:both;"></div>
+</div>
+
+<div class="content">
+{assign var=totalTickets value=0}
+{foreach from=$scanners key=s item=scanner}
+	{assign var=totalTickets value=$totalTickets+$scanner.amount}
+{/foreach}
+
+{if $future}
+	<div class="error">
+		<div>{$month} has not yet finished.</div>
+	</div>
+{else}
+	<input type="hidden" id="ticketsdate" value="{$sdate}" />
+	<div style="float: left; width: 400px;">
+		<div class="form">
+			<label class="field"><b>Total Nr of Tickets:</b></label>
+			<b>{$totalTickets}</b>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="http://eve-files.com/tools/dice/" target="_blank">Rolle the dice</a>
+		</div>
+		<div style="clear:both;"></div>
+		<br />
+	{for $rolls=1 to 6}
+		<div class="form">
+			<form method="post" action="Javascript: RollNumber('{$rolls}')">
+			<label class="field small"><b>Roll {$rolls}:</b></label>
+			<input type="text" id="roll{$rolls}" style="width: 60px;"/>
+			<button type="submit" class="small" style="width:50px;">Go</button>
+			<div id="rollresult{$rolls}" style="float: right; width: 150px; font-weight: bold;"></div>
+			</form>
+		</div>
+	{/for}
+	</div>
+{/if}
+	
+	<div style="float: right; width: 400px;">
+		<table class="sectionoverview">
+			<tr>
+				<th colspan="2" class="large">Tickets</th>
+				<th style="text-align: center;">{$totalTickets}</th>
+			</tr>
+		{foreach from=$scanners key=s item=scanner}
+			<tr class="{if $s%2==0}even{else}odd{/if}">
+				<td style="padding: 0px; width: 20px;">
+					<img src="http://image.eveonline.com/Character/{$scanner.user->getMainCharacter()->id}_32.jpg" 
+						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+				</td>
+				<td>
+					{$scanner.user->getMainCharacter()->name}
+				</td>
+				<td style="text-align: center;">
+					{$scanner.amount}
+				</td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+	<div style="clear:both;"></div>
+</div>

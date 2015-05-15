@@ -1,0 +1,129 @@
+<div class="content">
+	<h1>
+		<img src="images/default/stats.png" style="width: 32px;" align="left">
+		&nbsp;Leaderboard {$month}
+		<div style="float: right; width: 400px; text-align: right; margin-top: -6px;">
+			<button type="button" class="small" style="width: 160px;" onclick="document.location='index.php?module=stats&date={$sdate}&month=-1'">
+				<img src="images/default/left.png" align="left" />
+				Previous Month
+			</button>
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&date={$sdate}&month=1'">
+				Next Month
+				<img src="images/default/right.png" align="right" />
+			</button>
+		</div>
+	</h1>
+	<div style="clear:both;"></div>
+	<br />
+
+	<div style="float: left; width: 45%;">
+		<table class="sectionoverview">
+			<tr>
+				<th class="large" colspan="3">
+					Top Scanners
+				</th>
+				<th style="width: 70px; text-align: center;">Signatures</th>
+			</tr>
+	{foreach from=$topsignatures key=s item=user}
+			<tr class="{if $s%2==0}even{else}odd{/if}">				
+				<td style="padding: 0px; width: 20px;">
+					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg" 
+						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+				</td>
+				<td style="padding: 0px; width: 20px;">
+					<img src="http://image.eveonline.com/Corporation/{$user.user->getMainCharacter()->corporationID}_32.png" 
+						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+				</td>
+				<td style="{if $s==0}color: #ffffff; font-weight: bold;{/if}">
+					&nbsp;
+					<span style="font-weight: bold; font-size: 13px;">{$user.rank}.</span>
+					&nbsp;
+					{$user.user->getMainCharacter()->name}&nbsp;
+				</td>
+				<td style="text-align: center;">{$user.amount}</td>
+			</tr>
+	{/foreach}
+		</table>
+		<br />
+
+		<table class="sectionoverview">
+			<tr>
+				<th class="large" colspan="3">
+					You
+				</th>
+				<th style="width: 70px; text-align: center;">Signatures</th>
+			</tr>
+			<tr class="even">				
+				<td style="padding: 0px; width: 20px;">
+					<img src="http://image.eveonline.com/Character/{$usersignature.user->getMainCharacter()->id}_32.jpg" 
+						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+				</td>
+				<td style="padding: 0px; width: 20px;">
+					<img src="http://image.eveonline.com/Corporation/{$usersignature.user->getMainCharacter()->corporationID}_32.png" 
+						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+				</td>
+				<td>
+					&nbsp;
+					<span style="font-weight: bold; font-size: 13px;">
+					{if $usersignature.rank == 0}
+						Unranked
+					{else}
+						{$usersignature.rank}.
+					{/if}
+					</span>
+					&nbsp;
+					{$usersignature.user->getMainCharacter()->name}&nbsp;
+				</td>
+				<td style="text-align: center; {if $usersignature.amount == 0}background-color: #CC0000; color: #FFFFFF; font-weight: bold;{/if}">
+					{$usersignature.amount}
+				</td>
+			</tr>
+		</table>
+	
+		<br />	
+		<br />
+	
+		<table class="sectionoverview">
+			<tr>
+				<th class="large">
+					Total Signatures scanned
+				</th>
+				<th style="width: 70px; text-align: center;">Signatures</th>
+			</tr>
+	{foreach from=$totalsignatures key=s item=signatures}
+			<tr class="{if $s%2==0}even{else}odd{/if}">
+				<td>{$signatures.date}</td>
+				<td style="text-align: center;">{$signatures.amount}</td>
+			</tr>
+	{/foreach}
+		</table>
+	</div>
+	<div style="float: right; width: 45%;">
+	{if $doraffles}
+		<div class="message">
+			<h2>MONTHLY RAFFLE</h2>
+			<p style="color: #CC0000;"><b>At the end of each month, 3 isk prizes will be awarded to scanners via a Raffle!</b></p>
+			<p>The goal is to encourage you to get out there!</p>
+			<p><u><b>The rules are simple:</b></u></p> 
+			<ul>
+				<li>For every signature you scanned, you get 1 ticket;</li>
+				<li><u>Everyone</u> counts! not just people on the leaderboard;</li>
+				<li>Total prize pool is a <b>100m</b> per <b>1000 signatures</b>;</li>
+				<li>The prizes are <b>50%</b>, <b>30%</b> and <b>20%</b> of the total prize pool;</li>
+				<li>You can only win 1 prize per person, per month.</li>
+			</ul>
+			<p>The more you scan, the more you can win!</p>
+			<p><b>Happy scanning!</b></p>
+		</div>
+		<br />
+	{/if}
+		<div class="message soft">
+			<ul>
+				<li>Newly added signatures AND updated signatures are counted.</li>
+				<li>Updating a signature that was not changed will <u>not</u> count.</li>
+				<li>Please contact leadership for any questions.</li>
+			</ul>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+</div>

@@ -1,0 +1,22 @@
+div.userRightsModule {
+	float: left; 
+	width: 200px;
+	margin-bottom: 15px;
+}
+
+div.userRightsModule div.form label.righttitle {
+	margin: 0px;
+	padding: 0px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+div.userRightsModule div.form div.value {
+	width: 20px;
+}
+
+div.userRightsModule div.form img {
+	height: 12px; 
+	margin-top: 5px;
+	cursor: pointer;
+}

@@ -1,0 +1,14 @@
+@font-face {
+    font-family: EveSans;
+    src: url(fonts/evesans.ttf);
+}
+@font-face {
+    font-family: EveAlpha;
+    src: url(fonts/evealpha.ttf);
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: url(fonts/opensans/opensans-regular.ttf);
+}
+

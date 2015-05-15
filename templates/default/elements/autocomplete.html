@@ -1,0 +1,6 @@
+<label class="value">
+	<input type="hidden" id="{$element->field}" name="{$element->field}" value="{$element->getAddValue()}" />
+	<input type="text" id="{$element->field}name" name="{$element->field}name" value="{$element->getValueName()}" rel="autocomplete" 
+			 table="{$element->table}" field="{$element->field}" keyfield="{$element->keyfield}" namefield="{$element->getNamefield()}"
+			 {foreach from=$extraAttributes key=attr item=val} {$attr}="{$val}"{/foreach} />
+</label>

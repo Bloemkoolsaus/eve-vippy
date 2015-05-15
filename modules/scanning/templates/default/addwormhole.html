@@ -1,0 +1,33 @@
+<div class="message">
+	<div style="width: 400px;">
+		<h3>Add Wormhole</h3>
+		<form method="post" action="Javascript: addWormhole($('#addWormholeFrom').attr('value'),$('#addWormholeTo').attr('value'));">
+		<div class="form">
+			<label class="field" style="width: 70px;">From:</label>
+			<label class="value" style="width: 210px;">
+				<input type="text" id="addWormholeFrom" value="{$system->name}" style="width: 200px;" />
+			</label>
+		</div>
+		<div class="form">
+			<label class="field" style="width: 70px;">To:</label>
+			<label class="value" style="width: 210px;">
+				<input type="text" id="addWormholeTo" value="" style="width: 200px;" />
+			</label>
+		</div>
+		<div style="clear:both;"></div>
+		<br />
+	{if isset($errors)}
+		<div class="form" style="text-align: right;">
+		{foreach from=$errors item=error}
+			<div style="color: #CC0000;">{$error}</div>
+		{/foreach}
+		</div>
+	{/if}
+		<div class="form" style="text-align: right;">
+			<button class="small" type="button" onclick="cancelAddWormhole()">Cancel</button>
+			<button class="small" type="submit">Add</button>
+		</div>
+		</form>
+	</div>
+	<div style="clear:both;"></div>
+</div>

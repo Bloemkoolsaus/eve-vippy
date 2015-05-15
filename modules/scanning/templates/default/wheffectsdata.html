@@ -1,0 +1,10 @@
+{foreach from=$positives item=effect}	
+	<div style="color: #339933; white-space: nowrap;">
+		{$effect.name}: {if $effect.amount>0}+{/if}{$effect.amount}%
+	</div>
+{/foreach}
+{foreach from=$negatives item=effect}	
+	<div style="color: #CC2222; white-space: nowrap;">
+		{$effect.name}: {if $effect.amount>0}+{/if}{$effect.amount}%
+	</div>
+{/foreach}

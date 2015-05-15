@@ -1,0 +1,19 @@
+div.table {
+	width: 48%;
+}
+div.table.left {
+	float: left;
+}
+div.table.right {
+	float: right;
+}
+
+@media (max-width: 800px) {
+	div.table.right,
+	div.table.left  {
+		float: none;
+	}
+	div.table {
+		width: 100%;
+	}
+}

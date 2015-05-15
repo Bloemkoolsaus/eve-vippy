@@ -1,0 +1,49 @@
+{if isset($errors) && $errors|@count > 0}
+<div class="error">
+{foreach from=$errors key=e item=error}
+	{$error}<br />
+{/foreach}
+</div>
+<br />
+{/if}
+<br />
+<form method="post" action="" name="formEdit{$formname}">
+<input type="hidden" name="save" value="true" />
+{if isset($formname)}<input type="hidden" name="formname" value="{$formname}" />{/if}
+<input type="hidden" name="{$keyField}" value="{$keyValue}" />
+
+{assign var=nrObligatory value=0}
+{foreach from=$elements key=e item=element}
+<div class="form">
+	{if isset($element.longtitle)}
+		<p>{$element.longtitle}</p>
+	{else}
+		<label class="field">
+			{if isset($element.title)}{$element.title}:{/if}
+			{if isset($element.obligatory) && $element.obligatory > 0}
+				{assign var=nrObligatory value=$nrObligatory+1}
+				<span style="color:red;">*</span>
+			{/if}
+		</label>
+	{/if}
+	{if isset($element.input)}{$element.input}{/if}
+</div>
+{/foreach}
+
+{if $allowedit == 1}
+<div class="form">
+	<div class="buttons">
+		<button type="button" onclick="history.go(-1)">Cancel</button>
+		<button type="submit">Save</button>
+	</div>
+</div>
+
+{if $nrObligatory > 0}
+<div class="form" style="font-style: italic;">
+	<span style="color:red;">*</span> Field is required.
+</div>
+{/if}
+{/if}
+
+</form>
+<div style="clear: both;"></div>

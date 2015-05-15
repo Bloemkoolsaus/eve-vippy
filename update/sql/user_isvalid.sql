@@ -1,0 +1,1 @@
+alter table users add column isvalid tinyint(4) default null after isceo;

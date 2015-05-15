@@ -1,0 +1,83 @@
+div.message, div.error, div.success,
+div.notice, div.warning {
+	border-radius: 5px;
+	padding: 5px;
+	padding-bottom: 10px;
+	font-size: 12px;
+	margin: 5px;
+}
+div.message h1, div.message h2, div.message h3, 
+div.success h1, div.success h2, div.success h3, 
+div.error h1, div.error h2, div.error h3,
+div.notice h1, div.notice h2, div.notice h3, 
+div.warning h1, div.warning h2, div.warning h3 {
+	color: inherit;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+	margin-bottom: 5px;
+}
+div.message a, div.error a,
+div.notice a, div.warning a {
+	color: inherit;
+}
+
+div.message {
+	background-color: #DDDDDD;
+	background: -webkit-linear-gradient(#FFFFFF, #CCCCCC);
+	background: -moz-linear-gradient(#FFFFFF, #CCCCCC);
+	color: #111111;
+	font-family: Verdana;
+	font-size: 11px;
+}
+div.message.soft {
+	background-color: #555555;
+	background: -webkit-linear-gradient(#555555, #333333);
+	background: -moz-linear-gradient(#555555, #333333);
+	color: #BBBBBB;
+}
+#divNotices div.message {
+	text-align: center;	
+}
+div.notice {
+	background-color: #00AAFF;
+	background: -webkit-linear-gradient(#00AAFF, #0066BB);
+	background: -moz-linear-gradient(#00AAFF, #0066BB);
+	color: #FFFFFF;
+	text-align: center;
+	padding: 5px;
+}
+div.success {
+	background-color: #008800;
+	background: -webkit-linear-gradient(#00CC00, #008800);
+	background: -moz-linear-gradient(#00CC00, #008800);
+	color: #FFFFFF;
+	text-align: center;
+	padding: 5px;
+}
+div.warning {
+	background-color: #FFCC00;
+	background: -webkit-linear-gradient(#FFCC00, #CC9900);
+	background: -moz-linear-gradient(#FFCC00, #CC9900);
+	border: double 3px #111111;
+	color: #222222;
+	text-align: center;
+}
+div.error {
+	background-color: #990000;
+	background: -webkit-linear-gradient(#CC0000, #880000);
+	background: -moz-linear-gradient(#CC0000, #880000);
+	color: #FFFFFF;
+	text-align: center;
+}
+
+
+div.message a {
+	color: #2222CC;
+}
+div.message a:visited {
+	color: #2222CC;
+}
+div.message a:hover {
+	color: #4444FF;
+}

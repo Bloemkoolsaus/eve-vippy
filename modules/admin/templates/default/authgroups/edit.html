@@ -1,0 +1,276 @@
+<div class="content">
+	<h1>Access Control Group - {$authgroup->name}</h1>
+
+{if $errors|@count > 0}
+	<div class="error">
+	{foreach from=$errors item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+	<br />
+{/if}
+		
+	<form method="post" name="formAuthGroup" action="">
+	<input type="hidden" name="id" value="{$authgroup->id}" />
+	
+	<div style="float: left; width: 40%;">
+		<div class="form">
+			<label class="field">Name:</label>
+			<label class="value">
+			{if $App->user->getIsSysAdmin()}
+				<input type="text" name="name" value="{$authgroup->name}"/>
+			{else}
+				{$authgroup->name}
+			{/if}
+			</label>
+		</div>
+	{if $authgroup->id > 0}
+		<div class="form">
+			<label class="field">Main chain:</label>
+			<label class="value">
+				<select name="mainchain">
+					<option value="null">-- none --</option>
+				{foreach from=$authgroup->getChains() item=chain}
+					<option value="{$chain->id}" {if $chain->id == $authgroup->mainChainID}selected{/if}>{$chain->name}</option>
+				{/foreach}
+				</select>
+			</label>
+		</div>
+	{/if}
+		<div style="clear:both;"></div>
+		<br />	
+		<div class="form" style="text-align: right;">
+			<button type="submit">Save</button>
+		</div>
+	</div>
+	
+	<div style="float: right; width: 55%;">
+	{if $authgroup->id > 0}
+		<div style="float: left; width: 300px;">
+			<div class="form">
+				<div class="field"><b><u>Alliances:</u></b></div>
+				<div class="value" style="width: 270px;">
+				{foreach from=$authgroup->getAlliances() item=alliance}
+					<div style="margin: 2px;">
+						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
+						<a href="index.php?module=admin&section=authgroups&action=edit&id={$authgroup->id}&deletealliance={$alliance->id}"><img src="images/eve/cross.png" align="right"></a>
+						&nbsp; {$alliance->name}
+					</div>
+					<div style="clear:both;"></div>
+				{/foreach}
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+			<div class="form">
+				<div class="field"><b><u>Corporations:</u></b></div>
+				<div class="value" style="width: 270px;">
+				{foreach from=$authgroup->getCorporations() item=corp}
+					<div style="margin: 2px;">
+						<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 18px;" align="left">
+						<a href="index.php?module=admin&section=authgroups&action=edit&id={$authgroup->id}&deletecorp={$corp->id}"><img src="images/eve/cross.png" align="right"></a>
+						&nbsp; {$corp->name}
+					</div>
+					<div style="clear:both;"></div>
+				{/foreach}
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+	{if $App->user->getIsSysAdmin()}
+			<div class="form">
+				<div class="field"><b><u>Allowed (non public) Modules:</u></b></div>
+				<div class="value">
+					<ul>
+					{foreach from=$authgroup->getModules() item=mod}
+						<li>{$mod|ucfirst}</li>
+					{/foreach}
+					</ul>
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+	{/if}
+		</div>
+		<div style="float: left; width: 200px;">
+			<div>
+				<div class="field"><b>Add Alliance</b></div>
+				<div style="padding: 10px;">
+					{$addAllianceElement->getEditHTML()}
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+			<div>
+				<div class="field"><b>Add Corporation</b></div>
+				<div style="padding: 10px;">
+					{$addCorporationElement->getEditHTML()}
+				</div>			
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+		</div>
+	{else}
+		<div>
+			<h3>Subscription</h3>
+			<div class="form">
+				<label class="field">Description:</label>
+				<label class="value">
+					<input type="text" name="subscription[description]">
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">Amount:</label>
+				<label class="value">
+					<input type="text" name="subscription[amount]" style="width: 50px;">
+					&nbsp; (million isk a month)
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">Valid:</label>
+				<label class="value">
+					From: &nbsp; <input type="text" name="subscription[fromdate]" rel="datepicker" style="width: 80px;">
+					&nbsp; &nbsp; &nbsp;
+					Untill: &nbsp; <input type="text" name="subscription[tilldate]" rel="datepicker" style="width: 80px;">
+				</label>
+			</div>
+	</div>
+	{/if}
+	</div>
+	
+	{literal}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$("input#corporation").change(function() {
+			document.formAuthGroup.submit();
+		});
+		$("input#alliance").change(function() {
+			document.formAuthGroup.submit();
+		});
+	});
+	</script>
+	{/literal}
+
+	</form>
+	<div style="clear:both;"></div>
+
+{if $App->user->getIsSysAdmin() && $authgroup->id > 0} 
+	<div>
+		<table class="sectionoverview">
+			<tr>
+				<th>Subscriptions</th>
+				<th>Amount</th>
+				<th>Valid From</th>
+				<th>Valid Untill</th>
+			</tr>
+		{foreach from=$authgroup->getSubscriptions() key=s item=subscription}
+			<tr class="{if $s%2==0}even{else}odd{/if}">
+				<td>
+					{$subscription->description}
+				</td>
+				<td style="text-align: right;">
+					{$subscription->amount} p/month &nbsp;
+				</td>
+				<td>
+					{$subscription->fromdate|date_full}
+				</td>
+				<td>
+				{if $subscription->tilldate != null}
+					{$subscription->tilldate|date_full}					
+				{/if}
+				</td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+{/if}
+</div>
+
+{if $authgroup->getSubscription() != null}
+<div class="content">
+	<h2>Subscription</h2>
+	<div style="float: left; width: 35%;">
+		<div style="padding: 10px;">
+			<div style="font-weight: bold;">
+				<u>{$authgroup->getSubscription()->description}</u>
+			</div>
+			<div style="font-weight: bold; padding: 5px;">
+			{if $authgroup->getSubscription()->amount != 0}
+				{$authgroup->getSubscription()->amount}m ISK a Month.
+			{else}
+				Free
+			{/if}
+			</div>
+		</div>
+		<div style="padding: 10px;">
+			<div style="padding: 5px;">
+		{if $monthsdue|@count > 0}
+				{assign var=totaldue value=0}
+				<table style="width: 100%;">
+					<tr>
+						<th>Month</th>
+						<th style="text-align: right;">Cost</th>
+						<th style="text-align: right;">Received</th>
+						<th style="text-align: right;">Due</th>
+					</tr>
+			{foreach from=$monthsdue item=due}
+					<tr>
+						<th>{$due.month}</th>
+						<td style="width: 100px; text-align: right;">{$due.due|valuta}</td>
+						<td style="text-align: right;">{$due.amount|valuta}</td>
+						<td style="text-align: right;">{($due.due-$due.amount)|valuta}</td>
+					</tr>
+				{assign var=totaldue value=$totaldue+($due.due-$due.amount)}
+			{/foreach}
+				</table>
+				<br />
+				<table style="width: 100%;">
+					<tr>
+						<td><h3>TOTAL DUE<h3></td>
+						<td style="text-align: right;">
+							<h3>{$totaldue|valuta}</h3>
+						</td>
+					</tr>
+				</table>
+		{/if}
+			</div>
+		</div>
+	</div>
+{if $authgroup->getSubscription()->amount != 0}
+	<div style="float: right; width: 60%;">
+		<table class="sectionoverview">
+			<tr>
+				<th class="large" colspan="2">Payments</th>
+				<th>By</th>		
+				<th>Description</th>		
+			</tr>
+		{foreach from=$authgroup->getPayments() key=i item=transaction}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td>{$transaction->date|date_full}</td>
+				<td style="text-align: right; {if $transaction->amount > 0}color: #00ff00;{/if}">
+					{$transaction->amount|valuta} &nbsp;
+				</td>
+				<td>{$transaction->getFromCharacter()->name}</td>
+				<td>{$transaction->description}</td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+{/if}
+	<div style="clear:both;"></div>
+</div>
+
+<div class="content">
+	<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
+	<div>
+	{foreach from=$authgroup->getAllowedUsers() item=user}
+		<div style="float: left; width: 200px; padding: 2px;">
+			<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+			<a href="index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
+			<div style="clear:both;"></div>
+		</div>
+	{/foreach}
+	</div>
+	<div style="clear:both;"></div>
+</div>
+{/if}

@@ -1,0 +1,21 @@
+div.left {
+	float: left;
+}
+div.right {
+	float: right;
+}
+div.half {
+	width: 50%;
+}
+div.onethird {
+	width: 35%;
+}
+div.twothird {
+	width: 60%;
+}
+div.onequarter {
+	width: 25%;
+}
+div.threequarter {
+	width: 70%;
+}

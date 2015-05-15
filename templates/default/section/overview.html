@@ -1,0 +1,151 @@
+<script type="text/javascript">
+{literal}
+function doDelete(deleteURL)
+{
+	{/literal}
+	if(confirm('Delete. Are you sure?'))
+		document.location = deleteURL; 
+	else
+		return false;
+	{literal}
+}
+{/literal}
+</script>
+
+{if isset($allowsearch) && $allowsearch == 1}
+<form method="post" action="">
+<div class="searchoverview">
+	Search:
+	<input type="text" name="search{$tablename}" value="{$search}"/>
+	<button class="small" type="submit">Search</button>
+</div>
+</form>
+{/if}
+
+{assign var="nrFields" value=$heads|@count}
+{if isset($allowedit) && $allowedit == 1}
+	{assign var="nrFields" value=$nrFields+1}
+{/if}
+{if isset($allowsorting) && $allowsorting == 1}
+	{assign var="nrFields" value=$nrFields+1}
+{/if}
+
+{if isset($allowsorting) && $allowsorting == 0}
+	{assign var="sortUrl" value="&sort=$orderByField&dir=$orderByDir"}
+{else}
+	{assign var="sortUrl" value=""}
+{/if}
+
+{if $nrRecords == 0}<p>No data found.</p>{/if}
+
+<table class="sectionoverview">
+	{if isset($allownew) && $allownew == 1 && ($nrRecords > 10 || $nrRecords == 0)}
+	<tr>
+		<td class="tablebuttons" colspan="{$nrFields}">
+			<button type="button" onclick="document.location='{$urlnew}'">Add new</button>
+		</td>
+	</tr>
+	{/if}
+{if $nrPages > 1}	
+	{assign var="startPage" value=$pageNr-2}
+	{assign var="endPage" value=$pageNr+2}
+	
+	{if $startPage <= 0}{assign var="startPage" value=1}{/if}
+	{if $endPage > $nrPages}{assign var="endPage" value=$nrPages}{/if}	
+	<tr>
+		<td class="tablebuttons" colspan="{$nrFields}">
+			<div class="pageinfo">
+				Page {$pageNr} of {$nrPages}
+			</div>
+			<div class="pageselection">
+				{if $pageNr > 1}<a href="{$urloverview}&page={$prevPage}{$sortUrl}">Previous</a> &nbsp;{/if}
+
+				{if $pageNr > 3}
+					<a href="{$urloverview}&page=1{$sortUrl}">1</a> ..
+				{/if}
+				{section name=page start=$startPage loop=$endPage+1 step=1}
+					{if $smarty.section.page.index==$pageNr}
+						<b>{$smarty.section.page.index}</b>
+					{else}
+						<a href="{$urloverview}&page={$smarty.section.page.index}{$sortUrl}">{$smarty.section.page.index}</a>
+					{/if}
+				{/section}
+				{if $endPage < $nrPages}
+					.. <a href="{$urloverview}&page={$nrPages}{$sortUrl}">{$nrPages}</a>
+				{/if}
+				</select>
+				{if $pageNr < $nrPages}&nbsp; <a href="{$urloverview}&page={$nextPage}{$sortUrl}">Next</a>{/if}
+			</div>
+		</td>
+	</tr>
+{/if}
+	{if $nrRecords > 0}
+	<tr>
+		{foreach from=$heads key=i item=title}
+		
+		{if $orderByField == $title.field}
+			{if $orderByDir=="ASC"}
+				{assign var="newOrderBy" value="DESC"}
+			{else}
+				{assign var="newOrderBy" value="ASC"}
+			{/if}
+		{else}
+			{assign var="newOrderBy" value=$orderByDir}
+		{/if}
+		<th {if isset($title.large)}class="large"{/if}>
+			<span {if $allowsorting==0}onclick="document.location='{$urloverview}&sort={$title.field}&dir={$newOrderBy}'" style="cursor: pointer;"{/if}>
+			{$title.title}
+			{if $allowsorting==0}
+				{if $orderByField == $title.field}
+					{if $orderByDir == "ASC"}
+						<img src="images/default/down.png" style="height: 12px; margin-top: 2px;" align="right" />
+					{else}
+						<img src="images/default/up.png" style="height: 12px; margin-top: 2px;" align="right" />
+					{/if}
+				{/if}
+			{/if}
+			</span>
+			{if isset($title.help) && $title.help != ""}
+				<img src="images/default/help.png" style="height: 12px; margin-top: 2px; cursor: pointer;" align="right" onclick="return showHelp('{$title.help}');" />
+			{/if}
+		</th>
+		{/foreach}
+		{if $allowsorting==1}
+		<th>&nbsp;</th>
+		{/if}
+		{if $allowedit==1}
+		<th>&nbsp;</th>
+		{/if}
+	</tr>
+	{foreach from=$rows key=i item=row}
+	<tr class="{if $i%2 == 0}even{else}odd{/if}">
+		{foreach from=$row.fields key=j item=field}
+		<td style='text-align: {$field.align}' {if $row.urledit}onclick="document.location = '{$row.urledit}'"{/if}>
+			{$field.value}
+		</td>
+		{/foreach}
+		{if $allowsorting==1}
+		<td class="buttons">
+			<a href="{$row.urlsort}&direction=down" title="Omlaag"><img src="images/default/down.png" alt="Omlaag" /></a>
+			<a href="{$row.urlsort}&direction=up" title="Omhoog"><img src="images/default/up.png" alt="Omhoog" /></a>
+		</td>
+		{/if}
+		{if $allowedit==1}
+		<td class="buttons">
+			<a href="{$row.urledit}" title="Edit"><img src="images/default/edit.png" alt="Edit" /></a>
+			{if $allowdelete==1}
+			<a href="#" onclick="doDelete('{$row.urldelete}'); return false;" title="Delete"><img src="images/default/cross.png" alt="Delete" /></a>
+			{/if}
+		</td>
+		{/if}
+	</tr>
+	{/foreach}
+	{if $allownew==1}
+	<tr>
+		<td class="tablebuttons" colspan="{$nrFields}">
+			<button type="button" onclick="document.location='{$urlnew}'">Add new</button>
+		</td>
+	</tr>
+	{/if}
+	{/if}
+</table>

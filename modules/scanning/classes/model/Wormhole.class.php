@@ -1,0 +1,464 @@
+<?php
+namespace scanning\model
+{
+	/*
+	 *	LET OP!!! Wormhole is het wormhole systeem.
+	 *  De daadwerkelijke wormhole (waar je door springt) is Connection
+	 */
+	class Wormhole
+	{
+		public $id = 0;
+		public $chainID = 0;
+		public $signatureID = null;
+		public $solarSystemID = 0;
+		public $permanent = false;
+		public $name = "";
+		public $x = 0;
+		public $y = 0;
+		public $status = 1;
+		public $mappedByUserID = 0;
+		public $mappedByCharacterID = 0;
+		public $addDate = null;
+		public $fullScanDate = null;
+		public $fullScanDateBy = null;
+		public $updateDate;
+
+		private $system = null;
+		private $chain = null;
+		private $connections = null;
+		private $connectedSystems = null;
+
+		function __construct($id=false)
+		{
+			if ($id) {
+				$this->id = $id;
+				$this->load();
+			}
+		}
+
+		function load($result=false)
+		{
+			if (!$result)
+			{
+				$cacheFileName = "wormhole/".$this->id.".json";
+				if ($cache = \AppRoot::getCache($cacheFileName))
+					$result = json_decode($cache, true);
+				else
+				{
+					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE id = ?", array($this->id));
+					\AppRoot::setCache($cacheFileName, json_encode($result));
+				}
+			}
+
+			if ($result)
+			{
+				$this->id = $result["id"];
+				$this->chainID = $result["chainid"];
+				$this->signatureID = $result["signatureid"];
+				$this->solarSystemID = $result["solarsystemid"];
+				$this->permanent = ($result["permanent"]>0)?true:false;
+				$this->name = $result["name"];
+				$this->x = $result["x"];
+				$this->y = $result["y"];
+				$this->status = $result["status"];
+				$this->mappedByUserID = $result["mappedby_userid"];
+				$this->mappedByCharacterID = $result["mappedby_characterid"];
+				$this->addDate = $result["adddate"];
+				$this->fullScanDate = $result["fullyscanned"];
+				$this->fullScanDateBy = $result["fullyscannedby"];
+				$this->updateDate = $result["updatedate"];
+			}
+		}
+
+		function store($positionModifier=25, $copyToOtherChains=true)
+		{
+			// Kopie's even uit. Dit gaat niet helemaal goed...
+			$copyToOtherChains = false;
+
+			if ($this->addDate == null)
+				$this->addDate = date("Y-m-d H:i:s");
+
+			if ($this->mappedByUserID == 0)
+				$this->mappedByUserID = \User::getUSER()->id;
+
+			if ($this->mappedByCharacterID == 0)
+			{
+				if (\eve\model\IGB::getIGB()->isIGB())
+					$this->mappedByCharacterID = \eve\model\IGB::getIGB()->getPilotID();
+			}
+
+			$this->x = round($this->x/$positionModifier)*$positionModifier;
+			$this->y = round($this->y/$positionModifier)*$positionModifier;
+
+			$data = array(	"chainid"		=> $this->chainID,
+							"signatureid"	=> $this->signatureID,
+							"solarsystemid" => $this->solarSystemID,
+							"permanent"		=> ($this->permanent)?1:0,
+							"name"			=> $this->name,
+							"x"				=> $this->x,
+							"y"				=> $this->y,
+							"status"		=> $this->status,
+							"mappedby_userid"		=> $this->mappedByUserID,
+							"mappedby_characterid"	=> $this->mappedByCharacterID,
+							"fullyscanned"	=> $this->fullScanDate,
+							"fullyscannedby"=> $this->fullScanDateBy,
+							"adddate"		=> date("Y-m-d H:i:s", strtotime($this->addDate)),
+							"updatedate"	=> date("Y-m-d H:i:s"));
+			if ($this->id != 0)
+				$data["id"] = $this->id;
+
+			if ($this->id == 0)
+			{
+				$result = \MySQL::getDB()->insert("mapwormholes", $data);
+				$system = array("id" => $this->solarSystemID);
+				if ($this->getSolarsystem() !== null)
+					$system["name"] = $this->getSolarsystem()->name;
+
+				$this->id = $result;
+				\User::getUSER()->addLog("add-wormhole", $this->solarSystemID,
+										array("chain"	=> array("id" => $this->getChain()->id,
+																"name"=> $this->getChain()->name),
+											"system" 	=> $system));
+			}
+			else
+				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
+
+			// Remove cache so that it resets
+			\AppRoot::removeCache("wormhole/".$this->id.".json");
+
+
+			// Check of dit wormhole ook op andere chains staat. Zo ja, wijzigingen kopieeren!
+			if ($copyToOtherChains)
+			{
+				foreach (\scanning\model\Wormhole::getWormholesByAuthgroup($this->getChain()->authgroupID, $this->solarSystemID) as $wormhole)
+				{
+					if ($wormhole->id != $this->id)
+					{
+						$wormhole->status = $this->status;
+						$wormhole->mappedByUserID = $this->mappedByUserID;
+						$wormhole->mappedByCharacterID = $this->mappedByCharacterID;
+						$wormhole->fullScanDate = $this->fullScanDate;
+						$wormhole->fullScanDateBy = $this->fullScanDateBy;
+						$wormhole->store($positionModifier, false);
+						$wormhole->getChain()->setMapUpdateDate();
+					}
+				}
+			}
+
+
+			// Check voor negatieve posities (die vallen van de map)
+			if ($this->x < 0)
+			{
+				$x = $this->x*-1;
+				\MySQL::getDB()->doQuery("UPDATE mapwormholes SET x = x + $x WHERE chainid = ".$this->chainID);
+				$this->load();
+			}
+			if ($this->y < 0)
+			{
+				// Verplaats hele map opzij.
+				$y = $this->y*-1;
+				\MySQL::getDB()->doQuery("UPDATE mapwormholes SET y = y + $y WHERE chainid = ".$this->chainID);
+				$this->load();
+			}
+		}
+
+		function delete()
+		{
+			$this->getChain()->removeWormhole($this);
+		}
+
+		function move($newX, $newY)
+		{
+			$this->x = $newX;
+			$this->y = $newY;
+			$this->store();
+		}
+
+		/**
+		 * Get solarsystem
+		 * @return \scanning\model\System|null
+		 */
+		function getSolarsystem()
+		{
+			if ($this->system == null && $this->solarSystemID > 0)
+				$this->system = new \scanning\model\System($this->solarSystemID);
+
+			return $this->system;
+		}
+
+		function isReservation()
+		{
+			if ($this->solarSystemID == 0)
+				return true;
+
+			return false;
+		}
+
+		/**
+		 * Get chain
+		 * @return \scanning\model\Chain
+		 */
+		function getChain()
+		{
+			if ($this->chain == null)
+				$this->chain = new \scanning\model\Chain($this->chainID);
+
+			return $this->chain;
+		}
+
+		/**
+		 * Is this the home system
+		 * @return boolean
+		 */
+		function isHomeSystem()
+		{
+			if ($this->getChain()->homesystemID == $this->solarSystemID)
+				return true;
+
+			return false;
+		}
+
+		function showContextMenu()
+		{
+			$tpl = \SmartyTools::getSmarty();
+			$tpl->assign("wormhole", $this);
+			return $tpl->fetch("scanning/system/contextmenu");
+		}
+
+		/**
+		 * Get connections
+		 * @return \scanning\model\Connection[]
+		 */
+		function getConnections()
+		{
+			if ($this->connections === null)
+				$this->connections = \scanning\model\Connection::getConnectionBySystem($this->solarSystemID, $this->chainID);
+
+			return $this->connections;
+		}
+
+		/**
+		 * Get connected systems
+		 * @return \scanning\model\Wormhole[]
+		 */
+		function getConnectedSystems()
+		{
+			if ($this->connectedSystems === null)
+				$this->connectedSystems = \scanning\model\Connection::getConnectedSystems($this->solarSystemID, $this->chainID);
+
+			return $this->connectedSystems;
+		}
+
+		/**
+		 * Connected?
+		 * @param integer $systemID
+		 * @return boolean
+		 */
+		function isConnectedTo($systemID)
+		{
+			\AppRoot::debug("is connected to: ".$systemID);
+			foreach ($this->getConnections() as $connection)
+			{
+				if ($connection->getFromWormhole()->solarSystemID == $this->solarSystemID && $connection->toSystemID == $systemID)
+					return true;
+
+				if ($connection->getToWormhole()->solarSystemID == $this->solarSystemID && $connection->fromSystemID == $systemID)
+					return true;
+			}
+
+			return false;
+		}
+
+		/**
+		 * get full scanned by user
+		 * @return \users\model\User|null
+		 */
+		function getFullyScannedByUser()
+		{
+			if ($this->fullScanDateBy != null && $this->fullScanDateBy > 0)
+				return new \users\model\User($this->fullScanDateBy);
+
+			return null;
+		}
+
+		function markFullyScanned()
+		{
+			$this->fullScanDate = date("Y-m-d H:i:s");
+			$this->fullScanDateBy = \User::getUSER()->id;
+			$this->store();
+			$this->getChain()->setMapUpdateDate();
+		}
+
+
+		/**
+		 * Get route to selected system
+		 * @param \scanning\model\Wormhole $toSystem
+		 * @return \scanning\model\Wormhole[]
+		 */
+		function getRouteToSystem(\scanning\model\Wormhole $toSystem=null)
+		{
+			\AppRoot::debug("getRouteToSystem()");
+			if ($toSystem == null)
+				$toSystem = self::getWormholeBySystemID($this->getChain()->getHomeSystem()->id);
+
+			$routes = array();
+			foreach ($this->getChain()->getWormholes() as $wormhole)
+			{
+				foreach ($wormhole->getConnections() as $connection)
+				{
+					$routes[$connection->getFromSystem()->id][$connection->getToSystem()->id] = 1;
+					$routes[$connection->getToSystem()->id][$connection->getFromSystem()->id] = 1;
+				}
+			}
+
+			$routeSystems = \Tools::getDijkstraRoute($this->getSolarsystem()->id, $toSystem->getSolarsystem()->id, $routes);
+			\AppRoot::debug("<pre>".print_r($routeSystems,true)."</pre>");
+			return $routeSystems;
+		}
+
+
+
+		/**
+		 * Get wormhole system
+		 * @param int $solarSystemID
+		 * @param int $chainID
+		 * @return \scanning\model\Wormhole|null
+		 */
+		public static function getWormholeBySystemID($solarSystemID, $chainID=null)
+		{
+			if ($chainID == null)
+				$chainID = \scanning\model\Chain::getCurrentChain()->id;
+
+			if ($result = \MySQL::getDB()->getRow("	SELECT * FROM mapwormholes
+													WHERE solarsystemid = ? AND chainid = ?"
+					, array($solarSystemID, $chainID)))
+			{
+				$system = new \scanning\model\Wormhole();
+				$system->load($result);
+				return $system;
+			}
+
+			return null;
+		}
+
+		/**
+		 * Get wormhole system
+		 * @param string $name
+		 * @param int $chainID
+		 * @return \scanning\model\Wormhole|null
+		 */
+		public static function getWormholeBySystemByName($name, $chainID=null)
+		{
+			if ($chainID == null)
+				$chainID = \scanning\model\Chain::getCurrentChain()->id;
+
+			if ($result = \MySQL::getDB()->getRow("	SELECT * FROM mapwormholes
+													WHERE name = ? AND chainid = ?"
+										, array($name, $chainID)))
+			{
+				$system = new \scanning\model\Wormhole();
+				$system->load($result);
+				return $system;
+			}
+
+			return null;
+		}
+
+		/**
+		 * Get systems by chain
+		 * @param int $chainID
+		 * @return \scanning\model\Wormhole[]
+		 */
+		public static function getWormholesByChain($chainID)
+		{
+			$wormholes = array();
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE chainid = ?", array($chainID)))
+			{
+				foreach ($results as $result)
+				{
+					$system = new \scanning\model\Wormhole();
+					$system->load($result);
+					$wormholes[] = $system;
+				}
+			}
+			return $wormholes;
+		}
+
+		/**
+		 * Get systems by solarsystem
+		 * @param int $solarSystemID
+		 * @return \scanning\model\Wormhole[]
+		 */
+		public static function getWormholesBySolarsystemID($solarSystemID)
+		{
+			$wormholes = array();
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE solarsystemid = ?", array($solarSystemID)))
+			{
+				foreach ($results as $result)
+				{
+					$system = new \scanning\model\Wormhole();
+					$system->load($result);
+					$wormholes[] = $system;
+				}
+			}
+			return $wormholes;
+		}
+
+
+		/**
+		 * Get systems by chain
+		 * @param int $authGroupID authgroup-id
+		 * @param int $systemID solarsystem-id
+		 * @return \scanning\model\Wormhole[]
+		 */
+		public static function getWormholesByAuthgroup($authGroupID, $systemID=null)
+		{
+			$qurey = array();
+			$query[] = "c.deleted = 0";
+
+			if (is_numeric($authGroupID))
+				$query[] = "c.authgroupid = ".$authGroupID;
+			else
+				return array();
+
+			if ($systemID != null && is_numeric($systemID))
+				$query[] = "w.solarsystemid = ".$systemID;
+
+
+			$wormholes = array();
+			if ($results = \MySQL::getDB()->getRows("SELECT w.*
+													FROM 	mapwormholes w
+														INNER JOIN mapwormholechains c ON c.id = w.chainid
+													WHERE 	".implode(" AND ", $query)))
+			{
+				foreach ($results as $result)
+				{
+					$system = new \scanning\model\Wormhole();
+					$system->load($result);
+					$wormholes[] = $system;
+				}
+			}
+			return $wormholes;
+		}
+
+		/**
+		 * Get wormhole by chain/signature
+		 * @param integer $chainID
+		 * @param integer $signatureID
+		 * @return \scanning\model\Wormhole|NULL
+		 */
+		public static function getWormholeBySignatureID($chainID, $signatureID)
+		{
+			if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE chainid = ? AND signatureid = ?"
+											, array($chainID, $signatureID)))
+			{
+				$system = new \scanning\model\Wormhole();
+				$system->load($result);
+				return $system;
+			}
+
+			return null;
+		}
+	}
+}
+?>

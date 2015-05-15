@@ -1,0 +1,148 @@
+<div class="content">
+	<h1>
+{if $chain->id > 0}
+		Chain: &nbsp;
+	{if $chain->getHomesystem() != null}
+		{$chain->getHomesystem()->getFullname()}
+		-
+	{/if}
+		{$chain->name}
+{else}
+		Add New Chain
+{/if}
+	</h1>
+{if isset($errors)}
+	<div class="error">
+	{foreach from=$errors item=error}
+		<p>{$error}</p>
+	{/foreach}
+	</div>
+{/if}
+
+	<form method="post" action="" name="formEditChain">
+	<div style="float: left; width: 40%;">
+		<input type="hidden" name="store" value="1"/>
+		<input type="hidden" id="chainid" name="id" value="{$chain->id}" />			
+		<div class="form">
+			<label class="field">Chain Name:</label>
+			<input type="text" name="name" value="{$chain->name}" />
+		</div>
+		<div class="form">
+			<label class="field">Home-system:</label>
+			<input type="text" name="homesystem" value="{$chain->getHomeSystem()->name}" />
+		</div>
+		<div class="form">
+			<label class="field">System Name:</label>
+			<input type="text" name="homesystemname" value="{$chain->systemName}" />
+		</div>
+		<div class="form">
+			<label class="field">Sort order:</label>
+			<input type="text" name="sortorder" value="{$chain->prio}" />
+		</div>
+{if $chain->getAuthGroup() != null}
+		<div class="form">
+			<label class="field">&nbsp;</label>
+	{if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
+			<select name="autonamewhs">
+				<option value="0">-- no --</option>
+				<option value="1" {if $chain->autoNameNewWormholes == '1'}selected{/if}>Letters</option>
+				<option value="2" {if $chain->autoNameNewWormholes == '2'}selected{/if}>Numbers</option>
+			</select>
+	{else}		
+			<input type="checkbox" name="autonamewhs" {if $chain->autoNameNewWormholes}checked{/if} />
+	{/if}
+			Auto-name Wormholes
+		</div>
+		<div class="form">
+			<label class="field">&nbsp;</label>
+			<input type="checkbox" name="dironly" {if $chain->directorsOnly}checked{/if} />
+			CEO / Directors only
+		</div>
+{/if}
+		<div class="form" style="text-align: right; margin-top: 30px;">
+			<div style="padding-right: 50px;">
+				<button type="submit">Save Chain</button>
+			</div>
+		</div>
+	</div>
+	<div style="float: left; width: 59%;">
+		<h3>Access Control</h3>
+		<div class="form">
+			<label class="field">Access Group:</label>
+		{if $authgroups|@count > 1}
+			<select name="authgroup">
+				<option value="0"></option>
+			{foreach from=$authgroups item=group}
+				<option value="{$group->id}" {if $chain->authgroupID == $group->id}selected{/if}>{$group->name}</option>
+			{/foreach}
+			</select>
+		{else}
+			<input type="hidden" name="authgroup" value="{$authgroups[0]->id}">
+			<span style="text-transform: uppercase; color: #ffffff;"><b>{$authgroups[0]->name}</b></span>
+		{/if}
+		</div>
+		<div class="form">
+			<label class="field">Allowed:</label>
+			<div class="value">
+		{if $chain->getAuthGroup() != null}
+			{if $chain->getAuthGroup()->getAlliances()|@count > 0}
+				<div>
+					<u>Alliances:</u>
+				</div>
+				<div style="padding: 5px;">
+				{foreach $chain->getAuthGroup()->getAlliances() item=ally}
+					<div>
+						<input type="checkbox" name="alliances[]" value="{$ally->id}"
+							{foreach from=$chain->getAlliances() item=cally}
+								{if $ally->id == $cally->id}checked{/if}
+							{/foreach}>
+						{$ally->name}
+					</div>
+				{/foreach}
+				</div>
+			{/if}
+			{if $chain->getAuthGroup()->getCorporations()|@count > 0 || $chain->getAuthGroup()->getAlliances()|@count > 0}
+				<div>
+					<u>Corporations:</u>
+				</div>
+				<div style="padding: 5px;">
+				{foreach $chain->getAuthGroup()->getAllowedCorporations() item=corp}
+					<div>
+						<input type="checkbox" name="corporations[]" value="{$corp->id}"
+							{foreach from=$chain->getCorporations() item=ccorp}
+								{if $corp->id == $ccorp->id}checked{/if}
+							{/foreach}>
+						{$corp->name}
+					</div>
+				{/foreach}
+				</div>
+			{/if}
+		{else}
+				<div style="color: red;">
+					<u>No Access Group selected.</u>
+				</div>
+				<div>
+					<div>
+						Before you can assign access, an Access Group must be selected for this chain.
+					</div>
+					<div>
+						Select an Access Group and hit save.
+					</div>
+				</div>
+		{/if}
+				<div style="margin-top: 20px;">
+				</div>
+			</div>
+		</div>
+		<div class="form">
+			<div class="message">
+				<ul>
+					<li>Only Alliances and Corporations in the selected Access Group can be allowed.</li>
+					<li>When you allow an alliance, all corporations in that alliance will have access to this chain.</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	</form>
+</div>

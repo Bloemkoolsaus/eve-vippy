@@ -1,0 +1,355 @@
+<h3>April 28th, 2015</h3>
+<b><u>SCANNING</u></b>
+ - Improved signaturelist layout for (very) small windows (such as mobiles devices or small windows in the IGB)
+ - When jumping through a wormhole connecting 2 kspace systems, VIPPY would not map it.
+ 	It will now check if the 2 systems are directly connected by a gate. If not, VIPPY will now assume a wormhole map the systems.
+ - Improved the auto mapping layout algorithm.
+
+{if isset($App->user) && $App->user->hasRight('atlas')}
+<b><u>ATLAS</u></b>
+ - Fixed menu ATLAS link.
+ 
+{/if}
+<b><u>VIPPY</u></b>
+ - Import the new static data dump for the Mosaic expansion.
+{if isset($App->user) && $App->user->getIsDirector()}
+ - Add an access control group page. All directors can now set wich corporations have access to VIPPY.
+ 
+{/if}
+<b><u>FIXES</u></b>
+ - `Delete all Signatures` also deleted POS signatures. Deleting all sigs will now keep POS signatures.
+ - Popups (such as edit connection info) would not center on screen if you scrolled horizontally.
+
+
+
+<h3>February 10th, 2015</h3>
+<b><u>SCANNING</u></b>
+ - Add visual for Shattered systems.
+ - Add a `delete all signatures` link.
+
+<b><u>WH-INFO</u></b>
+ - Shattered Systems
+
+<b><u>FIXES</u></b>
+ - VIPPY said A009 goes to nullsec, but it doesn't. It actually goes to one of the 25 Small-Ship Shattered systems.
+
+
+
+<h3>February 5th, 2015</h3>
+<b><u>SCANNING</u></b>
+ - Improved layout for small windows (such as mobiles devices or small windows in the IGB)
+ - Moved `mark fully scanned` button to a less prominent place. Systems are automatically marked fully scanned when you complete all signatures.
+ - Automatically update connection wormhole-type from signatures list.
+ 	VIPPY will attempt to automatlically set a connections type by looking at the signature list.
+ 	If a wormhole signature's info field has the name (not the J-sig) of the wormhole in the proper syntax, it can match the connection. 
+ 	VIPPY will take the first word as name parameter.
+ 		If you have `c5a-c5b` as info for that wh signature, VIPPY will be able to match the correct connection and update accordingly.
+ 		These values will all map to c5b: 	`c5a-c5b eol`	`c5b`	`c5b eol frig`	`c5a-c5b frig bubbeled whatever`
+ 		These values will <u>NOT</u> map to c5b: 	`frig c5a-c5b`	`j123456-1654321`	`j123456-1654321 c5a`
+ - Show lifetime/mass of a wormhole in the on-hover connection info when a wormhole-type is known.
+ - More code optimizations for improved server-side performance.
+
+<b><u>WH-INFO</u></b>
+ - Updated wormhole mass table.
+ - Updated wormhole color reference. 
+ - Add wormhole system effect reference.
+
+<b><u>FIXES</u></b>
+ - Fixed `Remove Connected Systems`. Unmapped systems would delete the whole chain instead of only the actual connected systems.
+ - Fixed jump-log layout. Every first line of mass after `Marked Reduced` would not go to a new line, messing up the table.
+
+
+
+<h3>January 18th, 2015</h3>
+<b><u>SCANNING</u></b>
+ - Improve copy-paste signatures usability.
+ - Include your own status on the leaderboard.
+ - Server optimizations.
+
+
+<h3>December 22nd, 2014</h3>
+<b><u>SCANNING</u></b>
+ - In response to popular request, change the fully-scanned icons to bars. Whenever there is a grey bar on a system, this means more scanning is required!
+	Bars can be different height: 
+	 * Large bar: Not scanned at all. Get your lazy bum out of that forcefield and start scanning;
+	 * Small bar: Previously scanned, but more then 2 hours age. Check for new sigs.
+ - Attempt to auto mark systems as fully scanned. For exemple when there are no more open signatures, or when a copy-past adds no new signatures.
+ - Auto-check connections to Thera using data from <a href="http://www.eve-scout.com/" target="_blank">http://www.eve-scout.com/</a>.
+ - Removed the `Copy-Paste sigs` popup, and put it in a folding pane in the page. This should make copy-pasting sigs quicker as the popup could take a while to load.
+ - Add an option in the context menu to remove all systems currently connected to the selected system. (remove part of a disconnected chain).
+ - The ingame browser button `Switch active system to current location` had become lost, wandering through the universe and has now magically returned.
+ - Re-done and improved the algorithm that positions new systems on the map.
+
+
+
+<h3>December 9th, 2014</h3>
+<b><u>RHEA</u></b>
+ - Import Rhea data export! \o/
+
+<b><u>FIXES</u></b>
+ - Fix broken statistics / leaderboard pages.
+ - Fix signatures hover info popup.
+
+
+
+<h3>December 8th, 2014</h3>
+<b><u>RHEA</u></b>
+ - CCP's data export is going to be late, as usual...
+ 	- Added a work-around for the new systems such as Thera that VIPPY does not know yet because of the SDE being late.
+
+<b><u>SCANNING</u></b>
+ - When scrolling horizontally, make only the map scroll. Keep all other page elements inside the browser viewport.
+ - When manually adding mass:
+ 	- Add the ability to select a ship-class instead of only a specific shiptype.
+ 	- Ability to add multiple records
+ 	- Mark manually added mass on the jumplog
+ - Add a button to mark a system fully scanned.
+ 	- <img src="images/default/scanned.not.png"> Unmarked system will have an `unmarked` icon at the top right.
+ 	- <img src="images/default/scanned.recently.png"> Marked systems that were marked over 2 hours ago will have also have an icon.
+
+
+
+<h3>December 1st, 2014</h3>
+<b><u>VIPPY</u></b>
+ - Performance and caching improvements. This will (hopefully) reduce lag on large maps.
+
+
+
+<h3>November 10th, 2014</h3>
+<b><u>PHOEBE</u></b>
+ - Adjust capital jump calculation for Phoebe.
+ 	
+
+
+<h3>October 28th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Added the `Exit Finder`.
+ - Wormhole stubs:
+	- Remember wich signature created wich wormhole. Rename the signature, renames the wormhole stub.
+ 	- Exclude `Unstable Wormhole` from the stubs name when copy pasting from the probe window.
+
+
+
+<h3>October 22th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Added last set of new c4 statics.
+ - Fix button `<i>Switch active system to current location</i>` for the ingame browser.
+ - Wormhole stubs:
+	- Improve parser for the wormhole stub names.
+ 	- Added a naming help for wormhole stubs. See the `map legend` (<i>click the blue <img src="images/default/info.png"> at the top right of the main map</i>).
+
+
+
+<h3>October 20th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Create a wormhole stub while scanning. (<i>Temporary, unmapped wormholes</i>) 
+ 	- To create a stub, add a WH signature to the sigs list. In the info field of the signature, provide the name for the new wormhole.
+ 	- If the stubs are named correctly, VIPPY will be able to correctly replace stubs with the mapped wormholes when you start mapping.
+ - Limit the number of capitals in range on popups to 5 capitals (<i>unless more then 5 are within 1 jump</i>).
+ - Set destination to nearest tradehub system (<i>Unfortunately, the ingame browser does not support set-destination to station</i>).
+ - Show icons for wormholes that can fit capitals. (<i>VIPPY will attempt to automatically deduce these based on connected systems</i>)
+ - Manually add mass to a wormhole.
+ - Improved the responsiveness of the signatures list.
+
+
+
+<h3>September 3rd, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Make auto-naming wormholes optional per chain.
+ - Adjust signature editor. Signatures now keep their IDs after downtime.
+ - Automatically expand and shrink the map. Some chains did not fit anymore.
+ - Automatically `snap` wormhole systems to a (small) grid to make it easier to align the map and improve readability.
+
+
+
+<h3>August 26th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - New frigate wormholes from Hyperion.
+ - Updated system effects.
+ - C4 Dual statics
+
+
+
+<h3>July 16th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Improve visibility of current users in a system when you hover over a system.
+ - K-Space systems, add my capital ships number of (cyno)jumps to this system when you hover over the system.
+ 	Go to `profile` > `My Capital Ships` to set your capital ships.
+ - Improve internal caching to (hopefully) decrease lag and increase performance.
+ - Solve problem that sometimes in the IGB, an empty map is loaded.
+
+
+
+<h3>June 7nd, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Update links from wormhol.es to the new wh.pasta.gg
+ - Make k-space systems stand out, by giving them a colored side bar.
+ - Improve information on mass/lifetime changes on the jumplog-popup.
+ 
+<b><u>SERVER</u></b>
+ - Added some extra RAM memory to the server.
+
+ 
+ 
+<h3>June 2nd, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Automatically name systems (c5s, c5a, c5b, etc). Yes, you're reading this right. It's in now.
+ - Jump log mass estimates were in m3. This should ofcourse be kg.... 
+ 
+<b><u>ADMIN</u></b>
+ - Creating new chains was broken. Is fixed now.
+ 
+ 
+ 
+<h3>May 29th, 2014</h3>
+<b><u>SCANNING</u></b>
+ - Add mass estimates to jump logs.
+ - Improve internal caching (performance should be better!).
+
+
+
+<h3>April 17th, 2014</h3>
+<b><u>Statistics</u></b>
+ - Add leaderboard.
+ - Add details statistics for leadership (CEO's and Directors).
+
+
+
+<h3>Februari 18th 2014</h3>
+<b><u>SCANNING</u></b>
+ - Add faction warfare icons for faction warfare (<img src="images/eve/fw.png">) systems and contested (<img src="images/eve/fw.contested.png">) systems.
+ - Add faction logo's to systems that belong to an NPC faction.
+ - Add an option to a connection to mark it as not a wormhole but normal gate jumps. These connections will show up with a blue color.
+ - You are now able to define if you have a capital ship in k-space. Go to `profile` > `My Capital Ships`.
+   If a capital ship is in cyno range of a connecting k-space wormhole, VIPPY will show a cyno icon  (<img src="images/eve/cyno.png">).
+   	<i>* By default, VIPPY will assume jump drive calibration 4. You can change this at `Profile` > `Account Settings`</i>
+ - Limit the number of active characters shown on the map in a certain system.
+ - Fixed an issue when calculating if a high-sec system is an hs island or not. 0.45 systems were seen as lowsec, while they are not.
+
+
+
+<h3>December 23rd, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Fixed the `on-map` tradehub calculation.
+ - Add icons if a HS is on a hs-island (<img src="images/eve/stargate.red.png">).
+ - Add icons if a LS has a direct gate to hs (<img src="images/eve/stargate.green.png">).
+
+
+
+<h3>August 20th, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Fixed `null to false` nearest tradehub calculation.
+ 
+
+ 
+<h3>August 17th, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Add station icons (<img src="images/eve/station.png">) on the map for station systems.
+ - Add yellow (<img src="images/eve/skull.orange.png">) and red (<img src="images/eve/skull.red.png">) skull icons to indicate recent pvp or pve activity.
+ - Add a jump log for each wormhole (hover mouse over the connection to see it).
+ 
+<b><u>USERS</u></b>
+ - Improved api stuff.
+
+
+<h3>June 4th, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Exploration changes for the Odyssey expansion.
+
+
+
+<h3>May 13th, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Only update date on notes when the notes actually changed.
+ - Add link icons to dotlan, wormhole.es, zkillboard and eve-survival.
+ - Add extra security to the `online pilots` popup.
+
+
+
+<h3>Februari 10th, 2013</h3>
+<b><u>SCANNING</u></b>
+ - Make the `show signatures` button remember that you clicked it.
+ - Add a last edit date to system notes.
+ - Automatically delete wormholes that are older then 72 hours. Mark a system as permanent if it should not be deleted.
+ 
+<b><u>USERS</u></b>
+ - Allow directors to see who has VIPPY access (from their corp).
+ - Allow directors to ban users from VIPPY.
+
+
+
+<h3>Januari 17th, 2013</h3>
+<b><u>PERFORMANCE</u></b>
+ - Add `tracking-only` mode for the ingame browser on alts. This mode will not show/load the map, wich will decrease client and server load.
+ 	You are encouraged to use this mode on your alts, the map is very CPU heavy for your client.
+ - Hide the signature list by default. It is not needed all the time, and when hiding it will decrease server load (and thus increase VIPPY performance).
+ - Cached the wormhole info popups when you hover over them on the map.
+ 	Wormhole effects for exemple were calculated for each call, wich is lame cause they never change. 
+ - Did some other very technical stuff to decrease load for the server.
+
+<b><u>SCANNING</u></b>
+ - Add `Known Wormholes`. This will make other aliance holes (or hostile holes) easy to spot when they appear on the map.
+ 	<i><u>Directors</u> and <u>CEO's</u> are able to edit the list of known wormholes in the admin section.</i>
+ - Show number of jumps between connected k-space systems. Connect two k-space systems by clicking `add wormhole`, then enter both system names.
+ - Add `snap-to-grid` button that will neatly arrange all systems on the map. Or atleast try to...
+ - Rename the `clear-all` button to `Delete All` to better describe it's function.
+ - Add notification system. Add a notification to a system by right-clicking the system on the map if there is important stuff about a certain system.
+ - Add `set destination`. Set destination while on the ingame browser by right-clicking the system on the map.
+ - Fixed a bug in the `show-online pilots` popup.
+
+
+
+<h3>November 11th, 2012</h3>
+<b><u>SCANNING</u></b>
+ - Fixed an issue with dragging systems when in zoomed in/out.
+ - Add a default layout when adding wormholes to the map.
+ - Add a list of anomalies to a solarsystems overview.
+ - Copy pasting signatures, will now also add the anomalies to the systems anomaly list.
+ - Fixed some nullsec systems that showed up as lowsec.
+
+
+
+<h3>September 19th, 2012</h3>
+<b><u>SCANNING</u></b>
+ - Add "Show Online Pilots" button to show wich pilots are online outside the chain.
+ - Add zoom controls to the chain map. You can now zoom out if you have extremely large chains.
+ - When adding a new signature, for exemple from the copy-paste, existing signatures are no longer overwritten but supplemented.
+ - Signal Strength column is added when copy-pasting signatures from the ingame scanner window.
+ - Fix and improve wh-activity graph generator.
+
+<b><u>WH-COLORS</u></b>
+ - Add a table of all different wormhole colors to and from what class of system. Every wormholer should know this by heart though.
+
+
+
+<h3>August 22th, 2012</h3>
+<b><u>SCANNING</u></b>
+ - Add system information, including npc/pvp kill statistics when you hover over a system on the map.
+ - Add wormhole info to the signature-hover window.
+ - Fix database issue in wich the correct system effect would not show.
+
+
+
+<h3>August 9th, 2012</h3>
+<b><u>SCANNING</u></b>
+ - Add a hover icon to each scanned signature to get more detailed information about that Signature.
+ - Fixed an anoying refresh when trying to edit an already existing signature.
+ - Fixed the wormhole effect status on the selected system wich only showed 1 or 0, instead of the effect.
+
+
+
+<h3>August 6th, 2012</h3>
+<b><u>SCANNING</u></b>
+ - Upgrade the database to the latest data on wormholes/statics/etc.
+ - You can now provide the wormhole-type when adding a wormhole signature.
+ - The graphical map will now expand in height (not in width) when you drag a system outside the map border. This will accommodate large chains.
+ - Upgrades & Performance improvements to the graphical map view.
+
+<b><u>PROFILE</u></b>
+ - Change the way API's are stored and processed. Hopefully that will fix issues some people are having with it.
+
+<b><u>ADMIN</u></b>
+ - Fix creating/managing chains for Directors & CEO's. This was incomplete and broken.
+
+<b><u>VIPPY</u></b>
+ - Add patch/change history log so you can all see what has changed after every update!

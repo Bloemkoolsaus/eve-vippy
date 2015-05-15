@@ -1,0 +1,1 @@
+delete from users where username is null;

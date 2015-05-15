@@ -1,0 +1,95 @@
+<div class="content">
+	<h1>Wormhole Mass Table Reference</h1>
+
+	<div class="table left">
+		<table class="sectionoverview">
+			<tr>
+				<th>Number</th>
+				<th>Destination</th>
+				<th>Allowed Mass</th>
+				<th>Max Mass</th>
+				<th>Lifetime</th>
+			</tr>
+	{foreach from=$wormholes key=i item=wormhole}
+		{if $i<=($wormholes|@count/2)}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td style="color: #EEEEEE;">
+					<b>{$wormhole.name}</b>
+				</td>
+				<td>
+					<span style="color:{$wormhole.color}"><b>{$wormhole.tag}</b></span>
+					&nbsp; {$wormhole.desto}
+				</td>
+				<td style="text-align: right;">
+				{if $wormhole.jumpmass != 0}
+					{(($wormhole.jumpmass*1000)*1000)|number} &nbsp; kg &nbsp;
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+				<td style="text-align: right;">
+				{if $wormhole.maxmass != 0}
+					{(($wormhole.maxmass*1000)*1000)|number} &nbsp; kg &nbsp;
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+				<td style="text-align: center;">
+				{if $wormhole.lifetime != 0}
+					{$wormhole.lifetime} Hours
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+			</tr>
+		{/if}
+	{/foreach}
+		</table>
+	</div>
+	<div class="table right">
+		<table class="sectionoverview">
+			<tr>
+				<th>Number</th>
+				<th>Destination</th>
+				<th>Allowed Mass</th>
+				<th>Max Mass until collapse</th>
+				<th>Lifetime</th>
+			</tr>
+	{foreach from=$wormholes key=i item=wormhole}
+		{if $i>($wormholes|@count/2)}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td style="color: #EEEEEE;">
+					<b>{$wormhole.name}</b>
+				</td>
+				<td>
+					<span style="color:{$wormhole.color}"><b>{$wormhole.tag}</b></span>
+					&nbsp; {$wormhole.desto}
+				</td>
+				<td style="text-align: right;">
+				{if $wormhole.jumpmass != 0}
+					{(($wormhole.jumpmass*1000)*1000)|number} &nbsp; kg &nbsp;
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+				<td style="text-align: right;">
+				{if $wormhole.maxmass != 0}
+					{(($wormhole.maxmass*1000)*1000)|number} &nbsp; kg &nbsp;
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+				<td style="text-align: center;">
+				{if $wormhole.lifetime != 0}
+					{$wormhole.lifetime} Hours
+				{else}
+					<i>Unknown</i>
+				{/if}
+				</td>
+			</tr>
+		{/if}
+	{/foreach}
+		</table>
+	</div>
+	<div style="clear:both;"></div>
+</div>

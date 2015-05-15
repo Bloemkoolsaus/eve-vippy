@@ -1,0 +1,51 @@
+table.sectionoverview {
+	width: 100%;
+}
+
+table.sectionoverview th {
+	font-weight: bold;
+	color: #ffffff;
+	background: none repeat scroll 0 0 rgba(30, 30, 30, 0.7);
+	background: linear-gradient(rgba(40, 40, 40, 0.7),rgba(30, 30, 30, 0.7));
+	padding: 5px;
+}
+table.sectionoverview th.large {
+	font-size: 14px;
+    text-shadow: 1px 1px 2px #9ecaed;
+}
+
+table.sectionoverview td {
+	color: #ffffff;
+	padding: 3px;
+}
+table.sectionoverview td.buttons {
+	width: 50px;
+	text-align: center;
+}
+table.sectionoverview td[onclick],
+table.sectionoverview tr[onclick] {
+	cursor: pointer;
+}
+
+
+table.sectionoverview tr.even:hover,
+table.sectionoverview tr.odd:hover {
+	background: none repeat scroll 0 0 rgba(255, 200, 10, 0.4);	
+}
+table.sectionoverview tr.even:hover,
+table.sectionoverview tr.odd:hover {
+	background: linear-gradient(rgba(255, 200, 10, 0.5),rgba(255, 200, 10, 0.3));
+}
+
+
+table.sectionoverview tr.even td {
+	background: none repeat scroll 0 0 rgba(100, 100, 100, 0.3);
+}
+table.sectionoverview tr.odd td {
+	background: none repeat scroll 0 0 rgba(150, 150, 150, 0.3);
+}
+table.sectionoverview tr.even td,
+table.sectionoverview tr.odd td {
+	background: linear-gradient(rgba(150, 150, 150, 0.3),rgba(100, 100, 100, 0.3)) !important;
+	background: -webkit-linear-gradient(rgba(150, 150, 150, 0.3),rgba(100, 100, 100, 0.3)) !important;
+}

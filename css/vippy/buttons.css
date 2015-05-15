@@ -1,0 +1,44 @@
+button {
+	cursor: pointer;
+	
+	border-radius: 5px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: rgba(110, 140, 150, 0.8);
+
+	background: none repeat scroll 0 0 rgba(110, 140, 150, 0.2);
+	background: linear-gradient(rgba(110, 140, 200, 0.3),rgba(110, 140, 150, 0.2));
+	background: -webkit-linear-gradient(rgba(110, 140, 200, 0.3),rgba(110, 140, 150, 0.2));
+	font-family: EveSans,Helvetica,Arial;	
+
+	margin: 2px;
+	padding-top: 2px;
+	padding-bottom: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #dddddd;
+	white-space: nowrap;
+	overflow: hidden;
+    -webkit-box-shadow: none;
+	text-transform: uppercase;
+	text-shadow: 	1px 0px 1px #555555, 
+					0px 1px 1px #555555;
+}
+
+button:hover {
+	border-color: #ffaa00;
+	background: none repeat scroll 0 0 rgba(255, 200, 10, 0.6);
+    box-shadow: 0 0 2px #ffaa00;
+    -webkit-box-shadow: 0 0 3px #ffaa00;
+	color: #ffffff;
+	text-shadow: 	1px 0px 1px #aaaaaa, 
+					0px 1px 1px #aaaaaa;
+}
+
+button.small {
+	margin: 0px;
+	padding: 0px;
+	font-size: 13px;
+}

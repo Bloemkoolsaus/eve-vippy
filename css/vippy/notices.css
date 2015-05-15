@@ -1,0 +1,28 @@
+div.message, div.error, div.success, div.notice, div.warning {
+	padding: 5px;
+	padding-bottom: 10px;
+	font-size: 12px;
+	margin: 5px;
+	border-radius: 0px;
+    box-shadow: 0 0 3px #9ecaed;
+}
+div.message p, 
+div.error p, 
+div.success p, 
+div.notice p, 
+div.warning p {
+	margin: 0px;
+	padding: 5px;
+} 
+div.message {
+	background: linear-gradient(rgba(100, 100, 100, 0.3),rgba(130, 130, 130, 0.3));
+    box-shadow: 0 0 3px #cccccc;
+}
+div.error {
+	background: linear-gradient(rgba(200, 10, 10, 0.2), rgba(200, 20, 20, 0.3),
+								rgba(200, 20, 20, 0.3), rgba(200, 10, 10, 0.2));
+    box-shadow: 0 0 3px #ff0000;
+    border-radius: 5px;
+	margin: 15px;
+	padding: 5px;
+}

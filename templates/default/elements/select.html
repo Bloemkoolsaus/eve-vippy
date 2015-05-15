@@ -1,0 +1,8 @@
+<label id="lblCombo{$name}" class="value" rel="combobox">
+	<select id="{$name}" name="{$name}">
+		<option value="0"></option>
+		{foreach from=$options key=i item=option}
+		<option value="{$option.value}" {if $value==$option.value}selected{/if}>{$option.name}</option>
+		{/foreach}
+	</select>
+</label>

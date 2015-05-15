@@ -1,0 +1,262 @@
+<div class="content">
+	<h1>{$user->getFullname()}</h1>
+{if $errors|@count > 0}
+	<div class="error" style="text-align: center; margin: 10px;">
+	{foreach from=$errors item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+{/if}
+{if $messages|@count > 0}
+	<div class="message" style="text-align: center; margin: 10px;">
+	{foreach from=$messages item=message}
+		<div>{$message}</div>
+	{/foreach}
+	</div>
+{/if}
+
+	<form method="post" action="">
+	<input type="hidden" id="userid" name="save" value="{$user->id}"/>
+	
+	<div style="float: left; width: 400px;">
+		<div class="form">
+			<label class="field"><b>Main Character:</b></label>
+	{foreach from=$chars key=c item=char}
+		{if isset($char.main)}
+			[{$char.corpticker}] {$char.name}
+		{/if}
+	{/foreach}
+		</div>
+		<div class="form">
+			<label class="field"><b>Username:</b></label>
+			{$user->username}
+		</div>
+		<div class="form">
+			<label class="field"><b>E-mail:</b></label>
+			{$user->email}
+		</div>	
+		<div class="form">
+			<label class="field"><b>Status:</b></label>
+		{if $user->deleted > 0}
+			<span style="color: #FF3322;">BANNED</span>
+		{else}
+			<span style="color: #22FF22;">Active</span>
+		{/if}
+		</div>	
+		<div class="form">
+			<label class="field"><b>Last loggedin:</b></label>
+		{if isset($lastlogindate)}
+			<div>{$lastlogindate}</div>
+			<div>
+				<img src="images/flags/16/{$lastloginip.country_code|strtolower}.png" align="left" title="{$lastloginip.city}, {$lastloginip.country_name}" />
+				<i>{$lastloginip.ip}</i>
+			</div>
+		{else}
+			<i>Unknown</i>
+		{/if}
+		</div>
+	{if isset($issysadmin)}
+		<div class="form">
+			<label class="field"><b>Auth. Group:</b></label>
+		{foreach from=$user->getAuthGroups() item=group}
+			<div>{$group->name}</div>
+		{/foreach}
+		</div>
+	{/if}	
+	</div>
+	
+	{if isset($usergroups)}
+	<input type="hidden" name="saveusergroups" value="1"/>
+	<div style="float: left; width: 250px;">
+		<div>
+			<h3>Usergroups:</h3>
+		</div>
+		<div style="padding-left: 5px;">
+	{foreach from=$usergroups item=group}
+		{if $group->name|trim|strlen > 0}
+			<div>
+				<input type="checkbox" id="group{$group->id}" name="group{$group->id}" style="height: 12px; vertical-align: text-bottom;"
+					{if $user->inGroup($group->id)}checked{/if} />
+				<label for="group{$group->id}" style="float: none;">{$group->name}</label>
+			</div>
+		{/if}
+	{/foreach}
+		</div>
+	</div>
+	{/if}
+	
+	<div style="float: right; width: 250px; text-align: right;">
+		<div style="margin-bottom: 1px;">
+			<button type="button" style="width: 200px;" onclick="resetPassword('{$user->id}')">
+				<img src="images/eve/refresh.png" align="left" />
+				Reset Password
+			</button>
+		</div>
+	<!--
+		<div style="margin-bottom: 5px;">
+			<button type="button" style="width: 200px;" onclick="validateAPI('{$user->id}')">
+				<img src="images/eve/aura.png" style="height: 16px;" align="left" />
+				Run API validation
+			</button>
+		</div>
+	-->
+		<div style="margin-bottom: 1px;">
+			{if $user->deleted > 0}
+				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
+					<img src="images/eve/apply.png" align="left" />
+					Re-Activate User
+				</button>
+			{else}
+				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
+					<img src="images/eve/stop.png" align="left" />
+					BAN User
+				</button>
+			{/if}
+		</div>
+	{if isset($issysadmin)}
+		<div style="margin-bottom: 1px;">
+			<button type="button" style="width: 200px;" onclick="document.location='index.php?module=users&loginas={$user->id}'">
+				<img src="images/eve/undock.small.png" align="left" />
+				Login as {$user->username}
+			</button>
+		</div>
+	{/if}
+	{if isset($usergroups)}
+		<div style="margin-top: 30px;">
+			<button type="submit" style="width: 200px;">
+				<img src="images/default/save.png" align="left" />
+				Save User
+			</button>
+		</div>
+	{/if}
+	</div>
+	</form>
+	<div style="clear:both;"></div>
+	<br />
+	<br />
+</div>
+
+<div class="content">
+	<div class="tabs">
+		<ul>
+			<li><a href="#" onclick="showUserEditTab('characters'); return false;">Known Characters</a></li>
+			<li><a href="#" onclick="showUserEditTab('apikeys'); return false;">API Keys</a></li>
+			<li><a href="#" onclick="showUserEditTab('logs'); showUserLogs(); return false;">Logs</a></li>
+		</ul>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+	
+	
+	<div id="detailtab-characters" rel="detailtab">
+		<h1>Known Characters</h1>
+		{if $chars|@count > 0}
+			{foreach from=$chars key=c item=char}
+			<div style="float: left; width: 380px; height: 140px;">
+				<div style="padding: 10px;">
+					<img src="http://image.eveonline.com/Character/{$char.id}_128.jpg" align="left" style="margin-right: 10px; width: 80px; border: solid 1px {if isset($char.main)}#FFAA00{else}#888888{/if}; border-radius: 5px;" />
+					<div class="form" style="width: 250px;">
+						<h3>{$char.name}</h3>
+						{if $char.ceo > 0}
+							<i>CEO</i>
+						{elseif $char.director > 0}
+							<i>Director</i>
+						{/if}
+						{if $char.title != ""}
+							<i>{$char.title}</i>
+						{/if}
+					</div>
+					<div style="float: left; width: 250px;">
+						<div>
+							<img src="http://image.eveonline.com/Corporation/{$char.corporationid}_32.png" align="left" 
+								style="margin-right: 5px; height: 18px;" title="{$char.corporation}" alt="{$char.corporation}" />
+							{$char.corporation}
+						</div>
+						<div style="clear:both;"></div>
+						<div>
+							{if $char.alliance != ""}
+								<img src="http://image.eveonline.com/Alliance/{$char.allianceid}_32.png" align="left" 
+									style="margin-right: 5px; height: 18px;" title="{$char.alliance}" alt="{$char.alliance}" />
+								{$char.alliance}
+							{/if}
+							&nbsp;
+						</div>
+						<div style="clear:both;"></div>
+					</div>
+					<div style="clear:both;"></div>	
+					<div style="margin-top: 10px;">
+						<div style="float: left; width: 90px;">
+							<b>Source:</b>
+						</div>
+						<div style="float: left;">
+							{if $char.apikey > 0}
+								<span style="color: #44dd44">API Fetched</i></span>
+							{else}
+								<i>Location Tracker</i>
+							{/if}
+						</div>
+						<div style="clear:both;"></div>
+					</div>		
+					<div>
+						<div style="float: left; width: 90px;">
+							<b>Last Update:</b>
+						</div>
+						<div>
+							{$char.updatedate|date_age} ago
+						</div>
+						<div style="clear:both;"></div>
+					</div>
+				</div>	
+				<div style="clear:both;"></div>
+			</div>
+			{/foreach}
+		{else}
+			<div>This user does not have any characters installed.</div>
+		{/if}
+		<div style="clear:both;"></div>
+	</div>
+	
+	<div id="detailtab-apikeys" rel="detailtab" style="display:none;">
+		<h1>API Keys</h1>
+	{foreach from=$user->getApiKeys() item=apikey}
+		<div>
+			<div style="float: left; width: 100px;">
+				<img src="images/eve/profile.png"/>
+			</div>
+			<div style="float: left; width: 600px;">
+				<div class="form">
+					<label class="field" style="width: 100px;"><b>KeyID:</b></label>
+					{$apikey->keyID}
+				</div>
+				<div class="form">
+					<label class="field" style="width: 100px;"><b>vCode:</b></label>
+					{$apikey->vCode}
+				</div>
+				<div class="form">
+					<label class="field" style="width: 100px;"><b>Status:</b></label>
+					{if $apikey->valid && !$apikey->banned}
+						<span style="color: #00FF00;">Valid</span>
+						&nbsp; {$apikey->status}
+					{else}
+						<span style="color: #FF2222;">{$apikey->status}</span>
+					{/if}
+				</div>
+				<div class="form">
+					<label class="field" style="width: 100px;"><b>Access Mask:</b></label>
+					{$apikey->accesMask}
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+			<hr/>
+		</div>
+	{/foreach}
+	</div>
+
+	<div id="detailtab-logs" rel="detailtab" style="display:none;">
+		<h1>USER LOGS</h1>
+		<div id="userlogs"></div>
+		<div style="clear:both;"></div>
+	</div>
+	
+	<div style="clear:both;"></div>
+</div>

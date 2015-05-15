@@ -1,0 +1,50 @@
+<div class="content">
+
+	<h1>Subscription</h1>
+	
+	<form method="post" action="">
+	<input type="hidden" name="id" value="{$subscription->id}">
+	<div class="form">
+		<label class="field">Auth Group:</label>
+		<label class="value">
+			<select name="authgroup">
+				<option value=""></option>
+			{foreach from=$authgroups item=group}
+				<option value="{$group->id}" {if $group->id == $subscription->authgroupID}selected{/if}>
+					{$group->name}
+				</option>
+			{/foreach}
+			</select>
+		</label>
+	</div>
+	<div class="form">
+		<label class="field">Description:</label>
+		<label class="value">
+			<input type="text" name="description" value="{$subscription->description}">
+		</label>
+	</div>
+	<div class="form">
+		<label class="field">Amount:</label>
+		<label class="value">
+			<input type="text" name="amount" value="{$subscription->amount}" style="width: 50px;">
+			&nbsp; (million isk a month)
+		</label>
+	</div>
+	<div class="form">
+		<label class="field">Valid:</label>
+		<label class="value">
+			From: &nbsp; <input type="text" name="fromdate" rel="datepicker" value="{$subscription->fromdate|date_date:'d-m-Y'}" style="width: 80px;">
+			&nbsp; &nbsp; &nbsp;
+			Untill: &nbsp; <input type="text" name="tilldate" rel="datepicker" value="{$subscription->tilldate|date_date:'d-m-Y'}" style="width: 80px;">
+		</label>
+	</div>
+	<div class="form">
+		<label class="field">&nbsp;</label>
+		<label class="value" style="text-align: right;">
+			<br />
+			<button type="submit">Save</button>
+		</label>
+	</div>
+	</form>
+	<div style="clear:both;"></div>
+</div>

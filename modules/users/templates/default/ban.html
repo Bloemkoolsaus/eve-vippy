@@ -1,0 +1,20 @@
+<div style="padding: 10px;">
+	<form method="post" action="">
+	<input type="hidden" name="{if $userdeleted > 0}unbanuser{else}banuser{/if}" value="1" />
+	<input type="hidden" name="id" value="{$userid}" />
+	<div class="message">
+		{if $userdeleted == 0}
+			<div>Are you sure you want to ban {$username}?</div>
+			<div>{$username} will <u>not</u> be able to use VIPPY after he/she is banned.</div>
+		{else}
+			<div>Are you sure you want to re-activate {$username}?</div>
+		{/if}
+	</div>
+	<div style="text-align: center; margin: 10px;">
+		<br />
+		<button type="button" onclick="destroyPopup();">No, cancel</button>
+		&nbsp;&nbsp;
+		<button type="submit">Yes, {if $userdeleted > 0}Re-Active{else}BAN{/if}</button>
+	</div>
+	</form>
+</div>

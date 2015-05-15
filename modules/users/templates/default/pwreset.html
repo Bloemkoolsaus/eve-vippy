@@ -1,0 +1,19 @@
+<div style="padding: 10px;">
+	<form method="post" action="">
+	<input type="hidden" name="resetpassword" value="1" />
+	<input type="hidden" name="id" value="{$userid}" />
+	<div class="message">	
+		<div>Are you sure you want to reset the password of {$username}?</div>
+	</div>
+	<div style="padding: 15px;">
+		<div>You will be given the new password after reset.</div>
+		<div>Make sure to give the new password to {$username}</div>
+	</div>
+	<div style="text-align: center; margin: 10px;">
+		<br />
+		<button type="button" onclick="destroyPopup();">No, cancel</button>
+		&nbsp;&nbsp;
+		<button type="submit">Yes, reset password</button>
+	</div>
+	</form>
+</div>

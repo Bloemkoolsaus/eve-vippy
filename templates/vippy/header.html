@@ -1,0 +1,16 @@
+{if $loggedInUser->loggedIn()}
+<div id="header">
+	<div id="menucontainer">
+		{$mainmenu}
+	</div>
+{if isset($newPatchNotes)}
+	<div id="menuNotifications">
+		<div>
+			New updates since your last visit!
+			&nbsp; 
+			<a href="index.php?module=admin&section=changelog">Patch-notes</a>
+		</div>
+	</div>
+{/if}
+</div>
+{/if}

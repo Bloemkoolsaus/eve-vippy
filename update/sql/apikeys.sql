@@ -1,0 +1,1 @@
+alter table api_keys add column deleted tinyint(1) default 0 after banned;
