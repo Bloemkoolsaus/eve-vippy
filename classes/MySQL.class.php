@@ -22,34 +22,56 @@ class MySQL
 		$this->connect($newConnection);
 	}
 
+	/**
+	 * Connect
+	 * @param boolean $newConnection
+	 */
 	function connect($newConnection=false)
 	{
-		if ($this->connection = @mysql_connect($this->host, $this->user, $this->pass, $newConnection)) {
-			if (@mysql_select_db($this->dtbs, $this->connection))
-				AppRoot::debug("MySQL: <span style='color: green;'>Connection established</span> (" . $this->host . " > " . $this->dtbs . " [".$this->user."])");
-			else {
-				$this->error("Unable to select database: " . $this->dtbs, mysql_error());
-				$this->close();
-			}
-		} else {
-			$this->error("Connection failed: " . $this->host . " > " . $this->user, mysql_error());
+		$this->connection = new \mysqli($this->host, $this->user, $this->pass, $this->dtbs);
+
+		if ($this->connection->connect_errno == 0)
+			\AppRoot::debug("MySQL: <span style='color: green;'>Connection established</span> (".$this->host." > ".$this->dtbs." [".$this->user."])");
+		else
+		{
+			$this->error("Connection failed: ".$this->connection->connect_error." (".$this->host." > ".$this->dtbs." [".$this->user."])");
 			$this->close();
 		}
 	}
 
-	function close()
+	/**
+	 * Get connection
+	 * @return \mysqli|null
+	 */
+	function getConnection()
 	{
-		if ($this->connection != null)
-			@mysql_close($this->connection);
-		$this->connection = null;
+		if (!$this->connected())
+			$this->connect();
+
+		return $this->connection;
 	}
 
+	/**
+	 * Do we have a connection?
+	 * @return boolean
+	 */
 	function connected()
 	{
 		if ($this->connection == null)
 			return false;
 		else
 			return true;
+	}
+
+	/**
+	 * Close connection
+	 */
+	function close()
+	{
+		if ($this->connected())
+			$this->connection->close($this->connection);
+
+		$this->connection = null;
 	}
 
 	function error($msg, $error)
@@ -71,6 +93,13 @@ class MySQL
 		return $query;
 	}
 
+
+	/**
+	 * Do query
+	 * @param string $query
+	 * @param array $data
+	 * @return \mysqli_result|false
+	 */
 	function doQuery($query, $data=array())
 	{
 		if (!$this->connected())
@@ -79,18 +108,14 @@ class MySQL
 		if (count($data) > 0)
 			$query = $this->replaceParams($query, $data);
 
-		AppRoot::debug("MySQL: Query (" . $this->host . " > " . $this->dtbs . ")\n<span style='color:#0000AA'>".$query."</span>");
-
-		if ($this->connection == null)
-			$this->connect();
-
-		$return = false;
-		if ($result = mysql_query($query, $this->connection))
-			$return = $result;
+		\AppRoot::debug("MySQL: Query (" . $this->host . " > " . $this->dtbs . ")\n<span style='color:#0000AA'>".$query."</span>");
+		if ($result = $this->getConnection()->query($query))
+			return $result;
 		else
-			$this->error(mysql_error(), $query);
-
-		return $return;
+		{
+			$this->error($this->getConnection()->error, $query);
+			return false;
+		}
 	}
 
 	function getRows($query, $data=array(), $lowercaseColumnNames=true)
@@ -98,7 +123,7 @@ class MySQL
 		if ($result = $this->doQuery($query, $data))
 		{
 			$results = array();
-			while ($row = mysql_fetch_array($result))
+			while ($row = $result->fetch_array())
 			{
 				if ($lowercaseColumnNames) {
 					foreach ($row as $key => $val) {
@@ -107,7 +132,7 @@ class MySQL
 				}
 				$results[] = $row;
 			}
-			mysql_free_result($result);
+			$result->free_result();
 			return $results;
 		}
 
@@ -148,7 +173,7 @@ class MySQL
 			}
 		}
 		else
-			AppRoot::error("updateinsert expects where clause");
+			$this->error("updateinsert expects where clause");
 	}
 
 	function insert($table, $data, $onDuplicateUpdateKey=null)
@@ -178,7 +203,7 @@ class MySQL
 			return false;
 	}
 
-	function update($table, $data, $where = false)
+	function update($table, $data, $where=false)
 	{
 		$fields = array();
 		$query = array();
@@ -201,9 +226,7 @@ class MySQL
 			}
 		}
 
-		if ($this->doQuery("UPDATE ".$table."
-							SET ".implode(", ",$fields)."
-							".((count($query) > 0)?" WHERE ".implode(" AND ", $query):"")))
+		if ($this->doQuery("UPDATE ".$table." SET ".implode(", ",$fields)." ".((count($query) > 0)?" WHERE ".implode(" AND ", $query):"")))
 			return true;
 		else
 			return false;
@@ -546,7 +569,7 @@ class MySQL
 
 		$value = trim($value);
 		$value = stripslashes($value);
-		$value = mysql_real_escape_string($value, $db->connection);
+		$value = mysqli_real_escape_string(self::getDB()->getConnection(), $value);
 
 		if ($isDBField)
 			$value = str_replace(";","",$value);
