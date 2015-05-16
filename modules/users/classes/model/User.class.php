@@ -494,7 +494,7 @@ namespace users\model
 			if ($this->config === null)
 			{
 				$this->config = array();
-				if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_config WHERE var = ? AND userid = ?", array($var, $this->id)))
+				if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_config WHERE userid = ?", array($this->id)))
 				{
 					foreach ($results as $result) {
 						$this->config[$result["var"]] = $result["val"];
