@@ -17,6 +17,98 @@ class AppRoot
 
 	private static $cacheDir = "documents/cache/";
 
+
+
+	/**
+	 * SQL UPDATES
+	 */
+	public static function readSqlUpdates()
+	{
+		// Zoeken naar SQL updates en deze uitvoeren.
+		$queryRegex = '%\s*((?:\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' | "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | /*[^*]*\*+([^*/][^*]*\*+)*/ | \#.* | --.* | [^"\';#])+(?:;|$))%x';
+		$directory = "update".DIRECTORY_SEPARATOR."sql";
+
+		\AppRoot::debug("== Check UPDATE SQL: ".$directory);
+		if ($handle = @opendir($directory))
+		{
+			$executedFiles = array();
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM system_patches_sql")) {
+				foreach ($results as $result) {
+					$executedFiles[] = $result["filename"];
+				}
+			}
+
+			while (false !== ($file = readdir($handle)))
+			{
+				if ($file == "." || $file == "..")
+					continue;
+
+				$sqlFile = $directory.DIRECTORY_SEPARATOR.$file;
+				if (is_file($sqlFile) && !in_array($file, $executedFiles))
+				{
+					\MySQL::getDB()->updateinsert("system_patches_sql",
+							array(	"filename"	=> $file,
+									"execdate"	=> date("Y-m-d H:i:s")),
+							array(	"filename"	=> $file));
+
+					// Queries parsen & uitvoeren
+					preg_match_all($queryRegex, file_get_contents($sqlFile), $queries);
+					foreach ($queries[1] as $query) {
+						\MySQL::getDB()->doQuery($query);
+					}
+					unset($queries);
+				}
+			}
+			unset($executedFiles);
+		}
+		@closedir($handle);
+		unset($handle);
+		\AppRoot::debug("== Finished UPDATE SQL");
+	}
+
+	/**
+	 * PHP SCRIPT UPDATES
+	 */
+	public static function readPhpUpdates()
+	{
+		// Zoeken naar update scripts en deze uitvoeren.
+		$directory = "update".DIRECTORY_SEPARATOR."php";
+
+		\AppRoot::debug("== Check UPDATE Scripts");
+		if ($handle = @opendir($directory))
+		{
+			$executedFiles = array();
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM system_patches_php")) {
+				foreach ($results as $result) {
+					$executedFiles[] = $result["filename"];
+				}
+			}
+
+			while (false !== ($patchFile = readdir($handle)))
+			{
+				if ($patchFile == "." || $patchFile == "..")
+					continue;
+
+				$phpFile = $directory.DIRECTORY_SEPARATOR.$patchFile;
+				if (is_file($phpFile) && !in_array($patchFile, $executedFiles))
+				{
+					\MySQL::getDB()->updateinsert("system_patches_php",
+							array(	"filename"	=> $patchFile,
+									"execdate"	=> date("Y-m-d H:i:s")),
+							array(	"filename"	=> $patchFile));
+
+					\AppRoot::debug("Executing: ".$phpFile);
+					include($phpFile);
+				}
+			}
+			unset($executedFiles);
+		}
+		@closedir($handle);
+		unset($handle);
+		\AppRoot::debug("== Finished UPDATE Scripts");
+	}
+
+
 	public static function logRequest()
 	{
 		$browser = Tools::getBrowser();

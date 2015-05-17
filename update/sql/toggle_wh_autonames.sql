@@ -1,1 +1,0 @@
-alter table mapwormholechains add column autoname_whs tinyint(1) default 1 after homesystemname;

@@ -1,9 +1,0 @@
-update mapsolarsystemclasses set color = '#BB1111' where tag = 'NS';
-update mapsolarsystemclasses set color = '#FF8811' where tag = 'LS';
-update mapsolarsystemclasses set color = '#00AA22' where tag = 'HS';
-update mapsolarsystemclasses set color = '#AA00DD' where tag = 'C6';
-update mapsolarsystemclasses set color = '#CC1111' where tag = 'C5';
-update mapsolarsystemclasses set color = '#AA3300' where tag = 'C4';
-update mapsolarsystemclasses set color = '#779900' where tag = 'C3';
-update mapsolarsystemclasses set color = '#0066AA' where tag = 'C2';
-update mapsolarsystemclasses set color = '#228822' where tag = 'C1';

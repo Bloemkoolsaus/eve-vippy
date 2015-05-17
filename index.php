@@ -7,8 +7,6 @@ $mainMenu = null;
 
 \AppRoot::title(APP_TITLE);
 
-// new theme
-//\SmartyTools::setTemplate("vippy");
 
 // KONINGSDAG
 if (date("Y-m-d") == date("Y")."-04-27") {

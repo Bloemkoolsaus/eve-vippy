@@ -1,1 +1,0 @@
-insert into config (var, val, updatedate) values ('atlas_url', 'http://www.de-ny.org/', now());

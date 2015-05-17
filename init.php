@@ -91,44 +91,11 @@ if ($handle = @opendir($directory)) {
 \AppRoot::debug("Initializing");
 \AppRoot::parseRequestURL();
 
-if (!\Tools::REQUEST("ajax"))
+
+// Patches
+if (!\Tools::REQUEST("ajax") && \Tools::REQUEST("action") != "keepalive")
 {
-	// Zoeken naar SQL updates en deze uitvoeren.
-	\AppRoot::debug("Check UPDATE SQL");
-	$queryRegex = '%\s*((?:\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' | "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | /*[^*]*\*+([^*/][^*]*\*+)*/ | \#.* | --.* | [^"\';#])+(?:;|$))%x';
-	$directory = "update".DIRECTORY_SEPARATOR."sql";
-	if (file_exists($directory))
-	{
-		$execDirectory = $directory.DIRECTORY_SEPARATOR."exec";
-		if ($handle = @opendir($directory))
-		{
-			while (false !== ($file = readdir($handle)))
-			{
-				if ($file == "." || $file == "..")
-					continue;
-
-				$updateSQLFile = $directory.DIRECTORY_SEPARATOR.$file;
-				$execSQLFile = $execDirectory.DIRECTORY_SEPARATOR.$file;
-				if (is_file($updateSQLFile) && !file_exists($execSQLFile))
-				{
-					// Queries parsen.
-					preg_match_all($queryRegex, file_get_contents($updateSQLFile), $updateQueries);
-
-					// Queries uitvoeren.
-					foreach ($updateQueries[1] as $query) {
-						\MySQL::getDB()->doQuery($query);
-					}
-
-					// SQL file verplaatsen zodat deze niet nog eens uitgevoerd wordt.
-					if (!file_exists($execDirectory))
-						mkdir($execDirectory,0777);
-
-					copy($updateSQLFile,$execSQLFile);
-				}
-			}
-			closedir($handle);
-		}
-	}
-	\AppRoot::debug("Finished UPDATE SQL");
+	\AppRoot::readSqlUpdates();
+	\AppRoot::readPhpUpdates();
 }
 ?>
