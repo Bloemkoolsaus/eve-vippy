@@ -25,8 +25,9 @@ class AppRoot
 	public static function readSqlUpdates()
 	{
 		// Zoeken naar SQL updates en deze uitvoeren.
-		$queryRegex = '%\s*((?:\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' | "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | /*[^*]*\*+([^*/][^*]*\*+)*/ | \#.* | --.* | [^"\';#])+(?:;|$))%x';
 		$directory = "update".DIRECTORY_SEPARATOR."sql";
+		if (!file_exists($directory))
+			return false;
 
 		\AppRoot::debug("== Check UPDATE SQL: ".$directory);
 		if ($handle = @opendir($directory))
@@ -38,6 +39,7 @@ class AppRoot
 				}
 			}
 
+			$queryRegex = '%\s*((?:\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' | "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | /*[^*]*\*+([^*/][^*]*\*+)*/ | \#.* | --.* | [^"\';#])+(?:;|$))%x';
 			while (false !== ($file = readdir($handle)))
 			{
 				if ($file == "." || $file == "..")
@@ -73,6 +75,8 @@ class AppRoot
 	{
 		// Zoeken naar update scripts en deze uitvoeren.
 		$directory = "update".DIRECTORY_SEPARATOR."php";
+		if (!file_exists($directory))
+			return false;
 
 		\AppRoot::debug("== Check UPDATE Scripts");
 		if ($handle = @opendir($directory))
