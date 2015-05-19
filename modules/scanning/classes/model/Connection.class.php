@@ -220,7 +220,7 @@ namespace scanning\model
 				 */
 				$params = array();
 				foreach ($data as $var => $val) {
-					$params[] = "`".$var."` = ".(($val===null)?"null":"'".mysql_real_escape_string($val)."'");
+					$params[] = "`".$var."` = ".(($val===null)?"null":"'".\MySQL::escape($val)."'");
 				}
 
 				\MySQL::getDB()->doQuery("	UPDATE 	mapwormholeconnections

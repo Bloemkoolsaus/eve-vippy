@@ -232,19 +232,22 @@ namespace scanning\model
 
 
 
-			// Check if this signature already has an unmapped wormhole
+			// Check if this signature already has a (unmapped) wormhole
+			\AppRoot::debug("Check if this signature already has a (unmapped) wormhole");
 			$newWormhole = \scanning\model\Wormhole::getWormholeBySignatureID(\User::getSelectedChain(), $this->id);
 			if ($newWormhole !== null)
 			{
 				if ($newWormhole->getSolarsystem() !== null)
 					$newWormhole = null;
 			}
+			\AppRoot::debug("found wormhole: <pre>".print_r($newWormhole,true)."</pre>");
 
 
 			$originWormhole = $this->getWormhole();
 
 			// Nieuwe naam
 			$newWormholeName = $this->sigInfo;
+			\AppRoot::debug("new wormhole name: ".$newWormholeName);
 
 			$parsedWormholeName = explode(" ", $newWormholeName);
 			$parts = explode("-", $parsedWormholeName[0]);

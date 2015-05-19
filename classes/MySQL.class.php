@@ -198,7 +198,7 @@ class MySQL
 		}
 
 		if ($this->doQuery($query))
-			return mysql_insert_id();
+			return mysqli_insert_id($this->getConnection());
 		else
 			return false;
 	}

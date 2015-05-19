@@ -10,9 +10,9 @@ namespace scanning
 		public static function getWormholeByField($byfield,$byvalue,$chainid,$getfield="id")
 		{
 			$db = \MySQL::getDB();
-			$byfield = mysql_real_escape_string($byfield);
-			$byvalue = mysql_real_escape_string($byvalue);
-			$getfield = mysql_real_escape_string($getfield);
+			$byfield = \MySQL::escape($byfield);
+			$byvalue = \MySQL::escape($byvalue);
+			$getfield = \MySQL::escape($getfield);
 
 			if ($result = $db->getRow("SELECT ".$getfield." FROM mapwormholes WHERE ".$byfield." = ? AND chainid = ?"
 								, array($byvalue,$chainid)))
