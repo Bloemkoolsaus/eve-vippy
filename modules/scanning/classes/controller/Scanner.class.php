@@ -208,18 +208,21 @@ namespace scanning\controller
 				{
 					if (strtotime($sig->updateDate) < strtotime("now")-3600)
 					{
-						$sig->delete();
-
-						$nameParts = explode(" ", $sig->sigInfo);
-						$nameParts = explode("-", $nameParts[0]);
-						$sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
-
-						$wormhole = \scanning\model\Wormhole::getWormholeBySystemByName($sigName);
-						if ($wormhole != null)
+						if (strtoupper($sig->sigType) !== "POS")
 						{
-							$connection = $sig->getWormhole()->getConnectionTo($wormhole->solarSystemID);
-							if ($connection != null)
-								$connection->delete();
+							$sig->delete();
+
+							$nameParts = explode(" ", $sig->sigInfo);
+							$nameParts = explode("-", $nameParts[0]);
+							$sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
+
+							$wormhole = \scanning\model\Wormhole::getWormholeBySystemByName($sigName);
+							if ($wormhole != null)
+							{
+								$connection = $sig->getWormhole()->getConnectionTo($wormhole->solarSystemID);
+								if ($connection != null)
+									$connection->delete();
+							}
 						}
 					}
 				}
