@@ -206,7 +206,7 @@ namespace scanning\controller
 			{
 				foreach (\scanning\model\Signature::getSignaturesBySolarSystem($solarSystem->id) as $sig)
 				{
-					if (strtotime($sig->updateDate) < strtotime("now")-2)
+					if (strtotime($sig->updateDate) < strtotime("now")-3600)
 					{
 						$sig->delete();
 
