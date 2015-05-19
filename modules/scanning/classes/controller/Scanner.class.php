@@ -139,6 +139,7 @@ namespace scanning\controller
 			$signatureController = new \scanning\controller\Signature();
 			$solarSystem = new \scanning\model\System(\User::getSelectedSystem());
 
+			$nrSignatures = 0;
 			foreach (explode("\n",$imput) as $line)
 			{
 				$parts = explode("\t", $line);
@@ -168,6 +169,8 @@ namespace scanning\controller
 					$signature->signalStrength = str_replace("%","",$parts[4]);
 					$signature->deleted = false;
 					$signature->store();
+
+					$nrSignatures++;
 				}
 				else
 				{
@@ -196,6 +199,15 @@ namespace scanning\controller
 					$anomaly->anomalyID = $anomID;
 					$anomaly->signatureID = $sigID;
 					$anomaly->store();
+				}
+			}
+
+			if ($nrSignatures > 2)
+			{
+				foreach (\scanning\model\Signature::getSignaturesBySolarSystem($solarSystem->id) as $sig)
+				{
+					if (strtotime($sig->updateDate) < strtotime("now")-2)
+						$sig->delete();
 				}
 			}
 

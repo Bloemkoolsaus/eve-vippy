@@ -1,3 +1,14 @@
+<h3>May 19th, 2015</h3>
+<b><u>SCANNING</u></b>
+ - When copy pasting more then 2 signatures, check for old signatures that are no longer in the copy paste and remove them.
+ 	This will automatically clear old signatures. If the signatures was a wormhole, try find the matching wormhole and close it's connection.
+
+<b><u>VIPPY</u></b>
+ - Fixed the error that caused Vippy to go bananas last weekend.
+
+
+
+
 <h3>April 28th, 2015</h3>
 <b><u>SCANNING</u></b>
  - Improved signaturelist layout for (very) small windows (such as mobiles devices or small windows in the IGB)
@@ -22,6 +33,7 @@
 
 
 
+
 <h3>February 10th, 2015</h3>
 <b><u>SCANNING</u></b>
  - Add visual for Shattered systems.
@@ -32,6 +44,7 @@
 
 <b><u>FIXES</u></b>
  - VIPPY said A009 goes to nullsec, but it doesn't. It actually goes to one of the 25 Small-Ship Shattered systems.
+
 
 
 
@@ -60,6 +73,7 @@
 
 
 
+
 <h3>January 18th, 2015</h3>
 <b><u>SCANNING</u></b>
  - Improve copy-paste signatures usability.
@@ -82,6 +96,7 @@
 
 
 
+
 <h3>December 9th, 2014</h3>
 <b><u>RHEA</u></b>
  - Import Rhea data export! \o/
@@ -89,6 +104,7 @@
 <b><u>FIXES</u></b>
  - Fix broken statistics / leaderboard pages.
  - Fix signatures hover info popup.
+
 
 
 
@@ -109,9 +125,11 @@
 
 
 
+
 <h3>December 1st, 2014</h3>
 <b><u>VIPPY</u></b>
  - Performance and caching improvements. This will (hopefully) reduce lag on large maps.
+
 
 
 
@@ -121,12 +139,14 @@
  	
 
 
+
 <h3>October 28th, 2014</h3>
 <b><u>SCANNING</u></b>
  - Added the `Exit Finder`.
  - Wormhole stubs:
 	- Remember wich signature created wich wormhole. Rename the signature, renames the wormhole stub.
  	- Exclude `Unstable Wormhole` from the stubs name when copy pasting from the probe window.
+
 
 
 
@@ -140,6 +160,7 @@
 
 
 
+
 <h3>October 20th, 2014</h3>
 <b><u>SCANNING</u></b>
  - Create a wormhole stub while scanning. (<i>Temporary, unmapped wormholes</i>) 
@@ -150,6 +171,7 @@
  - Show icons for wormholes that can fit capitals. (<i>VIPPY will attempt to automatically deduce these based on connected systems</i>)
  - Manually add mass to a wormhole.
  - Improved the responsiveness of the signatures list.
+
 
 
 
@@ -167,6 +189,7 @@
  - New frigate wormholes from Hyperion.
  - Updated system effects.
  - C4 Dual statics
+
 
 
 
