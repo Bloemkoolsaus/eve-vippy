@@ -238,6 +238,30 @@ namespace scanning\model
 		}
 
 		/**
+		 * Get connection to system
+		 * @param unknown $solarSystemID
+		 * @return \scanning\model\Connection|null
+		 */
+		function getConnectionTo($solarSystemID)
+		{
+			foreach ($this->getConnections() as $connection)
+			{
+				if ($connection->getFromWormhole()->id == $this->id)
+				{
+					if ($connection->getToSystem()->id == $solarSystemID)
+						return $connection;
+				}
+				else
+				{
+					if ($connection->getFromSystem()->id == $solarSystemID)
+						return $connection;
+				}
+			}
+
+			return null;
+		}
+
+		/**
 		 * Get connected systems
 		 * @return \scanning\model\Wormhole[]
 		 */

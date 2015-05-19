@@ -207,7 +207,21 @@ namespace scanning\controller
 				foreach (\scanning\model\Signature::getSignaturesBySolarSystem($solarSystem->id) as $sig)
 				{
 					if (strtotime($sig->updateDate) < strtotime("now")-2)
+					{
 						$sig->delete();
+
+						$nameParts = explode(" ", $sig->sigInfo);
+						$nameParts = explode("-", $nameParts[0]);
+						$sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
+
+						$wormhole = \scanning\model\Wormhole::getWormholeBySystemByName($sigName);
+						if ($wormhole != null)
+						{
+							$connection = $sig->getWormhole()->getConnectionTo($wormhole->solarSystemID);
+							if ($connection != null)
+								$connection->delete();
+						}
+					}
 				}
 			}
 
