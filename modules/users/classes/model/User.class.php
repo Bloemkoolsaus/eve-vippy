@@ -242,14 +242,17 @@ namespace users\model
 			$ticker = "";
 			if ($this->getMainCharacter() != null)
 			{
-				$ticker = $this->getMainCharacter()->getCorporation()->ticker;
+                if ($this->getMainCharacter()->getCorporation())
+                {
+                    $ticker = $this->getMainCharacter()->getCorporation()->ticker;
 
-				if ($this->getMainCharacter()->isCEO())
-					$ticker .= " CEO";
-				else if ($this->getMainCharacter()->isDirector())
-					$ticker .= " DIR";
+                    if ($this->getMainCharacter()->isCEO())
+                        $ticker .= " CEO";
+                    else if ($this->getMainCharacter()->isDirector())
+                        $ticker .= " DIR";
+                }
 
-				return "[".$ticker."] ".$this->getMainCharacter()->name;
+				return ((strlen(trim($ticker)) > 0)?"[".$ticker."] ":"").$this->getMainCharacter()->name;
 			}
 
 			return $this->displayname;
@@ -295,6 +298,7 @@ namespace users\model
 
 			// Clear user cache
 			$this->resetCache();
+            return true;
 		}
 
 		/**
