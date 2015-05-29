@@ -90,10 +90,7 @@ namespace users\model
 				$this->isCEO = $resultset["isceo"];
 				$this->deleted = ($resultset["deleted"]>0)?true:false;
 				$this->updatedate = $resultset["updatedate"];
-
 				$this->isValid = null;
-				if (isset($resultset["isvalid"]) && $resultset["isvalid"] !== null)
-					$this->isValid = ($resultset["isvalid"]>0)?true:false;
 			}
 		}
 
@@ -118,7 +115,7 @@ namespace users\model
 						$user = new \users\model\User($this->id);
 						$user->addLog("login-unowned-character", $this->id,
 								array(	"character" => $this->id,
-										"fromuser"	=> $old->userID,
+										"fromuser"	=> $pilot->userID,
 										"touser"	=> $this->id));
 					}
 				}
@@ -157,6 +154,8 @@ namespace users\model
 						    "extrainfo" => $extrainfo);
 				\MySQL::getDB()->insert("user_log", $data);
 			}
+
+            return true;
 		}
 
 		public function setLoginStatus($loggedin=true)
@@ -182,7 +181,7 @@ namespace users\model
 
 		public function login($username, $password, $retry=false, $setKeyCookie=false)
 		{
-			\AppRoot::debug("LOGIN: ".$username);
+			\AppRoot::debug("LOGIN: ".$username." ($retry)");
 
 			$loggedIn = false;
 			if ($users = \MySQL::getDB()->getRows("SELECT * FROM users WHERE username = ? AND deleted = 0", array($username)))
@@ -242,14 +241,17 @@ namespace users\model
 			$ticker = "";
 			if ($this->getMainCharacter() != null)
 			{
-				$ticker = $this->getMainCharacter()->getCorporation()->ticker;
+                if ($this->getMainCharacter()->getCorporation())
+                {
+                    $ticker = $this->getMainCharacter()->getCorporation()->ticker;
 
-				if ($this->getMainCharacter()->isCEO())
-					$ticker .= " CEO";
-				else if ($this->getMainCharacter()->isDirector())
-					$ticker .= " DIR";
+                    if ($this->getMainCharacter()->isCEO())
+                        $ticker .= " CEO";
+                    else if ($this->getMainCharacter()->isDirector())
+                        $ticker .= " DIR";
+                }
 
-				return "[".$ticker."] ".$this->getMainCharacter()->name;
+				return ((strlen(trim($ticker)) > 0)?"[".$ticker."] ":"").$this->getMainCharacter()->name;
 			}
 
 			return $this->displayname;
@@ -295,6 +297,7 @@ namespace users\model
 
 			// Clear user cache
 			$this->resetCache();
+            return true;
 		}
 
 		/**
@@ -1010,7 +1013,7 @@ namespace users\model
 		 */
 		public function isAuthorized()
 		{
-			\AppRoot::debug("User($this->displayname)->isAuthorized(): ".(($this->isValid==null)?"null":$this->isValid));
+			\AppRoot::debug("User($this->displayname)->isAuthorized(): ".(($this->isValid===null)?"null":$this->isValid));
 			if ($this->isValid === null)
 				$this->fetchIsAuthorized();
 

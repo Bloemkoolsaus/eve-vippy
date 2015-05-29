@@ -48,14 +48,12 @@ namespace users\controller
 				}
 
 				if (count($allowedCorporationIDs) > 0)
-				{
-					$section->allowEdit = true;
 					$queryParams[] = "id IN (SELECT userid FROM characters WHERE corpid IN (".implode(",",$allowedCorporationIDs)."))";
-				}
 				else
 					return false;
 			}
 
+            $section->allowEdit = true;
 			$section->allowDelete = false;
 			$section->allowNew = false;
 

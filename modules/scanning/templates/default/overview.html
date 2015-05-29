@@ -9,7 +9,7 @@
 		<div style="padding: 10px;">
 			<b>You have not trusted VIPPY. Please trust VIPPY to enable location tracking.</b>
 		</div>
-		<button type="button" class="small" style="width: 150px;" 
+		<button type="button" class="small" style="width: 150px;"
 			onclick="CCPEVE.requestTrust('{$smarty.const.APP_URL}*'); $(window).reload();">
 			Trust VIPPY now
 		</button>
@@ -21,7 +21,7 @@
 		<div id="mapHeaderTitle">
 			<div id="divNoTracking" style="text-align: right;">
 			{if isset($igb)}
-				<a href="#" onclick="showTrackingOnlyModeHelp();">What is this?</a> => 
+				<a href="#" onclick="showTrackingOnlyModeHelp();">What is this?</a> =>
 				<button type="button" onclick="enableTrackingOnly()">Enable Tracking-Only Mode</button>
 			{/if}
 			</div>
@@ -50,7 +50,7 @@
 		<div style="clear:both;"></div>
 		<div style="padding: 4px;">
 			<div style="float: left; width: 50%;">
-				<h3 style="padding: 0px; margin: 0px; color: #AAAAAA;">Map: &nbsp; {$chain->name}</h3>
+				<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$chain->name}</h3>
 			</div>
 			<div id="mapControls" style="float: right; width: 100px; text-align: right;">
 				<img src="images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
@@ -80,7 +80,7 @@
 		<button id="exitFinderButton" onclick="showExitFinder({if isset($igb)}'{$igb->getSolarsystemName()}'{/if});" style="float: right; width: 120px;">Exit Finder</button>
 	</div>
 	<div id="addWormholeForm" style="display:none;"></div>
-	
+
 	<!-- MASS DELETE -->
 	<div id="massDeleteInstruction" style="display:none;">
 		<div class="message">
@@ -92,7 +92,7 @@
 			<button class="small" onclick="cancelMassDeleteWormholes();">Done</button>
 		</div>
 	</div>
-	
+
 	<!-- DELETE ALL -->
 	<div id="clearChainConfirmation" style="display:none;">
 		<div class="message">
@@ -105,7 +105,7 @@
 			<button class="small" onclick="cancelClearChain();">NO</button>
 		</div>
 	</div>
-	
+
 	<!-- EXIT FINDER -->
 	<div id="exitFinderForm" style="display: none; margin-top: 15px;">
 		<div class="message">
@@ -120,7 +120,7 @@
 				</h3>
 			</div>
 			<div style="padding: 5px;">
-				Find closest exit to: 
+				Find closest exit to:
 				&nbsp;
 				<input type="text" id="exitFinderSystem" value="" />
 				&nbsp;
@@ -183,7 +183,7 @@
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />
-						<input type="text" id="siginfo" style="width: 95%;" />	
+						<input type="text" id="siginfo" style="width: 95%;" />
 					</td>
 					<td style="width: 60px;">
 						<br />
@@ -217,7 +217,7 @@
 			</div>
 			<div style="clear:both;"></div>
 		</div>
-		
+
 		<div id="signatureList" style="margin-top: 4px;{if isset($hidesignatures)}display: none;{/if}"></div>
 	</div>
 
