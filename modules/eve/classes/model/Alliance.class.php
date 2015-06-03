@@ -39,6 +39,7 @@ namespace eve\model
 				$data["id"] = $this->id;
 
 			\MySQL::getDB()->updateinsert("alliances", $data, array("id" => $this->id));
+            return true;
 		}
 
 		/**

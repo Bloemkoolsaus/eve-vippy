@@ -7,9 +7,11 @@ namespace admin\model
 		public $name;
 		public $mainChainID;
 
-		private $config = null;
+        private $config = null;
 		private $corporations = null;
 		private $alliances = null;
+        private $allowedCorporations = null;
+
 		private $modules = null;
 		private $chains = null;
 		private $subscriptions = null;
@@ -23,10 +25,103 @@ namespace admin\model
 			}
 		}
 
+        private function getCacheFilename()
+        {
+            return "authgroups/".$this->id.".json";
+        }
+
+        private function loadFromCache()
+        {
+            if ($cache = \AppRoot::getCache($this->getCacheFilename()))
+            {
+                $result = json_decode($cache, true);
+                $this->load($result);
+
+                if (isset($result["corporations"]))
+                {
+                    $this->corporations = array();
+                    foreach ($result["corporations"] as $corpData)
+                    {
+                        $corporation = new \eve\model\Corporation();
+                        $corporation->load($corpData);
+                        $this->corporations[] = $corporation;
+                    }
+                }
+
+                if (isset($result["alliances"]))
+                {
+                    $this->alliances = array();
+                    foreach ($result["alliances"] as $allyData)
+                    {
+                        $alliance = new \eve\model\Alliance();
+                        $alliance->load($allyData);
+                        $this->alliances[] = $alliance;
+                    }
+                }
+
+                if (isset($result["allowed"]))
+                {
+                    $this->allowedCorporations = array();
+                    foreach ($result["allowed"] as $corpData)
+                    {
+                        $corporation = new \eve\model\Corporation();
+                        $corporation->load($corpData);
+                        $this->allowedCorporations[] = $corporation;
+                    }
+                }
+                
+                return true;
+            }
+
+            return false;
+        }
+
+        private function saveToCache($data)
+        {
+            $data["corporations"] = array();
+            foreach ($this->getCorporations() as $corp)
+            {
+                $data["corporations"][] = array("id" => $corp->id,
+                                                "ticker" => $corp->ticker,
+                                                "name" => $corp->name,
+                                                "ceo" => $corp->ceoID,
+                                                "allianceid" => $corp->allianceID,
+                                                "updatedate" => $corp->updateDate);
+            }
+
+            $data["alliances"] = array();
+            foreach ($this->getAlliances() as $ally)
+            {
+                $data["alliances"][] = array(   "id" => $ally->id,
+                                                "ticker" => $ally->ticker,
+                                                "name" => $ally->name);
+            }
+
+            $data["allowed"] = array();
+            foreach ($this->getAllowedCorporations() as $corp)
+            {
+                $data["allowed"][] = array( "id" => $corp->id,
+                                            "ticker" => $corp->ticker,
+                                            "name" => $corp->name,
+                                            "ceo" => $corp->ceoID,
+                                            "allianceid" => $corp->allianceID,
+                                            "updatedate" => $corp->updateDate);
+            }
+
+            \AppRoot::setCache($this->getCacheFilename(), json_encode($data));
+        }
+
 		function load($result=false)
 		{
-			if (!$result)
-				$result = \MySQL::getDB()->getRow("SELECT * FROM user_auth_groups WHERE id = ?", array($this->id));
+            if (!$result)
+            {
+                // Eerst in cache kijken
+                if (!$this->loadFromCache())
+                {
+                    $result = \MySQL::getDB()->getRow("SELECT * FROM user_auth_groups WHERE id = ?", array($this->id));
+                    $this->saveToCache($result);
+                }
+            }
 
 			if ($result)
 			{
@@ -63,6 +158,8 @@ namespace admin\model
 					\MySQL::getDB()->insert("user_auth_groups_corporations", array("authgroupid" => $this->id, "corporationid" => $corp->id));
 				}
 			}
+
+            \Tools::deleteFile($this->getCacheFilename());
 		}
 
 		/**
@@ -83,16 +180,20 @@ namespace admin\model
 		 */
 		function getAllowedCorporations()
 		{
-			$corporations = array();
-			foreach ($this->getCorporations() as $corp) {
-				$corporations[$corp->id] = $corp;
-			}
-			foreach ($this->getAlliances() as $ally) {
-				foreach ($ally->getCorporations() as $corp) {
-					$corporations[$corp->id] = $corp;
-				}
-			}
-			return $corporations;
+            if ($this->allowedCorporations == null)
+            {
+                $this->allowedCorporations = array();
+                foreach ($this->getCorporations() as $corp) {
+                    $this->allowedCorporations[$corp->id] = $corp;
+                }
+                foreach ($this->getAlliances() as $ally) {
+                    foreach ($ally->getCorporations() as $corp) {
+                        $this->allowedCorporations[$corp->id] = $corp;
+                    }
+                }
+            }
+
+			return $this->allowedCorporations;
 		}
 
 
@@ -104,6 +205,7 @@ namespace admin\model
 		{
 			if ($this->corporations === null)
 			{
+                \AppRoot::debug("AuthGroup()->getCorporations()", true);
 				$this->corporations = array();
 				if ($results = \MySQL::getDB()->getRows("SELECT	c.*
 														FROM	corporations c
@@ -167,6 +269,7 @@ namespace admin\model
 		{
 			if ($this->alliances === null)
 			{
+                \AppRoot::debug("AuthGroup()->getAlliances()", true);
 				$this->alliances = array();
 				if ($results = \MySQL::getDB()->getRows("SELECT	c.*
 														FROM	alliances c

@@ -532,9 +532,12 @@ class AppRoot
 		\AppRoot::debug("getCache: ".$file);
 
 		if (file_exists($file))
-			return file_get_contents($file);
+            return file_get_contents($file);
 		else
-			return false;
+        {
+            \AppRoot::debug("Cache does nog exists");
+            return false;
+        }
 	}
 
 	/**

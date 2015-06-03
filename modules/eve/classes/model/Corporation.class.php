@@ -54,6 +54,8 @@ namespace eve\model
 			// Update CEO
 			\MySQL::getDB()->doQuery("UPDATE characters SET isceo = 0 WHERE corpid = ?", array($this->id));
 			\MySQL::getDB()->doQuery("UPDATE characters SET isceo = 1 WHERE id = ?", array($this->ceoID));
+
+            return true;
 		}
 
 		/**

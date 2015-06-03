@@ -323,6 +323,7 @@ namespace scanning\model
 			if ($fromSystemID == 0 || $toSystemID == 0)
 				return false;
 
+
 			// Wormholes alleen toevoegen als deze nog niet bestaan.
 			$fromWormhole = \scanning\model\Wormhole::getWormholeBySystemID($fromSystemID, $this->id);
 			$toWormhole = \scanning\model\Wormhole::getWormholeBySystemID($toSystemID, $this->id);
@@ -376,6 +377,7 @@ namespace scanning\model
 			// Verbinding toevoegen
 			\AppRoot::debug("Verbinding toevoegen");
 			$this->addWormholeConnectionByWormhole($originHole->id, $addingHole->id, false);
+
 
 
 			// Nieuw systeem is toegevoegd.
@@ -515,14 +517,15 @@ namespace scanning\model
 			return true;
 		}
 
-		/**
-		 * Add actual system
-		 * @param integer $systemID
-		 * @param integer $posX
-		 * @param integer $posY
-		 * @param string name|null
-		 * @return \scanning\model\Wormhole
-		 */
+        /**
+         * Add actual system
+         * @param integer $systemID
+         * @param integer $posX
+         * @param integer $posY
+         * @param string  $name
+         * @param string  $sigID
+         * @return Wormhole
+         */
 		public function addSolarSystem($systemID, $posX, $posY, $name=null, $sigID=null)
 		{
 			$system = new \scanning\model\Wormhole();

@@ -50,11 +50,24 @@ namespace scanning\controller\map\positioning
 			$this->origin = $origin;
 		}
 
+        /**
+         * Get origin
+         * @return \scanning\model\Wormhole|null
+         */
+        function getOrigin()
+        {
+            return $this->origin;
+        }
+
+        /**
+         * Get next position
+         * @return array
+         */
 		function getNextPosition()
 		{
 			\AppRoot::debug("getNextPosition()");
-			$originX = ($this->origin !== null) ? $this->origin->x : 50;
-			$originY = ($this->origin !== null) ? $this->origin->y : 50;
+			$originX = ($this->getOrigin() !== null) ? $this->getOrigin()->x : 50;
+			$originY = ($this->getOrigin() !== null) ? $this->getOrigin()->y : 50;
 
 			$direction = null;
 			$pos = array("x" => 50, "y" => 50);
@@ -63,13 +76,13 @@ namespace scanning\controller\map\positioning
 			// Probeer systeem voor origin te achterhalen. Die bepaald de richting.
 			if ($this->origin != null)
 			{
-				$routeSystems = array($this->origin);
-				$currentSystem = $this->origin;
+				$routeSystems = array($this->getOrigin());
+				$currentSystem = $this->getOrigin();
 
-				if (!$this->origin->isHomeSystem())
+				if (!$this->getOrigin()->isHomeSystem())
 				{
 					// Fetch terug naar home system
-					$route = $this->origin->getRouteToSystem();
+					$route = $this->getOrigin()->getRouteToSystem();
 					if (count($route) >= 2)
 					{
 						$system1 = \scanning\model\Wormhole::getWormholeBySystemID($route[0]);
@@ -100,7 +113,6 @@ namespace scanning\controller\map\positioning
 			}
 			if ($directionObject == null)
 				$directionObject = $this;
-
 
 			$positions = $directionObject->getPositions();
 			$i = 0;

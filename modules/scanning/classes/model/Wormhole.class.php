@@ -283,10 +283,10 @@ namespace scanning\model
 			\AppRoot::debug("is connected to: ".$systemID);
 			foreach ($this->getConnections() as $connection)
 			{
-				if ($connection->getFromWormhole()->solarSystemID == $this->solarSystemID && $connection->toSystemID == $systemID)
+				if ($connection->getFromWormhole()->solarSystemID == $this->solarSystemID && $connection->getToSystem()->id == $systemID)
 					return true;
 
-				if ($connection->getToWormhole()->solarSystemID == $this->solarSystemID && $connection->fromSystemID == $systemID)
+				if ($connection->getToWormhole()->solarSystemID == $this->solarSystemID && $connection->getFromSystem()->id == $systemID)
 					return true;
 			}
 
@@ -335,9 +335,14 @@ namespace scanning\model
 				}
 			}
 
-			$routeSystems = \Tools::getDijkstraRoute($this->getSolarsystem()->id, $toSystem->getSolarsystem()->id, $routes);
-			\AppRoot::debug("<pre>".print_r($routeSystems,true)."</pre>");
-			return $routeSystems;
+            if (count($routes) > 0)
+            {
+                $routeSystems = \Tools::getDijkstraRoute($this->getSolarsystem()->id, $toSystem->getSolarsystem()->id, $routes);
+                \AppRoot::debug("<pre>" . print_r($routeSystems, true) . "</pre>");
+                return $routeSystems;
+            }
+
+            return array();
 		}
 
 

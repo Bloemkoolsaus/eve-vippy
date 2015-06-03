@@ -10,6 +10,11 @@ class MySQL
 
 	private static $currentDB = null;
 
+    /**
+     * get new mysql connection
+     * @param array|bool $credentials
+     * @param bool $newConnection
+     */
 	function __construct($credentials=false, $newConnection=false)
 	{
 		if ($credentials) {
@@ -69,12 +74,12 @@ class MySQL
 	function close()
 	{
 		if ($this->connected())
-			$this->connection->close($this->connection);
+			$this->getConnection()->close($this->connection);
 
 		$this->connection = null;
 	}
 
-	function error($msg, $error)
+	function error($msg, $error=null)
 	{
 		$this->error[] = $error;
 		try {
@@ -147,6 +152,13 @@ class MySQL
 			return false;
 	}
 
+    /**
+     * update or insert
+     * @param      $table
+     * @param      $data
+     * @param array|bool $where
+     * @return bool|int|string
+     */
 	function updateinsert($table, $data, $where=false)
 	{
 		if ($where)
@@ -174,6 +186,8 @@ class MySQL
 		}
 		else
 			$this->error("updateinsert expects where clause");
+
+        return false;
 	}
 
 	function insert($table, $data, $onDuplicateUpdateKey=null)
@@ -203,6 +217,13 @@ class MySQL
 			return false;
 	}
 
+    /**
+     * update
+     * @param string $table
+     * @param array $data
+     * @param array|bool $where
+     * @return bool
+     */
 	function update($table, $data, $where=false)
 	{
 		$fields = array();
@@ -232,7 +253,13 @@ class MySQL
 			return false;
 	}
 
-	function delete($table, $where = false)
+    /**
+     * delete
+     * @param string $table
+     * @param array|bool $where
+     * @return bool
+     */
+	function delete($table, $where=false)
 	{
 		if (! $where)
 			$query = "TRUNCATE " . $table;
@@ -259,6 +286,7 @@ class MySQL
 	 */
 	function convertToLowerCase()
 	{
+        $queries = array();
 		if ($tables = $this->getRows("	SELECT * FROM information_schema.tables
 										WHERE table_schema = '".$this->dtbs."'"))
 		{
@@ -312,250 +340,6 @@ class MySQL
 
 		\AppRoot::debug("MySQL: Finished backup");
 		return true;
-	}
-
-	function emptyDatabase()
-	{
-		if ($tables = $this->getRows("SELECT * FROM information_schema.tables WHERE table_schema = '".MYSQL_DTBS."'")) {
-			foreach ($tables as $table) {
-				$this->doQuery("DROP TABLE IF EXISTS `".$table["TABLE_NAME"]."`");
-			}
-		}
-	}
-
-	function copyFromDatabase($host=false,$username=false,$password=false,$schema=false,$structureOnly=false)
-	{
-		$this->emptyDatabase();
-
-		$credentials = array("host"	=> (!$host) ? MYSQL_HOST : $host,
-							"user"	=> (!$username) ? MYSQL_USER : $username,
-							"pass"	=> (!$password) ? MYSQL_PASS : $password,
-							"dtbs"	=> (!$schema) ? MYSQL_DTBS : $schema);
-		$copyDB = new MySQL($credentials);
-		foreach (explode(";",$copyDB->makeBackUp($structureOnly)) as $query)
-		{
-			$this->doQuery($query);
-		}
-	}
-
-	function syncStructureFromDatabase($host=false,$username=false,$password=false,$schema=false,$toScript=false)
-	{
-		// EERST BACKUP MAKEN
-		$rootDir = "bak";
-		if (!file_exists($rootDir))
-			mkdir($rootDir,0777);
-
-		$rootDir .= "/dbsync";
-		if (!file_exists($rootDir))
-			mkdir($rootDir,0777);
-
-		$filename = $rootDir."/".date("YmdHi").".sql";
-		$handle = fopen($filename,"w");
-		fwrite($handle, $this->makeBackUp());
-		fclose($handle);
-
-
-		// START SYNCHRONIZATIE
-		$credentials = array("host"	=> (!$host) ? MYSQL_HOST : $host,
-							"user"	=> (!$username) ? MYSQL_USER : $username,
-							"pass"	=> (!$password) ? MYSQL_PASS : $password,
-							"dtbs"	=> (!$schema) ? MYSQL_DTBS : $schema);
-		$srcDB = new MySQL($credentials);
-
-		$localTables = array();
-		$sourceTables = array();
-		$syncQueries = array();
-
-		if ($results = $this->getRows("SELECT * FROM information_schema.columns WHERE table_schema = ?", array($this->dtbs)))
-		{
-			foreach ($results as $result)
-			{
-				$localTables[$result["TABLE_NAME"]]["columns"][$result["COLUMN_NAME"]] = array(
-						"type"		=> $result["COLUMN_TYPE"],
-						"extra"		=> $result["EXTRA"],
-						"null"		=> $result["IS_NULLABLE"],
-						"default"	=> $result["COLUMN_DEFAULT"]
-				);
-
-				// Keys
-				if ($results = $this->getRows("SHOW KEYS FROM ".$this->dtbs.".".$result["TABLE_NAME"]))
-				{
-					foreach ($results as $result) {
-						$localTables[$result["Table"]]["keys"][$result["Key_name"]][$result["Column_name"]] = $result["Column_name"];
-					}
-				}
-			}
-
-		}
-
-		if ($results = $srcDB->getRows("SELECT * FROM information_schema.columns WHERE table_schema = ?", array($srcDB->dtbs)))
-		{
-			foreach ($results as $result)
-			{
-				$sourceTables[$result["TABLE_NAME"]]["columns"][$result["COLUMN_NAME"]] = array(
-						"type"		=> $result["COLUMN_TYPE"],
-						"extra"		=> $result["EXTRA"],
-						"null"		=> $result["IS_NULLABLE"],
-						"default"	=> $result["COLUMN_DEFAULT"]
-				);
-
-				// Keys
-				if ($results = $srcDB->getRows("SHOW KEYS FROM ".$srcDB->dtbs.".".$result["TABLE_NAME"]))
-				{
-					foreach ($results as $result) {
-						$sourceTables[$result["Table"]]["keys"][$result["Key_name"]][$result["Column_name"]] = $result["Column_name"];
-					}
-				}
-			}
-		}
-
-		// Controleer alle tabellen
-		foreach ($sourceTables as $table => $tinfo)
-		{
-			if (isset($localTables[$table]))
-			{
-				// Tabel bestaat in lokale tabel
-
-				// Controleer alle kolommen
-				$prevColumn = "";
-				foreach ($tinfo["columns"] as $column => $cinfo)
-				{
-					if (isset($localTables[$table]["columns"][$column]))
-					{
-						// Kolom bestaat in lokale tabel, controleer datatype
-						$diff = false;
-						foreach ($cinfo as $ivar => $ival)
-						{
-							if ($localTables[$table]["columns"][$column][$ivar] != $ival)
-							{
-								$diff = true;
-								break;
-							}
-						}
-
-						if ($diff)
-						{
-							// Vershil. Bijwerken
-							$query = "ALTER TABLE `".$table."` MODIFY `".$column."` ".$cinfo["type"];
-							if ($cinfo["null"] == "NO")
-								$query .= " NOT NULL";
-							if (strlen(trim($cinfo["default"])) > 0)
-								$query .= " DEFAULT '".$cinfo["default"]."'";
-							if (strlen(trim($cinfo["extra"])) > 0)
-								$query .= " ".$cinfo["extra"];
-
-							$syncQueries[] = $query;
-						}
-					}
-					else
-					{
-						// Kolom bestaat niet in lokale tabel. Maak de kolom aan.
-						$query = "ALTER TABLE `".$table."` ADD COLUMN `".$column."` ".$cinfo["type"];
-						if ($cinfo["null"] == "NO")
-							$query .= " NOT NULL";
-						if (strlen(trim($cinfo["default"])) > 0)
-							$query .= " DEFAULT '".$cinfo["default"]."'";
-						if (strlen(trim($cinfo["extra"])) > 0)
-							$query .= " ".$cinfo["extra"];
-						if (strlen(trim($prevColumn)) > 0)
-							$query .= " AFTER `".$prevColumn."`";
-
-						$syncQueries[] = $query;
-					}
-
-					$prevColumn = $column;
-				}
-
-				// Controleer verwijderde kolommen
-				foreach ($localTables[$table]["columns"] as $column => $cinfo)
-				{
-					if (!isset($sourceTables[$table]["columns"][$column]))
-						$this->doQuery("ALTER TABLE `".$table."` DROP COLUMN `".$column."`");
-				}
-
-				// Controleer alle keys
-				foreach ($tinfo["keys"] as $keyname => $columns)
-				{
-					$keyDiff = false;
-					if (isset($localTables[$table]["keys"][$keyname]))
-					{
-						// Key bestaat.
-						// Controleer of alle keys in de lokale tabel zitten
-						foreach ($sourceTables[$table]["keys"][$keyname] as $column)
-						{
-							if (!isset($localTables[$table]["keys"][$keyname][$column]))
-								$keyDiff = true;
-						}
-						// Controleer of er niet teveel keys in de lokalte tabel zitten
-						foreach ($localTables[$table]["keys"][$keyname] as $column)
-						{
-							if (!isset($sourceTables[$table]["keys"][$keyname][$column]))
-								$keyDiff = true;
-						}
-
-						if ($keyDiff)
-						{
-							// Key verwijderen
-							$syncQueries[] = "DROP INDEX `".$keyname."` ON `".$table."`";
-						}
-					}
-					else
-						$keyDiff = true;
-
-					if ($keyDiff)
-					{
-						// Key toevoegen
-						$addQuery = "CREATE INDEX `".$keyname."` ON `".$table."` (";
-						$i=0;
-						foreach ($sourceTables[$table]["keys"][$keyname] as $column) {
-							$addQuery .= (($i>0)?",":"")."`".$column."`";
-						}
-						$addQuery .= ")";
-						$syncQueries[] = $addQuery;
-					}
-				}
-
-				// Zijn er keys die verwijderd moeten worden?
-				foreach ($localTables[$table]["keys"] as $keyname => $columns)
-				{
-					if (!isset($sourceTables[$table]["keys"][$keyname]))
-						$syncQueries[] = "DROP INDEX `".$keyname."` ON `".$table."`";
-				}
-			}
-			else
-			{
-				// Tabel bestaat niet in lokale tabel. Maak de tabel aanm.
-				if ($createtable = $srcDB->getRow("SHOW CREATE TABLE ".$srcDB->dtbs.".".$table))
-					$syncQueries[] = $createtable[1];
-			}
-		}
-
-		// Controleer verwijderde tabellen
-		foreach ($localTables as $table => $tinfo)
-		{
-			if (!isset($sourceTables[$table]))
-				$syncQueries[] = "DROP TABLE `".$table."`";
-		}
-
-		if ($toScript)
-		{
-			$rootDir = "sync";
-			if (!file_exists($rootDir))
-				mkdir($rootDir,0777);
-
-			$filename = $rootDir."/".date("YmdHi").".sql";
-			$handle = fopen($filename,"w");
-			foreach ($syncQueries as $query) {
-				fwrite($handle,$query.";\n\n");
-			}
-			fclose($handle);
-		}
-		else
-		{
-			foreach ($syncQueries as $query) {
-				$this->doQuery($query);
-			}
-		}
 	}
 
 	public static function escape($value, $isDBField=false)

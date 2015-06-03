@@ -1,3 +1,14 @@
+<h3>June 3rd, 2015</h3>
+<b><u>VIPPY</u></b>
+ - Updated to Carnyx data export.
+
+<b><u>FIXES</u></b>
+ - Fixed an out of memory exception that could occur when adding a wormhole between systems when neither system was already on the map.
+
+
+
+
+
 <h3>May 19th, 2015</h3>
 <b><u>SCANNING</u></b>
  - When copy pasting more then 2 signatures, check for old signatures that are no longer in the copy paste and remove them.
@@ -19,13 +30,13 @@
 {if isset($App->user) && $App->user->hasRight('atlas')}
 <b><u>ATLAS</u></b>
  - Fixed menu ATLAS link.
- 
+
 {/if}
 <b><u>VIPPY</u></b>
  - Import the new static data dump for the Mosaic expansion.
 {if isset($App->user) && $App->user->getIsDirector()}
  - Add an access control group page. All directors can now set wich corporations have access to VIPPY.
- 
+
 {/if}
 <b><u>FIXES</u></b>
  - `Delete all Signatures` also deleted POS signatures. Deleting all sigs will now keep POS signatures.
@@ -54,7 +65,7 @@
  - Moved `mark fully scanned` button to a less prominent place. Systems are automatically marked fully scanned when you complete all signatures.
  - Automatically update connection wormhole-type from signatures list.
  	VIPPY will attempt to automatlically set a connections type by looking at the signature list.
- 	If a wormhole signature's info field has the name (not the J-sig) of the wormhole in the proper syntax, it can match the connection. 
+ 	If a wormhole signature's info field has the name (not the J-sig) of the wormhole in the proper syntax, it can match the connection.
  	VIPPY will take the first word as name parameter.
  		If you have `c5a-c5b` as info for that wh signature, VIPPY will be able to match the correct connection and update accordingly.
  		These values will all map to c5b: 	`c5a-c5b eol`	`c5b`	`c5b eol frig`	`c5a-c5b frig bubbeled whatever`
@@ -64,7 +75,7 @@
 
 <b><u>WH-INFO</u></b>
  - Updated wormhole mass table.
- - Updated wormhole color reference. 
+ - Updated wormhole color reference.
  - Add wormhole system effect reference.
 
 <b><u>FIXES</u></b>
@@ -84,7 +95,7 @@
 <h3>December 22nd, 2014</h3>
 <b><u>SCANNING</u></b>
  - In response to popular request, change the fully-scanned icons to bars. Whenever there is a grey bar on a system, this means more scanning is required!
-	Bars can be different height: 
+	Bars can be different height:
 	 * Large bar: Not scanned at all. Get your lazy bum out of that forcefield and start scanning;
 	 * Small bar: Previously scanned, but more then 2 hours age. Check for new sigs.
  - Attempt to auto mark systems as fully scanned. For exemple when there are no more open signatures, or when a copy-past adds no new signatures.
@@ -136,7 +147,7 @@
 <h3>November 10th, 2014</h3>
 <b><u>PHOEBE</u></b>
  - Adjust capital jump calculation for Phoebe.
- 	
+
 
 
 
@@ -163,7 +174,7 @@
 
 <h3>October 20th, 2014</h3>
 <b><u>SCANNING</u></b>
- - Create a wormhole stub while scanning. (<i>Temporary, unmapped wormholes</i>) 
+ - Create a wormhole stub while scanning. (<i>Temporary, unmapped wormholes</i>)
  	- To create a stub, add a WH signature to the sigs list. In the info field of the signature, provide the name for the new wormhole.
  	- If the stubs are named correctly, VIPPY will be able to correctly replace stubs with the mapped wormholes when you start mapping.
  - Limit the number of capitals in range on popups to 5 capitals (<i>unless more then 5 are within 1 jump</i>).
@@ -208,22 +219,22 @@
  - Update links from wormhol.es to the new wh.pasta.gg
  - Make k-space systems stand out, by giving them a colored side bar.
  - Improve information on mass/lifetime changes on the jumplog-popup.
- 
+
 <b><u>SERVER</u></b>
  - Added some extra RAM memory to the server.
 
- 
- 
+
+
 <h3>June 2nd, 2014</h3>
 <b><u>SCANNING</u></b>
  - Automatically name systems (c5s, c5a, c5b, etc). Yes, you're reading this right. It's in now.
- - Jump log mass estimates were in m3. This should ofcourse be kg.... 
- 
+ - Jump log mass estimates were in m3. This should ofcourse be kg....
+
 <b><u>ADMIN</u></b>
  - Creating new chains was broken. Is fixed now.
- 
- 
- 
+
+
+
 <h3>May 29th, 2014</h3>
 <b><u>SCANNING</u></b>
  - Add mass estimates to jump logs.
@@ -262,15 +273,15 @@
 <h3>August 20th, 2013</h3>
 <b><u>SCANNING</u></b>
  - Fixed `null to false` nearest tradehub calculation.
- 
 
- 
+
+
 <h3>August 17th, 2013</h3>
 <b><u>SCANNING</u></b>
  - Add station icons (<img src="images/eve/station.png">) on the map for station systems.
  - Add yellow (<img src="images/eve/skull.orange.png">) and red (<img src="images/eve/skull.red.png">) skull icons to indicate recent pvp or pve activity.
  - Add a jump log for each wormhole (hover mouse over the connection to see it).
- 
+
 <b><u>USERS</u></b>
  - Improved api stuff.
 
@@ -294,7 +305,7 @@
  - Make the `show signatures` button remember that you clicked it.
  - Add a last edit date to system notes.
  - Automatically delete wormholes that are older then 72 hours. Mark a system as permanent if it should not be deleted.
- 
+
 <b><u>USERS</u></b>
  - Allow directors to see who has VIPPY access (from their corp).
  - Allow directors to ban users from VIPPY.
@@ -307,7 +318,7 @@
  	You are encouraged to use this mode on your alts, the map is very CPU heavy for your client.
  - Hide the signature list by default. It is not needed all the time, and when hiding it will decrease server load (and thus increase VIPPY performance).
  - Cached the wormhole info popups when you hover over them on the map.
- 	Wormhole effects for exemple were calculated for each call, wich is lame cause they never change. 
+ 	Wormhole effects for exemple were calculated for each call, wich is lame cause they never change.
  - Did some other very technical stuff to decrease load for the server.
 
 <b><u>SCANNING</u></b>

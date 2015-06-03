@@ -551,7 +551,7 @@ Class Tools
 				if ($file == "." || $file == "..")
 					continue;
 
-				$filename = $dir."/".$file;
+				$filename = str_replace("//","/",$dir."/".$file);
 				if (is_dir($filename))
 					self::deleteDir($filename);
 				else

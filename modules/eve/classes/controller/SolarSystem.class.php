@@ -100,7 +100,7 @@ namespace eve\controller
 
 		public function getWormholeStatus($systemID)
 		{
-			\AppRoot::debug("getWormholeStatus()");
+			\AppRoot::debug("getWormholeStatus($systemID)");
 
 			$status = 1;
 			if ($result = \MySQL::getDB()->getRow("SELECT status FROM mapwormholes WHERE solarsystemid = ? AND chainid = ?"

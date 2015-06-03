@@ -26,7 +26,6 @@ namespace users\model
 		private $permissions = null;
 		private $settings = null;
 		private $chains = null;
-		private $character = null;
 		private $characters = null;
 		private $corporations = array();
 		private $alliances = array();
@@ -34,6 +33,10 @@ namespace users\model
 		private $authorizedAlliances = null;
 		private $isFittingManager = null;
 		private $capitalShips = null;
+        private $logs = null;
+
+        /** @var \eve\model\Character */
+        private $character = null;
 
 
 		public function __construct($id=false)
@@ -58,7 +61,7 @@ namespace users\model
 
 		public function resetCache()
 		{
-			\AppRoot::debug($this->getFullName()."->resetCache()");
+			\AppRoot::debug($this->getFullName()."->resetCache()", true);
 			\Tools::deleteDir(\AppRoot::getCacheDirectory().$this->getCacheDirectory());
 		}
 
@@ -1013,7 +1016,7 @@ namespace users\model
 		 */
 		public function isAuthorized()
 		{
-			\AppRoot::debug("User($this->displayname)->isAuthorized(): ".(($this->isValid===null)?"null":$this->isValid));
+			\AppRoot::debug("User($this->displayname)->isAuthorized(): ".(($this->isValid===null)?"null":$this->isValid), true);
 			if ($this->isValid === null)
 				$this->fetchIsAuthorized();
 
@@ -1033,8 +1036,6 @@ namespace users\model
 				$this->isValid = true;
 			else if (count($this->getAuthorizedCorporations()) > 0)
 				$this->isValid = true;
-
-			$this->store();
 		}
 
 		public function getAllChains()
@@ -1146,7 +1147,7 @@ namespace users\model
 		 */
 		public function getAuthGroupsIDs()
 		{
-			\AppRoot::debug("User->getAuthGroups()");
+			\AppRoot::debug("User->getAuthGroupsIDs()");
 			if (!is_array($this->authGroupIDs) || count($this->authGroupIDs) == 0)
 			{
 				$cacheFilename = $this->getCacheDirectory()."authgroups.json";
@@ -1192,18 +1193,9 @@ namespace users\model
 			if ($this->authGroups === null)
 			{
 				$this->authGroups = array();
-				if (count($this->getAuthGroupsIDs()) > 0)
-				{
-					if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_auth_groups WHERE id IN (".implode(",",$this->getAuthGroupsIDs()).")"))
-					{
-						foreach ($results as $result)
-						{
-							$group = new \admin\model\AuthGroup();
-							$group->load($result);
-							$this->authGroups[] = $group;
-						}
-					}
-				}
+                foreach ($this->getAuthGroupsIDs() as $id) {
+                    $this->authGroups[] = new \admin\model\AuthGroup($id);
+                }
 			}
 			return $this->authGroups;
 		}

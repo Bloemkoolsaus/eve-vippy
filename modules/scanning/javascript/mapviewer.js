@@ -6,7 +6,7 @@ $(window).load(function() {
 	if ($("#signatureMap").length > 0) {
 		reloadSignatureMap();
 		setTimeout(refreshSigMapPage, 600000);
-		$(document).bind("contextmenu", function() { return false; });		
+		$(document).bind("contextmenu", function() { return false; });
 	}
 	if (isIGB()) {
 		callLocationTracker();
@@ -77,7 +77,7 @@ function loadSignatureMap(extraURL, ignorepopup)
 				if (!mayResetMap())
 					return false;
 
-				var currentTime = new Date();				
+				var currentTime = new Date();
 				var hour = currentTime.getHours()-0;
 				var min = currentTime.getMinutes()-0;
 				var sec = currentTime.getSeconds()-0;
@@ -155,7 +155,7 @@ function cancelAddWormhole()
 	$("#addWormholeForm").fadeOut(250,function() {
 		$("#mapButtons").show();
 		$("#addWormholeForm").html("");
-	});	
+	});
 }
 
 function switchSystem(system)
@@ -227,7 +227,7 @@ function saveWormhole()
 	url += "&status="+$("#whstatus").attr("value");
 	url += "&notes="+document.getElementById("notes").value;
 	url += "&nocache=1";
-	loadSignatureMap(url);	
+	loadSignatureMap(url);
 }
 
 function deleteWormhole(wormholeID, removeConnected)
