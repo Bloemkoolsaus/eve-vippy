@@ -335,14 +335,10 @@ namespace scanning\model
 				}
 			}
 
-            if (count($routes) > 0)
-            {
-                $routeSystems = \Tools::getDijkstraRoute($this->getSolarsystem()->id, $toSystem->getSolarsystem()->id, $routes);
-                \AppRoot::debug("<pre>" . print_r($routeSystems, true) . "</pre>");
-                return $routeSystems;
-            }
+            $routeSystems = \Tools::getDijkstraRoute($this->getSolarsystem()->id, $toSystem->getSolarsystem()->id, $routes);
+            \AppRoot::debug("<pre>" . print_r($routeSystems, true) . "</pre>");
 
-            return array();
+            return $routeSystems;
 		}
 
 

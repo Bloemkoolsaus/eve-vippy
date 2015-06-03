@@ -69,7 +69,7 @@ namespace admin\model
                         $this->allowedCorporations[] = $corporation;
                     }
                 }
-                
+
                 return true;
             }
 

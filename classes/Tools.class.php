@@ -754,6 +754,9 @@ Class Tools
 	 */
 	public static function getDijkstraRoute($start, $end, $routes)
 	{
+        if (count($routes) == 0)
+            return array();
+
 		// The start and the end
 		$a = $start;
 		$b = $end;
@@ -781,18 +784,26 @@ Class Tools
 		        	$S[$key] = array($min, $Q[$key]);
 		    	}
 		    }
+
 		    unset($Q[$min]);
 		}
 
-		//list the path
+		// List the path
 		$path = array();
 		$pos = $b;
-		while ($pos != $a)
+
+        $i = 0;
+		while ($pos != $a && $i < 500)
 		{
+            $i++;
+            if (!isset($S[$pos][0]))
+                continue;
+
 		    $path[] = $pos;
 		    $pos = $S[$pos][0];
 		}
 		$path[] = $a;
+
 		return array_reverse($path);
 	}
 }
