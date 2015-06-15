@@ -14,7 +14,7 @@ function loadSignatureList(extraURL, addNoCache)
 			extraURL = "";
 
 		if ($("#signatureList").html() == "" || addNoCache)
-			extraURL += "&nocache=1"
+			extraURL += "&nocache=1";
 
 		if ($("#sigsSortBy").length > 0)
 			extraURL += "&sortby=" + $("#sigsSortBy").attr("value");

@@ -10,7 +10,7 @@ function showPopup(content, width, height, postCloseHandler, preCloseHandler, po
 {
 	if (!content)
 		content = "<p style='text-align: center;'>Loading</p>";
-	
+
 	popupContent = content;
 	popupPreCloseHandler = preCloseHandler;
 	popupPostCloseHandler = postCloseHandler;
@@ -24,15 +24,15 @@ function showPopup(content, width, height, postCloseHandler, preCloseHandler, po
 	popupStep1();
 }
 
-function popupStep1() 
+function popupStep1()
 {
-	addDiv("disabledPage");
+    addDiv("disabledPage");
 	$("#disabledPage").css("width",$(document).width());
 	$("#disabledPage").css("height",$(document).height());
 	$("#disabledPage").fadeIn(popupSpeed, popupStep2);
 }
 
-function popupStep2() 
+function popupStep2()
 {
 	$("#disabledPage").click(function() { destroyPopup(); });
 	addDiv("popup");
@@ -42,9 +42,9 @@ function popupStep2()
 	$("#popup").slideDown(popupSpeed, popupPostLoadHandler);
 }
 
-function loadPopup() 
+function loadPopup()
 {
-	var popDiv = document.getElementById("popup");
+	var popDiv = $("#popup");
 	addDiv("popupHeader", popDiv);
 	addDiv("popupContent", popDiv);
 	addDiv("popupFooter", popDiv);
@@ -53,12 +53,12 @@ function loadPopup()
 	setPopupFooter();
 }
 
-function setPopupHeader() 
+function setPopupHeader()
 {
 	document.getElementById("popupHeader").innerHTML = "<button id='popupCloseBttn' onclick='destroyPopup(); return false;'> &nbsp;X&nbsp; </button>&nbsp;";
 }
 
-function setPopupContent(content,width,height) 
+function setPopupContent(content,width,height)
 {
 	if (content)
 		popupContent = content;
@@ -66,13 +66,12 @@ function setPopupContent(content,width,height)
 		popupWidth = width;
 	if (height)
 		popupHeight = height;
-			
+
 	$("#popupContent").html(popupContent);
 	setPopupPosition();
-	setCombobox();
 }
 
-function setPopupFooter() 
+function setPopupFooter()
 {
 }
 
@@ -90,12 +89,12 @@ function setPopupHeight(height)
 }
 
 function setPopupPosition(setToContent)
-{	
+{
 	if (popupWidth > 0)
 		$("#popup").width(popupWidth);
-	
+
 	if (popupHeight > 0)
-		$("#popup").height(popupHeight) + $("#popupHeader").height();	
+		$("#popup").height(popupHeight + $("#popupHeader").height());
 
 	// Calculate Width
 	var popWidth = $("#popup").width();
@@ -113,30 +112,43 @@ function setPopupPosition(setToContent)
 	popTop += $(window).scrollTop();
 	if (popTop < 0)
 		popTop = 50;
-	
+
 	// Set Position
 	$("#popup").css("left", popLeft);
 	$("#popup").css("top", popTop);
 }
 
-function destroyPopup(cancelCallback) 
+function destroyPopup(cancelCallback)
 {
 	if (!cancelCallback && popupPreCloseHandler != null)
 		popupPreCloseHandler.call();
-	
+
 	$(window).unbind('scroll');
 	popupContent = "";
 	popupWidth = 0;
 	popupHeight = 0;
 	if (document.getElementById("popup"))
-		$("#popup").slideUp(popupSpeed*1.5, function() { removeDiv("popup") });
+		$("#popup").slideUp(popupSpeed*1.5, function() { $("#popup").remove(); });
 	if (document.getElementById("disabledPage"))
-		$("#disabledPage").fadeOut(popupSpeed*1.5, function() { removeDiv("disabledPage") });
-	
+		$("#disabledPage").fadeOut(popupSpeed*1.5, function() { $("#disabledPage").remove(); });
+
 	if (!cancelCallback && popupPostCloseHandler != null)
 		popupPostCloseHandler.call();
-	
+
 	popupPreCloseHandler = null;
 	popupPostCloseHandler = null;
 	popupPostLoadHandler = null;
+}
+
+function showLoadingPopup()
+{
+    showPopup("Loading", 300, 100);
+}
+
+function addDiv(id, element)
+{
+    if (!element)
+        element = $("body");
+
+    element.append("<div id='"+id+"'></div>");
 }

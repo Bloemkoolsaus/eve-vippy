@@ -5,13 +5,11 @@ var mousePosY = 0;
 $(document).ready(function() {
 	setSubmenu();
 	setDatePicker();
-	setCombobox();
 	setAutoCompletes();
-	setTristateCheckbox();
 	hideRegisterFormAntiBot();
 	setMouseCoordinates();
 	setMenuNotifications();
-	
+
 	if (document.location.hash.length > 0)
 	{
 		setTimeout(function() {
@@ -42,8 +40,8 @@ function setMenuNotifications()
 		else if (!$("#menuNotifications").is(":visible"))
 		{
 			setTimeout(function() {
-				$("#menuNotifications").slideDown('fast', function() { 
-					setLayoutPositions(); 
+				$("#menuNotifications").slideDown('fast', function() {
+					setLayoutPositions();
 				});
 			}, 1000);
 		}
@@ -60,7 +58,7 @@ function setMouseCoordinates()
 	$(document).mousemove(function(e) {
 		mousePosX = e.pageX;
 		mousePosY = e.pageY;
-	}); 
+	});
 }
 
 function hideRegisterFormAntiBot()
@@ -69,7 +67,7 @@ function hideRegisterFormAntiBot()
 		$("#street").hide();
 }
 
-function setSubmenu() 
+function setSubmenu()
 {
 	$("li.mainmenu").each(function() {
 		$(this).mouseover(function() {
@@ -83,7 +81,7 @@ function setSubmenu()
 	});
 }
 
-function setDatePicker() 
+function setDatePicker()
 {
 	$("input[rel=datepicker]").each(function() {
 		$(this).datepicker({
@@ -100,31 +98,16 @@ function setDatePicker()
 	});
 }
 
-function setCombobox() 
-{	
-	$("[rel=combobox]").each(function() {
-		var id = $(this).attr("id");
-		var width = $("#"+id+">select").width();
-		if (width < 150)
-			width = 150;
-		
-		$("#"+id+">select").combobox({
-			delay: 0
-		});
-		$("#"+id+">input").css("width", width);
-	});
-}
-
-function setAutoCompletes() 
+function setAutoCompletes()
 {
-	$("input[rel=autocomplete]").each(function() 
+	$("input[rel=autocomplete]").each(function()
 	{
 		var searchMinLength = 2;
 		var searchDelay = 150;
 
 		if ($(this).hasAttr("minlength"))
 			searchMinLength = $(this).attr("minlength");
-		
+
 		if ($(this).hasAttr("delay"))
 			searchDelay = $(this).attr("delay");
 
@@ -138,16 +121,16 @@ function setAutoCompletes()
 
 		if ($(this).hasAttr("element"))
 			reqURL +="&element="+$(this).attr("element");
-		
+
 		if ($(this).hasAttr("table"))
 			reqURL +="&table="+$(this).attr("table");
-		
+
 		if ($(this).hasAttr("keyfield"))
 			reqURL +="&keyfield="+$(this).attr("keyfield");
-		
+
 		if ($(this).hasAttr("namefield"))
 			reqURL +="&namefield="+$(this).attr("namefield");
-		
+
 		if ($(this).hasAttr("limit"))
 			reqURL +="&limit="+$(this).attr("limit");
 
@@ -156,6 +139,7 @@ function setAutoCompletes()
 			minLength: searchMinLength,
 			delay: searchDelay,
 			select: function(event,ui) {
+                console.log(ui);
 				$("#"+field).val(ui.item.id);
 				$("#"+field).trigger('change');
 			}
@@ -163,17 +147,20 @@ function setAutoCompletes()
 	});
 }
 
-function setTristateCheckbox()
+function showHelp(help)
 {
-	$("input[rel=tristate]").each(function(){
-		$(this).tristate({
-			children: $(this).parent().find("ul>li>input[type='checkbox']"),
-			classes: { 
-				checkbox: "customcheck", 
-				checked: "customcheckfull", 
-				partial: "customcheckpartial", 
-				unchecked: "customchecknone" 
-			}
-		});
-	});
+    var content = "<div class='help' style='padding: 15px; text-align: left;'>";
+    content += "<img src='images/default/information.png' align='left' style='margin-right: 15px; margin-bottom: 15px;' />";
+    content += help + "</div>";
+
+    content += "<div class='help' style='padding: 15px; text-align: center;'>";
+    content += "<button type='button' onclick='destroyPopup();'> OK </button>";
+    content += "</div>";
+
+    showPopup(content, 400, 200);
+    return false;
 }
+
+$.fn.hasAttr = function(attrName) {
+    return this.attr(attrName) !== undefined;
+};
