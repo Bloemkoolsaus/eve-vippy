@@ -253,9 +253,7 @@ table.sectionoverview tr.even:hover,
 table.sectionoverview tr.odd:hover {
 	color: #FFFFFF !important;
 	background-color: #FF9A1E;
-	background: -webkit-linear-gradient(#FFAA00, #DD8800);
-	background: -moz-linear-gradient(#FFAA00, #DD8800);
-	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFAA00',endColorstr='#DD8800',GradientType=0);
+    background: #FF9A1E linear-gradient(#FFAA00, #DD8800);
 	cursor: pointer;
 }
 
@@ -352,12 +350,14 @@ div.notice a, div.warning a {
 }
 
 div.message {
+    background-color: #DDDDDD;
     background: #DDDDDD linear-gradient(#FFFFFF, #CCCCCC);
     font-family: Verdana,sans-serif;
     font-size: 11px;
     color: #111111;
 }
 div.message.soft {
+    background-color: #555555;
     background: #555555 linear-gradient(#555555, #333333);
     color: #BBBBBB;
 }
@@ -365,24 +365,28 @@ div.message.soft {
     text-align: center;
 }
 div.notice {
+    background-color: #00AAFF;
     background: #00AAFF linear-gradient(#00AAFF, #0066BB);
     color: #FFFFFF;
     text-align: center;
     padding: 5px;
 }
 div.success {
+    background-color: #008800;
     background: #008800 linear-gradient(#00CC00, #008800);
     color: #FFFFFF;
     text-align: center;
     padding: 5px;
 }
 div.warning {
+    background-color: #FFCC00;
     background: #FFCC00 linear-gradient(#FFCC00, #CC9900);
     border: double 3px #111111;
     color: #222222;
     text-align: center;
 }
 div.error {
+    background-color: #990000;
     background: #990000 linear-gradient(#CC0000, #880000);
     color: #FFFFFF;
     text-align: center;
@@ -415,12 +419,14 @@ div.tabs ul li {
     float: left;
     margin: 3px 3px 0;
     padding: 7px 15px;
+    background-color: #555555;
     background: #555555 linear-gradient(#555555, #111111);
     border: solid 1px #555555;
     border-radius: 3px 3px 0 0;
 }
 
 div.tabs ul li:hover {
+    background-color: #EA8400;
     background: #EA8400 linear-gradient(#EA8400, #FF9A1E);
     text-shadow: 0 1px 2px #FF7100;
     cursor: pointer;
@@ -437,7 +443,8 @@ div.tabs ul li a {
 }
 
 button {
-    background: #000000 linear-gradient(#555555, #111111);
+    background-color: #111111;
+    background: #111111 linear-gradient(#555555, #111111);
     border: 1px solid #555555;
     border-radius: 5px;
     padding: 5px 10px;
@@ -452,6 +459,7 @@ button {
 
 button:hover {
     border-color: #DD8800;
+    background-color: #DD8800;
     background: #DD8800 linear-gradient(#FFAA00, #DD8800);
 }
 
