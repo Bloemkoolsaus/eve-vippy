@@ -14,13 +14,13 @@
 
 
 body {
+    background: url(../images/default/background.jpg) fixed;
 	font-family: "Trebuchet MS",MetaBlack,sans-serif;
 	font-size: 11px;
 	color: #CCCCCC;
 	text-align: center;
 	margin: 0;
 	padding: 0;
-    background: url(/images/default/background.jpg) fixed;
 }
 
 h1 {

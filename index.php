@@ -107,8 +107,7 @@ $stylesheets = array();
 // Een ajax verzoek hoeft geen javascript en css in te laden.
 if (!\Tools::REQUEST("ajax"))
 {
-	\AppRoot::addJavascriptFile("javascript/", "jquery.js");
-	\AppRoot::addJavascriptFile("javascript/", "jquery.ui..custom.min.js");
+	\AppRoot::addJavascriptFile("javascript/", "jquery.v1.11.3.js");
 
 	// Load Javascripts
 	$directories = array("javascript/");
