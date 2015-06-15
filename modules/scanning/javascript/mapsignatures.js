@@ -6,7 +6,7 @@ function loadSignatureList(extraURL, addNoCache)
 
 	if ((!loadingSigList && $("#disabledPage").length == 0 && $("#signatureList").is(":visible")) || extraURL)
 	{
-		var system = $("#sigsystem").attr("value");
+		var system = $("#sigsystem").val();
 		if (system.length == 0)
 			return false;
 
@@ -17,10 +17,10 @@ function loadSignatureList(extraURL, addNoCache)
 			extraURL += "&nocache=1";
 
 		if ($("#sigsSortBy").length > 0)
-			extraURL += "&sortby=" + $("#sigsSortBy").attr("value");
+			extraURL += "&sortby=" + $("#sigsSortBy").val();
 
 		if ($("#sigsSortDir").length > 0)
-			extraURL += "&sortdir=" + $("#sigsSortDir").attr("value");
+			extraURL += "&sortdir=" + $("#sigsSortDir").val();
 
 		loadingSigList = true;
 		$.ajax({
@@ -46,8 +46,8 @@ function showSignatureList()
 
 function sortSigList(sortByNew)
 {
-	var sortBy = $("#sigsSortBy").attr("value");
-	var sortDir = $("#sigsSortDir").attr("value");
+	var sortBy = $("#sigsSortBy").val();
+	var sortDir = $("#sigsSortDir").val();
 	if (sortBy == sortByNew)
 		$("#sigsSortDir").attr("value", (sortDir=="DESC")?"ASC":"DESC");
 	else
@@ -76,13 +76,13 @@ function editSig(id)
 function saveEditSig(id)
 {
 	var reqURL = "index.php?module=scanning&section=map&action=updatesignature&id="+id+"&ajax=1";
-	reqURL += "&sig=" + $("#siginput"+id+"id").attr("value");
-	reqURL += "&type=" + $("#siginput"+id+"type").attr("value");
-	if ($("#siginput"+id+"type").attr("value") == "wh")
-		reqURL += "&typeid=" + $("#siginput"+id+"whtype").attr("value");
-	reqURL += "&info=" + $("#siginput"+id+"info").attr("value");
+	reqURL += "&sig=" + $("#siginput"+id+"id").val();
+	reqURL += "&type=" + $("#siginput"+id+"type").val();
+	if ($("#siginput"+id+"type").val() == "wh")
+		reqURL += "&typeid=" + $("#siginput"+id+"whtype").val();
+	reqURL += "&info=" + $("#siginput"+id+"info").val();
 	if ($("#siginput"+id+"signalstrength").length > 0)
-		reqURL += "&signalstrength=" + $("#siginput"+id+"signalstrength").attr("value");
+		reqURL += "&signalstrength=" + $("#siginput"+id+"signalstrength").val();
 
 	$("#sigedit"+id+"id").fadeOut(500, function() { $("#siglist"+id+"id").show(); } );
 	$("#sigedit"+id+"type").fadeOut(500, function() { $("#siglist"+id+"type").show(); } );

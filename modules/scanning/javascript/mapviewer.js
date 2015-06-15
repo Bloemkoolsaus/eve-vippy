@@ -60,7 +60,7 @@ function loadSignatureMap(extraURL, ignorepopup)
 
 	if (($("#disabledPage").length == 0 || ignorepopup) || extraURL)
 	{
-		var system = $("#sigsystem").attr("value");
+		var system = $("#sigsystem").val();
 		if (system.length == 0)
 			return false;
 
@@ -169,7 +169,7 @@ function switchSystem(system)
 
 function selectSignatureType()
 {
-	var sigType =  $("#sigtype").attr("value");
+	var sigType =  $("#sigtype").val();
 
 	if (sigType == "wh")
 	{
@@ -186,13 +186,13 @@ function selectSignatureType()
 function addSignature()
 {
 	var reqURL = "index.php?module=scanning&section=map&action=addsignature&ajax=1";
-	reqURL += "&sig=" + $("#sigid").attr("value");
-	reqURL += "&type=" + $("#sigtype").attr("value");
+	reqURL += "&sig=" + $("#sigid").val();
+	reqURL += "&type=" + $("#sigtype").val();
 
-	if ($("#sigtype").attr("value") == "wh")
-		reqURL += "&typeid=" + $("#whtype").attr("value");
+	if ($("#sigtype").val() == "wh")
+		reqURL += "&typeid=" + $("#whtype").val();
 
-	reqURL += "&info=" + $("#siginfo").attr("value");
+	reqURL += "&info=" + $("#siginfo").val();
 
 	$("#sigid").attr("value","");
 	$("#sigtype").attr("value","");
@@ -222,9 +222,9 @@ function removeSig(id)
 
 function saveWormhole()
 {
-	var url = "&rename="+$("#renameid").attr("value");
-	url += "&name="+$("#renamename").attr("value");
-	url += "&status="+$("#whstatus").attr("value");
+	var url = "&rename="+$("#renameid").val();
+	url += "&name="+$("#renamename").val();
+	url += "&status="+$("#whstatus").val();
 	url += "&notes="+document.getElementById("notes").value;
 	url += "&nocache=1";
 	loadSignatureMap(url);
