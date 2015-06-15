@@ -279,7 +279,6 @@ class AppRoot
 	public static function doCliCommand($command)
 	{
 		\AppRoot::debug("<div style='background-color: #222222; color: #EEEEEE; padding: 1px;'>".$command."</div>");
-
 		$output = shell_exec($command);
 
 		if ($output === null)
@@ -289,13 +288,9 @@ class AppRoot
 		}
 		else
 		{
-			if ($output == null)
-				$output = "no-output";
 			\ApPRoot::debug($command.":<pre>".$output."</pre>");
 			return $output;
 		}
-
-		return true;
 	}
 
 	public static function addJavascriptFile($directory, $filename, $module=false)

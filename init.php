@@ -26,10 +26,10 @@ function autoLoader($classname)
 	if (file_exists($classFile))
 	{
 		require_once($classFile);
-		AppRoot::debug("Load Class file: ".$classFile);
+		\AppRoot::debug("Load Class file: ".$classFile);
 	}
 	else
-		AppRoot::error("Failed to load Class file: ".$classFile);
+		\AppRoot::error("Failed to load Class file: ".$classFile);
 }
 spl_autoload_register("autoLoader");
 

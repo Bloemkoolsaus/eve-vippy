@@ -1,4 +1,3 @@
-
 var mousePosX = 0;
 var mousePosY = 0;
 
@@ -164,3 +163,38 @@ function showHelp(help)
 $.fn.hasAttr = function(attrName) {
     return this.attr(attrName) !== undefined;
 };
+
+
+
+/**
+ * IGB functions
+ */
+
+ function isIGB()
+{
+    if (typeof CCPEVE === 'undefined')
+        return false;
+    else
+        return true;
+}
+
+function trustIGB(trustableURL)
+{
+    try {
+        CCPEVE.requestTrust(trustableURL);
+    } catch(err) {
+        alert("You are not in the ingame browser!");
+    }
+}
+
+function setDestination(systemID)
+{
+    try {
+        CCPEVE.setDestination(systemID);
+    } catch(err) {
+        alert("Cannot set destination!\nYou are not in the ingame browser.");
+    }
+
+    if ($("#wormholeContext").length > 0)
+        $("#wormholeContext").remove();
+}

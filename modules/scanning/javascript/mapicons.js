@@ -1,4 +1,4 @@
-var preloadedIcons = new Array();
+var preloadedIcons = [];
 
 var starIcon = createImage('images/eve/star.png');
 var pvpIcon = createImage('images/eve/skull.red.png');
@@ -9,7 +9,7 @@ var directHsIcon = createImage('images/eve/stargate.green.png');
 var cynoIcon = createImage('images/eve/cyno.png');
 var rifterIcon = createImage('images/eve/rifter.png');
 
-var factionIcons = new Array();
+var factionIcons = [];
 for (var i=500001; i<=500020; i++) {
 	factionIcons[i] = createImage('images/eve/factions/'+i+'.png');
 }
@@ -17,15 +17,11 @@ for (var i=500001; i<=500020; i++) {
 var fwIcon = createImage('images/eve/fw.png');
 var fwContestedIcon = createImage('images/eve/fw.contested.png');
 
-var scannedNot = createImage('images/default/scanned.not.png');
-var scannedRecently = createImage('images/default/scanned.recently.png');
-
-
 function createImage(file) {
 	var img = new Image();
 	img.ready = false;
 	img.onload = function () {
-		   this.ready = true;	
+		   this.ready = true;
 		};
 	img.src = file;
 	preloadedIcons.push(img);
@@ -39,12 +35,12 @@ var attemptes = 0;
 function preloading() {
 	attemptes++;
 	if (attemptes > 20) {
-		// if more then 20x attempts clear the interval so we don't have an endless loop. 
+		// if more then 20x attempts clear the interval so we don't have an endless loop.
 		clearInterval(preloader);
 	}
 	var len = preloadedIcons.length;
 	for (var i = 0; i < len; i++) {
-		if (!preloadedIcons[i].ready) return; 
+		if (!preloadedIcons[i].ready) return;
 	}
 	clearInterval(preloader);
 }
