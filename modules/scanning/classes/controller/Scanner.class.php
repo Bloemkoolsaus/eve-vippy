@@ -221,7 +221,10 @@ namespace scanning\controller
 							{
 								$connection = $sig->getWormhole()->getConnectionTo($wormhole->solarSystemID);
 								if ($connection != null)
-									$connection->delete();
+                                {
+                                    if (!$connection->isKspaceToKspace())
+                                        $connection->delete();
+                                }
 							}
 						}
 					}

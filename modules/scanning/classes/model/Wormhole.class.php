@@ -239,7 +239,7 @@ namespace scanning\model
 
 		/**
 		 * Get connection to system
-		 * @param unknown $solarSystemID
+		 * @param integer $solarSystemID
 		 * @return \scanning\model\Connection|null
 		 */
 		function getConnectionTo($solarSystemID)

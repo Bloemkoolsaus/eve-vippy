@@ -494,6 +494,20 @@ namespace scanning\model
 				return $this->getToWormholeType();
 		}
 
+        /**
+         * Is kspace to kspace
+         * @return bool
+         */
+        function isKspaceToKspace()
+        {
+            if ($this->getFromSystem()->isKSpace())
+            {
+                if ($this->getToSystem()->isKSpace())
+                    return true;
+            }
+            return false;
+        }
+
 
 
 

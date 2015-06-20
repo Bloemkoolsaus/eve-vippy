@@ -100,8 +100,6 @@ namespace scanning
 					}
 					else if ($action == "sigmap")
 					{
-						$scannerController = new \scanning\controller\Scanner();
-
 						if (\Tools::REQUEST("setpermanent"))
 						{
 							$systemID = \scanning\Wormhole::getWormholeIdBySystem(\Tools::REQUEST("setpermanent"), \User::getSelectedChain());
