@@ -836,10 +836,12 @@ namespace users\model
 			\AppRoot::debug("getAuthorizedCharacters()");
 
 			// Check cache
+            $characters = array();
 			$cacheFilename = $this->getCacheDirectory()."authchars.json";
 			if ($cache = \AppRoot::getCache($cacheFilename))
-				$characters = json_decode($cache);
-			else
+                $characters = json_decode($cache);
+
+            if (count($characters) == 0)
 			{
 				$characters = array();
 				foreach ($this->getCharacters() as $character)
