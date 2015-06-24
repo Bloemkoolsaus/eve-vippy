@@ -164,6 +164,9 @@ namespace eve\model
 								break;
 							}
 						}
+
+                        if (!$this->isAuthorized)
+                            \AppRoot::debug("<span styl'color:red;'>not in an allowed group</span>");
 					}
 					else
 						\AppRoot::debug("<span styl'color:red;'>api ".$this->getApiKey()->id." key not valid</span>");
