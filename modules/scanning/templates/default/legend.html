@@ -3,25 +3,25 @@
 		<div style="float: left; width: 40%;">
 			<h3><u>Adding a wormhole signature</u></h3>
 			<div style="padding: 5px;">
-				If you add a WH signature, VIPPY can create a temporary unmapped wormhole. 
+				If you add a WH signature, VIPPY can create a temporary unmapped wormhole.
 				You have to decide on a name for the new wormhole, and put that name in the `info` column of the signature.
 			</div>
 			<div style="padding: 5px;">
-				If the name of the temporary wormhole is correct, as soon as a system is mapped that gets the name of a temp one, 
+				If the name of the temporary wormhole is correct, as soon as a system is mapped that gets the name of a temp one,
 				the temporary system will be replaced by the new mapped one.
 			</div>
 			<div style="padding: 5px;">
 				<b><u>The naming works as follows:</u></b>
 				<div style="padding: 5px;">
 					&nbsp; &nbsp; <i>FROM-TO other info</i>
-				</div>			
+				</div>
 			</div>
 			<div style="padding: 5px;">
-				The name of the new system will be grabbed out of the FROM-TO part. Always use FROM dash TO.			
-			</div>					
+				The name of the new system will be grabbed out of the FROM-TO part. Always use FROM dash TO.
+			</div>
 			<div style="padding: 5px;">
-				Any words after the FROM-TO will not be included in the new name of the temporary wormhole.			
-			</div>					
+				Any words after the FROM-TO will not be included in the new name of the temporary wormhole.
+			</div>
 			<div style="padding: 5px;">
 				However, certain keywords are defined:
 				<div style="padding: 5px;">
@@ -47,6 +47,10 @@
 					<td><img src="images/default/wspace.link.crit.png" /></td>
 					<td>This wormhole has had its stability critically disrupted by the mass of numerous ships passing through and is on the verge of collapse.</td>
 				</tr>
+                <tr>
+                    <td><img src="images/default/gate.link.png" /></td>
+                    <td>These systems are not connected via wormholes but through normal jump gates.</td>
+                </tr>
 				<tr>
 					<td><img src="images/default/wspace.link.eol.png" /></td>
 					<td>This wormhole is reaching the end of its natural lifetime.</td>
@@ -63,24 +67,9 @@
 					<td><img src="images/default/kspace.link.png" /></td>
 					<td>This wormhole links 2 kspace systems. The number indicates the amount of regular gate jumps.</td>
 				</tr>
-				<tr>
-					<td><img src="images/default/gate.link.png" /></td>
-					<td>These systems are not connected via wormholes but through normal jump gates.</td>
-				</tr>
 			</table>
 			<br />
 			<table>
-				<tr>
-					<td><img src="images/default/scanned.not.png" /></td>
-					<td>This system was not, or partially scanned.</td>
-				</tr>
-				<tr>
-					<td><img src="images/default/scanned.recently.png" /></td>
-					<td>This system was marked fully scanned, but over 2 hours ago.</td>
-				</tr>
-				<tr>
-					<td><br /></td>
-				</tr>
 				<tr>
 					<td><img src="images/eve/star.png" /></td>
 					<td>I currently have a pilot in this system.</td>
@@ -95,19 +84,25 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><i>Please note that kill information comes from the eve api server, and can only be refreshed once every hour!!</i></td>
+					<td>
+                        <u>Please note:</u>
+                        <ul style="margin: 0px;">
+                            <li>CCP has made kill information unavailable for wormhole systems</li>
+                            <li>Kill information is refreshed once every hour (api limit)</li>
+                        </ul>
+                    </td>
 				</tr>
 				<tr>
 					<td><br /></td>
 				</tr>
-				<tr>
-					<td><img src="images/eve/station.png" /></td>
-					<td>This system has 1 or more stations.</td>
-				</tr>
-				<tr>
-					<td><img src="images/eve/station.png" /></td>
-					<td>This system has 1 or more stations.</td>
-				</tr>
+                <tr>
+                    <td><img src="images/eve/station.png" /></td>
+                    <td>This system has 1 or more stations.</td>
+                </tr>
+                <tr>
+                    <td><img src="images/eve/cyno.png" /></td>
+                    <td>You have a registered capital ship in jump range of this system.</td>
+                </tr>
 				<tr>
 					<td><img src="images/eve/stargate.red.png" /></td>
 					<td>This system is on a high-sec island!</td>

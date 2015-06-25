@@ -22,7 +22,7 @@
 	<form method="post" action="" name="formEditChain">
 	<div style="float: left; width: 40%;">
 		<input type="hidden" name="store" value="1"/>
-		<input type="hidden" id="chainid" name="id" value="{$chain->id}" />			
+		<input type="hidden" id="chainid" name="id" value="{$chain->id}" />
 		<div class="form">
 			<label class="field">Chain Name:</label>
 			<input type="text" name="name" value="{$chain->name}" />
@@ -48,16 +48,21 @@
 				<option value="1" {if $chain->autoNameNewWormholes == '1'}selected{/if}>Letters</option>
 				<option value="2" {if $chain->autoNameNewWormholes == '2'}selected{/if}>Numbers</option>
 			</select>
-	{else}		
+	{else}
 			<input type="checkbox" name="autonamewhs" {if $chain->autoNameNewWormholes}checked{/if} />
 	{/if}
 			Auto-name Wormholes
 		</div>
-		<div class="form">
-			<label class="field">&nbsp;</label>
-			<input type="checkbox" name="dironly" {if $chain->directorsOnly}checked{/if} />
-			CEO / Directors only
-		</div>
+        <div class="form">
+            <label class="field">&nbsp;</label>
+            <input type="checkbox" name="dironly" {if $chain->directorsOnly}checked{/if} />
+            CEO / Directors only
+        </div>
+        <div class="form">
+            <label class="field">&nbsp;</label>
+            <input type="checkbox" name="countinstats" {if $chain->countInStats}checked{/if} />
+            Count in statistics / leaderboard
+        </div>
 {/if}
 		<div class="form" style="text-align: right; margin-top: 30px;">
 			<div style="padding-right: 50px;">

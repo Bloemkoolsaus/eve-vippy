@@ -56,21 +56,24 @@ namespace scanning\model
 		{
 			// Is gewijzigd?
 			$countInStats = false;
-			if ($this->id > 0)
-			{
-				if (strlen(trim($this->sigType)) > 0)
-				{
-					$oldsig = new \scanning\model\Signature($this->id);
-					if ($oldsig->sigType != $this->sigType)
-						$countInStats = true;
-				}
-			}
-			else
-			{
-				// Het is een nieuwe
-				if (strlen(trim($this->sigType)) > 0)
-					$countInStats = true;
-			}
+            if (\scanning\model\Chain::getCurrentChain()->countInStats)
+            {
+                if ($this->id > 0)
+                {
+                    if (strlen(trim($this->sigType)) > 0)
+                    {
+                        $oldsig = new \scanning\model\Signature($this->id);
+                        if ($oldsig->sigType != $this->sigType)
+                            $countInStats = true;
+                    }
+                }
+                else
+                {
+                    // Het is een nieuwe
+                    if (strlen(trim($this->sigType)) > 0)
+                        $countInStats = true;
+                }
+            }
 
 			if ($this->scandate == null)
 			{
@@ -82,10 +85,7 @@ namespace scanning\model
 			$this->updateBy = \User::getUSER()->id;
 
 			if ($this->authGroupID == null)
-			{
-				$currentChain = new \scanning\model\Chain(\User::getSelectedChain());
-				$this->authGroupID = $currentChain->authgroupID;
-			}
+				$this->authGroupID = \scanning\model\Chain::getCurrentChain()->authgroupID;
 
 			$data = array(	"solarsystemid"	=> $this->solarSystemID,
 							"authgroupid"	=> $this->authGroupID,

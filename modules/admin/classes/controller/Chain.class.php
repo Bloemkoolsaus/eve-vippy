@@ -93,6 +93,7 @@ namespace admin\controller
 				$chain->homesystemID = $solarSystem->id;
 				$chain->systemName = (\Tools::POST("homesystemname"))?\Tools::POST("homesystemname"):$solarSystem->name;
 				$chain->prio = \Tools::POST("sortorder");
+                $chain->countInStats = \Tools::POST("countinstats");
 
 				if ($chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0)
 					$chain->autoNameNewWormholes = \Tools::POST("autonamewhs");
