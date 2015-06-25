@@ -72,7 +72,7 @@ function generateMap(data)
 
 	layer = new Kinetic.Layer();
 	generateConnections(data.connections);
-	generateSystems(data.wormholes);	
+	generateSystems(data.wormholes);
 
 	resizeMap();
 	$(window).resize(function() {
@@ -87,17 +87,17 @@ function resizeMap()
 {
 	var stageWidth = maxWidth;
 	var stageHeight = maxHeight;
-	
+
 	if (stageWidth < (totalWidth + 100))
 		stageWidth = totalWidth + 100;
-	
+
 	if (stageHeight < totalHeight)
 		stageHeight = totalHeight + 20;
 
 	stage.setSize(stageWidth, stageHeight);
 	$("#signatureMap").width(stageWidth);
 	$("#signatureMapContainer").width(stageWidth);
-	
+
 	if ($(window).width() > stageWidth)
 	{
 		var left = Math.round(($(window).width() - stageWidth) / 2);
@@ -120,13 +120,13 @@ function generateConnections(data)
 	{
 		var connectionColor = "#338844";
 
-		if (data[i].attributes.kspacejumps != null)
-			connectionColor = (data[i].attributes.normalgates != null) ? "#0088FF" : "#CCCCCC";
-		else 
-		{
-			if (data[i].attributes.mass != null)
-				connectionColor = (data[i].attributes.mass == 1) ? "#FFAA22" : "#BB2222";
-		}
+        // Mass reduced of crit
+        if (data[i].attributes.mass != null)
+            connectionColor = (data[i].attributes.mass == 1) ? "#FFAA22" : "#BB2222";
+
+        // Normal gate connectie
+        if (data[i].attributes.normalgates != null)
+            connectionColor = "#0088FF";
 
 		var connGroup = new Kinetic.Group();
 		var outlineColor = connectionColor;
@@ -159,7 +159,7 @@ function generateConnections(data)
 			lineCap: "butt",
 			lineJoin: "butt",
 			detectionType: "pixel"
-		}); 
+		});
 		var connectionBorder = new Kinetic.Line({
 			points: [x1,y1,x2,y2],
 			stroke: connectionColor,
@@ -174,72 +174,83 @@ function generateConnections(data)
 		var connectionJumps = null;
 		var connectionJumpsTxt = null;
 		var connectionJumpsImg = null;
-		
-		if (data[i].attributes.kspacejumps != null || 
-			data[i].attributes.frigate != null || 
+
+		if (data[i].attributes.kspacejumps != null ||
+			data[i].attributes.frigate != null ||
 			data[i].attributes.capital != null)
 		{
 			// Positie voor plaatje
 			var jTxtPosX = jPosX-6;
 			var jTxtPosY = jPosY-4;
-			
+
 			if (data[i].attributes.kspacejumps == null)
 				jTxtPosX += 3;
 
 			if (data[i].attributes.frigate > 0)
 			{
-				connectionJumps = new Kinetic.Circle({
-					x: jPosX,
-					y: jPosY,
-					radius: 14,
-					fill: '#000000',
-			        stroke: outlineColor,
-			        strokeWidth: 2
-				});
-				connectionJumpsImg = new Kinetic.Image({
-					x: jTxtPosX-12,
-					y: jTxtPosY-3,
-					image: rifterIcon,
-					width: 32,
-					height: 16
-				});
+                if (data[i].attributes.normalgates == null)
+                {
+                    connectionJumps = new Kinetic.Circle({
+                        x: jPosX,
+                        y: jPosY,
+                        radius: 14,
+                        fill: '#000000',
+                        stroke: outlineColor,
+                        strokeWidth: 2
+                    });
+                    connectionJumpsImg = new Kinetic.Image({
+                        x: jTxtPosX - 12,
+                        y: jTxtPosY - 3,
+                        image: rifterIcon,
+                        width: 32,
+                        height: 16
+                    });
+                }
 			}
 			else if (data[i].attributes.capital > 0)
 			{
-				connectionJumps = new Kinetic.Circle({
-					x: jPosX,
-					y: jPosY,
-					radius: 7,
-					fill: '#000000',
-			        stroke: outlineColor,
-			        strokeWidth: 1
-				});
-				connectionJumpsImg = new Kinetic.Image({
-					x: jTxtPosX-3,
-					y: jTxtPosY-1,
-					image: cynoIcon,
-					width: 12,
-					height: 12
-				});
+                if (data[i].attributes.normalgates == null)
+                {
+                    connectionJumps = new Kinetic.Circle({
+                        x: jPosX,
+                        y: jPosY,
+                        radius: 7,
+                        fill: '#000000',
+                        stroke: outlineColor,
+                        strokeWidth: 1
+                    });
+                    connectionJumpsImg = new Kinetic.Image({
+                        x: jTxtPosX - 3,
+                        y: jTxtPosY - 1,
+                        image: cynoIcon,
+                        width: 12,
+                        height: 12
+                    });
+                }
 			}
 			else
 			{
-				connectionJumps = new Kinetic.Circle({
-					x: jPosX,
-					y: jPosY,
-					radius: 10,
-					fill: '#DDDDDD',
-			        stroke: '#CCCCCC',
-			        strokeWidth: 2
-				});
-				connectionJumpsTxt = new Kinetic.Text({
-					x: jTxtPosX,
-					y: jTxtPosY,
-		            text: data[i].attributes.kspacejumps,
-		            fontSize: 8,
-		            fontFamily: "Calibri",
-		            textFill: "#555555"
-		        });
+                if (data[i].attributes.kspacejumps > 1)
+                {
+                    connectionJumps = new Kinetic.Circle({
+                        x: jPosX,
+                        y: jPosY,
+                        radius: 9,
+                        fill: '#DDDDDD',
+                        stroke: connectionColor,
+                        strokeWidth: 1
+                    });
+                    if (data[i].attributes.kspacejumps < 10)
+                        jTxtPosX += 3;
+                    connectionJumpsTxt = new Kinetic.Text({
+                        x: jTxtPosX,
+                        y: jTxtPosY,
+                        text: data[i].attributes.kspacejumps,
+                        fontSize: 8,
+                        fontFamily: "Calibri",
+                        textFill: "#222222"
+                    });
+                }
 			}
 		}
 
@@ -263,7 +274,7 @@ function generateConnections(data)
 
 		var diffy = y1-y3;
 		if (diffy < 0)
-			diffy = diffy*-1;		
+			diffy = diffy*-1;
 		if (diffy < 100) {
 			y1 += 10;
 			y3 += 10;
@@ -283,7 +294,7 @@ function generateConnections(data)
 			stroke: "transparent",
 			strokeWidth: 1,
 			listening: true,
-			name: data[i].from.system+","+data[i].to.system,
+			name: data[i].from.system+","+data[i].to.system
 		});
 
 		connectionBox.on("mouseover", function() {
@@ -307,7 +318,7 @@ function generateConnections(data)
 		{
 			connGroup.add(connectionJumps);
 			if (connectionJumpsTxt !== null)
-				connGroup.add(connectionJumpsTxt);			
+				connGroup.add(connectionJumpsTxt);
 			if (connectionJumpsImg !== null)
 				connGroup.add(connectionJumpsImg);
 		}
@@ -318,7 +329,7 @@ function generateConnections(data)
 }
 
 function generateSystems(data)
-{	
+{
 	var i = 0;
 	for (i=0; i<data.length; i++)
 	{
@@ -334,28 +345,28 @@ function generateSystems(data)
     	var whHeight = whDefaultHeight;
     	var homeSystem = false;
         var startContentWidth = 5;
-    	
-    	if (data[i].solarsystem != null) 
+
+    	if (data[i].solarsystem != null)
     	{
-	    	if (data[i].solarsystem.class.name == "WH") 
+	    	if (data[i].solarsystem.class.name == "WH")
 	    	{
 	    		whClass = data[i].whsystem.class;
 	    		whColor = data[i].solarsystem.class.color;
 
 				if (data[i].statics != null)
-			    	whHeight += (lineHeight * data[i].statics.length-1);	// reserveer ruimte voor static(s) 
+			    	whHeight += (lineHeight * data[i].statics.length-1);	// reserveer ruimte voor static(s)
 
 	    		if (data[i].whsystem.effect != null)
 	        		whHeight += lineHeight;									// reserveer ruimte voor effect
-	    	} 
-	    	else 
+	    	}
+	    	else
 	    	{
 	    		whClass = data[i].solarsystem.class.name;
 	    		whColor = data[i].solarsystem.class.color;
         		whHeight += lineHeight;										// reserveer ruimte voor region-name
-	    	}	    	
+	    	}
     	}
-    	
+
     	if (data[i].whsystem != null && data[i].whsystem.homesystem != null)
     		homeSystem = data[i].whsystem.homesystem;
 
@@ -366,8 +377,8 @@ function generateSystems(data)
 			whHeight += (lineHeight * charLength);
 		}
     	whHeight += 5;
-   	
-    	
+
+
     	if (data[i].known != null) {
 			if (data[i].known.type > 2) {
 				whTextBold = true;
@@ -479,7 +490,7 @@ function generateSystems(data)
 		{
 			if (data[i].solarsystem != null && data[i].solarsystem.class.name == "WH")
 			{
-				// Wspace-system				
+				// Wspace-system
 		        if (data[i].fullyscanned == null)
 		        {
 		        	wormholeUnscannedBar = new Kinetic.Rect({
@@ -488,8 +499,8 @@ function generateSystems(data)
 						width: 17,
 						height: whHeight-17,
 						fill: "#AAAAAA"
-					});	
-		        	startContentWidth = 20;	        	
+					});
+		        	startContentWidth = 20;
 		        }
 		        else if (data[i].fullyscanned >= 1)
 		        {
@@ -499,7 +510,7 @@ function generateSystems(data)
 						width: 17,
 						height: whHeight-(Math.round(whHeight/3)*2)-2,
 						fill: "#AAAAAA"
-					});	
+					});
 		        	startContentWidth = 20;
 		        }
 			}
@@ -523,7 +534,7 @@ function generateSystems(data)
 						height: whHeight-27,
 						fill: "#AAAAAA"
 					});
-		        } 
+		        }
 		        else if (data[i].fullyscanned >= 1)
 		        {
 		        	wormholeUnscannedBar = new Kinetic.Rect({
@@ -534,7 +545,7 @@ function generateSystems(data)
 						fill: "#AAAAAA"
 					});
 		        }
-		        
+
 				whColor = "#FFFFFF";
 	        	startContentWidth = 20;
 			}
@@ -575,7 +586,7 @@ function generateSystems(data)
 	        	loadSignatureMap("&move="+this.getName()+"&x="+newX+"&y="+newY);
         	}
         });
-        
+
         if (data[i].solarsystem != null)
         {
 	        wormhole.on("mouseover", function() {
@@ -612,8 +623,8 @@ function generateSystems(data)
         	wormhole.add(wormholeUnscannedBar);
         wormhole.add(wormholeClass);
         wormhole.add(wormholeSystem);
-        
-                
+
+
 
         // Extra text toevoegen..?
 		if (mapZoom > 80)
@@ -629,10 +640,10 @@ function generateSystems(data)
 				{
 					var titleName = data[i].whsystem.titles[t].name;
 					var titleColor = "#444444";
-					
+
 					if (data[i].whsystem.titles[t].color != null)
 						titleColor = data[i].whsystem.titles[t].color;
-	
+
 					var systemTitle = new Kinetic.Text({
 			            x: 20,
 			            y: extraTxtHeight+1,
@@ -648,13 +659,13 @@ function generateSystems(data)
 				}
 			}
 
-			
+
 			var extraText = false;
-			
-			// Tradhubs			
+
+			// Tradhubs
 			if (data[i].tradehub != null && data[i].tradehub.jumps != null)
 				extraText = data[i].tradehub.jumps + " jumps to " + data[i].tradehub.name;
-			
+
 			// WH-effects
 			if (data[i].whsystem.effect != null)
 				extraText = data[i].whsystem.effect;
@@ -672,7 +683,7 @@ function generateSystems(data)
 				});
 				wormhole.add(whExtraText);
 				extraTxtHeight += lineHeight;
-			}			
+			}
 
 			// Statics van dit gat.
 			var j = 0;
@@ -680,7 +691,7 @@ function generateSystems(data)
 
 			if (data[i].whsystem.statics != null)
 			{
-				for (j=1; j<=data[i].whsystem.statics.length; j++) 
+				for (j=1; j<=data[i].whsystem.statics.length; j++)
 				{
 					var wormholeStatic = new Kinetic.Text({
 						x: 65,
@@ -694,7 +705,7 @@ function generateSystems(data)
 					wormhole.add(wormholeStatic);
 				}
 			}
-				
+
 
 			// Piloten in dat systeem.
 			if (data[i].characters != null)
@@ -704,7 +715,7 @@ function generateSystems(data)
 					nrOfCharLines = 5;
 
 				var j = 0;
-				for (j=1; j<=nrOfCharLines; j++) 
+				for (j=1; j<=nrOfCharLines; j++)
 				{
 					var characterName = data[i].characters[j-1].name;
 					if (j == 5 && data[i].characters.length > 5)
@@ -724,7 +735,7 @@ function generateSystems(data)
 			}
 
 			var xtraIconX = startContentWidth;
-			
+
 			// Heb ik een toon in dit systeem?
 			if (data[i].insystem != null && data[i].insystem > 0)
 			{
@@ -756,7 +767,7 @@ function generateSystems(data)
 					}
 				}
 
-				// Station system?			
+				// Station system?
 				if (data[i].attributes.stations != null)
 				{
 					var img = new Kinetic.Image({
@@ -769,7 +780,7 @@ function generateSystems(data)
 					wormhole.add(img);
 					xtraIconX += 12;
 				}
-				
+
 				// Caps in range?
 				if (data[i].attributes.cyno != null)
 				{
@@ -781,9 +792,9 @@ function generateSystems(data)
 						height: 12
 					});
 					wormhole.add(img);
-					xtraIconX += 12;			
+					xtraIconX += 12;
 				}
-				
+
 				// HS-Island?
 				if (data[i].attributes.hsisland != null)
 				{
@@ -797,7 +808,7 @@ function generateSystems(data)
 					wormhole.add(img);
 					xtraIconX += 14;
 				}
-				
+
 				// Direct-HS
 				if (data[i].attributes.direcths != null)
 				{
@@ -811,8 +822,8 @@ function generateSystems(data)
 					wormhole.add(img);
 					xtraIconX += 14;
 				}
-				
-				
+
+
 				// Contested / faction warfare
 				if (data[i].attributes.contested != null)
 				{
@@ -842,7 +853,7 @@ function generateSystems(data)
 
 
 			if (whClass != "HS" && data[i].kills != null)
-			{				
+			{
 				// Recente pvp kills
 				if (data[i].kills.pvp > 0)
 				{
@@ -875,7 +886,7 @@ function generateSystems(data)
         wormholeFade.add(wormholeBoxFade);
         wormholeFade.add(wormholeClassFade);
         wormholeFade.add(wormholeSystemFade);
-        
+
         layer.add(wormholeFade);
         layer.add(wormhole);
 	}
@@ -936,7 +947,7 @@ function openWormholeDetails(system,x,y)
 	var posLeft = x + whDefaultWidth + $("#signatureMap").position().left;
 	var posTop = y + $("#signatureMap").position().top - 20;
 
-	if (($(window).width()-posLeft) < 380) 
+	if (($(window).width()-posLeft) < 380)
 	{
 		posLeft = posLeft - whDefaultWidth - 400;
 		className += "right";
@@ -962,7 +973,7 @@ function openWormholeDetails(system,x,y)
 function closeWormholeDetails(system)
 {
 	$("#whInfo"+system).remove();
-	popupActive = true;		
+	popupActive = true;
 	loadingSigMap = false;
 	blockMapRefresh = false;
 }
@@ -1031,7 +1042,7 @@ function openConnectionDetails(who, x, y)
 	html += "</div>";
 
 	$("#maincontainer").append(html);
-	
+
 	if (className == "right")
 		posLeft = posLeft - 20 - $("#"+popupID).width();
 
@@ -1047,7 +1058,7 @@ function closeConnectionDetails(who)
 {
 	var popupID = "connInfo"+who.replace(",","-");
 	$("#"+popupID).remove();
-	popupActive = true;		
+	popupActive = true;
 	loadingSigMap = false;
 	blockMapRefresh = false;
 }
@@ -1057,7 +1068,7 @@ function fetchConnectionInfo(who)
 		url: "index.php?module=scanning&section=getconndetails&ajax=1&connection="+who,
 		success: function(data) {
 			$("#conndetailsinfo").html(data);
-			$("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");			
+			$("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
 			// Jumplog halen
 			$.ajax({
 				url: "index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
