@@ -13,6 +13,7 @@ namespace scanning\model
 		public $autoNameNewWormholes = true;
 		public $deleted = false;
 		public $lastActive;
+        public $countInStats = false;
 
 		private $alliances = null;
 		private $corporations = null;
@@ -70,7 +71,8 @@ namespace scanning\model
 				$this->systemName = $result["homesystemname"];
 				$this->autoNameNewWormholes = $result["autoname_whs"];
 				$this->prio = $result["prio"];
-				$this->deleted = ($result["deleted"]>0)?true:false;
+                $this->deleted = ($result["deleted"]>0)?true:false;
+                $this->countInStats = ($result["countinstats"]>0)?true:false;
 				$this->lastActive = $result["lastmapupdatedate"];
 			}
 		}
@@ -92,7 +94,8 @@ namespace scanning\model
 							"homesystemname"=> $this->systemName,
 							"autoname_whs"	=> $this->autoNameNewWormholes,
 							"prio"			=> $this->prio,
-							"deleted"		=> ($this->deleted)?1:0);
+                            "deleted"		=> ($this->deleted)?1:0,
+							"countinstats"	=> ($this->countInStats)?1:0);
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
