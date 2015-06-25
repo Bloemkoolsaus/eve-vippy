@@ -218,6 +218,16 @@ namespace scanning\model
 			return false;
 		}
 
+        function isPermenant()
+        {
+            if ($this->permanent)
+                return true;
+            if ($this->isHomeSystem())
+                return true;
+
+            return false;
+        }
+
 		function showContextMenu()
 		{
 			$tpl = \SmartyTools::getSmarty();

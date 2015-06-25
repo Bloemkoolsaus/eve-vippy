@@ -871,9 +871,11 @@ namespace scanning\model
 													"name"	=> $this->name));
 			\User::getUSER()->addLog("delete-wormhole", $this->id, $extrainfo);
 
-			\MySQL::getDB()->delete("mapwormholes", array("chainid" => $this->id, "permanent" => 0));
-			\MySQL::getDB()->delete("mapwormholeconnections", array("chainid" => $this->id));
-			$this->addHomeSystemToMap(false);
+            foreach (\scanning\model\Wormhole::getWormholesByChain($this->id) as $wormhole)
+            {
+                if (!$wormhole->isPermenant())
+                    $wormhole->delete();
+            }
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();
