@@ -380,10 +380,10 @@ namespace scanning\controller
 					$data["attributes"] = array();
 					if ($result["kspacejumps"] != 0)
 						$data["attributes"]["kspacejumps"] = $result["kspacejumps"];
+                    else if ($result["allowcapitals"] > 0)
+                        $data["attributes"]["capital"] = true;
 					if ($result["frigatehole"] > 0)
 						$data["attributes"]["frigate"] = true;
-					if ($result["allowcapitals"] > 0)
-						$data["attributes"]["capital"] = true;
 					if ($result["eol"] > 0)
 						$data["attributes"]["eol"] = true;
 					if ($result["mass"] > 0)
