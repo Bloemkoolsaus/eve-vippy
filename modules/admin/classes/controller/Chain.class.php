@@ -26,21 +26,38 @@ namespace admin\controller
 					$chains[] = $chain;
 			}
 
+            // Chains toevoegen die GEEN alliances/corporations hebben.
+            if ($results = \MySQL::getDB()->getRows("SELECT *
+                                                    FROM    mapwormholechains
+                                                    WHERE   authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
+                                                    AND     id NOT IN (select chainid from mapwormholechains_alliances)
+                                                    AND     id NOT IN (select chainid from mapwormholechains_corporations)"))
+            {
+                foreach ($results as $result)
+                {
+                    $chain = new \scanning\model\Chain();
+                    $chain->load($result);
+                    $chains[] = $chain;
+                }
+            }
+
+
+
 			if (\User::getUSER()->getIsSysAdmin())
 			{
-				if ($results = \MySQL::getDB()->getRows("SELECT *
+                if ($results = \MySQL::getDB()->getRows("SELECT *
 														FROM 	mapwormholechains
 														WHERE 	deleted = 0
 														AND 	id NOT IN (".implode(",", \User::getUSER()->getAvailibleChainIDs()).")
 														ORDER BY authgroupid, prio, id, name ASC"))
-				{
-					foreach ($results as $result)
-					{
-						$chain = new \scanning\model\Chain();
-						$chain->load($result);
-						$adminChains[] = $chain;
-					}
-				}
+                {
+                    foreach ($results as $result)
+                    {
+                        $chain = new \scanning\model\Chain();
+                        $chain->load($result);
+                        $adminChains[] = $chain;
+                    }
+                }
 			}
 
 
@@ -129,18 +146,24 @@ namespace admin\controller
 
 			if (\Tools::REQUEST("action") == "new" && !\Tools::POST("id"))
 			{
-				if ($corpid = \User::getUSER()->getMainCorporationID())
-					$corporations = "[".$corpid."]";
+                foreach (\User::getUSER()->getAuthGroups() as $authgroup) {
+                    $chain->authgroupID = $authgroup->id;
+                    break;
+                }
+                foreach ($chain->getAuthGroup()->getCorporations() as $corp) {
+                    $chain->addCorporation($corp->id);
+                }
+                foreach ($chain->getAuthGroup()->getAlliances() as $alliance) {
+                    $chain->addAlliance($alliance->id);
+                }
 			}
-			else
-			{
-				foreach ($chain->getCorporations() as $corporation) {
-					$corporations .= "[".$corporation->id."],";
-				}
-				foreach ($chain->getAlliances() as $alliance) {
-					$alliances .= "[".$alliance->id."],";
-				}
-			}
+
+            foreach ($chain->getCorporations() as $corporation) {
+                $corporations .= "[".$corporation->id."],";
+            }
+            foreach ($chain->getAlliances() as $alliance) {
+                $alliances .= "[".$alliance->id."],";
+            }
 
 			$authGroups = array();
 
