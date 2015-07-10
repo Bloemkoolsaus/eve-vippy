@@ -1,3 +1,11 @@
+<h3>July 10rd, 2015</h3>
+<b><u>VIPPY</u></b>
+ - Updated to Aegis data export.
+
+
+
+
+
 <h3>June 3rd, 2015</h3>
 <b><u>VIPPY</u></b>
  - Updated to Carnyx data export.
