@@ -5,7 +5,7 @@ require_once("init.php");
 $db = new \MySQL(array(	"host" => "localhost",
 						"user" => "root",
 						"pass" => "root",
-						"dtbs" => "eve_db"));
+						"dtbs" => "eve_db_aegis"));
 $db->convertToLowerCase();
 
 echo "<p>Done</p>";

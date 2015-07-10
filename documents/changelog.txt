@@ -1,4 +1,4 @@
-<h3>July 10rd, 2015</h3>
+<h3>July 10th, 2015</h3>
 <b><u>VIPPY</u></b>
  - Updated to Aegis data export.
 
