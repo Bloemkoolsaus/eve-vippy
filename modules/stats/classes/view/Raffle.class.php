@@ -54,7 +54,7 @@ namespace stats\view
 			if (!$future)
 			{
 				$cacheFile = "statistics/scanning/raffle/tickets.".date("Y-m",strtotime($date));
-				if (!$tickets = \AppRoot::getCache($cacheFile))
+				if (!$tickets = \Cache::file()->get($cacheFile))
 				{
 					$tickets = array();
 					if ($results = \MySQL::getDB()->getRows("SELECT	u.*
@@ -74,7 +74,7 @@ namespace stats\view
 						}
 					}
 					$tickets = json_encode($tickets);
-					\AppRoot::setCache($cacheFile, $tickets);
+                    \Cache::file()->set($cacheFile, $tickets);
 				}
 			}
 
@@ -90,7 +90,7 @@ namespace stats\view
 		function rollTicket()
 		{
 			$cacheFile = "statistics/scanning/raffle/tickets.".date("Y-m",strtotime(\Tools::REQUEST("date")));
-			if (!$tickets = \AppRoot::getCache($cacheFile))
+			if (!$tickets = \Cache::file()->get($cacheFile))
 				return "<span style='color:red;'>unkown</span>";
 
 			$tickets = json_decode($tickets,true);

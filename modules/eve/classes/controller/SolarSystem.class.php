@@ -162,7 +162,7 @@ namespace eve\controller
 			\AppRoot::debug("getTradeHubs()");
 
 			$hubs = array();
-			if ($cache = \AppRoot::getCache("tradehubs/hubs.json"))
+			if ($cache = \Cache::file()->get("tradehubs/hubs.json"))
 				$hubs = json_decode($cache,true);
 			else
 			{
@@ -172,7 +172,7 @@ namespace eve\controller
 						$hubs[] = $result["solarsystemid"];
 					}
 				}
-				\AppRoot::setCache("tradehubs/hubs.json", json_encode($hubs));
+                \Cache::file()->set("tradehubs/hubs.json", json_encode($hubs));
 			}
 
 			return $hubs;

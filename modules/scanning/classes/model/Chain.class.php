@@ -32,15 +32,19 @@ namespace scanning\model
 			}
 		}
 
-		private function getCacheDirectory()
+		private function getCacheDirectory($full=false)
 		{
-			return "mapchain/".$this->id."/";
+            $directory = "mapchain/".$this->id."/";
+            if ($full)
+                $directory = \Cache::file()->getDirectory().$directory;
+
+            return $directory;
 		}
 
 		function resetCache()
 		{
 			\AppRoot::debug("Chain ".$this->name." (".$this->getHomeSystem()->name.")->resetCache()");
-			\Tools::deleteDir($this->getCacheDirectory());
+			\Tools::deleteDir($this->getCacheDirectory(true));
 		}
 
 		function load($result=false)
@@ -50,14 +54,14 @@ namespace scanning\model
 				// Check cache
 				if (!\AppRoot::config("no-cache-chains"))
 				{
-					if ($result = \AppRoot::getCache($this->getCacheDirectory()."chaininfo.json"))
+					if ($result = \Cache::file()->get($this->getCacheDirectory()."chaininfo.json"))
 						$result = json_decode($result, true);
 				}
 
 				if (!$result)
 				{
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholechains WHERE id = ?", array($this->id));
-					\AppRoot::setCache($this->getCacheDirectory()."chaininfo.json", json_encode($result));
+                    \Cache::file()->set($this->getCacheDirectory()."chaininfo.json", json_encode($result));
 				}
 			}
 

@@ -234,12 +234,22 @@ class AppRoot
 		return self::$timeMeasures[$var]["exec"];
 	}
 
-	public static function error($message)
-	{
-		self::$errors[] = $message."\n\n".self::getStackTrace();
-		self::storeError($message);
-		self::debug("<span style='color:red;'>" . $message . "</span>");
-	}
+    public static function error($message)
+    {
+        $error = $message."\n\n".self::getStackTrace();
+
+        if (\AppRoot::doDebug())
+            echo "<pre>".print_r($error,true)."</pre>";
+
+        self::$errors[] = $error;
+        self::storeError($error);
+        self::debug("<span style='color:red;'>" . $error . "</span>");
+    }
+
+    public static function depricated($what, $message="")
+    {
+        self::error("Depricated call: ".$what."\n".$message);
+    }
 
 	public static function storeError($message)
 	{
@@ -516,61 +526,27 @@ class AppRoot
 		return self::$cacheDir;
 	}
 
-	/**
-	 * Get cache file contenst
-	 * @param string $file
-	 * @return string|boolean false
-	 */
+
+
 	public static function getCache($file)
 	{
-		$file = self::getCacheDirectory().$file;
-		\AppRoot::debug("getCache: ".$file);
-
-		if (file_exists($file))
-            return file_get_contents($file);
-		else
-        {
-            \AppRoot::debug("Cache does nog exists");
-            return false;
-        }
+        \AppRoot::depricated("getCache()", $file);
+        return \Cache::file()->get($file);
 	}
 
-	/**
-	 * Set cache file contents
-	 * @param string $file
-	 * @param string $cache
-	 */
 	public static function setCache($file, $cache)
 	{
-		\ApPRoot::debug("setCache: ".$file);
-		$file = self::getCacheDirectory().$file;
-		$dirParts = explode("/",$file);
-		$filename = array_pop($dirParts);
-		$dirname = "";
-		foreach ($dirParts as $part) {
-			if (strlen(trim($part)) > 0) {
-				$dirname .= $part."/";
-				if (!file_exists($dirname))
-					mkdir($dirname,0777);
-			}
-		}
-
-		$handle = fopen($dirname.$filename,"w");
-		fwrite($handle, $cache);
-		fclose($handle);
+        \AppRoot::depricated("setCache()", $file);
+        return \Cache::file()->get($file, $cache);
 	}
 
-	/**
-	 * Remove cache file
-	 * @param string $file
-	 */
 	public static function removeCache($file)
 	{
-		$file = self::getCacheDirectory().$file;
-		\ApPRoot::debug("removeCache: ".$file);
-		if (file_exists($file))
-			@unlink($file);
+        \AppRoot::depricated("removeCache()", $file);
+        return \Cache::file()->get($file);
 	}
+
+
 
 	public static function getDBConfig($var)
 	{

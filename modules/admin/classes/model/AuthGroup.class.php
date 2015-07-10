@@ -32,7 +32,7 @@ namespace admin\model
 
         private function loadFromCache()
         {
-            if ($cache = \AppRoot::getCache($this->getCacheFilename()))
+            if ($cache = \Cache::file()->get($this->getCacheFilename()))
             {
                 $result = json_decode($cache, true);
                 $this->load($result);
@@ -108,7 +108,7 @@ namespace admin\model
                                             "updatedate" => $corp->updateDate);
             }
 
-            \AppRoot::setCache($this->getCacheFilename(), json_encode($data));
+            \Cache::file()->set($this->getCacheFilename(), json_encode($data));
         }
 
 		function load($result=false)
@@ -159,7 +159,7 @@ namespace admin\model
 				}
 			}
 
-            \Tools::deleteFile($this->getCacheFilename());
+            \Cache::file()->remove($this->getCacheFilename());
 		}
 
 		/**

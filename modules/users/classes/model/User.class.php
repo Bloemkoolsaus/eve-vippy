@@ -47,14 +47,21 @@ namespace users\model
 			}
 		}
 
-		/**
-		 * get cache dir
-		 * @return string|null
-		 */
-		private function getCacheDirectory()
+        /**
+         * get cache dir
+         * @param bool $full
+         * @return null|string
+         */
+		private function getCacheDirectory($full=false)
 		{
 			if ($this->id !== 0)
-				return "user/".$this->id."/";
+            {
+                $directory = "user/".$this->id."/";
+                if ($full)
+                    $directory = \Cache::file()->getDirectory().$directory;
+
+                return $directory;
+            }
 
 			return null;
 		}
@@ -62,7 +69,7 @@ namespace users\model
 		public function resetCache()
 		{
 			\AppRoot::debug($this->getFullName()."->resetCache()", true);
-			\Tools::deleteDir(\AppRoot::getCacheDirectory().$this->getCacheDirectory());
+			\Tools::deleteDir($this->getCacheDirectory());
 		}
 
 		function load($resultset=false)
@@ -72,11 +79,11 @@ namespace users\model
 				$cacheFileName = $this->getCacheDirectory()."user.json";
 
 				// Eerst in cache kijken
-				if ($cache = \AppRoot::getCache($cacheFileName))
+				if ($cache = \Cache::file()->get($cacheFileName))
 					$resultset = json_decode($cache, true);
 				else {
 					$resultset = \MySQL::getDB()->getRow("SELECT * FROM users WHERE id = ?", array($this->id));
-					\AppRoot::setCache($cacheFileName, json_encode($resultset));
+                    \Cache::file()->set($cacheFileName, json_encode($resultset));
 				}
 			}
 
@@ -327,7 +334,7 @@ namespace users\model
 			}
 
 			$cacheFilename = $this->getCacheDirectory()."rights.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
 				$this->rights = json_decode($cache,true);
 			else
 			{
@@ -345,7 +352,7 @@ namespace users\model
 				foreach ($rights as $right) {
 					$this->rights[$right["module"]][$right["name"]] = true;
 				}
-				\AppRoot::setCache($cacheFilename, json_encode($this->rights));
+                \Cache::file()->set($cacheFilename, json_encode($this->rights));
 			}
 		}
 
@@ -366,7 +373,7 @@ namespace users\model
 				$this->permissions = array();
 
 				// Check de cache
-				$cache = \AppRoot::getCache($cacheFilename);
+				$cache = \Cache::file()->get($cacheFilename);
 				if ($cache) {
 					$this->permissions = json_decode($cache,true);
 				}
@@ -375,7 +382,7 @@ namespace users\model
 			if (!isset($this->permissions[$module][$right]))
 			{
 				$this->permissions[$module][$right] = $this->calcHasRight($module, $right);
-				\AppRoot::setCache($cacheFilename, json_encode($this->permissions));
+                \Cache::file()->set($cacheFilename, json_encode($this->permissions));
 			}
 
 			return $this->permissions[$module][$right];
@@ -469,7 +476,7 @@ namespace users\model
 			$this->settings = array();
 
 			$cacheFilename = $this->getCacheDirectory()."settings.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
 				$results = json_decode($cache,true);
 			else
 			{
@@ -478,7 +485,7 @@ namespace users\model
 													    INNER JOIN user_user_settings u ON u.settingid = s.id
 													WHERE   u.userid = ?"
 										, array(\User::getUSER()->id));
-				\AppRoot::setCache($cacheFilename, json_encode($results));
+                \Cache::file()->set($cacheFilename, json_encode($results));
 			}
 
 			if ($results) {
@@ -731,7 +738,7 @@ namespace users\model
 			{
 				$this->capitalShips = array();
 				$cacheFilename = $this->getCacheDirectory()."capitals.json";
-				if ($cache = \AppRoot::getCache($cacheFilename))
+				if ($cache = \Cache::file()->get($cacheFilename))
 				{
 					foreach (json_decode($cache) as $ship)
 					{
@@ -745,7 +752,7 @@ namespace users\model
 				else
 				{
 					$this->capitalShips = \profile\model\Capital::getCapitalShipsByUser($this->id);
-					\AppRoot::setCache($cacheFilename, json_encode($this->capitalShips));
+                    \Cache::file()->set($cacheFilename, json_encode($this->capitalShips));
 				}
 			}
 
@@ -838,7 +845,7 @@ namespace users\model
 			// Check cache
             $characters = array();
 			$cacheFilename = $this->getCacheDirectory()."authchars.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
                 $characters = json_decode($cache);
 
             if (count($characters) == 0)
@@ -849,7 +856,7 @@ namespace users\model
 					if ($character->isAuthorized())
 						$characters[] = $character;
 				}
-				\AppRoot::setCache($cacheFilename, json_encode($characters));
+                \Cache::file()->set($cacheFilename, json_encode($characters));
 			}
 
 			return $characters;
@@ -935,7 +942,7 @@ namespace users\model
 
 			// Check cache
 			$cacheFilename = $this->getCacheDirectory()."authcorps.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
 			{
 				$cache = json_decode($cache, true);
 				foreach ($cache["corporations"] as $data)
@@ -981,8 +988,8 @@ namespace users\model
 						$this->authorizedAlliances[] = new \eve\model\Alliance($id);
 				}
 
-				\AppRoot::setCache($cacheFilename, json_encode(array("corporations"	=> $this->authorizedCorporations,
-																	"alliances"		=> $this->authorizedAlliances)));
+                \Cache::file()->set($cacheFilename, json_encode(array(  "corporations"	=> $this->authorizedCorporations,
+																	    "alliances"		=> $this->authorizedAlliances)));
 			}
 		}
 
@@ -1072,7 +1079,7 @@ namespace users\model
 				}
 
 				$cacheFilename = $this->getCacheDirectory()."chains.json";
-				if ($cache = \AppRoot::getCache($cacheFilename))
+				if ($cache = \Cache::file()->get($cacheFilename))
 					$results = json_decode($cache,true);
 				else
 				{
@@ -1100,7 +1107,7 @@ namespace users\model
 														GROUP BY id
 														ORDER BY prio, id"))
 					{
-						\AppRoot::setCache($cacheFilename, json_encode($results));
+                        \Cache::file()->set($cacheFilename, json_encode($results));
 					}
 				}
 
@@ -1153,7 +1160,7 @@ namespace users\model
 			if (!is_array($this->authGroupIDs) || count($this->authGroupIDs) == 0)
 			{
 				$cacheFilename = $this->getCacheDirectory()."authgroups.json";
-				if ($cache = \AppRoot::getCache($cacheFilename))
+				if ($cache = \Cache::file()->get($cacheFilename))
 					$this->authGroupIDs = json_decode($cache,true);
 				else
 				{
@@ -1174,7 +1181,7 @@ namespace users\model
 							$this->authGroupIDs[] = $result["authgroupid"];
 						}
 					}
-					\AppRoot::setCache($cacheFilename, json_encode($this->authGroupIDs));
+                    \Cache::file()->set($cacheFilename, json_encode($this->authGroupIDs));
 				}
 			}
 

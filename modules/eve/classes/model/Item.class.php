@@ -31,11 +31,11 @@ namespace eve\model
 				$cacheFileName = "items/".$this->id."/item.json";
 
 				// Eerst in cache kijken
-				if ($result = \AppRoot::getCache($cacheFileName))
+				if ($result = \Cache::file()->get($cacheFileName))
 					$result = json_decode($result, true);
 				else {
 					$result = \MySQL::getDB()->getRow("SELECT * FROM ".\eve\Module::eveDB().".invtypes WHERE typeid = ?", array($this->id));
-					\AppRoot::setCache($cacheFileName, json_encode($result));
+                    \Cache::file()->set($cacheFileName, json_encode($result));
 				}
 			}
 

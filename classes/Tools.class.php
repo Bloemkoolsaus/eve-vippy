@@ -527,8 +527,12 @@ Class Tools
 	public static function deleteFile($file)
 	{
 		\AppRoot::debug("DELETING FILE: ".$file);
-		if (file_exists($file))
-			@unlink($file);
+        if (file_exists($file))
+            unlink($file);
+
+        // Confirm file is deleted
+        if (file_exists($file))
+            \AppRoot::error("File ".$file." not deleted!!");
 	}
 
 	public static function deleteDir($dir)
@@ -537,8 +541,12 @@ Class Tools
 		if (file_exists($dir))
 		{
 			self::emptyDir($dir);
-			@rmdir($dir);
+			rmdir($dir);
 		}
+
+        // Confirm folder is deleted
+        if (file_exists($dir))
+            \AppRoot::error("Directory ".$dir." not deleted!!");
 	}
 
 	public static function emptyDir($dir)

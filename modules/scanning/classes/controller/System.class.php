@@ -76,7 +76,7 @@ namespace scanning\controller
 
 			$cacheFileName = "solarsystem/".$system->id."/wheffects.json";
 
-			if ($cache = \AppRoot::getCache($cacheFileName))
+			if ($cache = \Cache::file()->get($cacheFileName))
 				$results = json_decode($cache, true);
 			else
 			{
@@ -87,7 +87,7 @@ namespace scanning\controller
 														WHERE 	i.typename LIKE '%".$sysEffect."%'
 														AND		i.typename LIKE '%Class ".$sysClassNr."%'"))
 				{
-					\AppRoot::setCache($cacheFileName, json_encode($results));
+                    \Cache::file()->set($cacheFileName, json_encode($results));
 				}
 			}
 

@@ -41,12 +41,12 @@ namespace scanning\model
 			if (!$result)
 			{
 				$cacheFileName = "wormhole/".$this->id.".json";
-				if ($cache = \AppRoot::getCache($cacheFileName))
+				if ($cache = \Cache::file()->get($cacheFileName))
 					$result = json_decode($cache, true);
 				else
 				{
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE id = ?", array($this->id));
-					\AppRoot::setCache($cacheFileName, json_encode($result));
+                    \Cache::file()->set($cacheFileName, json_encode($result));
 				}
 			}
 
@@ -124,7 +124,7 @@ namespace scanning\model
 				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
 
 			// Remove cache so that it resets
-			\AppRoot::removeCache("wormhole/".$this->id.".json");
+            \Cache::file()->remove("wormhole/".$this->id.".json");
 
 
 			// Check of dit wormhole ook op andere chains staat. Zo ja, wijzigingen kopieeren!

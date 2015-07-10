@@ -30,11 +30,11 @@ namespace eve\model
 				$cacheFileName = "solarsystem/".$this->id."/solarsystem.json";
 
 				// Eerst in cache kijken
-				if ($result = \AppRoot::getCache($cacheFileName))
+				if ($result = \Cache::file()->get($cacheFileName))
 					$result = json_decode($result, true);
 				else {
 					$result = \MySQL::getDB()->getRow("SELECT * FROM ".\eve\Module::eveDB().".mapsolarsystems WHERE solarsystemid = ?", array($this->id));
-					\AppRoot::setCache($cacheFileName, json_encode($result));
+                    \Cache::file()->set($cacheFileName, json_encode($result));
 				}
 			}
 
@@ -46,17 +46,6 @@ namespace eve\model
 				$this->region = $result["regionid"];
 				$this->security = $result["security"];
 			}
-		}
-
-		function store()
-		{
-			$data = array(	"solarsystemid"		=> $this->id,
-							"solarsystemname"	=> $this->name,
-							"constellationid"	=> $this->constellation,
-							"regionid"			=> $this->region,
-							"security"			=> $this->security);
-			\MySQL::getDB()->updateinsert(\eve\Module::eveDB().".mapsolarsystems", $data, array("solarsystemid" => $this->id));
-			@unlink("solarsystem/".$this->id."/solarsystem.json");
 		}
 
 		function getFullname()
@@ -161,7 +150,7 @@ namespace eve\model
 			$this->info = array();
 			$cacheFileName = "solarsystem/".$this->id."/systeminfo.json";
 
-			if ($cache = \AppRoot::getCache($cacheFileName))
+			if ($cache = \Cache::file()->get($cacheFileName))
 			{
 				$this->info = json_decode($cache,true);
 			}
@@ -197,7 +186,7 @@ namespace eve\model
 				$this->info["factionid"] = $sov["factionid"];
 				$this->info["allianceid"] = $sov["allianceid"];
 
-				\AppRoot::setCache($cacheFileName, json_encode($this->info));
+                \Cache::file()->set($cacheFileName, json_encode($this->info));
 			}
 		}
 
@@ -255,7 +244,7 @@ namespace eve\model
 		function getRecentKills()
 		{
 			$cacheFilename = "solarsystem/".$this->id."/recentkills.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
 			{
 				$data = json_decode($cache,true);
 
@@ -276,7 +265,7 @@ namespace eve\model
 		function getSovStatistics()
 		{
 			$cacheFilename = "solarsystem/".$this->id."/sovstatistics.json";
-			if ($cache = \AppRoot::getCache($cacheFilename))
+			if ($cache = \Cache::file()->get($cacheFilename))
 				$data = json_decode($cache,true);
 			else
 				$data = $this->setSovStatistics();
@@ -354,7 +343,7 @@ namespace eve\model
 			if ($this->jumps === null)
 			{
 				$this->jumps = array();
-				if ($cache = \AppRoot::getCache("solarsystem/".$this->id."/nrjumps.json"))
+				if ($cache = \Cache::file()->get("solarsystem/".$this->id."/nrjumps.json"))
 					$this->jumps = json_decode($cache,true);
 			}
 
@@ -362,7 +351,7 @@ namespace eve\model
 			{
 				$controller = new \eve\controller\SolarSystem();
 				$this->jumps[$systemID] = $controller->getNrJumps($this->id, $systemID, $minSecurity=null);
-				\AppRoot::setCache("solarsystem/".$this->id."/nrjumps.json", json_encode($this->jumps));
+                \Cache::file()->set("solarsystem/".$this->id."/nrjumps.json", json_encode($this->jumps));
 			}
 
 			return $this->jumps[$systemID];
@@ -378,7 +367,7 @@ namespace eve\model
 			$cacheFileName = "solarsystem/".$this->id."/cynorange.json";
 
 			$results = false;
-			if ($cache = \AppRoot::getCache($cacheFileName))
+			if ($cache = \Cache::file()->get($cacheFileName))
 				$results = json_decode($cache, true);
 
 			$systems = array();
@@ -396,7 +385,7 @@ namespace eve\model
 																)/149597870691)/63239.6717) < ".$maxJumpRange
 												, array($this->id)))
 				{
-					\AppRoot::setCache($cacheFileName, json_encode($results));
+                    \Cache::file()->set($cacheFileName, json_encode($results));
 				}
 			}
 
@@ -421,7 +410,7 @@ namespace eve\model
 
 			$cacheFileName = "solarsystem/".$this->id."/lightyears.json";
 			$data = array();
-			if ($cache = \AppRoot::getCache($cacheFileName))
+			if ($cache = \Cache::file()->get($cacheFileName))
 			{
 				$data = json_decode($cache, true);
 				if (isset($data[$solarSystemID]))
@@ -441,7 +430,7 @@ namespace eve\model
 											, array($this->id, $solarSystemID)))
 				{
 					$data[$solarSystemID] = $result["distance"];
-					\AppRoot::setCache($cacheFileName, json_encode($data));
+                    \Cache::file()->set($cacheFileName, json_encode($data));
 					return $result["distance"];
 				}
 			}
@@ -480,7 +469,7 @@ namespace eve\model
 
 			$cacheFileName = "solarsystem/".$this->id."/capitalroute.json";
 			$data = array();
-			if ($cache = \AppRoot::getCache($cacheFileName))
+			if ($cache = \Cache::file()->get($cacheFileName))
 			{
 				$data = json_decode($cache, true);
 				if (isset($data[$solarSystemID][$maxJumpRange]))
@@ -504,7 +493,7 @@ namespace eve\model
 			}
 
 			$data[$solarSystemID][$maxJumpRange] = $route;
-			\AppRoot::setCache($cacheFileName, json_encode($data));
+            \Cache::file()->set($cacheFileName, json_encode($data));
 			return $route;
 		}
 
@@ -691,7 +680,7 @@ namespace eve\model
 
 			$kills["date"] = date("Y-m-d H:i:s");
 			$cacheFilename = "solarsystem/".$this->id."/recentkills.json";
-			\AppRoot::setCache($cacheFilename, json_encode($kills));
+            \Cache::file()->set($cacheFilename, json_encode($kills));
 
 			return $kills;
 		}
@@ -713,7 +702,7 @@ namespace eve\model
 								"contested"		=> $result["contested"]);
 
 				$cacheFilename = "solarsystem/".$this->id."/sovstatistics.json";
-				\AppRoot::setCache($cacheFilename, json_encode($data));
+                \Cache::file()->set($cacheFilename, json_encode($data));
 			}
 
 			return $data;

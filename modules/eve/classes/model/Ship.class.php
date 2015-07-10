@@ -96,7 +96,7 @@ namespace eve\model
 
 			// Kijk eerst in de cache?
 			$cacheFile = "ships/".$this->id."/maxJumpRange.json";
-			if ($cache = \AppRoot::getCache($cacheFile))
+			if ($cache = \Cache::file()->get($cacheFile))
 				$data = json_decode($cache,true);
 			else
 			{
@@ -108,7 +108,7 @@ namespace eve\model
 				for ($i=1; $i<=5; $i++) {
 					$data["bonusRange"][$i] = $baseRange + ($baseRange*(($bonusRange*$i)/100));
 				}
-				\AppRoot::setCache($cacheFile, json_encode($data));
+                \Cache::file()->set($cacheFile, json_encode($data));
 			}
 
 			return $data["bonusRange"][$jumpDriveCalibration];

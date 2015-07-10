@@ -24,12 +24,12 @@ namespace scanning\model
 			if (!$result)
 			{
 				$cacheFileName = "whtype/".$this->id.".json";
-				if ($cache = \AppRoot::getCache($cacheFileName))
+				if ($cache = \Cache::file()->get($cacheFileName))
 					$result = json_decode($cache, true);
 				else
 				{
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholetypes WHERE id = ?", array($this->id));
-					\AppRoot::setCache($cacheFileName, json_encode($result));
+                    \Cache::file()->set($cacheFileName, json_encode($result));
 				}
 			}
 
