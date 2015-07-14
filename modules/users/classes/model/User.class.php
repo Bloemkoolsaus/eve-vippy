@@ -629,9 +629,9 @@ namespace users\model
 			foreach ($this->getAuthorizedCharacters() as $char)
 			{
 				// Kijk of deze toon beter is dan die nu al staat
-				if ($this->character !== null)
+				if ($this->getMainCharacter() !== null)
 				{
-					if ($this->character->isCEO())
+					if ($this->getMainCharacter()->isCEO())
 					{
 						if ($char->isCEO())
 						{
@@ -650,10 +650,10 @@ namespace users\model
 
 					if ($char->isDirector())
 					{
-						if ($this->character->isDirector())
+						if ($this->getMainCharacter()->isDirector())
 						{
 							// Allebij director.. wie is het oudst?
-							if (strtotime($this->character->dateOfBirth) > strtotime($char->dateOfBirth))
+							if (strtotime($this->getMainCharacter()->dateOfBirth) > strtotime($char->dateOfBirth))
 								$this->character = $char;
 						}
 						else
@@ -662,10 +662,10 @@ namespace users\model
 					else
 					{
 						// Alleen verder als de huidige toon ook geen director is
-						if (!$this->character->isDirector())
+						if (!$this->getMainCharacter()->isDirector())
 						{
 							// Kijk welke het oudst is
-							if (strtotime($this->character->dateOfBirth) > strtotime($char->dateOfBirth))
+							if (strtotime($this->getMainCharacter()->dateOfBirth) > strtotime($char->dateOfBirth))
 								$this->character = $char;
 						}
 					}
@@ -675,7 +675,7 @@ namespace users\model
 			}
 
 			// Geen toon gevonden..?
-			if ($this->character == null)
+			if ($this->getMainCharacter() == null)
 			{
 				// Dan mag deze gebruiker eigenlijk helemaal niet in VIPPY. Zet toch maar iets.
 				foreach ($this->getCharacters() as $char) {
@@ -684,9 +684,9 @@ namespace users\model
 				}
 			}
 
-			if ($this->character != null)
+			if ($this->getMainCharacter() != null)
 			{
-				$this->mainCharId = $this->character->id;
+				$this->mainCharId = $this->getMainCharacter()->id;
 				return $this->character;
 			}
 
