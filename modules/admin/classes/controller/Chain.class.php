@@ -20,7 +20,7 @@ namespace admin\controller
 			}
 
 			$chains = array();
-			foreach (\User::getUSER()->getAvailibleChains() as $chain)
+			foreach (\User::getUSER()->getAvailibleChains(false) as $chain)
 			{
 				if ($chain->getAllowedAdmin())
 					$chains[] = $chain;
