@@ -834,19 +834,23 @@ namespace users\model
 			return $this->isFittingManager;
 		}
 
-		/**
-		 * get authorized characters
-		 * @return \eve\model\Character[]
-		 */
-		private function getAuthorizedCharacters()
+        /**
+         * get authorized characters
+         * @param bool $fromCache
+         * @return \eve\model\Character[]
+         */
+		private function getAuthorizedCharacters($fromCache=true)
 		{
-			\AppRoot::debug("getAuthorizedCharacters()");
+			\AppRoot::debug("User()->getAuthorizedCharacters($fromCache)");
 
 			// Check cache
             $characters = array();
-			$cacheFilename = $this->getCacheDirectory()."authchars.json";
-			if ($cache = \Cache::file()->get($cacheFilename))
-                $characters = json_decode($cache);
+            $cacheFilename = $this->getCacheDirectory() . "authchars.json";
+            if ($fromCache)
+            {
+                if ($cache = \Cache::file()->get($cacheFilename))
+                    $characters = json_decode($cache);
+            }
 
             if (count($characters) == 0)
 			{
@@ -1061,27 +1065,33 @@ namespace users\model
 			return $chains;
 		}
 
-		/**
-		 * Get available chains
-		 * @return \scanning\model\Chain[]
-		 */
-		public function getAvailibleChains()
+        /**
+         * Get available chains
+         * @param bool $fromCache
+         * @return \scanning\model\Chain[]
+         */
+		public function getAvailibleChains($fromCache=true)
 		{
-			\APpRoot::debug("User->getAvailibleChains()");
-			if ($this->chains === null)
+            \AppRoot::debug("User->getAvailibleChains($fromCache)");
+			if ($this->chains === null || !$fromCache)
 			{
 				$this->chains = array();
-
 				if (count($this->getAuthorizedCharacters()) == 0)
 				{
 					\AppRoot::debug("<span style='color:red;'>No authorized characters found</span>");
 					return $this->chains;
 				}
 
-				$cacheFilename = $this->getCacheDirectory()."chains.json";
-				if ($cache = \Cache::file()->get($cacheFilename))
-					$results = json_decode($cache,true);
-				else
+                $results = null;
+                $cacheFilename = $this->getCacheDirectory() . "chains.json";
+
+                if ($fromCache)
+                {
+                    if ($cache = \Cache::file()->get($cacheFilename))
+                        $results = json_decode($cache, true);
+                }
+
+                if ($results == null)
 				{
 					$characterIDs = array();
 					foreach ($this->getAuthorizedCharacters() as $character) {
@@ -1126,6 +1136,7 @@ namespace users\model
 						$this->chains[] = $chain;
 				}
 			}
+            \AppRoot::debug("/User->getAvailibleChains($fromCache)");
 
 			return $this->chains;
 		}
