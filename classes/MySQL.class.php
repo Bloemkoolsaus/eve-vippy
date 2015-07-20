@@ -330,13 +330,14 @@ class MySQL
 		foreach (explode("/",$backupFile) as $part) {
 			$directoryParts[] = $part;
 		}
-		$filename = array_pop($directoryParts);
-		$directory = implode("/", $directoryParts);
 
-		\AppRoot::doCliCommand("mysqldump -h ".$this->host." -u ".$this->user." -p".$this->pass." --lock-tables=false ".$this->dtbs." > ".$filename);
-		\AppRoot::doCliCommand("tar -czf ".$filename.".tar.gz ".$filename);
-		\AppRoot::doCliCommand("mv ".$filename.".tar.gz ".$directory."/".$filename.".tar.gz");
-		\AppRoot::doCliCommand("rm ".$filename);
+        $filename = array_pop($directoryParts);
+		$directory = \Tools::checkDirectory(implode("/", $directoryParts));
+        $backupFile = $directory."/".$filename;
+
+		\AppRoot::doCliCommand("mysqldump -h ".$this->host." -u ".$this->user." -p".$this->pass." --lock-tables=false ".$this->dtbs." > ".$backupFile);
+		\AppRoot::doCliCommand("tar -czf ".$backupFile.".tar.gz ".$backupFile);
+		\AppRoot::doCliCommand("rm ".$backupFile);
 
 		\AppRoot::debug("MySQL: Finished backup");
 		return true;
