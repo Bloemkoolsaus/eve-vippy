@@ -1,6 +1,7 @@
-<h3>July 18th, 2015</h3>
+<h3>July 19th, 2015</h3>
 <b><u>SERVER</u></b>
- - Moved vippy to a new server at a different hosting company. The previous one had to much interuptions.
+ - Succesfully moved vippy to a new server at a different hosting company.
+        As most of you guys will have noticed, the previous one had to much interuptions.
 
 
 
@@ -12,14 +13,12 @@
 
 
 
-
 <h3>June 3rd, 2015</h3>
 <b><u>VIPPY</u></b>
  - Updated to Carnyx data export.
 
 <b><u>FIXES</u></b>
  - Fixed an out of memory exception that could occur when adding a wormhole between systems when neither system was already on the map.
-
 
 
 
