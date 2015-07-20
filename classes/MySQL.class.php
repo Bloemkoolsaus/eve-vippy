@@ -335,7 +335,7 @@ class MySQL
 
 		\AppRoot::doCliCommand("mysqldump -h ".$this->host." -u ".$this->user." -p".$this->pass." --lock-tables=false ".$this->dtbs." > ".$filename);
 		\AppRoot::doCliCommand("tar -czf ".$filename.".tar.gz ".$filename);
-		\AppRoot::doCliCommand("mv ".$filename.".tar.gz ".$directory."/".$filename.".tar.gz");
+		\AppRoot::doCliCommand("mv ".$filename.".tar.gz ".$directory."/".str_replace("documents/","",$filename).".tar.gz");
 		\AppRoot::doCliCommand("rm ".$filename);
 
 		\AppRoot::debug("MySQL: Finished backup");
