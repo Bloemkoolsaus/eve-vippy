@@ -86,6 +86,10 @@ namespace eve\model
 							"dob"			=> ($this->dateOfBirth!=null)?date("Y-m-d H:i:s",strtotime($this->dateOfBirth)):null,
 							"updatedate"	=> date("Y-m-d H:i:s"));
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
+
+            
+            if ($this->getUser() != null)
+                $this->getUser()->resetCache();
 		}
 
 		function isCEO()
