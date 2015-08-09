@@ -87,7 +87,7 @@ namespace eve\model
 							"updatedate"	=> date("Y-m-d H:i:s"));
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
 
-            
+
             if ($this->getUser() != null)
                 $this->getUser()->resetCache();
 		}

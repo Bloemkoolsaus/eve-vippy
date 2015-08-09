@@ -80,29 +80,39 @@
 				</th>
 				<th style="width: 30px; text-align: center;">Rank</th>
                 <th style="width: 30px; text-align: center;">Sigs</th>
+                <th style="width: 30px; text-align: center;">Sigs p/hour</th>
                 <th style="width: 30px; text-align: center;">Hours Online</th>
 			</tr>
 	{assign var=i value=0}
 	{foreach from=$scanners item=user}
 		{if $user.user->getMainCharacter()->corporationID == $corp.corp->id}
-			<tr class="{if $i%2==0}even{else}odd{/if}"
-				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
-				<td style="padding: 0; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
-						style="height: 20px; margin: 1px; margin-bottom: -2px;">
-				</td>
-				<td>
-					&nbsp;{$user.user->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">{$user.rank}</td>
-				<td style="text-align: center;"><b>{$user.amount}</b></td>
-                <td style="text-align: center;">{$user.user->getHoursOnline($sdate, $edate)}</td>
-			</tr>
+            {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
+            <tr class="{if $i%2==0}even{else}odd{/if}"
+                onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
+                <td style="padding: 0; width: 20px;">
+                    <img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
+                         style="height: 20px; margin: 1px; margin-bottom: -2px;">
+                </td>
+                <td>
+                    &nbsp;{$user.user->getMainCharacter()->name}&nbsp;
+                </td>
+                <td style="text-align: center;">-</td>
+                <td style="text-align: center;"><b>{$user.amount}</b></td>
+                <td style="text-align: center;">
+                    {if $nrhours > 0}
+                    {($user.amount/$nrhours)|round:1}
+                    {/if}
+                </td>
+                <td style="text-align: center;">
+                    {$nrhours}
+                </td>
+            </tr>
 			{assign var=i value=$i+1}
 		{/if}
 	{/foreach}
 	{foreach from=$corp.users key=s item=user}
 		{if $user.amount == 0}
+            {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
 				<td style="padding: 0; width: 20px;">
@@ -114,7 +124,14 @@
 				</td>
 				<td style="text-align: center;">-</td>
 				<td style="text-align: center;"><b>{$user.amount}</b></td>
-                <td style="text-align: center;">{$user.user->getHoursOnline($sdate, $edate)}</td>
+                <td style="text-align: center;">
+                    {if $nrhours > 0}
+                    {($user.amount/$nrhours)|round:1}
+                    {/if}
+                </td>
+                <td style="text-align: center;">
+                    {$nrhours}
+                </td>
 			</tr>
 			{assign var=i value=$i+1}
 		{/if}
