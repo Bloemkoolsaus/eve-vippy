@@ -1,15 +1,15 @@
 <div class="content">
 	<h1>
-		<img src="images/default/stats.png" style="width: 32px;" align="left">
+		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Statistics {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -7px;">
 			<button type="button" class="small" style="width: 160px;" onclick="document.location='index.php?module=stats&section=full&date={$sdate}&month=-1'">
-				<img src="images/default/left.png" align="left" />
+				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
 			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&section=full&date={$sdate}&month=1'">
 				Next Month
-				<img src="images/default/right.png" align="right" />
+				<img src="/images/default/right.png" align="right" />
 			</button>
 		</div>
 	</h1>
@@ -33,7 +33,7 @@
 				<tr class="{if $i%2==0}even{else}odd{/if}">
 					<td>
 						<div style="width: 99%; overflow: hidden; white-space: nowrap;">
-							<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" 
+							<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png"
 								style="height: 18px; margin: -1px; margin-right: 10px;" align="left">
 							{$corp.corp->name}
 						</div>
@@ -54,7 +54,7 @@
 		</div>
 	</div>
 	<div style="float: right; width: 48%;">
-		<div class="message">	
+		<div class="message">
 			<ul>
 				<li>These statistics are only availible for CEO's and Directors!</li>
 				<li>Only users with an active API key are counted</li>
@@ -68,26 +68,27 @@
 	<h2>Corporation details</h2>
 	{foreach from=$corporations item=corp}
 	{if $corp.users|@count > 0}
-	<div style="float: left; width: 250px; margin: 10px;">
+	<div style="float: left; margin: 10px;">
 		<table class="sectionoverview">
 			<tr>
 				<th class="large" colspan="2">
 					<div style="width: 145px; overflow: hidden; white-space: nowrap;">
-						<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" 
+						<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png"
 							style="height: 24px; margin: -2px;" align="left">
 						&nbsp; {$corp.corp->name}
 					</div>
 				</th>
 				<th style="width: 30px; text-align: center;">Rank</th>
-				<th style="width: 30px; text-align: center;">Sigs</th>
+                <th style="width: 30px; text-align: center;">Sigs</th>
+                <th style="width: 30px; text-align: center;">Hours Online</th>
 			</tr>
 	{assign var=i value=0}
 	{foreach from=$scanners item=user}
 		{if $user.user->getMainCharacter()->corporationID == $corp.corp->id}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
-				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg" 
+				<td style="padding: 0; width: 20px;">
+					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td>
@@ -95,6 +96,7 @@
 				</td>
 				<td style="text-align: center;">{$user.rank}</td>
 				<td style="text-align: center;"><b>{$user.amount}</b></td>
+                <td style="text-align: center;">{$user.user->getHoursOnline($sdate, $edate)}</td>
 			</tr>
 			{assign var=i value=$i+1}
 		{/if}
@@ -103,8 +105,8 @@
 		{if $user.amount == 0}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
-				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg" 
+				<td style="padding: 0; width: 20px;">
+					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td>
@@ -112,6 +114,7 @@
 				</td>
 				<td style="text-align: center;">-</td>
 				<td style="text-align: center;"><b>{$user.amount}</b></td>
+                <td style="text-align: center;">{$user.user->getHoursOnline($sdate, $edate)}</td>
 			</tr>
 			{assign var=i value=$i+1}
 		{/if}
@@ -120,7 +123,7 @@
 	</div>
 	{/if}
 	{/foreach}
-	
+
 	<div style="clear:both;"></div>
 </div>
 <div style="clear:both;"></div>

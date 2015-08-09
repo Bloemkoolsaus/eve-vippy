@@ -1317,8 +1317,8 @@ namespace users\model
 		 */
 		public function getIsActive($sdate=null, $edate=null)
 		{
-			$sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
-			$edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
+            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
+            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
 
 			foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
 			{
@@ -1329,6 +1329,40 @@ namespace users\model
 
 			return false;
 		}
+
+        /**
+         * Get nr hours online
+         * @param null $sdate
+         * @param null $edate
+         * @return float
+         */
+        public function getHoursOnline($sdate=null, $edate=null)
+        {
+            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
+            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
+
+            $nrSecondsOnline = array();
+            foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
+            {
+                // Search for a login through the IGB. So, look for pilot-id
+                if ($log->what == "login" && $log->getPilot() != null)
+                {
+                    if (!isset($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))]))
+                        $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = 0;
+
+                    $seconds = (strtotime($log->lastDate)-strtotime($log->logDate));
+                    if ($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] < $seconds)
+                        $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = $seconds;
+                }
+            }
+
+            $total = 0;
+            foreach ($nrSecondsOnline as $day => $seconds) {
+                $total += $seconds;
+            }
+
+            return round(($total/60)/60,2);
+        }
 
 
 
