@@ -206,7 +206,8 @@ namespace scanning\controller
 													    LEFT JOIN ".\eve\Module::eveDB().".mapregions r ON r.regionid = s.regionid
 													    LEFT JOIN mapknownwormholes k 	ON k.solarsystemid = s.solarsystemid
 																						AND	k.authgroupid = c1.authgroupid
-													    LEFT JOIN mapwormholechains c2 	ON c2.authgroupid = c1.authgroupid
+													    LEFT JOIN mapwormholechains c2 	ON c2.deleted = 0
+													                                    AND c2.authgroupid = c1.authgroupid
 													    								AND c2.homesystemid = wh.solarsystemid
 													WHERE	wh.chainid = ?
 													GROUP BY wh.id"
