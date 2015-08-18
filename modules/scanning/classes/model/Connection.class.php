@@ -319,13 +319,15 @@ namespace scanning\model
 		 */
 		function addJump($shiptypeID, $pilotID=null, $chainID=null, $fromSystemID=null, $toSystemID=null, $copy=true)
 		{
+            $ship = new \eve\model\Ship($shiptypeID);
 			\MySQL::getDB()->insert("mapwormholejumplog",
 								array(	"connectionid"	=> $this->id,
 										"chainid"		=> $chainID,
 										"fromsystemid"	=> $fromSystemID,
 										"tosystemid"	=> $toSystemID,
 										"characterid"	=> $pilotID,
-										"shipid"		=> $shiptypeID,
+										"shipid"		=> $ship->id,
+                                        "mass"          => $ship->mass,
 										"jumptime"		=> date("Y-m-d H:i:s")));
 
 			// Check the same connection on other maps.
@@ -341,6 +343,33 @@ namespace scanning\model
 				}
 			}
 		}
+
+        function addMass($amount, $copy=true)
+        {
+            $data = array("connectionid"=> $this->id,
+                          "chainid"		=> $this->getChain()->id,
+                          "fromsystemid"=> $this->getFromSystem()->id,
+                          "tosystemid"	=> $this->getToSystem()->id,
+                          "characterid"	=> null,
+                          "shipid"		=> null,
+                          "mass"        => $amount,
+                          "jumptime"	=> date("Y-m-d H:i:s"));
+            \MySQL::getDB()->insert("mapwormholejumplog", $data);
+            \User::getUSER()->addLog("addmass", $this->id, $data);
+
+            // Check the same connection on other maps.
+            if ($copy)
+            {
+                foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
+                                                        $this->getFromWormhole()->solarSystemID,
+                                                        $this->getToWormhole()->solarSystemID,
+                                                        $this->getChain()->authgroupID) as $connection)
+                {
+                    if ($connection->id !== $this->id)
+                        $connection->addMass($amount, false);
+                }
+            }
+        }
 
 		/**
 		 * Get chain

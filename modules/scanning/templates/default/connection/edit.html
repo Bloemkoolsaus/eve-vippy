@@ -8,13 +8,13 @@
 	</h2>
 
 	<div id="editConnectionContainer">
-	
+
 		<form method="post" name="formEditConnection" action="index.php?module=scanning&section=map&action=editconnection">
 		<input type="hidden" name="connectionid" value="{$connection->id}" />
 		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
 		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
-		
-		<div style="float: left; width: 350px;">		
+
+		<div style="float: left; width: 350px;">
 			<div class="form">
 				<label class="field">Mass:</label>
 				<label class="value">
@@ -32,10 +32,10 @@
 					&nbsp; <i>Mark wormhole End-of Life.</i>
 				</label>
 			</div>
-			
+
 			<div style="clear:both;"></div>
 			<br />
-			
+
 		{if $connection->getFromSystem()->isKSpace() && $connection->getToSystem()->isKSpace()}
 			<div class="form">
 				<label class="field">Normal Gates:</label>
@@ -59,10 +59,10 @@
 					&nbsp; <i>Wormhole allows capitals to jump.</i>
 				</label>
 			</div>
-			
+
 			<div style="clear:both;"></div>
 			<br />
-			
+
 			<div class="form">
 				<label class="field">Connection Type:</label>
 				<div class="field" style="text-align: left;">
@@ -112,12 +112,12 @@
 			</div>
 			<div style="clear:both;"></div>
 		</div>
-		
+
 		<div style="clear:both;"></div>
 		<br />
 		<br />
-		
-		<div style="float: left; width: 350px;">	
+
+		<div style="float: left; width: 350px;">
 			<div class="form" style="text-align: right;">
 				<button class="small" type="submit" style="width: 140px;">
 					<img src="images/default/save.png" align="left">
@@ -125,35 +125,35 @@
 				</button>
 			</div>
 		</div>
-		
+
 		<div style="clear:both;"></div>
 		<br />
 		<br />
-		
+
 		</form>
 	</div>
-	
+
 	<div id="addMassContainer" style="display: none; text-align: left;">
-		<div style="text-align: left; margin: 5px;">
-			<h3>
-				<img src="images/eve/mass.png" align="left">
-				&nbsp; Manually add Mass
-			</h3>
-		</div>
+        <div style="text-align: left; margin: 5px;">
+            <h3>
+                <img src="images/eve/mass.png" align="left">
+                &nbsp; Add mass by shiptype
+            </h3>
+        </div>
 		<form method="post" name="formDeleteConnection" action="index.php?module=scanning&section=map&action=editconnection">
 		<input type="hidden" name="connectionid" value="{$connection->id}" />
 		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
 		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
 		<input type="hidden" name="addmass" value="1" />
-		<div style="float: left; width: 320px;">
-			<div style="padding: 5px;">
-				<div style="float: left; width: 70%;">
-					<b>Ship Type:</b>
-				</div>
-				<div style="float: left; width: 25%;">
-					<b>Nr of Jumps:</b>
-				</div>
-			</div>
+		<div style="float: left; width: 300px; padding-left: 20px;">
+            <div style="padding: 5px;">
+                <div style="float: left; width: 70%;">
+                    <b>Ship Type:</b>
+                </div>
+                <div style="float: left; width: 25%;">
+                    <b>Nr of Jumps:</b>
+                </div>
+            </div>
 			<div style="clear:both;"></div>
 			<div id="addMassRecords"></div>
 			<div style="clear:both;"></div>
@@ -168,25 +168,51 @@
 				<li><i>10 ships making a single trip count as 10</i></li>
 				<li><i>10 ships making a round trip count as 20</i></li>
 			</ul>
-		</div>	
+		</div>
 		<div style="clear:both;"></div>
+        <div style="text-align: left; margin: 5px;">
+            <h3>
+                <img src="images/eve/mass.png" align="left">
+                &nbsp; Add custom mass
+            </h3>
+        </div>
+        <div style="float: left; width: 300px; padding-left: 20px;">
+            <div style="padding: 5px;">
+                <div style="float: left; width: 70%;">
+                    <b>Amount:</b> (in milions kg)
+                </div>
+                <div style="float: left; width: 25%;">
+                    <b>Nr of Jumps:</b>
+                </div>
+            </div>
+            <div style="padding: 5px;">
+                <div style="float: left; width: 70%;">
+                    <input type="text" id="amount" name="manual[mass]" style="width: 97%;">
+                </div>
+                <div style="float: left; width: 25%; text-align: center;">
+                    <input type="text" style="width: 30px; text-align: center;" value="1" name="manual[amount]">
+                </div>
+            </div>
+            <div style="clear:both;"></div>
+        </div>
+        <div style="clear:both;"></div>
 		<div class="form" style="text-align: right;">
 			<br />
 			<button class="small" type="submit" style="width: 140px;">
 				<img src="images/default/save.png" align="left">
 				Save
 			</button>
-		</div>		
+		</div>
 		</form>
 	</div>
-	
+
 	<div id="deleteConnectionContainer" style="display: none;">
 		<form method="post" name="formDeleteConnection" action="index.php?module=scanning&section=map&action=editconnection">
 		<input type="hidden" name="connectionid" value="{$connection->id}" />
 		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
 		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
 		<input type="hidden" name="delete" value="1" />
-		
+
 		<br />
 		<br />
 		<div style="text-align: center; font-size: 14px; font-weight: bold;">
@@ -201,7 +227,7 @@
 				Yes, DELETE
 			</button>
 		</div>
-		
+
 		</form>
 	</div>
 </div>
@@ -211,7 +237,7 @@
 <div style="padding: 5px;">
 	<div style="float: left; width: 70%;">
 		<select name="ship[]" style="width: 98%;">
-			<option value="0>">-- Select a Ship class or type --</option>
+			<option value="0">-- Select a Ship class or type --</option>
 			<optgroup label="Ship-Class">
 			{foreach from=$shiptypes item=type}
 				<option value="group{$type->id}">{$type->name}</option>

@@ -61,6 +61,7 @@ namespace admin
 			if ($section == "changelog")
 			{
 				\User::getUSER()->setConfig("patchnotes", strtotime("now"));
+                \User::getUSER()->resetCache();
 
 				$notes = \SmartyTools::getSmarty();
 				$this->moduleTitle = "Patch notes";

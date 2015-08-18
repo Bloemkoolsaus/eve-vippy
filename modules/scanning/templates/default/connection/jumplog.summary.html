@@ -14,9 +14,13 @@
 {if isset($jumplog.beforemass) && $jumplog.beforemass|@count > 0}
 	{assign var=subtotalmass value=0}
 	{foreach from=$jumplog.beforemass item=ship}
-		<div class="shiptype">
-			&nbsp; {if $ship.amount|strlen == 1}&nbsp;&nbsp;{/if}{$ship.amount} 
-			&nbsp; {$ship.class}
+		<div class="shiptype" {if $ship.class == "none"}style="text-align: right; font-style: italic;"{/if}>
+        {if $ship.class == "none"}
+            custom mass
+        {else}
+            &nbsp; {if $ship.amount|strlen == 1}&nbsp;&nbsp;{/if}{$ship.amount}
+            &nbsp; {$ship.class}
+        {/if}
 		</div>
 		<div class="shipmanual">
 			{if $ship.manual > 0}{$ship.manual}{else}-{/if}
@@ -25,7 +29,7 @@
 			{$ship.mass|number} &nbsp; kg
 		</div>
 		{assign var=subtotalmass value=$subtotalmass+$ship.mass}
-		{assign var=totalmass value=$totalmass+$ship.mass} 
+		{assign var=totalmass value=$totalmass+$ship.mass}
 	{/foreach}
 {if $subtotalmass > 0}
 		<div style="padding-top: 10px;">
@@ -48,7 +52,7 @@
 	{assign var=subtotalmass value=0}
 	{foreach from=$jumplog.aftermass item=ship}
 		<div class="shiptype">
-			&nbsp; {if $ship.amount|strlen == 1}&nbsp;{/if}{$ship.amount} 
+			&nbsp; {if $ship.amount|strlen == 1}&nbsp;{/if}{$ship.amount}
 			&nbsp; {$ship.class}
 		</div>
 		<div class="shipmanual">
@@ -58,14 +62,14 @@
 			{$ship.mass|number} &nbsp; kg
 		</div>
 		{assign var=subtotalmass value=$subtotalmass+$ship.mass}
-		{assign var=totalmass value=$totalmass+$ship.mass} 
+		{assign var=totalmass value=$totalmass+$ship.mass}
 	{/foreach}
 {if $subtotalmass > 0}
 	<div style="padding-top: 10px;">
 		<div class="shiptype" style="text-align: right;">&nbsp;</div>
 		<div class="shipmass" style="border-top: solid 1px #DDDDDD;"><b>{$subtotalmass|number} &nbsp; kg</b></div>
 		<div style="clear:both;"></div>
-	</div>	
+	</div>
 {/if}
 {/if}
 {if $totalmass > 0}
@@ -77,7 +81,7 @@
 			<b>{$totalmass|number} kg</b>
 		</div>
 		<div style="clear:both;"></div>
-	</div>	
+	</div>
 {/if}
 		<div style="clear:both;"></div>
 	</div>

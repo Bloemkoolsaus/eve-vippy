@@ -1,3 +1,9 @@
+<b><u>SCANNING</u></b>
+ - Jumplog: Add custom number mass to jump log.
+
+
+
+
 <h3>July 19th, 2015</h3>
 <b><u>SERVER</u></b>
  - Succesfully moved vippy to a new server at a different hosting company.
