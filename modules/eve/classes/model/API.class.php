@@ -14,6 +14,8 @@ namespace eve\model
 		public $lastValidateDate = null;
 		public $deleted = false;
 
+        private $user = null;
+
 		function __construct($keyID=false)
 		{
 			if ($keyID) {
@@ -82,8 +84,23 @@ namespace eve\model
 							"lastcheckdate"	=> date("Y-m-d H:i:s", strtotime($this->lastValidateDate)),
 							"updatedate"	=> date("Y-m-d H:i:s"));
 				\MySQL::getDB()->updateinsert("api_keys", $data, array("keyid" => $this->keyID));
+
+                if ($this->getUser() != null)
+                    $this->getUser()->resetCache();
 			}
 		}
+
+        /**
+         * Get user
+         * @return \users\model\User|null
+         */
+        function getUser()
+        {
+            if ($this->userID != 0)
+                $this->user = new \users\model\User($this->userID);
+
+            return $this->user;
+        }
 
 		function delete()
 		{

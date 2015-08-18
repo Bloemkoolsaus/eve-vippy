@@ -159,7 +159,15 @@ namespace admin\model
 				}
 			}
 
+            /*
+             * Reset cache
+             */
             \Cache::file()->remove($this->getCacheFilename());
+            foreach ($this->getAllowedCorporations() as $corp) {
+                foreach (\users\model\User::getUsersByCorporation($corp->id) as $user) {
+                    $user->resetCache();
+                }
+            }
 		}
 
 		/**

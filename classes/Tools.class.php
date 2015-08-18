@@ -527,6 +527,7 @@ Class Tools
 	public static function deleteFile($file)
 	{
 		\AppRoot::debug("DELETING FILE: ".$file);
+        shell_exec("rm -rf ".$file);
         if (file_exists($file))
             unlink($file);
 
@@ -538,6 +539,7 @@ Class Tools
 	public static function deleteDir($dir)
 	{
 		\AppRoot::debug("DELETING DIR: ".$dir);
+        shell_exec("rm -rf ".$dir);
 		if (file_exists($dir))
 		{
 			self::emptyDir($dir);
