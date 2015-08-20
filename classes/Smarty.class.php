@@ -103,7 +103,6 @@ class SmartyTools
 		$smarty->setPluginsDir("classes/smarty/plugins");
 		$smarty->compile_dir = self::getCompiledDir();
 		$smarty->default_template_handler_func = "SmartyTools::getSmartyTemplate";
-		$smarty->assign("loggedInUser", \User::getUSER());
 		$smarty->assign("App", self::getAppData());
 		return $smarty;
 	}

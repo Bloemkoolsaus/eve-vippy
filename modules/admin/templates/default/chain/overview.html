@@ -7,18 +7,18 @@
 			</button>
 		</div>
 	</h1>
-	
+
 {if $chains|@count > 0}
 	<table class="sectionoverview">
 		<tr>
-		{if $loggedInUser->getIsSysAdmin()}
+		{if $App->user->getIsSysAdmin()}
 			<th>Authorization Group</th>
 		{/if}
 			<th>Chain Name</th>
 			<th>Home-system</th>
 			<th>Alliances</th>
 			<th>Corporations</th>
-		{if $loggedInUser->getIsSysAdmin()}
+		{if $App->user->getIsSysAdmin()}
 			<th>Last Active</th>
 		{/if}
 			<th style="width: 80px;">Sort Order</th>
@@ -26,7 +26,7 @@
 		</tr>
 	{foreach from=$chains key=c item=chain}
 		<tr class="{if $c%2==0}even{else}odd{/if}">
-		{if $loggedInUser->getIsSysAdmin()}
+		{if $App->user->getIsSysAdmin()}
 			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
 				{$chain->getAuthGroup()->name}
 			</td>
@@ -51,18 +51,18 @@
 					{$corp->name}<br />
 				{/foreach}
 			</td>
-		{if $loggedInUser->getIsSysAdmin()}
+		{if $App->user->getIsSysAdmin()}
 			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
 			{if $chain->lastActive != null}
 				{$chain->lastActive|date_full}
 			{/if}
 			</td>
 		{/if}
-			<td style="text-align: center;" 
+			<td style="text-align: center;"
 					onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
 				{$chain->prio}
 			</td>
-			<td style="text-align: center;">	
+			<td style="text-align: center;">
 				<a href="index.php?module=admin&section=chains&action=edit&id={$chain->id}"><img src="images/default/edit.png" style="border:0px;"></a>
 				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="images/default/cross.png" style="border:0px;"></a>
 			</td>
@@ -76,7 +76,7 @@
 {/if}
 </div>
 
-{if $loggedInUser->getIsSysAdmin() && $adminchains|@count > 0}
+{if $App->user->getIsSysAdmin() && $adminchains|@count > 0}
 <div class="content">
 	<br />
 	<h2>Other peoples chains &nbsp; [<span style="color:red;">Admin only</span>]</h2>
@@ -128,7 +128,7 @@
 				{$chain->lastActive|date_full}
 			{/if}
 			</td>
-			<td style="text-align: center;" 
+			<td style="text-align: center;"
 					onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
 				{$chain->prio}
 			</td>

@@ -63,6 +63,28 @@ namespace eve\model
 							array(	"character" => $this->id,
 									"fromuser"	=> $old->userID,
 									"touser"	=> $this->userID));
+
+					// Add notification for both users
+					$content = [];
+					$content[] = "API check has found multiple api keys for character `".$this->name."`.";
+					$content[] = $this->name." is owned by more then one VIPPY account.";
+					$content[] = "";
+					$content[] = "You will get problems authenticating for VIPPY because of ambiguous API keys.";
+					$content[] = "Please remove API keys from your secondary VIPPY accounts and use only one VIPPY account per person!";
+
+					$note = new \users\model\Notification();
+					$note->userID = $this->userID;
+					$note->type = "error";
+					$note->title = "Duplicate API keys found!!";
+					$note->content = implode("\n", $content);
+					$note->store();
+
+					$note = new \users\model\Notification();
+					$note->userID = $old->userID;
+					$note->type = "error";
+					$note->title = "Duplicate API keys found!!";
+					$note->content = implode("\n", $content);
+					$note->store();
 				}
 
 				// Check API Key
@@ -170,10 +192,10 @@ namespace eve\model
 						}
 
                         if (!$this->isAuthorized)
-                            \AppRoot::debug("<span styl'color:red;'>not in an allowed group</span>");
+                            \AppRoot::debug("<span style='color:red;'>not in an allowed group</span>");
 					}
 					else
-						\AppRoot::debug("<span styl'color:red;'>api ".$this->getApiKey()->id." key not valid</span>");
+						\AppRoot::debug("<span style='color:red;'>api ".$this->getApiKey()->id." key not valid</span>");
 				}
 				else
 					\AppRoot::debug("<span style='color:red;'>no api key</span>");
@@ -220,4 +242,3 @@ namespace eve\model
 		}
 	}
 }
-?>

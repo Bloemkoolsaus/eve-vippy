@@ -34,6 +34,7 @@ namespace users\model
 		private $isFittingManager = null;
 		private $capitalShips = null;
         private $logs = null;
+		private $notifications = null;
 
         /** @var \eve\model\Character */
         private $character = null;
@@ -1363,6 +1364,30 @@ namespace users\model
 
             return round(($total/60)/60,2);
         }
+
+        /**
+         * Get active notifications
+         * @return \users\model\Notification[]
+         */
+		public function getActiveNotifications()
+		{
+            if (\Tools::POST("readNotification"))
+            {
+                $note = new \users\model\Notification(\Tools::POST("readNotification"));
+                if ($note->userID == $this->id) {
+                    $note->readDate = date("Y-m-d H:i:s");
+                    $note->store();
+                }
+                \AppRoot::refresh();
+            }
+
+            if ($this->notifications === null)
+                $this->notifications = \users\model\Notification::getNotificationsByUser($this->id);
+
+            return $this->notifications;
+		}
+
+
 
 
 

@@ -381,15 +381,33 @@ div.success {
 div.warning {
     background-color: #FFCC00;
     background: #FFCC00 linear-gradient(#FFCC00, #CC9900);
-    border: double 3px #111111;
+	border: double 3px #111111;
     color: #222222;
     text-align: center;
 }
 div.error {
     background-color: #990000;
     background: #990000 linear-gradient(#CC0000, #880000);
-    color: #FFFFFF;
+    color: #eeeeee;
     text-align: center;
+}
+
+div.userNotification {
+	margin: 15px;
+}
+div.noteTitle {
+	font-weight: bold;
+	font-size: 18px;
+}
+div.noteContent {
+	font-weight: bold;
+	font-size: 13px;
+	padding: 10px;
+}
+div.noteInfo {
+	text-align: right;
+	font-size: 10px;
+	padding-right: 20px;
 }
 
 div.message a {

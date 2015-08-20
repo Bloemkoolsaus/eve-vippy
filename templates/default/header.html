@@ -1,13 +1,13 @@
-{if $loggedInUser->loggedIn()}
+{if isset($App->user)}
 <div id="header">
 	<div id="infoheader">
 		<div id="infoheaderbar">
 			<div id="infoheader-name">
-				Welcome: {$loggedInUser->getFullname()}
+				Welcome: {$App->user->getFullname()}
 			</div>
 			<div id="infoheader-info">
 			{if isset($location)}
-				<span="currentSolarSytem">{$location}</span>
+				<span class="currentSolarSytem">{$location}</span>
 			{/if}
 			{if isset($today)}
 				{$today}
@@ -23,10 +23,32 @@
 	<div id="menuNotifications">
 		<div>
 			New updates since your last visit!
-			&nbsp; 
+			&nbsp;
 			<a href="index.php?module=admin&section=changelog">Patch-notes</a>
 		</div>
 	</div>
 {/if}
 </div>
+{/if}
+
+{if isset($App->user) && $App->user->getActiveNotifications()|@count > 0}
+{foreach from=$App->user->getActiveNotifications() item=note}
+    <div class="userNotification {$note->type}">
+        <form method="post" action="">
+        <input type="hidden" name="readNotification" value="{$note->id}">
+        <div class="noteTitle">{$note->getTitle()}</div>
+        <div class="noteContent">{$note->getContent()}</div>
+    {if $note->userID == $App->user->id}
+        <div class="noteButtons">
+            <button type="submit" class="small">OK</button>
+        </div>
+    {/if}
+        <div class="noteInfo">
+            Questions? EVE-mail: <b>BLOEMKOOLSAUS</b>
+            &nbsp; | &nbsp;
+            {$note->notifyDate|date_full} - {$note->notifyDate|date_time}
+        </div>
+        </form>
+    </div>
+{/foreach}
 {/if}
