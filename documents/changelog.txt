@@ -1,11 +1,12 @@
+<h3>August 21, 2015</h3>
 <b><u>SCANNING</u></b>
- - Jumplog: Per request, allow addition of custom mass amount to a wormhole jump log.
+ - Jumplog: Per reque, allow addition of custom mass amount to a wormhole jump log.
  - Signature list: On small windows, the info hover on a signature would fall off screen. Moved info hover panel on screen on small windows.
 
 
 
 
-<h3>July 19th, 2015</h3>
+<h3>July 19, 2015</h3>
 <b><u>SERVER</u></b>
  - Succesfully moved vippy to a new server at a different hosting company.
         As most of you guys will have noticed, the previous one had to much interuptions.
@@ -13,14 +14,14 @@
 
 
 
-<h3>July 10th, 2015</h3>
+<h3>July 10, 2015</h3>
 <b><u>VIPPY</u></b>
  - Updated to Aegis data export.
 
 
 
 
-<h3>June 3rd, 2015</h3>
+<h3>June 3, 2015</h3>
 <b><u>VIPPY</u></b>
  - Updated to Carnyx data export.
 
@@ -30,7 +31,7 @@
 
 
 
-<h3>May 19th, 2015</h3>
+<h3>May 19, 2015</h3>
 <b><u>SCANNING</u></b>
  - When copy pasting more then 2 signatures, check for old signatures that are no longer in the copy paste and remove them.
  	This will automatically clear old signatures. If the signatures was a wormhole, try find the matching wormhole and close it's connection.
@@ -41,7 +42,7 @@
 
 
 
-<h3>April 28th, 2015</h3>
+<h3>April 28, 2015</h3>
 <b><u>SCANNING</u></b>
  - Improved signaturelist layout for (very) small windows (such as mobiles devices or small windows in the IGB)
  - When jumping through a wormhole connecting 2 kspace systems, VIPPY would not map it.
@@ -66,7 +67,7 @@
 
 
 
-<h3>February 10th, 2015</h3>
+<h3>February 10, 2015</h3>
 <b><u>SCANNING</u></b>
  - Add visual for Shattered systems.
  - Add a `delete all signatures` link.
@@ -80,7 +81,7 @@
 
 
 
-<h3>February 5th, 2015</h3>
+<h3>February 5, 2015</h3>
 <b><u>SCANNING</u></b>
  - Improved layout for small windows (such as mobiles devices or small windows in the IGB)
  - Moved `mark fully scanned` button to a less prominent place. Systems are automatically marked fully scanned when you complete all signatures.
@@ -106,16 +107,16 @@
 
 
 
-<h3>January 18th, 2015</h3>
+<h3>January 18, 2015</h3>
 <b><u>SCANNING</u></b>
  - Improve copy-paste signatures usability.
  - Include your own status on the leaderboard.
  - Server optimizations.
 
 
-<h3>December 22nd, 2014</h3>
+<h3>December 22, 2014</h3>
 <b><u>SCANNING</u></b>
- - In response to popular request, change the fully-scanned icons to bars. Whenever there is a grey bar on a system, this means more scanning is required!
+ - In response to popular reque, change the fully-scanned icons to bars. Whenever there is a grey bar on a system, this means more scanning is required!
 	Bars can be different height:
 	 * Large bar: Not scanned at all. Get your lazy bum out of that forcefield and start scanning;
 	 * Small bar: Previously scanned, but more then 2 hours age. Check for new sigs.
@@ -123,13 +124,13 @@
  - Auto-check connections to Thera using data from <a href="http://www.eve-scout.com/" target="_blank">http://www.eve-scout.com/</a>.
  - Removed the `Copy-Paste sigs` popup, and put it in a folding pane in the page. This should make copy-pasting sigs quicker as the popup could take a while to load.
  - Add an option in the context menu to remove all systems currently connected to the selected system. (remove part of a disconnected chain).
- - The ingame browser button `Switch active system to current location` had become lost, wandering through the universe and has now magically returned.
+ - The ingame browser button `Switch active system to current location` had become lo, wandering through the universe and has now magically returned.
  - Re-done and improved the algorithm that positions new systems on the map.
 
 
 
 
-<h3>December 9th, 2014</h3>
+<h3>December 9, 2014</h3>
 <b><u>RHEA</u></b>
  - Import Rhea data export! \o/
 
@@ -140,7 +141,7 @@
 
 
 
-<h3>December 8th, 2014</h3>
+<h3>December 8, 2014</h3>
 <b><u>RHEA</u></b>
  - CCP's data export is going to be late, as usual...
  	- Added a work-around for the new systems such as Thera that VIPPY does not know yet because of the SDE being late.
@@ -158,21 +159,21 @@
 
 
 
-<h3>December 1st, 2014</h3>
+<h3>December 1, 2014</h3>
 <b><u>VIPPY</u></b>
  - Performance and caching improvements. This will (hopefully) reduce lag on large maps.
 
 
 
 
-<h3>November 10th, 2014</h3>
+<h3>November 10, 2014</h3>
 <b><u>PHOEBE</u></b>
  - Adjust capital jump calculation for Phoebe.
 
 
 
 
-<h3>October 28th, 2014</h3>
+<h3>October 28, 2014</h3>
 <b><u>SCANNING</u></b>
  - Added the `Exit Finder`.
  - Wormhole stubs:
@@ -182,7 +183,7 @@
 
 
 
-<h3>October 22th, 2014</h3>
+<h3>October 22, 2014</h3>
 <b><u>SCANNING</u></b>
  - Added last set of new c4 statics.
  - Fix button `<i>Switch active system to current location</i>` for the ingame browser.
@@ -193,7 +194,7 @@
 
 
 
-<h3>October 20th, 2014</h3>
+<h3>October 20, 2014</h3>
 <b><u>SCANNING</u></b>
  - Create a wormhole stub while scanning. (<i>Temporary, unmapped wormholes</i>)
  	- To create a stub, add a WH signature to the sigs list. In the info field of the signature, provide the name for the new wormhole.
@@ -207,7 +208,7 @@
 
 
 
-<h3>September 3rd, 2014</h3>
+<h3>September 3, 2014</h3>
 <b><u>SCANNING</u></b>
  - Make auto-naming wormholes optional per chain.
  - Adjust signature editor. Signatures now keep their IDs after downtime.
@@ -216,7 +217,7 @@
 
 
 
-<h3>August 26th, 2014</h3>
+<h3>August 26, 2014</h3>
 <b><u>SCANNING</u></b>
  - New frigate wormholes from Hyperion.
  - Updated system effects.
@@ -225,7 +226,7 @@
 
 
 
-<h3>July 16th, 2014</h3>
+<h3>July 16, 2014</h3>
 <b><u>SCANNING</u></b>
  - Improve visibility of current users in a system when you hover over a system.
  - K-Space systems, add my capital ships number of (cyno)jumps to this system when you hover over the system.
@@ -235,7 +236,7 @@
 
 
 
-<h3>June 7nd, 2014</h3>
+<h3>June 7, 2014</h3>
 <b><u>SCANNING</u></b>
  - Update links from wormhol.es to the new wh.pasta.gg
  - Make k-space systems stand out, by giving them a colored side bar.
@@ -246,7 +247,7 @@
 
 
 
-<h3>June 2nd, 2014</h3>
+<h3>June 2, 2014</h3>
 <b><u>SCANNING</u></b>
  - Automatically name systems (c5s, c5a, c5b, etc). Yes, you're reading this right. It's in now.
  - Jump log mass estimates were in m3. This should ofcourse be kg....
@@ -256,14 +257,14 @@
 
 
 
-<h3>May 29th, 2014</h3>
+<h3>May 29, 2014</h3>
 <b><u>SCANNING</u></b>
  - Add mass estimates to jump logs.
  - Improve internal caching (performance should be better!).
 
 
 
-<h3>April 17th, 2014</h3>
+<h3>April 17, 2014</h3>
 <b><u>Statistics</u></b>
  - Add leaderboard.
  - Add details statistics for leadership (CEO's and Directors).
@@ -283,7 +284,7 @@
 
 
 
-<h3>December 23rd, 2013</h3>
+<h3>December 23, 2013</h3>
 <b><u>SCANNING</u></b>
  - Fixed the `on-map` tradehub calculation.
  - Add icons if a HS is on a hs-island (<img src="images/eve/stargate.red.png">).
@@ -291,13 +292,13 @@
 
 
 
-<h3>August 20th, 2013</h3>
+<h3>August 20, 2013</h3>
 <b><u>SCANNING</u></b>
  - Fixed `null to false` nearest tradehub calculation.
 
 
 
-<h3>August 17th, 2013</h3>
+<h3>August 17, 2013</h3>
 <b><u>SCANNING</u></b>
  - Add station icons (<img src="images/eve/station.png">) on the map for station systems.
  - Add yellow (<img src="images/eve/skull.orange.png">) and red (<img src="images/eve/skull.red.png">) skull icons to indicate recent pvp or pve activity.
@@ -307,13 +308,13 @@
  - Improved api stuff.
 
 
-<h3>June 4th, 2013</h3>
+<h3>June 4, 2013</h3>
 <b><u>SCANNING</u></b>
  - Exploration changes for the Odyssey expansion.
 
 
 
-<h3>May 13th, 2013</h3>
+<h3>May 13, 2013</h3>
 <b><u>SCANNING</u></b>
  - Only update date on notes when the notes actually changed.
  - Add link icons to dotlan, wormhole.es, zkillboard and eve-survival.
@@ -321,7 +322,7 @@
 
 
 
-<h3>Februari 10th, 2013</h3>
+<h3>Februari 10, 2013</h3>
 <b><u>SCANNING</u></b>
  - Make the `show signatures` button remember that you clicked it.
  - Add a last edit date to system notes.
@@ -333,7 +334,7 @@
 
 
 
-<h3>Januari 17th, 2013</h3>
+<h3>Januari 17, 2013</h3>
 <b><u>PERFORMANCE</u></b>
  - Add `tracking-only` mode for the ingame browser on alts. This mode will not show/load the map, wich will decrease client and server load.
  	You are encouraged to use this mode on your alts, the map is very CPU heavy for your client.
@@ -354,7 +355,7 @@
 
 
 
-<h3>November 11th, 2012</h3>
+<h3>November 11, 2012</h3>
 <b><u>SCANNING</u></b>
  - Fixed an issue with dragging systems when in zoomed in/out.
  - Add a default layout when adding wormholes to the map.
@@ -364,7 +365,7 @@
 
 
 
-<h3>September 19th, 2012</h3>
+<h3>September 19, 2012</h3>
 <b><u>SCANNING</u></b>
  - Add "Show Online Pilots" button to show wich pilots are online outside the chain.
  - Add zoom controls to the chain map. You can now zoom out if you have extremely large chains.
@@ -377,7 +378,7 @@
 
 
 
-<h3>August 22th, 2012</h3>
+<h3>August 22, 2012</h3>
 <b><u>SCANNING</u></b>
  - Add system information, including npc/pvp kill statistics when you hover over a system on the map.
  - Add wormhole info to the signature-hover window.
@@ -385,7 +386,7 @@
 
 
 
-<h3>August 9th, 2012</h3>
+<h3>August 9, 2012</h3>
 <b><u>SCANNING</u></b>
  - Add a hover icon to each scanned signature to get more detailed information about that Signature.
  - Fixed an anoying refresh when trying to edit an already existing signature.
@@ -393,7 +394,7 @@
 
 
 
-<h3>August 6th, 2012</h3>
+<h3>August 6, 2012</h3>
 <b><u>SCANNING</u></b>
  - Upgrade the database to the latest data on wormholes/statics/etc.
  - You can now provide the wormhole-type when adding a wormhole signature.
