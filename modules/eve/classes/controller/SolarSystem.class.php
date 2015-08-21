@@ -122,13 +122,16 @@ namespace eve\controller
 														INNER JOIN mapwormholestatics s ON s.solarsystemid = m.solarsystemid
 														INNER JOIN mapwormholetypes t ON t.id = s.whtypeid
 														INNER JOIN mapsolarsystemclasses c ON c.id = t.destination
-													WHERE   m.solarsystemid = ?"
+													WHERE   m.solarsystemid = ?
+													ORDER BY tag DESC"
 											, array($systemID)))
 			{
+                $kspaceTags = ["HS","LS","NS"];
 				foreach ($results as $result)
 				{
 					$statics[$result["signame"]]["tag"] = $result["tag"];
-					$statics[$result["signame"]]["name"] = $result["name"];
+                    $statics[$result["signame"]]["name"] = $result["name"];
+                    $statics[$result["signame"]]["wspace"] = (in_array($result["tag"], $kspaceTags))?false:true;
 				}
 			}
 

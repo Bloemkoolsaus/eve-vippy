@@ -587,16 +587,18 @@ namespace scanning\model
 				if ($system->getSolarsystem()->isWSpace())
 				{
 					// Ben ik de static?
-					$statics = array();
+					$wspaceStatics = array();
 					foreach ($previousSystem->getStatics(false,false) as $static) {
-						$statics[] = strtolower($static["tag"]);
+                        if ($static["wspace"])
+                            $wspaceStatics[] = strtolower($static["tag"]);
 					}
 
-
-					// Tellen bij 2, tenzij we de static zouden kunnen zijn.
-					$index = 2;
-					if (in_array($classname, $statics))
-						$index = 1;
+					// Tellen na statics, tenzij het één van de statics is.
+					$index = count($wspaceStatics)+1;
+					for ($s=0; $s<count($wspaceStatics); $s++) {
+                        if ($wspaceStatics[$s] == $classname)
+                            $index = $s+1;
+                    }
 				}
 				else
 				{
