@@ -1,5 +1,6 @@
 <b><u>SCANNING</u></b>
- - Jumplog: Add custom number mass to jump log.
+ - Jumplog: Per request, allow addition of custom mass amount to a wormhole jump log.
+ - Signature list: On small windows, the info hover on a signature would fall off screen. Moved info hover panel on screen on small windows.
 
 
 

@@ -1,23 +1,23 @@
 div#signatureListContainer {
-	float: left; 
-	width: 68%; 
+	float: left;
+	width: 68%;
 	margin-top: 20px;
 }
 div#systemDetailsContainer {
-	float: right; 
-	width: 30%; 
+	float: right;
+	width: 30%;
 	margin-top: 20px;
 }
 
 @media (max-width: 950px) {
 	div#signatureListContainer {
-		float: none; 
+		float: none;
 		width: 100%;
 		margin-top: 20px;
 	}
 	div#systemDetailsContainer {
-		float: none; 
-		width: 100%; 
+		float: none;
+		width: 100%;
 		margin-top: 20px;
 	}
 }
@@ -42,8 +42,8 @@ table#signatureTable .sigControls {
 	width: 50px;
 }
 
-@media (max-width: 500px) {	
-	table#signatureTable .sigID {
+@media (max-width: 500px) {
+    table#signatureTable .sigID {
 		width: 30px;
 	}
 	table#signatureTable .sigType {
@@ -61,10 +61,10 @@ table#signatureTable .sigControls {
 }
 
 div#signaturesFullyscanned {
-	text-align: right; 
+	text-align: right;
 	margin: 3px;
 }
-@media (max-width: 500px) {	
+@media (max-width: 500px) {
 	div#signaturesFullyscanned {
 		display: none;
 	}

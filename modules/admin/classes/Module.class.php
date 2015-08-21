@@ -60,7 +60,7 @@ namespace admin
 
 			if ($section == "changelog")
 			{
-				\User::getUSER()->setConfig("patchnotes", strtotime("now"));
+				\User::getUSER()->setConfig("patchnotes", strtotime("now")+600);
                 \User::getUSER()->resetCache();
 
 				$notes = \SmartyTools::getSmarty();

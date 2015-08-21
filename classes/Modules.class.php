@@ -213,11 +213,11 @@ class Modules
 			$tpl->assign("today", \Tools::getDayOfTheWeek().", ".Tools::getWrittenMonth(date("m"))." ".date("d").", ".date("Y"));
 
 		if (\User::getUSER()->isAuthorized())
-		{
-			$lastUpdateCheck = \User::getUSER()->getConfig("patchnotes");
-			$lastPatchnotes = filemtime("documents/changelog.txt");
-			if ($lastUpdateCheck == null || $lastUpdateCheck <= $lastPatchnotes)
-				$tpl->assign("newPatchNotes", 1);
+        {
+            $lastUpdateCheck = \User::getUSER()->getConfig("patchnotes");
+            $lastPatchnotes = filemtime("documents/changelog.txt");
+            if ($lastUpdateCheck == null || $lastUpdateCheck <= $lastPatchnotes)
+                $tpl->assign("newPatchNotes", 1);
 		}
 
 		return $tpl->fetch("header");

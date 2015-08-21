@@ -110,8 +110,23 @@ function markFullyScanned(systemID)
 
 function showSigInfo(sigID)
 {
-	$("#sigInfo"+sigID).css("left", $("#signatureList"+sigID).position().left+$("#signatureList"+sigID).width());
-	$("#sigInfo"+sigID).css("top", $("#signatureList"+sigID).position().top-30);
-	$("#sigInfo"+sigID).fadeIn();
+    var top = $("#signatureList"+sigID).position().top-30;
+    var left = $("#signatureList"+sigID).position().left+$("#signatureList"+sigID).width();
+
+    if ($(window).width() < 930)
+    {
+        left -= ($("#sigInfo"+sigID).width()+60);
+        $("#sigInfo"+sigID).find("div.content").removeClass("contentleft");
+        $("#sigInfo"+sigID).find("div.content").addClass("contentright");
+    }
+    else
+    {
+        $("#sigInfo"+sigID).find("div.content").removeClass("contentright");
+        $("#sigInfo"+sigID).find("div.content").addClass("contentleft");
+    }
+
+	$("#sigInfo"+sigID).css("left", left);
+	$("#sigInfo"+sigID).css("top", top);
+    $("#sigInfo"+sigID).fadeIn();
 	loadingSigList = true;
 }
