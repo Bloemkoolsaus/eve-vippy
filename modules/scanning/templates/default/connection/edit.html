@@ -1,10 +1,14 @@
 <div style="padding: 10px;">
 	<h2>
 		{$connection->getFromWormhole()->name}
-		<span style="font-size: 14px;">({$connection->getFromSystem()->name})</span>
+        {if $connection->getFromSystem() != null}
+            <span style="font-size: 14px;">({$connection->getFromSystem()->name})</span>
+        {/if}
 		&nbsp; &gt; &nbsp;
 		{$connection->getToWormhole()->name}
-		<span style="font-size: 14px;">({$connection->getToSystem()->name})</span>
+        {if $connection->getToSystem() != null}
+            <span style="font-size: 14px;">({$connection->getToSystem()->name})</span>
+        {/if}
 	</h2>
 
 	<div id="editConnectionContainer">
@@ -36,6 +40,7 @@
 			<div style="clear:both;"></div>
 			<br />
 
+    {if $connection->getFromSystem() != null && $connection->getToSystem() != null}
 		{if $connection->getFromSystem()->isKSpace() && $connection->getToSystem()->isKSpace()}
 			<div class="form">
 				<label class="field">Normal Gates:</label>
@@ -45,6 +50,7 @@
 				</label>
 			</div>
 		{/if}
+    {/if}
 			<div class="form">
 				<label class="field">Frigate Hole:</label>
 				<label class="value">
@@ -69,7 +75,9 @@
 					<div style="float: left; width: 120px; margin-left: 20px;">
 						<div>
 							{$connection->getFromWormhole()->name}
+                        {if $connection->getFromSystem() != null}
 							(<i>{$connection->getFromSystem()->name}</i>)
+                        {/if}
 						</div>
 						<div>
 							<select name="fromtype">
@@ -83,7 +91,9 @@
 					<div style="float: left; width: 100px;">
 						<div>
 							{$connection->getToWormhole()->name}
+                        {if $connection->getToSystem() != null}
 							(<i>{$connection->getToSystem()->name}</i>)
+                        {/if}
 						</div>
 						<div>
 							<select name="totype">

@@ -29,7 +29,6 @@ namespace eve\model
 				$this->id = $result["groupid"];
 				$this->categoryID = $result["categoryid"];
 				$this->name = $result["groupname"];
-				$this->description = $result["description"];
 			}
 		}
 

@@ -1,3 +1,10 @@
+<h3>August 24, 2015</h3>
+<b><u>SCANNING</u></b>
+ - Fix a fatal error message when trying to open the connection popup for an unmapped wormhole originating in a kspace system.
+
+
+
+
 <h3>August 21, 2015</h3>
 <b><u>SCANNING</u></b>
  - Jumplog: Per reque, allow addition of custom mass amount to a wormhole jump log.
