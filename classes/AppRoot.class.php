@@ -286,14 +286,16 @@ class AppRoot
 		fclose($handle);
 	}
 
-	public static function doCliCommand($command)
+	public static function doCliCommand($command, $expectOutput=false)
 	{
 		\AppRoot::debug("<div style='background-color: #222222; color: #EEEEEE; padding: 1px;'>".$command."</div>");
 		$output = shell_exec($command);
 
 		if ($output === null)
 		{
-			\AppRoot::error($command);
+            if ($expectOutput)
+			    \AppRoot::error($command);
+
 			return false;
 		}
 		else

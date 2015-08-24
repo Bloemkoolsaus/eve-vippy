@@ -539,9 +539,10 @@ Class Tools
 	public static function deleteDir($dir)
 	{
 		\AppRoot::debug("DELETING DIR: ".$dir);
-        shell_exec("rm -rf ".$dir);
+        \AppRoot::doCliCommand("rm -rf ".$dir);
 		if (file_exists($dir))
 		{
+            \AppRoot::debug("<span style='color:red;'>".$dir." still exists</span>");
 			self::emptyDir($dir);
 			rmdir($dir);
 		}

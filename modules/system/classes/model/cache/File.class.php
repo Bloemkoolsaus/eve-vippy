@@ -7,7 +7,6 @@ namespace system\model\cache
 
         function get($var)
         {
-            return null;
             $file = $this->getDirectory().$var;
             \AppRoot::debug("getCache: ".$file);
             if (file_exists($file))

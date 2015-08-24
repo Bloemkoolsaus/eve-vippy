@@ -70,7 +70,7 @@ namespace users\model
 		public function resetCache()
 		{
 			\AppRoot::debug($this->getFullName()."->resetCache()", true);
-			\Tools::deleteDir($this->getCacheDirectory());
+			\Tools::deleteDir($this->getCacheDirectory(true));
 		}
 
 		function load($resultset=false)
