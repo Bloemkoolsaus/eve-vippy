@@ -1,4 +1,6 @@
-<h3>August 24, 2015</h3>
+<h3>August 25, 2015</h3>
+<b><u>VIPPY</u></b>
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-galatea" target="_blank">Galatea</a> data export.
 <b><u>SCANNING</u></b>
  - Fix a fatal error message when trying to open the connection popup for an unmapped wormhole originating in a kspace system.
 
@@ -7,7 +9,7 @@
 
 <h3>August 21, 2015</h3>
 <b><u>SCANNING</u></b>
- - Jumplog: Per reque, allow addition of custom mass amount to a wormhole jump log.
+ - Jumplog: Per request, allow addition of custom mass amount to a wormhole jump log.
  - Signature list: On small windows, the info hover on a signature would fall off screen. Moved info hover panel on screen on small windows.
 
 
@@ -23,15 +25,14 @@
 
 <h3>July 10, 2015</h3>
 <b><u>VIPPY</u></b>
- - Updated to Aegis data export.
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-aegis" target="_blank">Aegis</a> data export.
 
 
 
 
 <h3>June 3, 2015</h3>
 <b><u>VIPPY</u></b>
- - Updated to Carnyx data export.
-
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-carnyx" target="_blank">Carnyx</a> data export.
 <b><u>FIXES</u></b>
  - Fixed an out of memory exception that could occur when adding a wormhole between systems when neither system was already on the map.
 
@@ -42,7 +43,6 @@
 <b><u>SCANNING</u></b>
  - When copy pasting more then 2 signatures, check for old signatures that are no longer in the copy paste and remove them.
  	This will automatically clear old signatures. If the signatures was a wormhole, try find the matching wormhole and close it's connection.
-
 <b><u>VIPPY</u></b>
  - Fixed the error that caused Vippy to go bananas last weekend.
 
@@ -55,17 +55,14 @@
  - When jumping through a wormhole connecting 2 kspace systems, VIPPY would not map it.
  	It will now check if the 2 systems are directly connected by a gate. If not, VIPPY will now assume a wormhole map the systems.
  - Improved the auto mapping layout algorithm.
-
 {if isset($App->user) && $App->user->hasRight('atlas')}
 <b><u>ATLAS</u></b>
  - Fixed menu ATLAS link.
-
 {/if}
 <b><u>VIPPY</u></b>
- - Import the new static data dump for the Mosaic expansion.
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-mosaic" target="_blank">Mosaic</a> data export.
 {if isset($App->user) && $App->user->getIsDirector()}
  - Add an access control group page. All directors can now set wich corporations have access to VIPPY.
-
 {/if}
 <b><u>FIXES</u></b>
  - `Delete all Signatures` also deleted POS signatures. Deleting all sigs will now keep POS signatures.
@@ -78,10 +75,8 @@
 <b><u>SCANNING</u></b>
  - Add visual for Shattered systems.
  - Add a `delete all signatures` link.
-
 <b><u>WH-INFO</u></b>
- - Shattered Systems
-
+ - Add support for shattered Systems
 <b><u>FIXES</u></b>
  - VIPPY said A009 goes to nullsec, but it doesn't. It actually goes to one of the 25 Small-Ship Shattered systems.
 
@@ -101,12 +96,10 @@
  		These values will <u>NOT</u> map to c5b: 	`frig c5a-c5b`	`j123456-1654321`	`j123456-1654321 c5a`
  - Show lifetime/mass of a wormhole in the on-hover connection info when a wormhole-type is known.
  - More code optimizations for improved server-side performance.
-
 <b><u>WH-INFO</u></b>
  - Updated wormhole mass table.
  - Updated wormhole color reference.
  - Add wormhole system effect reference.
-
 <b><u>FIXES</u></b>
  - Fixed `Remove Connected Systems`. Unmapped systems would delete the whole chain instead of only the actual connected systems.
  - Fixed jump-log layout. Every first line of mass after `Marked Reduced` would not go to a new line, messing up the table.
@@ -138,9 +131,8 @@
 
 
 <h3>December 9, 2014</h3>
-<b><u>RHEA</u></b>
- - Import Rhea data export! \o/
-
+<b><u>VIPPY</u></b>
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-rhea" target="_blank">Rhea</a> data export.
 <b><u>FIXES</u></b>
  - Fix broken statistics / leaderboard pages.
  - Fix signatures hover info popup.
@@ -149,10 +141,9 @@
 
 
 <h3>December 8, 2014</h3>
-<b><u>RHEA</u></b>
+<b><u>VIPPY</u></b>
  - CCP's data export is going to be late, as usual...
  	- Added a work-around for the new systems such as Thera that VIPPY does not know yet because of the SDE being late.
-
 <b><u>SCANNING</u></b>
  - When scrolling horizontally, make only the map scroll. Keep all other page elements inside the browser viewport.
  - When manually adding mass:
