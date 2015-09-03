@@ -36,22 +36,26 @@
 			<input type="text" name="homesystemname" value="{$chain->systemName}" />
 		</div>
 		<div class="form">
-			<label class="field">Sort order:</label>
+			<label class="field">Sort Order:</label>
 			<input type="text" name="sortorder" value="{$chain->prio}" />
 		</div>
 {if $chain->getAuthGroup() != null}
 		<div class="form">
-			<label class="field">&nbsp;</label>
-	{if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
+    {if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
+            <label class="field">Auto-name Wormholes:</label>
 			<select name="autonamewhs">
-				<option value="0">-- no --</option>
-				<option value="1" {if $chain->autoNameNewWormholes == '1'}selected{/if}>Letters</option>
-				<option value="2" {if $chain->autoNameNewWormholes == '2'}selected{/if}>Numbers</option>
+				<option value="0"></option>
+            {foreach from=$namingschemes item=scheme}
+                <option value="{$scheme->id}" {if $chain->autoNameNewWormholes == $scheme->id}selected{/if}>
+                    {$scheme->title}
+                </option>
+            {/foreach}
 			</select>
 	{else}
-			<input type="checkbox" name="autonamewhs" {if $chain->autoNameNewWormholes}checked{/if} />
+            <label class="field">&nbsp;</label>
+			<input type="checkbox" name="autonamewhs" {if $chain->autoNameNewWormholes}checked{/if} value="1" />
+            Auto-name Wormholes
 	{/if}
-			Auto-name Wormholes
 		</div>
         <div class="form">
             <label class="field">&nbsp;</label>

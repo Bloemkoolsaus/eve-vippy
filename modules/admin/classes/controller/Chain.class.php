@@ -189,6 +189,7 @@ namespace admin\controller
 			$tpl->assign("authgroups", $authGroups);
 			$tpl->assign("corporations", $corporations);
 			$tpl->assign("alliances", $alliances);
+            $tpl->assign("namingschemes", \map\model\NamingScheme::findAll());
 
 			if (count($errors) > 0)
 				$tpl->assign("errors", $errors);

@@ -15,6 +15,39 @@ class Module
 
 	function getContent()
 	{
+        // Pretty url stuff
+        $arguments = array();
+        if (\Tools::REQUEST("arguments")) {
+            foreach (explode(",",\Tools::REQUEST("arguments")) as $arg) {
+                if (strlen(trim($arg)) > 0)
+                    $arguments[] = $arg;
+            }
+        }
+        $section = (\Tools::REQUEST("section"))?:$this->moduleName;
+        $action = (count($arguments)>0)?array_shift($arguments):"overview";
+
+        $sectionParts = explode("-", $section);
+        $classname = "";
+        foreach ($sectionParts as $part) {
+            $classname .= ucfirst($part);
+        }
+
+        $viewClass = '\\'.$this->moduleName.'\\view\\'.ucfirst($classname);
+        if (!class_exists($viewClass))
+            $viewClass = '\\'.$this->moduleName.'\\common\\view\\'.ucfirst($classname);
+
+        if (class_exists($viewClass))
+        {
+            $view = new $viewClass();
+            $method = "get" . ucfirst($action);
+            if (!method_exists($view, $method))
+                $method = "getOverview";
+            if (method_exists($view, $method))
+                return $view->$method($arguments);
+        }
+
+
+        // oude stuff
 		if ($this->moduleSection != null)
 			$this->moduleContent = $this->moduleSection->getOverview();
 

@@ -54,6 +54,19 @@ class Model
         }
     }
 
+    function delete()
+    {
+        $data = array();
+        $where = array();
+        foreach ($this->getDBProperties() as $property => $field) {
+            $data[$field] = $this->$property;
+        }
+        foreach ($this->getDBKeyFields() as $field) {
+            $where[$field] = $data[$field];
+        }
+        \MySQL::getDB()->delete($this->getDBTable(),$where);
+    }
+
     /**
      * Get database table
      * @return string
@@ -133,6 +146,21 @@ class Model
                 $parts[] = strtolower(trim($part));
         }
         return implode("_", $parts);
+    }
+
+    public static function findById($id, $class=null)
+    {
+        if ($result = \MySQL::getDB()->getRow("SELECT * FROM ".self::getDBTableByClass($class)." WHERE id = ?", array($id)))
+        {
+            if ($class == null)
+                $class = get_called_class();
+
+            $entity = new $class();
+            $entity->load($result);
+            return $entity;
+        }
+
+        return null;
     }
 
     /**
