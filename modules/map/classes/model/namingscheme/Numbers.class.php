@@ -35,8 +35,10 @@ class Numbers extends \map\model\NamingScheme
                         $kspaceStatics[] = strtolower($static["tag"]);
                 }
 
-                // Tellen na statics, tenzij het één van de statics is.
-                $index = count($wspaceStatics)+count($kspaceStatics)+1;
+                // Tellen na statics, tenzij het een van de statics is.
+                $index = count($wspaceStatics)+1;
+                if ($index <= 2)
+                    $index = 2;
                 for ($s=0; $s<count($wspaceStatics); $s++) {
                     if ($wspaceStatics[$s] == $classname)
                         $index = 1;

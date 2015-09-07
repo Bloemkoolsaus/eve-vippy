@@ -35,7 +35,7 @@ class NumbersStatic extends \map\model\NamingScheme
                         $kspaceStatics[] = strtolower($static["tag"]);
                 }
 
-                // Tellen na statics, tenzij het één van de statics is.
+                // Tellen na statics, tenzij het een van de statics is.
                 if (count($wspaceStatics) > 0) {
                     $index = count($wspaceStatics) + 1;
                     for ($s = 0; $s < count($wspaceStatics); $s++) {
