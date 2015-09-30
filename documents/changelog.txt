@@ -1,3 +1,10 @@
+<h3>September 30, 2015</h3>
+<b><u>VIPPY</u></b>
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-vanguard" target="_blank">Vanguard</a> data export.
+
+
+
+
 <h3>September 03, 2015</h3>
 <b><u>SCANNING</u></b>
  - Fixed a bug in the wormhole auto-naming algorithm.
