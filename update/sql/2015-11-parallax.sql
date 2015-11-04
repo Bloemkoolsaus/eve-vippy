@@ -1,0 +1,1 @@
+update config set val = 'eve_db_parallax' where var = 'mysql_eve_db';
