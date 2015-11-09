@@ -15,14 +15,16 @@ namespace stats\view
 			if (\Tools::REQUEST("date"))
 				$date = date("Y-m-d", strtotime(\Tools::REQUEST("date")));
 			if (\Tools::REQUEST("month"))
-				$date = date("Y-m-d", mktime(0,0,0, date("m", strtotime($date))+\Tools::REQUEST("month"), 1, date("Y", strtotime($date))));
+				$date = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($date)) + \Tools::REQUEST("month"), 1, date("Y", strtotime($date))));
 
-			$topSDate = date("Y-m-d", mktime(0,0,0, date("m", strtotime($date)), 1, date("Y", strtotime($date))));
-			$topEDate = date("Y-m-d", mktime(0,0,0, date("m", strtotime($date))+1, 0, date("Y", strtotime($date))));
+			$topSDate = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($date)), 1, date("Y", strtotime($date))));
+			$topEDate = date("Y-m-d", mktime(0, 0, 0, date("m", strtotime($date)) + 1, 0, date("Y", strtotime($date))));
+
+			$authGroups = \User::getUSER()->getAuthGroupsIDs();
+			$authGroup = new \admin\model\AuthGroup($authGroups[0]);
 
 			$corporations = array();
-			$allianceID = \User::getUSER()->getMainCharacter()->getCorporation()->allianceID;
-			foreach (\eve\model\Corporation::getCorporationsByAlliance($allianceID) as $corp)
+			foreach ($authGroup->getAllowedCorporations() as $corp)
 			{
 				$corporations[] = array("corp" => $corp,
 										"users" => $signatures->getScannersByCorporationID($corp->id, $topSDate, $topEDate));

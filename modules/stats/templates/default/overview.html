@@ -24,8 +24,9 @@
 					<th style="width: 60px; text-align: center;">Total Sigs Scanned</th>
 					<th style="width: 60px; text-align: center;">Ratio<br />Sigs/User</th>
 				</tr>
-		{assign var=i value=0}
-		{foreach from=$corporations item=corp}
+	{assign var=i value=0}
+	{foreach from=$corporations item=corp}
+		{if $corp.users|@count > 0}
 			{assign var=totsigs value=0}
 			{foreach from=$corp.users key=s item=user}
 				{assign var=totsigs value=$totsigs+$user.amount}
@@ -49,7 +50,8 @@
 					</td>
 				</tr>
 			{assign var=i value=$i+1}
-		{/foreach}
+		{/if}
+	{/foreach}
 			</table>
 		</div>
 	</div>

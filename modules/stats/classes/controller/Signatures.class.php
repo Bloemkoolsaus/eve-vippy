@@ -7,18 +7,13 @@ namespace stats\controller
 		{
 			$fromdate = date("Y-m-d", strtotime($fromdate))." 00:00:00";
 			$tilldate = date("Y-m-d", strtotime($tilldate))." 23:59:59";
-			if ($authGroupID == null || !is_numeric($authGroupID))
-			{
+
+			if ($authGroupID == null || !is_numeric($authGroupID)) {
 				$authGroups = \User::getUSER()->getAuthGroupsIDs();
 				$authGroupID = $authGroups[0];
 			}
 			$authGroup = new \admin\model\AuthGroup($authGroupID);
 
-			if ($chainID == null || !is_numeric($chainID))
-			{
-				if ($authGroup->mainChainID != null && $authGroup->mainChainID > 0)
-					$chainID = $authGroup->mainChainID;
-			}
 
 			$queries = array();
 			$queries[] = "s.scandate BETWEEN '".$fromdate."' AND '".$tilldate."'";
@@ -26,6 +21,8 @@ namespace stats\controller
 
 			if ($chainID !== null && is_numeric($chainID))
 				$queries[] = "c.id = ".$chainID;
+			else
+				$queries[] = "c.countinstats > 0";
 
 			$limit = "";
 			if ($limitRows !== null && is_numeric($limitRows))
@@ -66,11 +63,6 @@ namespace stats\controller
 			}
 			$authGroup = new \admin\model\AuthGroup($authGroupID);
 
-			if ($chainID == null || !is_numeric($chainID))
-			{
-				if ($authGroup->mainChainID != null && $authGroup->mainChainID > 0)
-					$chainID = $authGroup->mainChainID;
-			}
 
 			$queries = array();
 			$queries[] = "s.scandate BETWEEN '".$fromdate."' AND '".$tilldate."'";
@@ -78,6 +70,8 @@ namespace stats\controller
 
 			if ($chainID !== null && is_numeric($chainID))
 				$queries[] = "c.id = ".$chainID;
+			else
+				$queries[] = "c.countinstats > 0";
 
 			$totals = array();
 			if ($results = \MySQL::getDB()->getRows("SELECT	MONTH(s.scandate) AS `month`,  year(s.scandate) AS `year`,
@@ -104,18 +98,18 @@ namespace stats\controller
 			$scannerIDs = array();
 			foreach ($this->getTopScanners($fromdate, $tilldate, null, null, null) as $user)
 			{
-				if ($user["user"]->getMainCharacter()->getCorporation()->id == $corporationID)
-				{
+				if ($user["user"]->getMainCharacter()->corporationID == $corporationID) {
 					$scannerIDs[] = $user["user"]->id;
 					$users[] = $user;
 				}
 			}
 			foreach (\users\model\User::getUsersByCorporation($corporationID) as $user)
 			{
-				if (!in_array($user->id, $scannerIDs))
-				{
-					if ($user->getIsActive($fromdate, $tilldate))
-						$users[] = array("user" => $user, "rank" => 0, "amount" => 0);
+				if ($user->getMainCharacter()->corporationID == $corporationID) {
+					if (!in_array($user->id, $scannerIDs)) {
+						if ($user->getIsActive($fromdate, $tilldate))
+							$users[] = array("user" => $user, "rank" => 0, "amount" => 0);
+					}
 				}
 			}
 
