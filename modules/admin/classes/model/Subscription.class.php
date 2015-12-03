@@ -48,7 +48,22 @@ namespace admin\model
 
 			$result = \MySQL::getDB()->updateinsert("vippy_subscriptions", $data, array("id" => $this->id));
 			if ($this->id == 0)
+			{
 				$this->id = $result;
+
+				// Deze was nieuw. Check of er nog lopende zijn, zo ja, laat die aflopen!
+				foreach (self::getSubscriptionsByAuthgroup($this->authgroupID) as $subscription)
+				{
+					if (strtotime($subscription->fromdate) < strtotime($this->fromdate))
+					{
+						if ($subscription->tilldate == null)
+						{
+							$subscription->tilldate = $this->fromdate;
+							$subscription->store();
+						}
+					}
+				}
+			}
 		}
 
 		function isActive()
@@ -158,7 +173,9 @@ namespace admin\model
 		public static function getSubscriptionsByAuthgroup($authgroupID)
 		{
 			$subscriptions = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions WHERE authgroupid = ? ORDER BY tilldate desc, fromdate desc", array($authgroupID)))
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions WHERE authgroupid = ?
+													ORDER BY fromdate DESC, tilldate DESC"
+									, array($authgroupID)))
 			{
 				foreach ($results as $result)
 				{

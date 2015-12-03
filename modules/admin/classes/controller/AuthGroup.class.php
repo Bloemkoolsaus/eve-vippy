@@ -153,7 +153,7 @@ namespace admin\controller
 
 					$curdate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($curdate))+1,date("d",strtotime($curdate)),date("Y",strtotime($curdate))));
 				}
-				$tpl->assign("monthsdue", $months);
+				$tpl->assign("monthsdue", array_reverse($months));
 			}
 
 			return $tpl->fetch("admin/authgroups/edit");

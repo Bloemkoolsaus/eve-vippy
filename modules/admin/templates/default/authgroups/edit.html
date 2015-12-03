@@ -9,10 +9,10 @@
 	</div>
 	<br />
 {/if}
-		
+
 	<form method="post" name="formAuthGroup" action="">
 	<input type="hidden" name="id" value="{$authgroup->id}" />
-	
+
 	<div style="float: left; width: 40%;">
 		<div class="form">
 			<label class="field">Name:</label>
@@ -38,12 +38,12 @@
 		</div>
 	{/if}
 		<div style="clear:both;"></div>
-		<br />	
+		<br />
 		<div class="form" style="text-align: right;">
 			<button type="submit">Save</button>
 		</div>
 	</div>
-	
+
 	<div style="float: right; width: 55%;">
 	{if $authgroup->id > 0}
 		<div style="float: left; width: 300px;">
@@ -105,7 +105,7 @@
 				<div class="field"><b>Add Corporation</b></div>
 				<div style="padding: 10px;">
 					{$addCorporationElement->getEditHTML()}
-				</div>			
+				</div>
 			</div>
 			<div style="clear:both;"></div>
 			<br />
@@ -137,7 +137,7 @@
 	</div>
 	{/if}
 	</div>
-	
+
 	{literal}
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -192,7 +192,7 @@
 							 &nbsp;
 						</td>
 						<th style="text-align: right;">
-							<h3>							
+							<h3>
 						{if $totaldue < 0}
 								<span style="color: #00ff00;"> + {($totaldue*-1)|valuta:1}</span>
 						{else}
@@ -200,7 +200,7 @@
 								<span style="color: #00ff00;">{$totaldue|valuta:1}</span>
 							{else}
 								{$totaldue|valuta:1}
-							{/if}								
+							{/if}
 						{/if}
 							</h3>
 						</th>
@@ -210,9 +210,18 @@
 			</div>
 		</div>
 	</div>
-	<div style="float: right; width: 60%;">	
+	<div style="float: right; width: 60%;">
 		<div style="padding: 10px;">
-			<h3>Subscriptions</h3>
+			<h3>
+				Subscriptions
+			{if $App->user->getIsSysAdmin()}
+				<div style="text-align: right; float: right;">
+					<button type="button" class="small" style="width: 150px;" onclick="document.location='/index.php?module=admin&section=subscriptions&action=new&authgroup={$authgroup->id}'">
+						New Subscription
+					</button>
+				</div>
+			{/if}
+			</h3>
 			<table class="sectionoverview">
 				<tr>
 					<th>Description</th>
@@ -221,7 +230,8 @@
 					<th>End</th>
 				</tr>
 			{foreach from=$authgroup->getSubscriptions() key=s item=subscription}
-				<tr class="{if $s%2==0}even{else}odd{/if}">
+				<tr class="{if $s%2==0}even{else}odd{/if}"
+					{if $App->user->getIsSysAdmin()}onclick="document.location='/index.php?module=admin&section=subscriptions&action=edit&id={$subscription->id}'"{/if}>
 					<td>
 						{$subscription->description}
 					{if $subscription->isActive()}
@@ -243,7 +253,7 @@
 					{if $subscription->tilldate != null}
 						{$subscription->tilldate|date_full}
 					{else}
-						<i>No end date</i>					
+						<i>No end date</i>
 					{/if}
 					</td>
 				</tr>
@@ -256,16 +266,16 @@
 				<tr>
 					<th>Date</th>
 					<th>Amount</th>
-					<th>By</th>		
-					<th>Description</th>		
+					<th>By</th>
+					<th>Description</th>
 				</tr>
 		{if $authgroup->getPayments()|@count > 0}
 			{foreach from=$authgroup->getPayments() key=i item=transaction}
 				<tr class="{if $i%2==0}even{else}odd{/if}">
 					<td>
 						{$transaction->date|date_full}
-						- 
-						{$transaction->date|date_time}						
+						-
+						{$transaction->date|date_time}
 					</td>
 					<td style="text-align: right; {if $transaction->amount > 0}color: #00ff00;{/if}">
 						{$transaction->amount|valuta} &nbsp;

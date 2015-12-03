@@ -152,7 +152,9 @@ namespace admin\model
 		public static function getTransactionsByAuthgroup($authgroupID)
 		{
 			$transactions = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions_journal WHERE authgroupid = ? ORDER BY transactiondate DESC", array($authgroupID)))
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions_journal
+													WHERE authgroupid = ? ORDER BY transactiondate DESC"
+										, array($authgroupID)))
 			{
 				foreach ($results as $result)
 				{

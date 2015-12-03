@@ -5,7 +5,7 @@ namespace admin\controller\console
 	{
 		function fetchWalletJournal($beforeID=null)
 		{
-			$limit = 100;
+			$limit = 2000;
 
 			$api = new \eve\controller\API();
 			$api->setKeyID(\AppRoot::getDBConfig("wallet_api_keyid"));
