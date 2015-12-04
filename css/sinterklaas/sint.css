@@ -1,0 +1,45 @@
+body {
+    background: #111155 linear-gradient(#111155, #114466);
+    background-image: url('/images/sinterklaas/background.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-attachment: fixed;
+}
+
+#header #infoheader {
+    background-color: #ffcc00 !important;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-top: 8px;
+}
+#header #infoheaderbar {
+    color: #222222 !important;
+}
+#header #menucontainer {
+    background: #bb0000 linear-gradient(#bb0000, #770000);
+}
+
+li.mainmenu[rel=Sinterklaas] {
+    float: right !important;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #000000;
+}
+
+table.sectionoverview tr.even{
+    background: rgba(100, 100, 100, 0.7) none repeat scroll 0 0;
+    color: #ffffff;
+}
+table.sectionoverview tr.odd {
+    background: rgba(150, 150, 150, 0.7) none repeat scroll 0 0;
+    color: #ffffff;
+}
+
+#zwarte-piet-1,
+#zwarte-piet-2,
+#sinterklaas {
+    position: absolute;
+    z-index: 100;
+}
+#sinterklaas img {
+    height: 65px;
+}

@@ -12,7 +12,7 @@ $mainMenu = null;
 if (date("Y-m-d") == date("Y")."-04-27") {
 	\SmartyTools::setTemplate("kingsday");
 }
-if (date("Y-m-d") == date("Y")."-12-05") {
+if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") {
 	\SmartyTools::setTemplate("sinterklaas");
 }
 if (date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-26") {
