@@ -135,9 +135,13 @@ class AppRoot
 		if (\Tools::GET("module") == "api")
 			return false;
 
-		// cron
-		if (\Tools::GET("module") == "system")
-			return false;
+        // cron
+        if (\Tools::GET("module") == "system")
+            return false;
+
+        // screenies
+        if (\Tools::GET("module") == "screenshots")
+            return false;
 
 		return true;
 	}
