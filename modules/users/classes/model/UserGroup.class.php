@@ -1,72 +1,35 @@
 <?php
 namespace users\model
 {
-	class UserGroup
+	class UserGroup extends \Model
 	{
+        protected $_table = "user_groups";
+
 		public $id = 0;
+        public $authGroupID;
 		public $name;
-		public $hidden = false;
-		public $deleted = false;
-		public $updatedate;
 
-		private $rights = null;
-
-		public function __construct($id = false)
-		{
-			if ($id)
-			{
-				$this->id = $id;
-				$this->load();
-			}
-		}
-
-		function load($result=false)
-		{
-			if (!$result)
-				$result = \MySQL::getDB()->getRow("SELECT * FROM user_groups WHERE id = ?", array($this->id));
-
-			if ($result)
-			{
-				$this->id = $result["id"];
-				$this->name = $result["name"];
-				$this->hidden = ($result["hidden"]>0)?true:false;
-				$this->deleted = ($result["deleted"]>0)?true:false;
-				$this->updatedate = $result["updatedate"];
-			}
-		}
+		private $_rights = null;
+        private $_users = null;
 
 		function store()
 		{
-			$data = array(	"name" 		 => $this->name,
-							"hidden" 	 => $this->hidden,
-							"deleted" 	 => $this->deleted,
-							"updatedate" => date("Y-m-d H:i:s"));
-			if ($this->id > 0)
-				$data["id"] = $this->id;
+            parent::store();
 
-			$result = \MySQL::getDB()->updateinsert("user_groups", $data, array("id" => $this->id));
-			if ($this->id == 0)
-				$this->id = $result;
-
-			if ($this->rights !== null)
+			if ($this->_rights !== null)
 			{
 				\MySQL::getDB()->delete("user_group_rights", array("groupid" => $this->id));
 				foreach ($this->getRights() as $module => $rights)
 				{
 					foreach ($rights as $name => $title)
 					{
-						// Kijk of de right bestaat
-						if ($right = \MySQL::getDB()->getRow("	SELECT * FROM user_rights
-																WHERE module = ? AND name = ?"
-													, array($module, $name)))
-						{
+						// Kijk of dit recht al bekend is.
+						if ($right = \MySQL::getDB()->getRow("SELECT * FROM user_rights WHERE module = ? AND name = ?", [$module, $name])) {
 							$id = $right["id"];
-						}
-						else
-						{
+						} else {
 							$id = \MySQL::getDB()->updateinsert("user_rights",
-														array("module" => $module, "name" => $name, "title"	=> $title),
-														array("module" => $module, "name" => $name));
+                                    ["module" => $module, "name" => $name, "title"	=> $title],
+                                    ["module" => $module, "name" => $name]);
 						}
 
 						// Toeveogen
@@ -82,28 +45,31 @@ namespace users\model
 		 */
 		function getUsers()
 		{
-			$users = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT	u.*
-													FROM	users u
-														INNER JOIN user_user_group ug ON ug.userid = u.id
-													WHERE	ug.groupid = ?
-													ORDER BY u.displayname"
-										, array($this->id)))
-			{
-				foreach ($results as $result)
-				{
-					$user = new \users\model\User();
-					$user->load($result);
-					$users[] = $user;
-				}
-			}
+			if ($this->_users === null)
+            {
+                $this->_users = [];
+                if ($results = \MySQL::getDB()->getRows("SELECT	u.*
+                                                        FROM	users u
+                                                            INNER JOIN user_user_group ug ON ug.userid = u.id
+                                                        WHERE	ug.groupid = ?
+                                                        ORDER BY u.displayname"
+                                                , [$this->id]))
+                {
+                    foreach ($results as $result)
+                    {
+                        $user = new \users\model\User();
+                        $user->load($result);
+                        $this->_users[] = $user;
+                    }
+                }
+            }
 
-			return $users;
+			return $this->_users;
 		}
 
 		function getRights()
 		{
-			if ($this->rights === null)
+			if ($this->_rights === null)
 			{
 				$this->clearRights();
 				if ($results = \MySQL::getDB()->getRows("SELECT	r.*
@@ -118,32 +84,40 @@ namespace users\model
 				}
 			}
 
-			return $this->rights;
+			return $this->_rights;
 		}
 
 		function clearRights()
 		{
-			$this->rights = array();
+			$this->_rights = array();
 		}
 
 		function addRight($module, $name, $title)
 		{
-			if ($this->rights === null)
-				$this->rights = $this->getRights();
+			if ($this->_rights === null)
+				$this->_rights = $this->getRights();
 
-			$this->rights[$module][$name] = $title;
+			$this->_rights[$module][$name] = $title;
 		}
 
 		function hasRight($module, $name)
 		{
-			if ($this->rights === null)
+			if ($this->_rights === null)
 				$this->getRights();
 
-			if (isset($this->rights[$module][$name]))
+			if (isset($this->_rights[$module][$name]))
 				return true;
 			else
 				return false;
 		}
+
+        function getAuthgroup()
+        {
+            if ($this->authGroupID)
+                return new \admin\model\AuthGroup($this->authGroupID);
+
+            return null;
+        }
 	}
 }
 ?>

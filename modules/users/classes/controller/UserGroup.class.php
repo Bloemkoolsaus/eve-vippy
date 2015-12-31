@@ -6,17 +6,29 @@ namespace users\controller
 		public function getOverviewSection()
 		{
 			$section = new \Section("user_groups","id");
-			$section->addElement("UserGroup","name");
+
+            if (\User::getUSER()->getIsSysAdmin())
+                $section->addElement("Access Group", "authgroupid", false, '\\admin\\elements\\AuthGroup\\AuthGroup');
+
+            $section->addElement("UserGroup", "name");
 			$section->allowEdit = true;
-			$section->deletedfield = "deleted";
-			$section->whereQuery = "WHERE hidden = 0";
+
+            if (!\User::getUSER()->getIsSysAdmin())
+                $section->whereQuery = " WHERE authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")";
+
 			return $section;
 		}
 
-		public function getUsergroups()
+		public function getUsergroups($user=null)
 		{
-			$groups = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_groups ORDER BY name"))
+            $query = ["authgroupid is not null"];
+			$groups = [];
+
+            if ($user != null)
+                $query[] = "authgroupid IN (".implode(",",$user->getAuthGroupsIDs()).")";
+
+
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_groups WHERE ".implode(" AND ", $query)." ORDER BY name"))
 			{
 				foreach ($results as $result)
 				{
@@ -43,6 +55,17 @@ namespace users\controller
 			if (\Tools::POST("save"))
 			{
 				$usergroup->name = \Tools::POST("name");
+
+                if (\Tools::POST("authgroupid"))
+                    $usergroup->authGroupID = \Tools::POST("authgroupid");
+                else
+                {
+                    $usergroup->authGroupID = null;
+                    $authgroups = \User::getUSER()->getAuthGroupsIDs();
+                    if (!\User::getUSER()->getIsSysAdmin())
+                        $usergroup->authGroupID = $authgroups[0];
+                }
+
 				$usergroup->clearRights();
 				foreach ($permissions as $module => $rights)
 				{
@@ -54,12 +77,30 @@ namespace users\controller
 				}
 
 				$usergroup->store();
-				\AppRoot::redirect("index.php?module=users&section=usergroups");
+                \AppRoot::redirect("index.php?module=users&section=usergroups");
 			}
+
+            if (\Tools::REQUEST("deleteuser"))
+            {
+                $user = new \users\model\User(\Tools::REQUEST("deleteuser"));
+                $user->removeUserGroup($usergroup->id);
+                $user->store();
+                \AppRoot::redirect("index.php?module=users&section=usergroups&action=edit&id=".$usergroup->id);
+            }
+
+            if (\Tools::POST("adduser"))
+            {
+                $user = new \users\model\User(\Tools::POST("adduser"));
+                $user->addUserGroup($usergroup->id);
+                $user->store();
+                \AppRoot::redirect("index.php?module=users&section=usergroups&action=edit&id=".$usergroup->id);
+            }
+
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("usergroup",$usergroup);
 			$tpl->assign("permissions", $permissions);
-			return $tpl->fetch(\SmartyTools::getTemplateDir("users")."usergroup.html");
+            $tpl->assign("accessgroups", \admin\model\AuthGroup::getAuthGroups());
+			return $tpl->fetch("users/group/edit");
 		}
 	}
 }

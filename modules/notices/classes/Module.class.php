@@ -5,6 +5,7 @@ namespace notices
 	{
 		public $moduleName = "notices";
 		public $moduleTitle = "Notifications";
+        public $public = false;
 
 
 		function getContent()

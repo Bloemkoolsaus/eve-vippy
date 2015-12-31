@@ -28,11 +28,19 @@ if (count(\User::getUSER()->getAuthGroupsAdmins()) > 0)
 								"section" => "authgroups");
 }
 // USERS
-if (\User::getUSER()->getIsDirector() || \User::getUSER()->hasRight("users", "manageusers"))
+if (\User::getUSER()->hasRight("users", "manageusers") || \User::getUSER()->getIsDirector())
 {
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Users",
 								"module"=> "users");
+
+    if (\User::getUSER()->getIsDirector() || \User::getUSER()->hasRight("users", "manageusers"))
+    {
+        $config["submenu"][] = array("type" => "link",
+                                     "name"	=> "User-Groups",
+                                     "module" => "users",
+                                     "section" => "usergroups");
+    }
 
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Logs",
@@ -51,10 +59,6 @@ if (\User::getUSER()->getIsSysAdmin())
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Subscriptions",
 								"section" => "subscriptions");
-	$config["submenu"][] = array("type" => "link",
-								"name"	=> "User-Groups",
-								"module" => "users",
-								"section" => "usergroups");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Clear Cache",
 								"section" => "clearcache");

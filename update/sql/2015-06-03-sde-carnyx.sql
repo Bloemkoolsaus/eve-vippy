@@ -1,1 +1,0 @@
-update config set val = 'eve_db_carnyx' where var = 'mysql_eve_db';

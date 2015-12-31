@@ -5,6 +5,7 @@ namespace admin
 	{
 		public $moduleName = "admin";
 		public $moduleTitle = "Admin";
+        public $public = false;
 
 		function getContent()
 		{

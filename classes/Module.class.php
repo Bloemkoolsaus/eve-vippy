@@ -5,6 +5,7 @@ class Module
 	public $moduleTitle = "Module";
 	public $moduleContent = "";
 	public $moduleSection = null;
+    public $public = true;
 
 	private $template;
 

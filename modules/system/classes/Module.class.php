@@ -3,6 +3,8 @@ namespace system
 {
 	class Module extends \Module
 	{
+        public $public = false;
+
 		public function __construct()
 		{
 			$this->moduleName = "api";

@@ -1,0 +1,81 @@
+<div class="content">
+	<h1>Usergroup</h1>
+{if isset($errors) && $errors|@count > 0}
+	<div class="error">
+	{foreach from=$errors key=e item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+{/if}
+</div>
+
+<div class="content">
+    <div style="float: left; width: 45%;">
+        <form method="post" action="" name="formEditUserGroup">
+            <input type="hidden" name="save" value="true" />
+            <input type="hidden" name="id" value="{$usergroup->id}"/>
+            <div class="form">
+                <label class="field">Access group:</label>
+                <label class="value">
+                    {if $App->user->getIsSysAdmin()}
+                        <select name="authgroupid">
+                            <option value="0">- none -</option>
+                        {foreach from=$accessgroups item=accessgroup}
+                            <option value="{$accessgroup->id}" {if $accessgroup->id == $usergroup->authGroupID}selected{/if}>
+                                {$accessgroup->name}
+                            </option>
+                        {/foreach}
+                        </select>
+                    {else}
+                        {if $usergroup->getAuthgroup() != null}
+                            {$usergroup->getAuthgroup()->name}
+                        {/if}
+                    {/if}
+                </label>
+            </div>
+            <div class="form">
+                <label class="field">Name:</label>
+                <label class="value"><input type="text" name="name" value="{$usergroup->name}" /></label>
+            </div>
+            <div class="form">
+                <div class="buttons">
+                    <button type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+        <div style="clear:both;"></div>
+    </div>
+    <div style="float: right; width: 45%;">
+        <h2>Members</h2>
+        {if $usergroup->getUsers()|@count > 0}
+            <ul>
+                {foreach from=$usergroup->getUsers() item=user}
+                    <li style="margin-bottom: 5px;">
+                        <a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
+                        &nbsp;
+                        <a href="/index.php?module=users&section=usergroups&action=edit&id={$usergroup->id}&deleteuser={$user->id}">
+                            <img src="/images/default/cross.small.png" style="top: 3px;">
+                        </a>
+                    </li>
+                {/foreach}
+            </ul>
+        {else}
+            <i>No members</i>
+        {/if}
+        <div style="padding: 10px;">
+            <form method="post" action="">
+                <div class="form">
+                    Add member to group: &nbsp;
+                    <select name="adduser">
+                        <option value=""></option>
+                    {foreach from=$usergroup->getAuthgroup()->getAllowedUsers() item=user}
+                        <option value="{$user->id}">{$user->getFullname()}</option>
+                    {/foreach}
+                    </select> &nbsp;
+                    <button type="submit" class="small">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div style="clear:both;"></div>
+</div>

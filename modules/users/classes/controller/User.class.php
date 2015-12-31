@@ -121,17 +121,15 @@ namespace users\controller
 
 			if (\Tools::POST("saveusergroups"))
 			{
-				if (\User::getUSER()->hasRight("admin","sysadmin"))
-				{
-					$user->clearUserGroups();
-					$usergroupController = new \users\controller\UserGroup();
-					foreach ($usergroupController->getUsergroups() as $group)
-					{
-						if (\Tools::POST("group".$group->id))
-							$user->addUserGroup($group->id);
-					}
-					$user->store();
-				}
+                $user->clearUserGroups();
+                if (isset($_POST["group"]))
+                {
+                    foreach ($_POST["group"] as $id => $val) {
+                        $user->addUserGroup($id);
+                    }
+                }
+                $user->store();
+
 				\AppRoot::redirect("index.php?module=users&action=edit&id=".$user->id);
 			}
 
@@ -169,12 +167,10 @@ namespace users\controller
 			$tpl->assign("messages", $messages);
 
 			if (\User::getUSER()->getIsSysAdmin())
-			{
 				$tpl->assign("issysadmin",1);
 
-				$usergroupController = new \users\controller\UserGroup();
-				$tpl->assign("usergroups", $usergroupController->getUsergroups());
-			}
+            $usergroupController = new \users\controller\UserGroup();
+            $tpl->assign("usergroups", $usergroupController->getUsergroups($user));
 
 			$lastLogin = $user->getLastLogin();
 			if ($lastLogin)

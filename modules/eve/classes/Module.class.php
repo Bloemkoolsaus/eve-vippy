@@ -3,6 +3,7 @@ namespace eve
 {
 	class Module extends \Module
 	{
+        public $public = false;
 		private static $eveDB = null;
 
 		public function __construct()

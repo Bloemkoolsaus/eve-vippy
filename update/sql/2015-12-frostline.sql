@@ -1,1 +1,0 @@
-update config set val = 'eve_db_frostline' where var = 'mysql_eve_db';

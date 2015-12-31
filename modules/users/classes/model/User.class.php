@@ -345,7 +345,7 @@ namespace users\model
 													FROM    user_rights r
 													    INNER JOIN user_group_rights rg ON rg.rightid = r.id
 													    INNER JOIN user_user_group ug ON ug.groupid = rg.groupid
-													    INNER JOIN user_groups g ON g.id = rg.groupid AND g.deleted = 0
+													    INNER JOIN user_groups g ON g.id = rg.groupid
 													WHERE   ug.userid = ?
 													AND		rg.level > 0
 													GROUP BY r.id"
@@ -391,14 +391,21 @@ namespace users\model
 
 		private function calcHasRight($module, $right)
 		{
+            $moduleObject = null;
+            $moduleClass = '\\'.$module.'\\Module';
+            if (class_exists($moduleClass))
+                $moduleObject = new $moduleClass();
+
+            $modulePublic = \AppRoot::config($module."public");
+            if ($moduleObject != null)
+                $modulePublic = $moduleObject->public;
+
+
 			if ($right == "allowed")
 			{
-				$moduleClass = '\\'.$module.'\\Module';
-				if (class_exists($moduleClass))
-				{
-					$moduleObject = new $moduleClass();
+                if ($moduleObject != null)
 					return $moduleObject->isAvailable();
-				}
+
 				$right = "availible";
 			}
 
@@ -409,7 +416,7 @@ namespace users\model
 					return false;
 
 				// Kijk of de module public is? Dan heb je geen rechten nodig!
-				if (\AppRoot::config($module."public"))
+				if ($modulePublic)
 					return true;
 			}
 
@@ -421,37 +428,66 @@ namespace users\model
 			{
 				if ($this->rights["admin"]["sysadmin"] == true)
 				{
-					\AppRooT::debug("SYSADMIN");
+					\AppRoot::debug("SYSADMIN");
 					return true;
 				}
 			}
-			else
-			{
-				// Je auth-groep moet de module ook mogen
-				foreach ($this->getAuthGroupsIDs() as $groupID)
-				{
-					if ($results = \MySQL::getDB()->getRows("SELECT *
-															FROM 	user_auth_groups_modules
-															WHERE	authgroupid = ?
-															AND		module = ?"
-												, array($groupID, $module)))
-					{
-						foreach ($results as $result)
-						{
-							// Kijk of het public is voor jou authgroup, dan mag het!
-							if ($right == "availible" && $result["public"] > 0)
-								return true;
 
-							// Je auth-groep mag het wel, maar mag jij het?
-							if (isset($this->rights[$module][$right]))
-							{
-								if ($this->rights[$module][$right] == true)
-									return true;
-							}
-						}
-					}
-				}
-			}
+            \AppRoot::debug($module."-".$right." is public? ".$modulePublic);
+            // Check of de module public is.
+            if ($modulePublic)
+            {
+                // Ja, iedereen mag deze module.
+                if ($right == "availible")
+                    return true;
+
+                // Je auth-groep mag het wel, maar mag jij het?
+                if (isset($this->rights[$module][$right]))
+                {
+                    if ($this->rights[$module][$right] == true)
+                        return true;
+                }
+
+                \AppRoot::debug($module."-".$right." check dir roles");
+                // Check of recht geimpliceerd wordt door director roles
+                $rights = \AppRoot::config($module."rights");
+                \AppRoot::debug("<pre>".print_r($rights,true)."</pre>");
+                if (isset($rights[$right]) && isset($rights[$right]["dirdefault"]))
+                {
+                    \AppRoot::debug("dir is default");
+                    if ($rights[$right]["dirdefault"] == true && $this->getIsDirector())
+                        return true;
+                }
+            }
+            else
+            {
+                \AppRoot::debug($module."-".$right." is <u>not</u> public");
+
+                // Nee, je auth-groep moet de module ook mogen.
+                foreach ($this->getAuthGroupsIDs() as $groupID)
+                {
+                    if ($results = \MySQL::getDB()->getRows("SELECT *
+                                                        FROM 	user_auth_groups_modules
+                                                        WHERE	authgroupid = ?
+                                                        AND		module = ?"
+                        , array($groupID, $module)))
+                    {
+                        foreach ($results as $result)
+                        {
+                            // Kijk of het public is voor jou authgroup, dan mag het!
+                            if ($right == "availible" && $result["public"] > 0)
+                                return true;
+
+                            // Je auth-groep mag het wel, maar mag jij het?
+                            if (isset($this->rights[$module][$right]))
+                            {
+                                if ($this->rights[$module][$right] == true)
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
 
 			return false;
 		}
@@ -537,8 +573,30 @@ namespace users\model
 
 		public function addUserGroup($groupID)
 		{
-			$this->groups[] = new \users\model\UserGroup($groupID);
+            if ($this->groups === null)
+                $this->getUserGroups();
+
+            $usergroup = new \users\model\UserGroup($groupID);
+
+            // Kan deze user wel in deze groep?
+            if ($usergroup->getAuthgroup() !== null)
+            {
+                if (!in_array($usergroup->authGroupID, $this->getAuthGroupsIDs()))
+                    return false;
+            }
+
+			$this->groups[] = $usergroup;
+            return true;
 		}
+
+        public function removeUserGroup($groupID)
+        {
+            foreach ($this->getUserGroups() as $key => $group)
+            {
+                if ($group->id == $groupID)
+                    unset($this->groups[$key]);
+            }
+        }
 
 		/**
 		 * get usergroups

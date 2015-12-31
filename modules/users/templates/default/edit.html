@@ -17,7 +17,7 @@
 
 	<form method="post" action="">
 	<input type="hidden" id="userid" name="save" value="{$user->id}"/>
-	
+
 	<div style="float: left; width: 400px;">
 		<div class="form">
 			<label class="field"><b>Main Character:</b></label>
@@ -34,7 +34,7 @@
 		<div class="form">
 			<label class="field"><b>E-mail:</b></label>
 			{$user->email}
-		</div>	
+		</div>
 		<div class="form">
 			<label class="field"><b>Status:</b></label>
 		{if $user->deleted > 0}
@@ -42,13 +42,13 @@
 		{else}
 			<span style="color: #22FF22;">Active</span>
 		{/if}
-		</div>	
+		</div>
 		<div class="form">
 			<label class="field"><b>Last loggedin:</b></label>
 		{if isset($lastlogindate)}
 			<div>{$lastlogindate}</div>
 			<div>
-				<img src="images/flags/16/{$lastloginip.country_code|strtolower}.png" align="left" title="{$lastloginip.city}, {$lastloginip.country_name}" />
+				<img src="/images/flags/16/{$lastloginip.country_code|strtolower}.png" align="left" title="{$lastloginip.city}, {$lastloginip.country_name}" />
 				<i>{$lastloginip.ip}</i>
 			</div>
 		{else}
@@ -62,9 +62,9 @@
 			<div>{$group->name}</div>
 		{/foreach}
 		</div>
-	{/if}	
+	{/if}
 	</div>
-	
+
 	{if isset($usergroups)}
 	<input type="hidden" name="saveusergroups" value="1"/>
 	<div style="float: left; width: 250px;">
@@ -75,8 +75,8 @@
 	{foreach from=$usergroups item=group}
 		{if $group->name|trim|strlen > 0}
 			<div>
-				<input type="checkbox" id="group{$group->id}" name="group{$group->id}" style="height: 12px; vertical-align: text-bottom;"
-					{if $user->inGroup($group->id)}checked{/if} />
+				<input type="checkbox" id="group{$group->id}" name="group[{$group->id}]"
+                       style="height: 12px; vertical-align: text-bottom;" {if $user->inGroup($group->id)}checked{/if} />
 				<label for="group{$group->id}" style="float: none;">{$group->name}</label>
 			</div>
 		{/if}
@@ -84,18 +84,18 @@
 		</div>
 	</div>
 	{/if}
-	
+
 	<div style="float: right; width: 250px; text-align: right;">
 		<div style="margin-bottom: 1px;">
 			<button type="button" style="width: 200px;" onclick="resetPassword('{$user->id}')">
-				<img src="images/eve/refresh.png" align="left" />
+				<img src="/images/eve/refresh.png" align="left" />
 				Reset Password
 			</button>
 		</div>
 	<!--
 		<div style="margin-bottom: 5px;">
 			<button type="button" style="width: 200px;" onclick="validateAPI('{$user->id}')">
-				<img src="images/eve/aura.png" style="height: 16px;" align="left" />
+				<img src="/images/eve/aura.png" style="height: 16px;" align="left" />
 				Run API validation
 			</button>
 		</div>
@@ -103,12 +103,12 @@
 		<div style="margin-bottom: 1px;">
 			{if $user->deleted > 0}
 				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
-					<img src="images/eve/apply.png" align="left" />
+					<img src="/images/eve/apply.png" align="left" />
 					Re-Activate User
 				</button>
 			{else}
 				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
-					<img src="images/eve/stop.png" align="left" />
+					<img src="/images/eve/stop.png" align="left" />
 					BAN User
 				</button>
 			{/if}
@@ -116,7 +116,7 @@
 	{if isset($issysadmin)}
 		<div style="margin-bottom: 1px;">
 			<button type="button" style="width: 200px;" onclick="document.location='index.php?module=users&loginas={$user->id}'">
-				<img src="images/eve/undock.small.png" align="left" />
+				<img src="/images/eve/undock.small.png" align="left" />
 				Login as {$user->username}
 			</button>
 		</div>
@@ -124,7 +124,7 @@
 	{if isset($usergroups)}
 		<div style="margin-top: 30px;">
 			<button type="submit" style="width: 200px;">
-				<img src="images/default/save.png" align="left" />
+				<img src="/images/default/save.png" align="left" />
 				Save User
 			</button>
 		</div>
@@ -146,8 +146,8 @@
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
-	
-	
+
+
 	<div id="detailtab-characters" rel="detailtab">
 		<h1>Known Characters</h1>
 		{if $chars|@count > 0}
@@ -168,14 +168,14 @@
 					</div>
 					<div style="float: left; width: 250px;">
 						<div>
-							<img src="http://image.eveonline.com/Corporation/{$char.corporationid}_32.png" align="left" 
+							<img src="http://image.eveonline.com/Corporation/{$char.corporationid}_32.png" align="left"
 								style="margin-right: 5px; height: 18px;" title="{$char.corporation}" alt="{$char.corporation}" />
 							{$char.corporation}
 						</div>
 						<div style="clear:both;"></div>
 						<div>
 							{if $char.alliance != ""}
-								<img src="http://image.eveonline.com/Alliance/{$char.allianceid}_32.png" align="left" 
+								<img src="http://image.eveonline.com/Alliance/{$char.allianceid}_32.png" align="left"
 									style="margin-right: 5px; height: 18px;" title="{$char.alliance}" alt="{$char.alliance}" />
 								{$char.alliance}
 							{/if}
@@ -183,7 +183,7 @@
 						</div>
 						<div style="clear:both;"></div>
 					</div>
-					<div style="clear:both;"></div>	
+					<div style="clear:both;"></div>
 					<div style="margin-top: 10px;">
 						<div style="float: left; width: 90px;">
 							<b>Source:</b>
@@ -196,7 +196,7 @@
 							{/if}
 						</div>
 						<div style="clear:both;"></div>
-					</div>		
+					</div>
 					<div>
 						<div style="float: left; width: 90px;">
 							<b>Last Update:</b>
@@ -206,7 +206,7 @@
 						</div>
 						<div style="clear:both;"></div>
 					</div>
-				</div>	
+				</div>
 				<div style="clear:both;"></div>
 			</div>
 			{/foreach}
@@ -215,13 +215,13 @@
 		{/if}
 		<div style="clear:both;"></div>
 	</div>
-	
+
 	<div id="detailtab-apikeys" rel="detailtab" style="display:none;">
 		<h1>API Keys</h1>
 	{foreach from=$user->getApiKeys() item=apikey}
 		<div>
 			<div style="float: left; width: 100px;">
-				<img src="images/eve/profile.png"/>
+				<img src="/images/eve/profile.png"/>
 			</div>
 			<div style="float: left; width: 600px;">
 				<div class="form">
@@ -257,6 +257,6 @@
 		<div id="userlogs"></div>
 		<div style="clear:both;"></div>
 	</div>
-	
+
 	<div style="clear:both;"></div>
 </div>
