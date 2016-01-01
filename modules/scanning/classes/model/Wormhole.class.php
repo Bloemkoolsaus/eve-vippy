@@ -168,13 +168,19 @@ namespace scanning\model
 			    $this->getChain()->removeWormhole($this);
 		}
 
-		function move($newX, $newY)
+		function move($newX, $newY, $modifier=25)
 		{
             if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
             {
                 $this->x = $newX;
                 $this->y = $newY;
-                $this->store();
+                $this->store($modifier);
+
+                $extrainfo = array("delete-all" => false,
+                                   "wormhole"   => array("id" => $this->id, "name" => $this->name),
+                                   "system"     => array("id" => $this->getSolarsystem()->id, "name" => $this->getSolarsystem()->name." - ".$this->name),
+                                   "chain"      => array("id" => $this->getChain()->id, "name" => $this->getChain()->name));
+                \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, $extrainfo);
             }
 		}
 

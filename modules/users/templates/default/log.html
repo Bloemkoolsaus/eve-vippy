@@ -15,10 +15,10 @@
 			{$log->getDescription()}
 		</td>
 		<td>
-			&nbsp; {$log->ipAddress} 
+			&nbsp; {$log->ipAddress}
 		{if $log->getLocation() != null}
 			&nbsp; | &nbsp;
-			<img src="images/flags/16/{$log->getLocation()->country->code|strtolower}.png" align="left" />
+			<img src="/images/flags/16/{$log->getLocation()->country->code|strtolower}.png" align="left" />
 			&nbsp;
 			{if $log->getLocation()->city->name}{$log->getLocation()->city->name},{/if}
 			{if $log->getLocation()->country->name}{$log->getLocation()->country->name}{/if}

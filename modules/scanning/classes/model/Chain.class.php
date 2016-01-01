@@ -723,14 +723,8 @@ namespace scanning\model
 
 		function moveWormhole($wormholeID, $x, $y, $updateCacheTimer=true, $modifier=25)
 		{
-            if (\User::getUSER()->isAllowedChainAction($this, "move"))
-            {
-                // Netjes alignen
-                $wormhole = new \scanning\model\Wormhole($wormholeID);
-                $wormhole->x = $x;
-                $wormhole->y = $y;
-                $wormhole->store($modifier);
-            }
+            $wormhole = new \scanning\model\Wormhole($wormholeID);
+            $wormhole->move($x, $y, $modifier);
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();
@@ -764,21 +758,24 @@ namespace scanning\model
 		 */
 		function removeWormhole(\scanning\model\Wormhole $wormhole, $updateCacheTimer=true)
 		{
-			if ($wormhole->getSolarsystem() !== null)
-			{
-				$extrainfo = array(	"delete-all"=> false,
-									"wormhole"	=> array("id" 	=> $wormhole->id,
-														"name"	=> $wormhole->name),
-									"system"	=> array("id" 	=> $wormhole->getSolarsystem()->id,
-														"name"	=> $wormhole->getSolarsystem()->name." - ".$wormhole->name),
-									"chain"		=> array("id"	=> $this->id,
-														"name"	=> $this->name));
-				\User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
-			}
+            if (\User::getUSER()->isAllowedChainAction($this, "delete"))
+            {
+                if ($wormhole->getSolarsystem() !== null)
+                {
+                    $extrainfo = array("delete-all" => false,
+                                       "wormhole"   => array("id"   => $wormhole->id,
+                                                             "name" => $wormhole->name),
+                                       "system"     => array("id"   => $wormhole->getSolarsystem()->id,
+                                                             "name" => $wormhole->getSolarsystem()->name . " - " . $wormhole->name),
+                                       "chain"      => array("id"   => $this->id,
+                                                             "name" => $this->name));
+                    \User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
+                }
 
-			\MySQL::getDB()->delete("mapwormholes", array("id" => $wormhole->id));
-			$this->removeWormholeConnection($wormhole->id, false);
-			$this->addHomeSystemToMap(false);
+                \MySQL::getDB()->delete("mapwormholes", array("id" => $wormhole->id));
+                $this->removeWormholeConnection($wormhole->id, false);
+                $this->addHomeSystemToMap(false);
+            }
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();

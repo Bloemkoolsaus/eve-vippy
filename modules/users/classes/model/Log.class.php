@@ -105,8 +105,10 @@ namespace users\model
 			{
 				case "login":
 					return "Login";
-				case "add-wormhole":
-					return "Add wormhole";
+                case "add-wormhole":
+                    return "Add wormhole";
+                case "move-wormhole":
+                    return "Reposition wormhole";
 				case "delete-wormhole":
 					$data = json_decode($this->extraInfo,true);
 					if (isset($data["delete-all"])) {
