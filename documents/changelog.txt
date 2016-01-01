@@ -1,4 +1,4 @@
-<h3>December 8, 2015</h3>
+<h3>January, 2016</h3>
 <b><u>VIPPY</u></b>
  - Per request, added an option for every chain to restrict certain actions (such as reposition system, delete system, etc).
     CEO and Directors can set these on the admin tab in managed chains.

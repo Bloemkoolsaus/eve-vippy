@@ -452,10 +452,10 @@ Class Tools
 
 		switch ($month) {
 			case 1:
-				return "Januari";
+				return "January";
 				break;
 			case 2:
-				return "Februari";
+				return "February";
 				break;
 			case 3:
 				return "March";
@@ -470,7 +470,7 @@ Class Tools
 				return "June";
 				break;
 			case 7:
-				return "Jule";
+				return "July";
 				break;
 			case 8:
 				return "August";
