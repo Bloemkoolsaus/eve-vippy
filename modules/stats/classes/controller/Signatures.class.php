@@ -22,7 +22,7 @@ namespace stats\controller
 			if ($chainID !== null && is_numeric($chainID))
 				$queries[] = "c.id = ".$chainID;
 			else
-				$queries[] = "c.countinstats > 0";
+                $queries[] = "c.id IN (SELECT chainid FROM map_chain_settings WHERE var = 'count-statistics')";
 
 			$limit = "";
 			if ($limitRows !== null && is_numeric($limitRows))
@@ -71,7 +71,7 @@ namespace stats\controller
 			if ($chainID !== null && is_numeric($chainID))
 				$queries[] = "c.id = ".$chainID;
 			else
-				$queries[] = "c.countinstats > 0";
+                $queries[] = "c.id IN (SELECT chainid FROM map_chain_settings WHERE var = 'count-statistics')";
 
 			$totals = array();
 			if ($results = \MySQL::getDB()->getRows("SELECT	MONTH(s.scandate) AS `month`,  year(s.scandate) AS `year`,
