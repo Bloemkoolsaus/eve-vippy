@@ -96,8 +96,15 @@ namespace users\controller
                 \AppRoot::redirect("index.php?module=users&section=usergroups&action=edit&id=".$usergroup->id);
             }
 
-			$tpl = \SmartyTools::getSmarty();
-			$tpl->assign("usergroup",$usergroup);
+            if ($usergroup->getAuthgroup() == null)
+            {
+                $authgroups = \User::getUSER()->getAuthGroups();
+                $usergroup->authGroupID = current($authgroups)->id;
+
+            }
+
+            $tpl = \SmartyTools::getSmarty();
+			$tpl->assign("usergroup", $usergroup);
 			$tpl->assign("permissions", $permissions);
             $tpl->assign("accessgroups", \admin\model\AuthGroup::getAuthGroups());
 			return $tpl->fetch("users/group/edit");
