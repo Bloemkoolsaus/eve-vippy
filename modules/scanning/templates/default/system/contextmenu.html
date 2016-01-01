@@ -11,55 +11,63 @@
 {if $wormhole->getSolarsystem() != null}
 {if !$wormhole->getSolarsystem()->isWSpace()}
 	<div onclick="setDestination('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-		<img src="images/eve/route.png" align="left" />
-		Set Destination to <span style="color:#FFFFFF;">{$wormhole->getSolarsystem()->name}</b>
+		<img src="/images/eve/route.png" align="left" />
+		Set Destination to <span style="color:#FFFFFF;">{$wormhole->getSolarsystem()->name}</span>
 	</div>
 	{assign var=tradehub value=$wormhole->getSolarsystem()->getTradehub()}
 	<div onclick="setDestination('{$tradehub.systemid}'); closeContextMenu();">
-		<img src="images/eve/route.png" align="left" />
+		<img src="/images/eve/route.png" align="left" />
 		Set Destination to {$tradehub.systemname}
 	</div>
 {/if}
 	<div onclick="switchSystem('{$wormhole->id}'); closeContextMenu();">
-		<img src="images/eve/apply.png" align="left" />
+		<img src="/images/eve/apply.png" align="left" />
 		Set system as active
 	</div>
 {/if}
+{if $App->user->isAllowedChainAction($wormhole->getChain(), 'delete')}
 	<div onclick="deleteWormhole('{$wormhole->id}'); closeContextMenu();">
-		<img src="images/eve/cross.png" align="left" />
+		<img src="/images/eve/cross.png" align="left" />
 		Remove system from map
 	</div>
 	<div onclick="deleteWormhole('{$wormhole->id}',true); closeContextMenu();">
-		<img src="images/eve/cross.png" align="left" />
+		<img src="/images/eve/cross.png" align="left" />
 		Remove ALL connected systems
 	</div>
+{/if}
 {if $wormhole->getSolarsystem() != null}
-	<div onclick="createSystemNotice('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-		<img src="images/eve/info.png" align="left" />
-		Add system notice
-	</div>
-{if $wormhole->getSolarsystem()->isKnownSystem()}
-	<div onclick="removeFromKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-		<img src="images/eve/pin.small.png" align="left" />
-		Remove from known-systems
-	</div>
-{else}
-	<div onclick="addToKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-		<img src="images/eve/pin.small.png" align="left" />
-		Add to known-systems
-	</div>
-{/if}
-{if $wormhole->permanent == 0}
-	<div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
-		<img src="images/eve/browser.small.png" align="left" />
-		Mark system as permanent
-	</div>
-{else}
-	<div onclick="unsetSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
-		<img src="images/eve/browser.small.png" align="left" />
-		Unmark system as permanent
-	</div>
-{/if}
+    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'notice')}
+        <div onclick="createSystemNotice('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
+            <img src="/images/eve/info.png" align="left" />
+            Add system notice
+        </div>
+    {/if}
+    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'known')}
+        {if $wormhole->getSolarsystem()->isKnownSystem()}
+            <div onclick="removeFromKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
+                <img src="/images/eve/pin.small.png" align="left" />
+                Remove from known-systems
+            </div>
+        {else}
+            <div onclick="addToKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
+                <img src="/images/eve/pin.small.png" align="left" />
+                Add to known-systems
+            </div>
+        {/if}
+    {/if}
+    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'move')}
+        {if $wormhole->permanent == 0}
+            <div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
+                <img src="/images/eve/browser.small.png" align="left" />
+                Mark system as permanent
+            </div>
+        {else}
+            <div onclick="unsetSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
+                <img src="/images/eve/browser.small.png" align="left" />
+                Unmark system as permanent
+            </div>
+        {/if}
+    {/if}
 {/if}
 </div>
 <div style="clear:both;"></div>
@@ -80,10 +88,10 @@
 	{elseif $wormhole->getSolarsystem()->getClass() == "Class 6"}
 		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass6"}
 	{/if}
-	<a href="{$evesurvival}" target="_blank" title="eve-survival"><img src="images/eve/bear.png" align="right" /></a>
-	<a href="http://zkillboard.com/system/{$wormhole->getSolarsystem()->id}" target="_blank" title="zKillboard"><img src="images/eve/killboard.png" align="right" /></a>
-	<a href="http://evemaps.dotlan.net/map/{$wormhole->getSolarsystem()->getRegion()->name|replace:' ':'_'}/{$wormhole->getSolarsystem()->name|replace:' ':'_'}" target="_blank" title="DOTLAN EveMaps"><img src="images/eve/dotlan.png" align="right" /></a>
-	<a href="http://wh.pasta.gg/{$wormhole->getSolarsystem()->name|replace:' ':'_'}" target="_blank" title="wormhole.es"><img src="images/eve/wormhole.es.png" align="right" /></a>
+	<a href="{$evesurvival}" target="_blank" title="eve-survival"><img src="/images/eve/bear.png" align="right" /></a>
+	<a href="http://zkillboard.com/system/{$wormhole->getSolarsystem()->id}" target="_blank" title="zKillboard"><img src="/images/eve/killboard.png" align="right" /></a>
+	<a href="http://evemaps.dotlan.net/map/{$wormhole->getSolarsystem()->getRegion()->name|replace:' ':'_'}/{$wormhole->getSolarsystem()->name|replace:' ':'_'}" target="_blank" title="DOTLAN EveMaps"><img src="/images/eve/dotlan.png" align="right" /></a>
+	<a href="http://wh.pasta.gg/{$wormhole->getSolarsystem()->name|replace:' ':'_'}" target="_blank" title="wormhole.es"><img src="/images/eve/wormhole.es.png" align="right" /></a>
 </div>
 {/if}
 <div style="clear:both;"></div>

@@ -123,7 +123,7 @@ namespace admin\controller
                 {
                     foreach ($_POST["control"] as $action => $group)
                     {
-                        if ($group > 0)
+                        if (!is_numeric($group) || $group > 0)
                             $chain->setSetting("control-".$action, $group);
                     }
                 }

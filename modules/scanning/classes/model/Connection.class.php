@@ -293,20 +293,23 @@ namespace scanning\model
 
 		function delete()
 		{
-			\MySQL::getDB()->delete("mapwormholeconnections", array("id" => $this->id));
+            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
+            {
+                \MySQL::getDB()->delete("mapwormholeconnections", array("id" => $this->id));
 
-			// Update chain cache timer
-			$this->getChain()->setMapUpdateDate();
+                // Update chain cache timer
+                $this->getChain()->setMapUpdateDate();
 
-			// Check the same connection on other maps.
-			foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
-													$this->getFromWormhole()->solarSystemID,
-													$this->getToWormhole()->solarSystemID,
-													$this->getChain()->authgroupID) as $connection)
-			{
-				if ($connection->id !== $this->id)
-					$connection->delete();
-			}
+                // Check the same connection on other maps.
+                foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
+                                $this->getFromWormhole()->solarSystemID,
+                                $this->getToWormhole()->solarSystemID,
+                                $this->getChain()->authgroupID) as $connection)
+                {
+                    if ($connection->id !== $this->id)
+                        $connection->delete();
+                }
+            }
 		}
 
 		/**

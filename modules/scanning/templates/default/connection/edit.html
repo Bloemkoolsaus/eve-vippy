@@ -13,7 +13,7 @@
 
 	<div id="editConnectionContainer">
 
-		<form method="post" name="formEditConnection" action="index.php?module=scanning&section=map&action=editconnection">
+		<form method="post" name="formEditConnection" action="/index.php?module=scanning&section=map&action=editconnection">
 		<input type="hidden" name="connectionid" value="{$connection->id}" />
 		<input type="hidden" name="from" value="{$connection->fromWormholeID}"/>
 		<input type="hidden" name="to" value="{$connection->toWormholeID}"/>
@@ -108,18 +108,22 @@
 			</div>
 		</div>
 		<div style="float: right; width: 230px; text-align: right;">
+        {if $App->user->isAllowedChainAction($connection->getChain(), 'mass')}
 			<div style="margin: 3px;">
 				<button class="small" type="button" onclick="manuallyAddMass();" style="width: 180px;">
-					<img src="images/eve/mass.png" align="left">
+					<img src="/images/eve/mass.png" align="left">
 					Manually Add Mass
 				</button>
 			</div>
+        {/if}
+        {if $App->user->isAllowedChainAction($connection->getChain(), 'delete')}
 			<div style="margin: 3px;">
 				<button class="small" type="button" onclick="$('#editConnectionContainer').hide();$('#deleteConnectionContainer').show();" style="width: 180px;">
-					<img src="images/eve/cross.png" align="left">
+					<img src="/images/eve/cross.png" align="left">
 					Delete Connection
 				</button>
 			</div>
+        {/if}
 			<div style="clear:both;"></div>
 		</div>
 
@@ -130,7 +134,7 @@
 		<div style="float: left; width: 350px;">
 			<div class="form" style="text-align: right;">
 				<button class="small" type="submit" style="width: 140px;">
-					<img src="images/default/save.png" align="left">
+					<img src="/images/default/save.png" align="left">
 					Save
 				</button>
 			</div>
@@ -146,7 +150,7 @@
 	<div id="addMassContainer" style="display: none; text-align: left;">
         <div style="text-align: left; margin: 5px;">
             <h3>
-                <img src="images/eve/mass.png" align="left">
+                <img src="/images/eve/mass.png" align="left">
                 &nbsp; Add mass by shiptype
             </h3>
         </div>
@@ -182,7 +186,7 @@
 		<div style="clear:both;"></div>
         <div style="text-align: left; margin: 5px;">
             <h3>
-                <img src="images/eve/mass.png" align="left">
+                <img src="/images/eve/mass.png" align="left">
                 &nbsp; Add custom mass
             </h3>
         </div>
@@ -209,7 +213,7 @@
 		<div class="form" style="text-align: right;">
 			<br />
 			<button class="small" type="submit" style="width: 140px;">
-				<img src="images/default/save.png" align="left">
+				<img src="/images/default/save.png" align="left">
 				Save
 			</button>
 		</div>

@@ -35,6 +35,7 @@ namespace users\model
 		private $capitalShips = null;
         private $logs = null;
 		private $notifications = null;
+        private $chainActions = null;
 
         /** @var \eve\model\Character */
         private $character = null;
@@ -892,6 +893,36 @@ namespace users\model
 
 			return $this->isFittingManager;
 		}
+
+        public function isAllowedChainAction(\scanning\model\Chain $chain, $action)
+        {
+            \AppRoot::debug("User()->isAllowedChainAction($action)");
+            $actions = new \stdClass();
+
+            // Check cache
+            $cacheFilename = $this->getCacheDirectory() . "chain-actions.json";
+            if ($cache = \Cache::file()->get($cacheFilename))
+                $actions = json_decode($cache);
+
+            if (!isset($actions->$action))
+            {
+                $actions->$action = true;
+
+                if (!$this->getIsDirector())
+                {
+                    if ($chain->getSetting('control-' . $action))
+                    {
+                        // Restricted! Check usergroups
+                        if (!$this->inGroup($chain->getSetting('control-' . $action)))
+                            $actions->$action = false;
+                    }
+                }
+
+                \Cache::file()->set($cacheFilename, json_encode($actions));
+            }
+
+            return $actions->$action;
+        }
 
         /**
          * get authorized characters

@@ -399,7 +399,7 @@ function showExitFinder(system)
 
 function exitFinder()
 {
-	$("#exitFinderResults").html("<img src='images/loading.gif'> Calculating..");
+	$("#exitFinderResults").html("<img src='/images/loading.gif'> Calculating..");
 
 	$.ajax({
 		url: "index.php?module=scanning&section=exitfinder&ajax=1",

@@ -723,11 +723,14 @@ namespace scanning\model
 
 		function moveWormhole($wormholeID, $x, $y, $updateCacheTimer=true, $modifier=25)
 		{
-			// Netjes alignen
-			$wormhole = new \scanning\model\Wormhole($wormholeID);
-			$wormhole->x = $x;
-			$wormhole->y = $y;
-			$wormhole->store($modifier);
+            if (\User::getUSER()->isAllowedChainAction($this, "move"))
+            {
+                // Netjes alignen
+                $wormhole = new \scanning\model\Wormhole($wormholeID);
+                $wormhole->x = $x;
+                $wormhole->y = $y;
+                $wormhole->store($modifier);
+            }
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();

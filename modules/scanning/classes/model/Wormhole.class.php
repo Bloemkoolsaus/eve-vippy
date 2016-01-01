@@ -164,14 +164,18 @@ namespace scanning\model
 
 		function delete()
 		{
-			$this->getChain()->removeWormhole($this);
+            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
+			    $this->getChain()->removeWormhole($this);
 		}
 
 		function move($newX, $newY)
 		{
-			$this->x = $newX;
-			$this->y = $newY;
-			$this->store();
+            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
+            {
+                $this->x = $newX;
+                $this->y = $newY;
+                $this->store();
+            }
 		}
 
 		/**
