@@ -21,8 +21,11 @@ Class Tools
 
 		$value = $_POST[$var];
 
-		if (!$raw)
+		if (!$raw && !is_array($value))
 			$value = self::Escape($value);
+
+        if (is_array($value) && count($value) == 0)
+            return false;
 
 		return $value;
 	}

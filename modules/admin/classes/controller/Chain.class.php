@@ -105,18 +105,28 @@ namespace admin\controller
 					$errors[] = "Home-system `".\Tools::POST("homesystem")."` not found";
 
 				$chain->name = \Tools::POST("name");
-				$chain->directorsOnly = \Tools::POST("dironly");
 				$chain->authgroupID = \Tools::POST("authgroup");
 				$chain->homesystemID = $solarSystem->id;
 				$chain->systemName = (\Tools::POST("homesystemname"))?\Tools::POST("homesystemname"):$solarSystem->name;
 				$chain->prio = \Tools::POST("sortorder");
-                $chain->countInStats = \Tools::POST("countinstats");
 
-				if ($chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0)
-					$chain->autoNameNewWormholes = \Tools::POST("autonamewhs");
-				else
-					$chain->autoNameNewWormholes = (\Tools::POST("autonamewhs"))?1:0;
+                $chain->clearSettings();
+                $chain->countInStats = (\Tools::POST("countinstats"))?1:0;
+                $chain->directorsOnly = (\Tools::POST("dironly"))?1:0;
 
+                if ($chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0)
+                    $chain->autoNameNewWormholes = \Tools::POST("autonamewhs");
+                else
+                    $chain->autoNameNewWormholes = (\Tools::POST("autonamewhs"))?1:0;
+
+                if (\Tools::POST("control"))
+                {
+                    foreach ($_POST["control"] as $action => $group)
+                    {
+                        if ($group > 0)
+                            $chain->setSetting("control-".$action, $group);
+                    }
+                }
 
 				if (\Tools::POST("corporations",true))
 				{
@@ -137,8 +147,6 @@ namespace admin\controller
 					\AppRoot::redirect("index.php?module=admin&section=chains");
 				}
 			}
-
-			$system = new \eve\model\SolarSystem($chain->homesystemID);
 
 
 			$corporations = "";
@@ -170,18 +178,18 @@ namespace admin\controller
 			if (\User::getUSER()->getIsSysAdmin())
 			{
 				foreach (\admin\model\AuthGroup::getAuthGroups() as $group) {
-					$authGroups[] = $group;
+                    $authGroups[$group->id] = $group;
 				}
 			}
 			else
 			{
 				foreach (\User::getUSER()->getAuthGroupsAdmins() as $group) {
-					$authGroups[] = $group;
+                    $authGroups[$group->id] = $group;
 				}
 			}
 
 			if (count($authGroups) == 1)
-				$chain->authgroupID = $authGroups[0]->id;
+				$chain->authgroupID = current($authGroups)->id;
 
 
 			$tpl = \SmartyTools::getSmarty();

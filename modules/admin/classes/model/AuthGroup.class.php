@@ -16,6 +16,7 @@ namespace admin\model
 		private $chains = null;
 		private $subscriptions = null;
 		private $payments = null;
+        private $usergroups = null;
 
 		function __construct($id=false)
 		{
@@ -493,6 +494,18 @@ namespace admin\model
 
 			return $this->payments;
 		}
+
+        /**
+         * Get usergroups
+         * @return \users\model\UserGroup[]
+         */
+        function getUsergroups()
+        {
+            if ($this->usergroups === null)
+                $this->usergroups = \users\model\UserGroup::findAll(["authgroupid" => $this->id]);
+
+            return $this->usergroups;
+        }
 
 
 

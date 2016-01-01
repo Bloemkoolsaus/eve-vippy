@@ -5,15 +5,12 @@ namespace scanning\model
 	{
 		public $id = 0;
 		public $authgroupID = 0;
-		public $directorsOnly = false;
 		public $homesystemID = 0;
 		public $name;
 		public $systemName;
 		public $prio = 0;
-		public $autoNameNewWormholes = true;
 		public $deleted = false;
 		public $lastActive;
-        public $countInStats = false;
 
 		private $alliances = null;
 		private $corporations = null;
@@ -21,6 +18,7 @@ namespace scanning\model
 		private $authgroup = null;
 		private $wormholes = null;
 		private $allowedUsers = null;
+        private $settings = null;
 
 		private static $currentChain = null;
 
@@ -69,17 +67,44 @@ namespace scanning\model
 			{
 				$this->id = $result["id"];
 				$this->authgroupID = $result["authgroupid"];
-				$this->directorsOnly = ($result["dironly"]>0)?true:false;
 				$this->homesystemID = $result["homesystemid"];
 				$this->name = $result["name"];
 				$this->systemName = $result["homesystemname"];
-				$this->autoNameNewWormholes = $result["autoname_whs"];
 				$this->prio = $result["prio"];
                 $this->deleted = ($result["deleted"]>0)?true:false;
-                $this->countInStats = ($result["countinstats"]>0)?true:false;
 				$this->lastActive = $result["lastmapupdatedate"];
 			}
 		}
+
+        function __get($param)
+        {
+            //\AppRoot::depricated("__get($param)");
+
+            if ($param == "directorsOnly")
+                return $this->getSetting("directors-only");
+
+            if ($param == "countInStats")
+                return $this->getSetting("count-statistics");
+
+            if ($param == "autoNameNewWormholes")
+                return $this->getSetting("wh-autoname-scheme");
+
+            return null;
+        }
+
+        function __set($param, $value)
+        {
+            \AppRoot::depricated("__set($param)");
+
+            if ($param == "directorsOnly")
+                $this->setSetting("directors-only", ($value)?1:null);
+
+            if ($param == "countInStats")
+                $this->setSetting("count-statistics", ($value)?1:null);
+
+            if ($param == "autoNameNewWormholes")
+                $this->setSetting("wh-autoname-scheme", $value);
+        }
 
 		function store()
 		{
@@ -92,14 +117,11 @@ namespace scanning\model
 			}
 
 			$data = array(	"authgroupid"	=> $this->authgroupID,
-							"dironly"		=> ($this->directorsOnly)?1:0,
 							"homesystemid"	=> $this->homesystemID,
 							"name"			=> $this->name,
 							"homesystemname"=> $this->systemName,
-							"autoname_whs"	=> $this->autoNameNewWormholes,
 							"prio"			=> $this->prio,
-                            "deleted"		=> ($this->deleted)?1:0,
-							"countinstats"	=> ($this->countInStats)?1:0);
+                            "deleted"		=> ($this->deleted)?1:0);
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
@@ -111,6 +133,14 @@ namespace scanning\model
 				// Home systeem toevoegen
 				$this->addHomeSystemToMap(false);
 			}
+
+            if ($this->settings !== null)
+            {
+                \MySQL::getDB()->delete("map_chain_settings", ["chainid" => $this->id]);
+                foreach ($this->getSettings() as $var => $val) {
+                    \MySQL::getDB()->insert("map_chain_settings", ["chainid" => $this->id, "var" => $var, "val" => $val]);
+                }
+            }
 
 			if ($this->corporations !== null)
 			{
@@ -144,6 +174,60 @@ namespace scanning\model
 				$user->resetCache();
 			}
 		}
+
+        /**
+         * Get settings
+         * @return array
+         */
+        function getSettings()
+        {
+            if ($this->settings === null)
+            {
+                $this->clearSettings();
+                if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_chain_settings WHERE chainid = ?", [$this->id]))
+                {
+                    foreach ($results as $result) {
+                        $this->settings[$result["var"]] = $result["val"];
+                    }
+                }
+            }
+
+            return $this->settings;
+        }
+
+        function clearSettings()
+        {
+            $this->settings = [];
+        }
+
+        /**
+         * Get setting
+         * @param $setting
+         * @return mixed|null
+         */
+        function getSetting($setting)
+        {
+            foreach ($this->getsettings() as $var => $val) {
+                if ($var == $setting)
+                    return $val;
+            }
+
+            return null;
+        }
+
+        /**
+         * Set setting
+         * @param $setting
+         * @param $value
+         */
+        function setSetting($setting, $value)
+        {
+            $this->getSettings();
+            $this->settings[$setting] = $value;
+
+            if ($value == null)
+                unset($this->settings[$setting]);
+        }
 
 		/**
 		 * Get allowed users

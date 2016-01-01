@@ -140,6 +140,13 @@ class Model
         if ($class == null)
             $class = get_called_class();
 
+        if (class_exists($class))
+        {
+            $object = new $class();
+            if ($object->_table != null)
+                return $object->_table;
+        }
+
         $parts = array();
         foreach (explode("\\", $class) as $i => $part) {
             if ($i != 1)

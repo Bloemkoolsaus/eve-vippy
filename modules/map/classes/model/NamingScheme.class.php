@@ -36,10 +36,11 @@ class NamingScheme extends \Model
 
     /**
      * Get naming scheme by id
-     * @param $id
-     * @return \map\model\NamingScheme|null
+     * @param      $id
+     * @param null $class
+     * @return NamingScheme|null
      */
-    public static function findByID($id)
+    public static function findByID($id, $class=null)
     {
         if ($result = \MySQL::getDB()->getRow("SELECT * FROM map_namingscheme WHERE id = ?", array($id)))
         {
