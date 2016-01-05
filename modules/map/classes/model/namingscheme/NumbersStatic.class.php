@@ -92,4 +92,52 @@ class NumbersStatic extends \map\model\NamingScheme
 
         return null;
     }
+
+    function getWHTypeBySignatureName(\scanning\model\Signature $signature)
+    {
+        if (strlen(trim($signature->sigInfo)) == 0)
+            return 0;
+
+        $parts = explode(" ",$signature->sigInfo);
+        $connectionName = $parts[0];
+        $parts = explode("-", $connectionName);
+        $wormholeName = array_pop($parts);
+        $nextWhName = $wormholeName[strlen($wormholeName)-1];
+
+        $statics = $signature->getSolarSystem()->getStatics(false, false);
+
+        if (is_numeric($nextWhName))
+        {
+            // wspace system
+            $i = 0;
+            foreach ($statics as $stype => $static)
+            {
+                if ($static["wspace"] > 0)
+                    $i++;
+
+                if ($i == $nextWhName)
+                    return $static["id"];
+            }
+        }
+        else
+        {
+            // kspace system
+            $nextWhType = $wormholeName[strlen($wormholeName)-2];
+
+            foreach ($statics as $stype => $static)
+            {
+                if (!$static["wspace"]) {
+                    if (strtoupper($static["tag"][0]) == strtoupper($nextWhType)) {
+                        if (strtolower($nextWhName) == "a")
+                            return $static["id"];
+                    }
+                }
+            }
+        }
+
+
+
+
+        return 0;
+    }
 }

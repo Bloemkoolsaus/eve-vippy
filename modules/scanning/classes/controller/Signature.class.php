@@ -142,6 +142,11 @@ namespace scanning\controller
 			$typeid = \Tools::REQUEST("typeid");
 			$sigStrength = \Tools::REQUEST("signalstrength");
 
+            if (!is_numeric($typeid)) {
+                $whtype = \scanning\model\WormholeType::findByName($typeid);
+                $typeid = ($whtype != 0) ? $whtype->id : 0;
+            }
+
 			if ($id) {
 				$signature =  new \scanning\model\Signature($id);
 			} else {
@@ -162,12 +167,12 @@ namespace scanning\controller
 			return true;
 		}
 
-		/**
-		 * Get a signature by it's signature-id
-		 * @param integer $sigID
-		 * @param integer $systemID	of false for current selected system.
-		 * @return \scanning\model\Signature
-		 */
+        /**
+         * Get a signature by it's signature-id
+         * @param integer $sigID
+         * @param bool|int $systemID of false for current selected system.
+         * @return \scanning\model\Signature
+         */
 		function getSignatureBySigID($sigID, $systemID=false)
 		{
 			$chain = new \scanning\model\Chain(\User::getSelectedChain());

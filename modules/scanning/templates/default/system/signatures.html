@@ -130,7 +130,7 @@
 		{/if}
 			</div>
 			<div id="sigedit{$sig.id}type" style="display:none;">
-				<select id="siginput{$sig.id}type" style="width: 65px;">
+				<select id="siginput{$sig.id}type" style="width: 65px;" autocomplete="off">
 					<option value=""></option>
 					<option value="wh" {if $sig.sigtype|upper == "WH"}selected{/if}>WH</option>
 					<option value="data" {if $sig.sigtype|upper == "DATA"}selected{/if}>Data</option>
@@ -141,6 +141,11 @@
 					<option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
 				</select>
 			{if $sig.sigtype == 'wh'}
+				<input type="text" class="ui-autocomplete-input" rel="autocomplete"
+					   id="siginput{$sig.id}whtype" name="whtype" autocomplete="off" minlength="0"
+					   value="" placeholder="K162" element="eve-elements-WHType"
+					   style="width: 50px; margin-top: 2px;">
+				{*
 				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
 					<option value=""></option>
 					<option value="9999" {if $sig.whtypeid} == 9999}selected{/if}>K162</option>
@@ -150,6 +155,7 @@
 					</option>
 				{/foreach}
 				</select>
+				*}
 			{/if}
 			</div>
 		</td>

@@ -54,6 +54,24 @@ namespace scanning\model
 
 			return false;
 		}
+
+
+        /**
+         * Find by name
+         * @param $name
+         * @return \scanning\model\WormholeType|null
+         */
+        public static function findByName($name)
+        {
+            if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholetypes WHERE name = ?", [strtoupper($name)]))
+            {
+                $type = new \scanning\model\WormholeType();
+                $type->load($result);
+                return $type;
+            }
+
+            return null;
+        }
 	}
 }
 ?>

@@ -26,8 +26,10 @@ function loadSignatureList(extraURL, addNoCache)
 		$.ajax({
 			url: "index.php?module=scanning&section=map&action=siglist&ajax=1&system="+system+extraURL,
 			success: function(data) {
-				if (data != "cached" && !editingSigList)
-					$("#signatureList").html(data);
+				if (data != "cached" && !editingSigList) {
+                    $("#signatureList").html(data);
+                    setAutoCompletes()
+                }
 
 				loadingSigList = false;
 			}

@@ -19,6 +19,7 @@ namespace scanning\model
 		private $wormholes = null;
 		private $allowedUsers = null;
         private $settings = null;
+        private $namingScheme = null;
 
 		private static $currentChain = null;
 
@@ -174,6 +175,22 @@ namespace scanning\model
 				$user->resetCache();
 			}
 		}
+
+        /**
+         * Get naming scheme
+         * @return \map\model\NamingScheme|null
+         */
+        function getNamingScheme()
+        {
+            if ($this->namingScheme === null)
+            {
+                $schemeID = $this->getSetting("wh-autoname-scheme");
+                if ($schemeID != null)
+                    $this->namingScheme = \map\model\NamingScheme::findByID($schemeID);
+            }
+
+            return $this->namingScheme;
+        }
 
         /**
          * Get settings

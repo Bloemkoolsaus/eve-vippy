@@ -207,7 +207,7 @@
 					<td style="width: 65px;">
 						<b>Type:</b><br />
 						<select name="sigtype" id="sigtype" style="width: 60px;" onchange="selectSignatureType()">
-							<option value=""></option>
+							<option value="" selected></option>
 							<option value="wh">WH</option>
 							<option value="data">Data</option>
 							<option value="gas">Gas</option>
@@ -217,8 +217,13 @@
 							<option value="pos">POS</option>
 						</select>
 					</td>
-					<td rel="addsig_wormhole" style="display: none; width: 100px;">
+					<td rel="addsig_wormhole" style="display: none; width: 60px;">
 						<b>WH Type:</b><br />
+						<input type="text" class="ui-autocomplete-input" rel="autocomplete"
+							   id="whtype" name="whtype" autocomplete="off" minlength="0"
+							   value="" placeholder="K162" element="eve-elements-WHType"
+							   style="width: 50px; margin-top: 2px;">
+					{*
 						<select id="whtype" name="whtype" style="width: 95px;">
 							<option value=""></option>
 							<option value="9999">K162</option>
@@ -226,6 +231,7 @@
 							<option value="{$type.id}">{$type.type} (to {$type.to})</option>
 						{/foreach}
 						</select>
+					*}
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />

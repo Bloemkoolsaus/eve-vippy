@@ -117,7 +117,7 @@ namespace eve\controller
             \AppRoot::debug("getWormholeStatics()");
 
             $statics = array();
-            if ($results = \MySQL::getDB()->getRows("SELECT	t.name as signame, c.name, c.tag, c.color
+            if ($results = \MySQL::getDB()->getRows("SELECT	t.id, t.name as signame, c.name, c.tag, c.color
 													FROM	".\eve\Module::eveDB().".mapsolarsystems m
 														INNER JOIN mapwormholestatics s ON s.solarsystemid = m.solarsystemid
 														INNER JOIN mapwormholetypes t ON t.id = s.whtypeid
@@ -129,6 +129,7 @@ namespace eve\controller
                 $kspaceTags = ["HS","LS","NS"];
                 foreach ($results as $result)
                 {
+                    $statics[$result["signame"]]["id"] = $result["id"];
                     $statics[$result["signame"]]["tag"] = $result["tag"];
                     $statics[$result["signame"]]["name"] = $result["name"];
                     $statics[$result["signame"]]["wspace"] = (in_array($result["tag"], $kspaceTags))?false:true;

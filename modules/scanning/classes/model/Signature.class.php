@@ -60,8 +60,7 @@ namespace scanning\model
             {
                 if ($this->id > 0)
                 {
-                    if (strlen(trim($this->sigType)) > 0)
-                    {
+                    if (strlen(trim($this->sigType)) > 0) {
                         $oldsig = new \scanning\model\Signature($this->id);
                         if ($oldsig->sigType != $this->sigType)
                             $countInStats = true;
@@ -86,6 +85,18 @@ namespace scanning\model
 
 			if ($this->authGroupID == null)
 				$this->authGroupID = \scanning\model\Chain::getCurrentChain()->authgroupID;
+
+            // Is het een wormhole?
+            if (strtolower($this->sigType) == "wh")
+            {
+                // WH-type bekend? Zo niet, kijk of het af te leiden valt uit de naam van de signature.
+                if ($this->sigTypeID == 0) {
+                    if ($this->getChain()->getNamingScheme() != null) {
+                        if (method_exists($this->getChain()->getNamingScheme(), "getWHTypeBySignatureName"))
+                            $this->sigTypeID = $this->getChain()->getNamingScheme()->getWHTypeBySignatureName($this);
+                    }
+                }
+            }
 
 			$data = array(	"solarsystemid"	=> $this->solarSystemID,
 							"authgroupid"	=> $this->authGroupID,
