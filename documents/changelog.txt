@@ -7,7 +7,7 @@
 
 <h3>January 10, 2016</h3>
 <b><u>SCANNING</u></b>
- - For editing signatures replaced the wormhole type select-box with an auto complete field. This should make it easier to select the correct wormhole type.
+ - When editing signatures, replaced the wormhole type select-box with an auto complete field. This should make it easier to select the correct wormhole type.
 {if numeric_naming}
  - If a chain is set to autonaming wormholes as "<i>Numbers (by static)</i>":
 	- VIPPY will now attempt to guess the correct wormhole type based on the signature info field (that should contain the next wormholes name).
@@ -19,6 +19,9 @@
 				Until now, if you jump into the 133 VIPPY will map it as 131, wich in this scenario is not correct.
 				If you've correctly set the 13-1 signature to X877, VIPPY should now know that 131 can not exist and correctly name the new system 133.
 {/if}
+<b><u>VIPPY</u></b>
+ - Extended the map legend as people have mentioned to me it was missing some things. (click blue "I" icon at the top right of the map).
+ - Removed zoom buttons. They haven't been working for a long time.
 
 
 

@@ -384,7 +384,7 @@ function mapLegend()
 	$.ajax({
 		url: "index.php?module=scanning&section=maplegend&ajax=1",
 		success: function(data) {
-			showPopup(data,800,750);
+			showPopup(data,930,750);
 		}
 	});
 }

@@ -54,9 +54,10 @@
 			</div>
 			<div id="mapControls" style="float: right; width: 300px;">
                 <img src="/images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
+				{*
 				<img src="/images/default/zoom_in.png" style="cursor:pointer;" onclick="mapZoomIn()" align="right"/>
 				<img src="/images/default/zoom_out.png" style="cursor:pointer;" onclick="mapZoomOut()" align="right"/>
-
+				*}
             {if !$App->user->isAllowedChainAction($chain, 'move') ||
             !$App->user->isAllowedChainAction($chain, 'add') ||
             !$App->user->isAllowedChainAction($chain, 'delete')}
