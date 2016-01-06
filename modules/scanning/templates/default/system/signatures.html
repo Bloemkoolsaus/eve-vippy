@@ -143,8 +143,8 @@
 			{if $sig.sigtype == 'wh'}
 				<input type="text" class="ui-autocomplete-input" rel="autocomplete"
 					   id="siginput{$sig.id}whtype" name="whtype" autocomplete="off" minlength="0"
-					   value="" placeholder="K162" element="eve-elements-WHType"
-					   style="width: 50px; margin-top: 2px;">
+					   value="{if $sig.whtypeid > 0}{$sig.whtypename}{/if}" placeholder="K162"
+					   element="eve-elements-WHType" style="width: 50px; margin-top: 2px;">
 				{*
 				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
 					<option value=""></option>

@@ -1,4 +1,28 @@
-<h3>January, 2016</h3>
+{assign var=numeric_naming value=0}
+{foreach from=$App->user->getAuthGroups() item=group}
+	{if $group->getConfig('wh_naming_numeric')}
+		{assign var=numeric_naming value=1}
+	{/if}
+{/foreach}
+
+<h3>January 10, 2016</h3>
+<b><u>SCANNING</u></b>
+ - For editing signatures replaced the wormhole type select-box with an auto complete field. This should make it easier to select the correct wormhole type.
+{if numeric_naming}
+ - If a chain is set to autonaming wormholes as "<i>Numbers (by static)</i>":
+	- VIPPY will now attempt to guess the correct wormhole type based on the signature info field (that should contain the next wormholes name).
+		<b>For exemple:</b>	If you are in the 121 (a c4 with statics X877 and C247).
+				Name a wh sig 121-1211 and vippy will assume that sig is a X877. Name it 121-1212 and a C247 will be assumed.
+	- VIPPY will check if the next wormhole name is correct based on the signatures.
+		<b>For exemple:</b>	You are in the 13 (a c4 with statics X877 and N766).
+				13-1 (<i>the way back</i>) is the static (<i>the X877</i>). There are 2 other wormholes in the 13: The 13-132, and 13-133. The 133 is also a c4.
+				Until now, if you jump into the 133 VIPPY will map it as 131, wich in this scenario is not correct.
+				If you've correctly set the 13-1 signature to X877, VIPPY should now know that 131 can not exist and correctly name the new system 133.
+{/if}
+
+
+
+<h3>January 2, 2016</h3>
 <b><u>VIPPY</u></b>
  - Per request, added an option for every chain to restrict certain actions (such as reposition system, delete system, etc).
     CEO and Directors can set these on the admin tab in managed chains.
