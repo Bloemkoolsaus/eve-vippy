@@ -350,6 +350,9 @@ namespace scanning\model
 			{
 				foreach ($wormhole->getConnections() as $connection)
 				{
+                    if ($connection->getFromSystem() == null || $connection->getToSystem() == null)
+                        continue;
+
 					$routes[$connection->getFromSystem()->id][$connection->getToSystem()->id] = 1;
 					$routes[$connection->getToSystem()->id][$connection->getFromSystem()->id] = 1;
 				}
@@ -397,9 +400,7 @@ namespace scanning\model
 			if ($chainID == null)
 				$chainID = \scanning\model\Chain::getCurrentChain()->id;
 
-			if ($result = \MySQL::getDB()->getRow("	SELECT * FROM mapwormholes
-													WHERE name = ? AND chainid = ?"
-										, array($name, $chainID)))
+			if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE name = ? AND chainid = ?", [$name, $chainID]))
 			{
 				$system = new \scanning\model\Wormhole();
 				$system->load($result);

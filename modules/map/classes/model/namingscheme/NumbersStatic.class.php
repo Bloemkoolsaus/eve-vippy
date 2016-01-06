@@ -23,11 +23,12 @@ class NumbersStatic extends \map\model\NamingScheme
                 $startingName = "";
 
 
+            $wspaceStatics = [];
+            $kspaceStatics = [];
+
             if ($system->getSolarsystem()->isWSpace())
             {
                 // Ben ik de static?
-                $wspaceStatics = [];
-                $kspaceStatics = [];
                 foreach ($previousSystem->getStatics(false,false) as $static) {
                     if ($static["wspace"])
                         $wspaceStatics[] = strtolower($static["tag"]);
@@ -54,9 +55,52 @@ class NumbersStatic extends \map\model\NamingScheme
             do
             {
                 if ($system->getSolarsystem()->isWSpace())
+                {
+                    // Controleer naam!
+                    if ($index <= count($wspaceStatics))
+                    {
+                        // Dit is een van de statics
+                        $statics = [];
+                        foreach ($previousSystem->getStatics(false,false) as $static) {
+                            $statics[] = $static;
+                        }
+
+                        // Welke static is dit?
+                        if (isset($statics[$index-1]))
+                        {
+                            $static = $statics[$index - 1];
+
+                            // kijk of de static signature bekend is.
+                            $signature = null;
+                            foreach (\scanning\model\Signature::getSignaturesBySolarSystem($previousSystem->id) as $sig)
+                            {
+                                if (strtolower($sig->sigType) == "wh") {
+                                    if ($sig->sigTypeID == $static["id"]) {
+                                        $signature = $sig;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Check of de static niet per ongeluk de weg terug is.
+                            if ($signature != null)
+                            {
+                                $sigWhName = explode(" ",$signature->sigInfo);
+                                $sigWhName = explode("-",$sigWhName[0]);
+                                if ($sigWhName[1] != $startingName.$index)
+                                {
+                                    // Niet goed, geen static. Zet juiste naam.
+                                    $index = count($wspaceStatics)+1;
+                                }
+                            }
+                        }
+                    }
+
                     $title = $startingName.$index;
+                }
                 else
                     $title = $startingName.$letters[$index];
+
 
                 $searches = array("11111111","1111111","111111","11111","1111");
                 $replacements = array("8x1","7x1","6x1","5x1","4x1");
@@ -104,13 +148,38 @@ class NumbersStatic extends \map\model\NamingScheme
         $wormholeName = array_pop($parts);
         $nextWhName = $wormholeName[strlen($wormholeName)-1];
 
-        $statics = $signature->getSolarSystem()->getStatics(false, false);
+        if (strlen($wormholeName) < strlen($signature->getWormhole()->name) || $nextWhName == 0)
+        {
+            // Dit is de weg terug! Kijk wat de andere kant is.
+            if ($nextWhName == 0)
+                $wormholeBack = \scanning\model\Wormhole::getWormholeBySystemID($signature->getChain()->homesystemID);
+            else
+                $wormholeBack = \scanning\model\Wormhole::getWormholeBySystemByName($wormholeName);
+
+            if ($wormholeBack != null)
+            {
+                $lookForNames = [
+                    $nextWhName."-".$signature->getWormhole()->name,
+                    $wormholeBack->name."-".$signature->getWormhole()->name,
+                    $signature->getWormhole()->name
+                ];
+
+                foreach (\scanning\model\Signature::getSignaturesBySolarSystem($wormholeBack->solarSystemID) as $sig)
+                {
+                    $sigWhName = explode(" ", $sig->sigInfo);
+                    if (in_array($sigWhName[0], $lookForNames)) {
+                        if ($sig->sigTypeID != 0 && $sig->sigTypeID != 9999)
+                            return 9999;
+                    }
+                }
+            }
+        }
 
         if (is_numeric($nextWhName))
         {
-            // wspace system
+            // Wspace system
             $i = 0;
-            foreach ($statics as $stype => $static)
+            foreach ($signature->getSolarSystem()->getStatics(false, false) as $stype => $static)
             {
                 if ($static["wspace"] > 0)
                     $i++;
@@ -121,10 +190,9 @@ class NumbersStatic extends \map\model\NamingScheme
         }
         else
         {
-            // kspace system
+            // Kspace system
             $nextWhType = $wormholeName[strlen($wormholeName)-2];
-
-            foreach ($statics as $stype => $static)
+            foreach ($signature->getSolarSystem()->getStatics(false, false) as $stype => $static)
             {
                 if (!$static["wspace"]) {
                     if (strtoupper($static["tag"][0]) == strtoupper($nextWhType)) {
@@ -134,9 +202,6 @@ class NumbersStatic extends \map\model\NamingScheme
                 }
             }
         }
-
-
-
 
         return 0;
     }
