@@ -15,21 +15,25 @@
 	</h1>
 	<div style="clear:both;"></div>
 
-	<div style="float: left; width: 50%;">
+	<div style="float: left; width: 58%;">
 		<div style="margin: 10px;">
-			<table class="sectionoverview" style="width: 450px;">
+			<table class="sectionoverview" style="width: 100%;">
 				<tr>
 					<th class="large">Corporation</th>
-					<th style="width: 60px; text-align: center;">Active Members</th>
-					<th style="width: 60px; text-align: center;">Total Sigs Scanned</th>
-					<th style="width: 60px; text-align: center;">Ratio<br />Sigs/User</th>
+					<th style="width: 50px; text-align: center;">Active Members</th>
+					<th style="width: 50px; text-align: center;">Total Sigs Scanned</th>
+					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/User</th>
+					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/Time</th>
 				</tr>
 	{assign var=i value=0}
 	{foreach from=$corporations item=corp}
 		{if $corp.users|@count > 0}
+			{assign var=totalHours value=0}
+			{assign var=totalAmount value=0}
 			{assign var=totsigs value=0}
 			{foreach from=$corp.users key=s item=user}
-				{assign var=totsigs value=$totsigs+$user.amount}
+				{assign var=totalHours value=$totalHours+$user.user->getHoursOnline($sdate, $edate)}
+				{assign var=totalAmount value=$totalAmount+$user.amount}
 			{/foreach}
 				<tr class="{if $i%2==0}even{else}odd{/if}">
 					<td>
@@ -43,10 +47,13 @@
 						{$corp.users|@count}
 					</td>
 					<td style="text-align: center;">
-						{$totsigs}
+						{$totalAmount}
 					</td>
 					<td style="text-align: center; font-weight: bold;">
-						{($totsigs/$corp.users|@count)|@round}
+						{($totalAmount/$corp.users|@count)|@round}
+					</td>
+					<td style="text-align: center;">
+						{($totalAmount/$totalHours)|round:1}
 					</td>
 				</tr>
 			{assign var=i value=$i+1}
@@ -55,11 +62,11 @@
 			</table>
 		</div>
 	</div>
-	<div style="float: right; width: 48%;">
+	<div style="float: right; width: 40%;">
 		<div class="message">
 			<ul>
 				<li>These statistics are only availible for CEO's and Directors!</li>
-				<li>Only users with an active API key are counted</li>
+				<li>Users that have logged in to VIPPY in the Ingame Browser are counted as active</li>
 			</ul>
 		</div>
 	</div>
@@ -68,7 +75,9 @@
 
 <div class="content">
 	<h2>Corporation details</h2>
-	{foreach from=$corporations item=corp}
+{foreach from=$corporations item=corp}
+	{assign var=totalHours value=0}
+	{assign var=totalAmount value=0}
 	{if $corp.users|@count > 0}
 	<div style="float: left; margin: 10px;">
 		<table class="sectionoverview">
@@ -80,8 +89,7 @@
 						&nbsp; {$corp.corp->name}
 					</div>
 				</th>
-				<th style="width: 30px; text-align: center;">Rank</th>
-                <th style="width: 30px; text-align: center;">Sigs</th>
+                <th style="width: 30px; text-align: center;">Total Sigs</th>
                 <th style="width: 30px; text-align: center;">Sigs p/hour</th>
                 <th style="width: 30px; text-align: center;">Hours Online</th>
 			</tr>
@@ -89,6 +97,8 @@
 	{foreach from=$scanners item=user}
 		{if $user.user->getMainCharacter()->corporationID == $corp.corp->id}
             {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
+			{assign var=totalHours value=$totalHours+$nrhours}
+			{assign var=totalAmount value=$totalAmount+$user.amount}
             <tr class="{if $i%2==0}even{else}odd{/if}"
                 onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
                 <td style="padding: 0; width: 20px;">
@@ -98,16 +108,15 @@
                 <td>
                     &nbsp;{$user.user->getMainCharacter()->name}&nbsp;
                 </td>
-                <td style="text-align: center;">-</td>
-                <td style="text-align: center;"><b>{$user.amount}</b></td>
-                <td style="text-align: center;">
-                    {if $nrhours > 0}
-                    {($user.amount/$nrhours)|round:1}
-                    {/if}
-                </td>
-                <td style="text-align: center;">
-                    {$nrhours}
-                </td>
+				<td style="text-align: center;">
+					{if $user.amount > 0}{$user.amount}{/if}
+				</td>
+				<td style="text-align: center;">
+					{if $nrhours > 0}{($user.amount/$nrhours)|round:1}{/if}
+				</td>
+				<td style="text-align: center;">
+					{$nrhours}
+				</td>
             </tr>
 			{assign var=i value=$i+1}
 		{/if}
@@ -115,6 +124,8 @@
 	{foreach from=$corp.users key=s item=user}
 		{if $user.amount == 0}
             {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
+			{assign var=totalHours value=$totalHours+$nrhours}
+			{assign var=totalAmount value=$totalAmount+$user.amount}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
 				<td style="padding: 0; width: 20px;">
@@ -124,20 +135,36 @@
 				<td>
 					&nbsp;{$user.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center;">-</td>
-				<td style="text-align: center;"><b>{$user.amount}</b></td>
-                <td style="text-align: center;">
-                    {if $nrhours > 0}
-                    {($user.amount/$nrhours)|round:1}
-                    {/if}
-                </td>
-                <td style="text-align: center;">
-                    {$nrhours}
-                </td>
+				<td style="text-align: center;">
+					{if $user.amount > 0}{$user.amount}{/if}
+				</td>
+				<td style="text-align: center;">
+				{if $nrhours > 0 && $user.amount > 0}
+					{($user.amount/$nrhours)|round:1}
+				{/if}
+				</td>
+				<td style="text-align: center;">
+					{$nrhours}
+				</td>
 			</tr>
 			{assign var=i value=$i+1}
 		{/if}
 	{/foreach}
+			<tr>
+				<td></td>
+				<td></td>
+				<th style="text-align: center;">
+					{$totalAmount}
+				</th>
+				<th style="text-align: center;">
+				{if $nrhours > 0}
+					{($totalAmount/$totalHours)|round:1}
+				{/if}
+				</th>
+				<th style="text-align: center;">
+					{$totalHours}
+				</th>
+			</tr>
 		</table>
 	</div>
 	{/if}
