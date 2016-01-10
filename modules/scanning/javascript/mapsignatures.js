@@ -28,7 +28,7 @@ function loadSignatureList(extraURL, addNoCache)
 			success: function(data) {
 				if (data != "cached" && !editingSigList) {
                     $("#signatureList").html(data);
-                    setAutoCompletes()
+                    //setAutoCompletes()
                 }
 
 				loadingSigList = false;
