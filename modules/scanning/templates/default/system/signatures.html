@@ -141,7 +141,7 @@
 					<option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
 				</select>
 			{if $sig.sigtype == 'wh'}
-				<input type="text" class="ui-autocomplete-input" rel="autocomplete"
+				<input type="text" class="ui-autocomplete-input" rel="autocomplete" onfocus="setWhTypeAutocomplete('{$sig.id}')"
 					   id="siginput{$sig.id}whtype" name="whtype" autocomplete="off" minlength="0"
 					   value="{if $sig.whtypeid > 0}{$sig.whtypename}{/if}" placeholder="K162"
 					   element="eve-elements-WHType" style="width: 50px; margin-top: 2px;">

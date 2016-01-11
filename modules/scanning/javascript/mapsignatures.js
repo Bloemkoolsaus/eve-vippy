@@ -28,7 +28,6 @@ function loadSignatureList(extraURL, addNoCache)
 			success: function(data) {
 				if (data != "cached" && !editingSigList) {
                     $("#signatureList").html(data);
-                    //setAutoCompletes()
                 }
 
 				loadingSigList = false;
@@ -73,6 +72,11 @@ function editSig(id)
 	$("#sigedit"+id+"info").fadeIn();
 	$("#sigedit"+id+"signalstrength").fadeIn();
 	$("#sigedit"+id+"buttons").fadeIn();
+}
+
+function setWhTypeAutocomplete(sigID)
+{
+    setAutoComplete($("#siginput"+sigID+"whtype"));
 }
 
 function saveEditSig(id)

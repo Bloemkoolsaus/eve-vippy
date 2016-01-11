@@ -97,53 +97,61 @@ function setDatePicker()
 	});
 }
 
+
 function setAutoCompletes()
 {
-	$("input[rel=autocomplete]").each(function()
-	{
-		var searchMinLength = 2;
-		var searchDelay = 150;
+    $("input[rel=autocomplete]").each(function() {
+        setAutoComplete($(this))
+    });
+}
+function setAutoComplete(elem)
+{
+    if (elem.hasAttr("data-init"))
+        return false;
 
-		if ($(this).hasAttr("minlength"))
-			searchMinLength = $(this).attr("minlength");
+    var searchMinLength = 2;
+    var searchDelay = 150;
 
-		if ($(this).hasAttr("delay"))
-			searchDelay = $(this).attr("delay");
+    if (elem.hasAttr("minlength"))
+        searchMinLength = elem.attr("minlength");
 
-		var reqURL = "index.php?autocomplete=1&ajax=1&minsearchlen=" + searchMinLength;
+    if (elem.hasAttr("delay"))
+        searchDelay = elem.attr("delay");
 
-		var field = $(this).attr("id");
-		if ($(this).hasAttr("field")) {
-			reqURL +="&field="+$(this).attr("field");
-			field = $(this).attr("field");
-		}
+    var reqURL = "index.php?autocomplete=1&ajax=1&minsearchlen=" + searchMinLength;
 
-		if ($(this).hasAttr("element"))
-			reqURL +="&element="+$(this).attr("element");
+    var field = elem.attr("id");
+    if (elem.hasAttr("field")) {
+        reqURL +="&field="+elem.attr("field");
+        field = elem.attr("field");
+    }
 
-		if ($(this).hasAttr("table"))
-			reqURL +="&table="+$(this).attr("table");
+    if (elem.hasAttr("element"))
+        reqURL +="&element="+elem.attr("element");
 
-		if ($(this).hasAttr("keyfield"))
-			reqURL +="&keyfield="+$(this).attr("keyfield");
+    if (elem.hasAttr("table"))
+        reqURL +="&table="+elem.attr("table");
 
-		if ($(this).hasAttr("namefield"))
-			reqURL +="&namefield="+$(this).attr("namefield");
+    if (elem.hasAttr("keyfield"))
+        reqURL +="&keyfield="+elem.attr("keyfield");
 
-		if ($(this).hasAttr("limit"))
-			reqURL +="&limit="+$(this).attr("limit");
+    if (elem.hasAttr("namefield"))
+        reqURL +="&namefield="+elem.attr("namefield");
 
-		$(this).autocomplete({
-			source: reqURL,
-			minLength: searchMinLength,
-			delay: searchDelay,
-			select: function(event,ui) {
-                console.log(ui);
-				$("#"+field).val(ui.item.id);
-				$("#"+field).trigger('change');
-			}
-		});
-	});
+    if (elem.hasAttr("limit"))
+        reqURL +="&limit="+elem.attr("limit");
+
+    elem.autocomplete({
+        source: reqURL,
+        minLength: searchMinLength,
+        delay: searchDelay,
+        select: function(event,ui) {
+            console.log(ui);
+            $("#"+field).val(ui.item.id);
+            $("#"+field).trigger('change');
+        }
+    });
+    elem.attr("data-init", "true");
 }
 
 function showHelp(help)
