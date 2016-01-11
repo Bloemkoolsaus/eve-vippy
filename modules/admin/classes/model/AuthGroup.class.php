@@ -364,6 +364,8 @@ namespace admin\model
 		 */
 		function isAllowed()
 		{
+            \AppRoot::debug("AuthGroup->isAllowed([".$this->id."] ".$this->name.")");
+
 			// Check for active subscriptions
 			foreach ($this->getSubscriptions() as $subscription)
 			{

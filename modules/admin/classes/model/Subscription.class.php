@@ -68,16 +68,24 @@ namespace admin\model
 
 		function isActive()
 		{
+            \AppRoot::debug("Subscription->isActive($this->fromdate,$this->tilldate)");
+
 			if ($this->fromdate != null) {
-				if (strtotime($this->fromdate) > strtotime("now"))
-					return false;
+				if (strtotime($this->fromdate) > strtotime("now")) {
+                    \AppRoot::debug("subscription not yet started");
+                    return false;
+                }
 			}
 
 			if ($this->tilldate != null) {
 				if (strtotime($this->tilldate) < strtotime("now"))
-					return false;
+                {
+                    \AppRoot::debug("subscription expired");
+                    return false;
+                }
 			}
 
+            \AppRoot::debug("Active!");
 			return true;
 		}
 

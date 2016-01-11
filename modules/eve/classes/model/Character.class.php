@@ -170,9 +170,12 @@ namespace eve\model
 			return $this->roles;
 		}
 
-		function isAuthorized()
+		function isAuthorized($reset=false)
 		{
-			\AppRoot::debug("isAuthorized(".$this->name.")");
+            if ($reset)
+                $this->isAuthorized = null;
+
+			\AppRoot::debug("isAuthorized(".$this->name.",".$reset.")");
 			if ($this->isAuthorized === null)
 			{
 				// Geldige api key??
@@ -187,6 +190,7 @@ namespace eve\model
 							if ($group->isAllowed())
 							{
 								$this->isAuthorized = true;
+                                \AppRoot::debug("<span style='color:green;'>allowed in group: ".$group->name."</span>");
 								break;
 							}
 						}
@@ -195,7 +199,7 @@ namespace eve\model
                             \AppRoot::debug("<span style='color:red;'>not in an allowed group</span>");
 					}
 					else
-						\AppRoot::debug("<span style='color:red;'>api ".$this->getApiKey()->id." key not valid</span>");
+						\AppRoot::debug("<span style='color:red;'>api key ".$this->getApiKey()->id." not valid</span>");
 				}
 				else
 					\AppRoot::debug("<span style='color:red;'>no api key</span>");

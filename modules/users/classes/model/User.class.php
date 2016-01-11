@@ -939,15 +939,19 @@ namespace users\model
             if ($fromCache)
             {
                 if ($cache = \Cache::file()->get($cacheFilename))
+                {
+                    \AppRoot::debug("Load from cache");
                     $characters = json_decode($cache);
+                }
             }
 
             if (count($characters) == 0)
 			{
+                \AppRoot::debug("No authorized characters found. Check again!");
 				$characters = array();
 				foreach ($this->getCharacters() as $character)
 				{
-					if ($character->isAuthorized())
+					if ($character->isAuthorized(true))
 						$characters[] = $character;
 				}
                 \Cache::file()->set($cacheFilename, json_encode($characters));
