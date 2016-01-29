@@ -45,6 +45,19 @@ namespace scanning\model
 			}
 		}
 
+        function store()
+        {
+            $data = [
+                "name" => $this->name,
+                "whtype" => $this->type,
+                "destination" => $this->destination,
+                "lifetime" => $this->lifetime,
+                "jumpmass" => $this->jumpmass,
+                "maxmass" => $this->maxmass
+            ];
+            \MySQL::getDB()->updateinsert("mapwormholetypes", $data, ["id" => $this->id]);
+        }
+
 		function isK162()
 		{
 			if ($this->id == 0)

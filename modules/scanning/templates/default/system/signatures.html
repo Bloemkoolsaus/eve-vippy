@@ -140,23 +140,24 @@
 					<option value="combat" {if $sig.sigtype|upper == "COMBAT"}selected{/if}>Combat</option>
 					<option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
 				</select>
-			{if $sig.sigtype == 'wh'}
+		{if $sig.sigtype == 'wh'}
+			{if $App->user->getSetting('whtypefield') == 'select'}
+				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
+					<option value=""></option>
+					<option value="9999" {if $sig.whtypeid} == 9999}selected{/if}>K162</option>
+					{foreach from=$system->getWormholeTypes() item=type}
+						<option value="{$type.type}" {if $type.type == $sig.whtypename}selected{/if}>
+							{$type.type} (to {$type.to})
+						</option>
+					{/foreach}
+				</select>
+			{else}
 				<input type="text" class="ui-autocomplete-input" rel="autocomplete" onfocus="setWhTypeAutocomplete('{$sig.id}')"
 					   id="siginput{$sig.id}whtype" name="whtype" autocomplete="off" minlength="0"
 					   value="{if $sig.whtypeid > 0}{$sig.whtypename}{/if}" placeholder="K162"
 					   element="eve-elements-WHType" style="width: 50px; margin-top: 2px;">
-				{*
-				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
-					<option value=""></option>
-					<option value="9999" {if $sig.whtypeid} == 9999}selected{/if}>K162</option>
-				{foreach from=$system->getWormholeTypes() item=type}
-					<option value="{$type.id}" {if $type.id == $sig.whtypeid}selected{/if}>
-						{$type.type} (to {$type.to})
-					</option>
-				{/foreach}
-				</select>
-				*}
 			{/if}
+		{/if}
 			</div>
 		</td>
 		<td onclick="editSig('{$sig.id}');">
