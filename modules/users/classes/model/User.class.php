@@ -307,6 +307,21 @@ namespace users\model
 				}
 			}
 
+            // User settings
+            if ($this->settings !== null)
+            {
+                \MySQL::getDB()->delete("user_user_settings", ["userid" => $this->id]);
+                foreach ($this->settings as $id => $setting)
+                {
+                    if ($setting->value != null)
+                    {
+                        \MySQL::getDB()->insert("user_user_settings", ["settingid" => $setting->setting->id,
+                                                                       "userid" => $this->id,
+                                                                       "value" => $setting->value]);
+                    }
+                }
+            }
+
 			// Clear user cache
 			$this->resetCache();
             return true;
@@ -496,43 +511,65 @@ namespace users\model
 		/**
 		 * Get setting
 		 * @param string $name
-		 * @return string|boolean false
+		 * @return string|null
 		 */
 		public function getSetting($name)
 		{
+            \AppRoot::debug("User->getSetting($name)");
 			if ($this->settings === null)
 				$this->fetchSettings();
 
 			if (isset($this->settings[$name]))
-				return $this->settings[$name];
-			else
-				return false;
+				return $this->settings[$name]->value;
+
+            return null;
 		}
+
+        /**
+         * Set setting
+         * @param Setting $setting
+         * @param $value
+         */
+        public function setSetting(\users\model\Setting $setting, $value)
+        {
+            if ($this->settings === null)
+                $this->fetchSettings();
+
+            $this->settings[$setting->name] = new \stdClass();
+            $this->settings[$setting->name]->setting = $setting;
+            $this->settings[$setting->name]->value = $value;
+        }
+
+        public function clearSettings()
+        {
+            $this->settings = [];
+        }
 
 		private function fetchSettings()
 		{
-			$this->settings = array();
-
+            $this->clearSettings();
 			$cacheFilename = $this->getCacheDirectory()."settings.json";
 			if ($cache = \Cache::file()->get($cacheFilename))
 				$results = json_decode($cache,true);
 			else
 			{
-				$results = \MySQL::getDB()->getRows("SELECT	s.name, u.value
-													FROM    user_settings s
+				$results = \MySQL::getDB()->getRows("SELECT	s.*, u.value
+													FROM    users_setting s
 													    INNER JOIN user_user_settings u ON u.settingid = s.id
 													WHERE   u.userid = ?"
 										, array(\User::getUSER()->id));
                 \Cache::file()->set($cacheFilename, json_encode($results));
 			}
 
-			if ($results) {
-				foreach ($results as $result) {
-					$this->settings[$result["name"]] = $result["value"];
+			if ($results)
+            {
+				foreach ($results as $result)
+                {
+                    $setting = \users\model\Setting::getObjectByName($result["name"]);
+                    $setting->load($result);
+                    $this->setSetting($setting, $result["value"]);
 				}
 			}
-
-			return $this->settings;
 		}
 
 		/**

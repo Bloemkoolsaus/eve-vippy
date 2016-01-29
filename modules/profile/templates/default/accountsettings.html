@@ -9,7 +9,7 @@
 		{/foreach}
 	</div>
 </div>
-{/if}	
+{/if}
 
 <div class="content">
 	<h1>Account Settings</h1>
@@ -60,8 +60,9 @@
 	<h2>Personal Settings</h2>
 {foreach from=$settings item=setting}
 	<div class="form">
-		<label class="field">{$setting.name}:</label>
-		<label class="value"><input type="text" name="setting{$setting.id}" value="{$setting.value}"></label>
+		<label class="field">{$setting->title}:</label>
+		{assign var=val value=$user->getSetting($setting->name)}
+		{$setting->getEditForm($val)}
 	</div>
 {/foreach}
 	<div style="clear:both;"></div>

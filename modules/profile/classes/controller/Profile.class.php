@@ -50,49 +50,33 @@ namespace profile\controller
 			$errors = array();
 			$settings = array();
 
-			if ($results = \MySQL::getDB()->getRows("SELECT s.id, s.title AS name, u.value
-													FROM    user_settings s
-													    LEFT JOIN user_user_settings u ON u.settingid = s.id
-													    	AND u.userid = ?"
-										, array(\User::getUSER()->id)))
-			{
-				foreach ($results as $result)
-				{
-					$settings[] = array("id"	=> $result["id"],
-										"name"	=> $result["name"],
-										"value"	=> $result["value"]);
-				}
-			}
-
 			if (\Tools::POST("save"))
 			{
 				\User::getUSER()->username = \Tools::POST("username");
 				\User::getUSER()->email = \Tools::POST("email");
 
-				if (\Tools::POST("password1") || \Tools::POST("password2"))
-				{
+                // Password
+				if (\Tools::POST("password1") || \Tools::POST("password2")) {
 					if (\Tools::POST("password1") == \Tools::POST("password2"))
 						\User::getUSER()->password = \User::generatePassword(\Tools::POST("password1"));
 					else
 						$errors[] = "Passwords did not match";
 				}
-				\User::getUSER()->store();
 
-				foreach ($settings as $setting)
-				{
-					\MySQL::getDB()->updateinsert("user_user_settings",
-											array(	"settingid" => $setting["id"],
-													"userid"	=> \User::getUSER()->id,
-													"value"		=> \Tools::POST("setting".$setting["id"])),
-											array(	"settingid" => $setting["id"],
-													"userid"	=> \User::getUSER()->id));
-				}
+                // Settings
+                foreach ($_POST["setting"] as $id => $value) {
+                    $setting = \users\model\Setting::findById($id);
+                    \User::getUSER()->setSetting($setting, $value);
+                }
+
+
+                \User::getUSER()->store();
 				\AppRoot::refresh();
 			}
 
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("user", \User::getUSER());
-			$tpl->assign("settings", $settings);
+			$tpl->assign("settings", \users\model\Setting::findAll());
 			$tpl->assign("errors", $errors);
 			return $tpl->fetch(\SmartyTools::getTemplateDir("profile")."accountsettings.html");
 		}

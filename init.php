@@ -29,7 +29,7 @@ function autoLoader($classname)
 		\AppRoot::debug("Load Class file: ".$classFile);
 	}
 	else
-		\AppRoot::error("Failed to load Class file: ".$classFile);
+		\AppRoot::debug("<span style='color:red;'><b>Failed to load Class file:</b> ".$classFile."</span>", true);
 }
 spl_autoload_register("autoLoader");
 
