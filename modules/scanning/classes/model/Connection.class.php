@@ -134,7 +134,9 @@ namespace scanning\model
 			if ($this->fromWHTypeID > 0 || $this->toWHTypeID > 0)
 			{
 				// WH Type bekend? Probeer te achterhalen of dit een frigate / capital hole is.
-				$this->frigateHole = false;
+                if (!$this->frigateHole)
+				    $this->frigateHole = false;
+
 				$this->allowCapitals = false;
 
 				$fromType = new \scanning\model\WormholeType($this->fromWHTypeID);

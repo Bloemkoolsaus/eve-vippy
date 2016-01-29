@@ -76,7 +76,7 @@ function editSig(id)
 
 function setWhTypeAutocomplete(sigID)
 {
-    setAutoComplete($("#siginput"+sigID+"whtype"));
+    //setAutoComplete($("#siginput"+sigID+"whtype"));
 }
 
 function saveEditSig(id)

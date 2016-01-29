@@ -83,8 +83,9 @@ class NumbersStatic extends \map\model\NamingScheme
                             }
 
                             // Check of de static niet per ongeluk de weg terug is.
-                            if ($signature != null)
+                            if ($signature == null)
                             {
+                                \AppRoot::debug("SIGNATURE: ".$signature);
                                 $sigWhName = explode(" ",$signature->sigInfo);
                                 $sigWhName = explode("-",$sigWhName[0]);
                                 if ($sigWhName[1] != $startingName.$index)
