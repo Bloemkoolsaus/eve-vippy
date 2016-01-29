@@ -10,7 +10,7 @@ namespace scanning\console
 
 			\MySQL::getDB()->doQuery("TRUNCATE mapwormholecharacterlocations");
 			\MySQL::getDB()->doQuery("TRUNCATE mapnrofjumps");
-			\MYSQL::getDB()->doQuery("DELETE FROM mapwormholejumplog WHERE jumptime < '".date("Y-m-d", mktime(0,0,0,date("m")-2,date("d"),date("Y")))."'");
+			\MYSQL::getDB()->doQuery("DELETE FROM mapwormholejumplog WHERE jumptime < '".date("Y-m-d", mktime(0,0,0,date("m")-6,date("d"),date("Y")))."'");
 
 			return true;
 		}
