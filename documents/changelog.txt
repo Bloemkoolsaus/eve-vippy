@@ -5,6 +5,13 @@
 	{/if}
 {/foreach}
 
+<b><u>Scanning</u></b>
+ - Added an option in "Profile -> <a href="/index.php?module=profile">Account Settings</a>" to change the wormhole-type field back to a dropdown box, instead of the current text field.
+    I have had complaints since removing it. This way, every one can choose wich they like best.
+
+
+
+
 <h3>January 10, 2016</h3>
 <b><u>SCANNING</u></b>
  - When editing signatures, replaced the wormhole type select-box with an auto complete field. This should make it easier to select the correct wormhole type.

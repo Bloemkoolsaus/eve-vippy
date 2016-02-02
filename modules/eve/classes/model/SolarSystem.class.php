@@ -108,43 +108,6 @@ namespace eve\model
 			}
 		}
 
-		private function getClassInfo($retry=false)
-		{
-			$info = array("tag" => "", "name" => "n/a", "color" => "#000000");
-
-			$controller = new \eve\controller\Solarsystem();
-			$class = $controller->getClassByRegion($this->region);
-			if ($class > 0)
-				$class = "C".$class;
-			else
-				$class = $controller->parseSecStatus($this->security);
-
-
-			// Shattered?
-			$info["shattered"] = false;
-			if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes_shattered WHERE constellationid = ?", array($this->constellation)))
-			{
-				$info["shattered"] = $result["type"];
-			}
-
-
-			// ClassID ophalen
-			if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapsolarsystemclasses WHERE tag = ?", array($class)))
-			{
-				$info["tag"] = $result["tag"];
-				$info["name"] = $result["name"];
-				$info["color"] = $result["color"];
-
-				// Toevoegen aan locatie tabel
-				\MySQL::getDB()->updateinsert("maplocationwormholeclasses",
-									array(	"locationid"		=> $this->id,
-											"wormholeclassid"	=> $result["id"]),
-									array(	"locationid"		=> $this->id));
-			}
-
-			return $info;
-		}
-
 		private function fetchSystemInfo()
 		{
 			$this->info = array();
@@ -190,13 +153,59 @@ namespace eve\model
 			}
 		}
 
-		function getClass($short=false)
-		{
-			if ($this->info == null || !isset($this->info["class"]["tag"]))
-				$this->fetchSystemInfo();
+        private function getClassInfo($retry=false)
+        {
+            $info = array("id" => 0, "tag" => "", "name" => "n/a", "color" => "#000000");
 
-			return ($short) ? $this->info["class"]["tag"] : $this->info["class"]["name"];
-		}
+            $controller = new \eve\controller\Solarsystem();
+            $class = $controller->getClassByRegion($this->region);
+            if ($class > 0)
+                $class = "C".$class;
+            else
+                $class = $controller->parseSecStatus($this->security);
+
+
+            // Shattered?
+            $info["shattered"] = false;
+            if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes_shattered WHERE constellationid = ?", array($this->constellation)))
+            {
+                $info["shattered"] = $result["type"];
+            }
+
+
+            // ClassID ophalen
+            if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapsolarsystemclasses WHERE tag = ?", array($class)))
+            {
+                $info["id"] = $result["id"];
+                $info["tag"] = $result["tag"];
+                $info["name"] = $result["name"];
+                $info["color"] = $result["color"];
+
+                // Toevoegen aan locatie tabel
+                \MySQL::getDB()->updateinsert("maplocationwormholeclasses",
+                    array(	"locationid"		=> $this->id,
+                              "wormholeclassid"	=> $result["id"]),
+                    array(	"locationid"		=> $this->id));
+            }
+
+            return $info;
+        }
+
+        function getClass($short=false)
+        {
+            if ($this->info == null || !isset($this->info["class"]["tag"]))
+                $this->fetchSystemInfo();
+
+            return ($short) ? $this->info["class"]["tag"] : $this->info["class"]["name"];
+        }
+
+        function getClassID()
+        {
+            if ($this->info == null || !isset($this->info["class"]["tag"]))
+                $this->fetchSystemInfo();
+
+            return $this->info["class"]["id"];
+        }
 
 		function getClassColor()
 		{
@@ -640,23 +649,16 @@ namespace eve\model
 			return false;
 		}
 
+        /**
+         * Get wormhole types
+         * @return array
+         */
 		function getWormholeTypes()
 		{
-			$types = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT t.id, t.name, sc.tag
-													FROM 	mapwormholetypes t
-														INNER JOIN mapsolarsystemclasses sc ON sc.id = t.destination
-													GROUP BY t.id
-													ORDER BY t.name"
-											, array($this->id)))
-			{
-				foreach ($results as $result)
-				{
-					$types[] = array("id"	=> $result["id"],
-									"type"	=> $result["name"],
-									"to"	=> $result["tag"]);
-				}
-			}
+			$types = [];
+			foreach (\scanning\model\WormholeType::findBySystemID($this->id) as $type) {
+                $types[] = $type;
+            }
 			return $types;
 		}
 

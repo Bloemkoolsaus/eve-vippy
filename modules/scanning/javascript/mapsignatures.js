@@ -24,7 +24,7 @@ function loadSignatureList(extraURL, addNoCache)
 
 		loadingSigList = true;
 		$.ajax({
-			url: "index.php?module=scanning&section=map&action=siglist&ajax=1&system="+system+extraURL,
+			url: "/index.php?module=scanning&section=map&action=siglist&ajax=1&system="+system+extraURL,
 			success: function(data) {
 				if (data != "cached" && !editingSigList) {
                     $("#signatureList").html(data);
@@ -40,7 +40,7 @@ function showSignatureList()
 {
 	$("#signatureToggle").hide();
 	$("#signatureForm").fadeIn();
-	$("#signatureList").html("<div><br /><img src='images/loading.gif'> Loading signatures</div>");
+	$("#signatureList").html("<div><br /><img src='/images/loading.gif'> Loading signatures</div>");
 	$("#signatureList").fadeIn();
 	loadSignatureList("&nocache=1");
 }
@@ -61,6 +61,9 @@ function editSig(id)
 {
 	editingSigList = true;
 
+    if ($("#sigedit"+id+"id").is(":visible"))
+        return false;
+
 	$("#siglist"+id+"id").hide();
 	$("#siglist"+id+"type").hide();
 	$("#siglist"+id+"info").hide();
@@ -72,6 +75,18 @@ function editSig(id)
 	$("#sigedit"+id+"info").fadeIn();
 	$("#sigedit"+id+"signalstrength").fadeIn();
 	$("#sigedit"+id+"buttons").fadeIn();
+
+    var data = {
+        sigID: id,
+        whType: $("#signWhTypeInput"+id).attr("data-sig-whtype")
+    };
+    var html = "";
+    if ($("#signWhTypeInput"+id).attr("data-whtype-input") == "select")
+        html = Mustache.to_html($("#whTypeSelectTPL").html(), data);
+    else
+        html = Mustache.to_html($("#whTypeInputTPL").html(), data);
+
+    $("#signWhTypeInput"+id).html(html);
 }
 
 function setWhTypeAutocomplete(sigID)
@@ -96,7 +111,7 @@ function saveEditSig(id)
 	$("#sigedit"+id+"info").fadeOut(500, function() { $("#siglist"+id+"info").show(); } );
 	$("#sigedit"+id+"signalstrength").fadeOut(500, function() { $("#siglist"+id+"whtype").show(); } );
 	$("#sigedit"+id+"buttons").fadeOut(500, function() { $("#siglist"+id+"buttons").show(); } );
-	$("#siglist"+id+"info").html("<img src='images/loading.gif'> Saving");
+	$("#siglist"+id+"info").html("<img src='/images/loading.gif'> Saving");
 
 	editingSigList = false;
 	$.ajax({

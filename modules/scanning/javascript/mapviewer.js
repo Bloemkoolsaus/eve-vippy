@@ -167,20 +167,43 @@ function switchSystem(system)
 	document.formChangeCurrentSystem.submit();
 }
 
-function selectSignatureType()
+function selectSignatureType(sigID)
 {
 	var sigType =  $("#sigtype").val();
 
 	if (sigType == "wh")
-	{
+    {
+        var data = { sigtype: sigType, sigID: sigID };
+        var html = "";
+        if ($("td[rel=addsig_wormhole]").attr("data-whtype-input") == "select")
+            html = Mustache.to_html($("#whTypeSelectTPL").html(), data);
+        else
+            html = Mustache.to_html($("#whTypeInputTPL").html(), data);
+
+        $("#whTypeInputContainer").html(html);
+
 		$("td[rel=addsig_wormhole]").show();
 		$("#whtype").focus();
 	}
-	else
-	{
+    else
+    {
 		$("td[rel=addsig_wormhole]").hide();
 		$("#siginfo").focus();
 	}
+}
+
+function selectSignatureWhType(select)
+{
+    if (select.val() == "other")
+    {
+        var data = { whType: select.attr("data-whtype"), sigID: select.attr("data-sigid") };
+        var html = Mustache.to_html($("#whTypeInputTPL").html(), data);
+        if (select.attr("data-sigid")) {
+            $("#signWhTypeInput"+select.attr("data-sigid")).html(html);
+        } else {
+            $("#whTypeInputContainer").html(html);
+        }
+    }
 }
 
 function addSignature()
@@ -190,7 +213,7 @@ function addSignature()
 	reqURL += "&type=" + $("#sigtype").val();
 
 	if ($("#sigtype").val() == "wh")
-		reqURL += "&typeid=" + $("#whtype").val();
+		reqURL += "&typeid=" + $("#whTypeInputContainer>[name=whtype]").val();
 
 	reqURL += "&info=" + $("#siginfo").val();
 

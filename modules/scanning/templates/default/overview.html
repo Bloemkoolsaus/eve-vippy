@@ -189,7 +189,7 @@
 		</div>
 		<a name="signatures"></a>
 		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
-			<h2 style="margin-bottom: 0px;">
+			<h2 style="margin-bottom: 0;">
 				Add signature
 			{if isset($igb) && $igb->isTrusted()}
 				<div style="float: right; width: 300px; text-align: right; font-size: 12px;">
@@ -218,22 +218,11 @@
 							<option value="pos">POS</option>
 						</select>
 					</td>
-					<td rel="addsig_wormhole" style="display: none; width: 60px;">
+					<td rel="addsig_wormhole" data-whtype-input="{$App->user->getSetting('whtypefield')}" style="display: none; width: 60px;">
 						<b>WH Type:</b><br />
-					{if $App->user->getSetting('whtypefield') == 'select'}
-						<select id="whtype" name="whtype" style="width: 95px;">
-							<option value=""></option>
-							<option value="9999">K162</option>
-						{foreach from=$system->getWormholeTypes() item=type}
-							<option value="{$type.type}">{$type.type} (to {$type.to})</option>
-						{/foreach}
-						</select>
-					{else}
-						<input type="text" class="ui-autocomplete-input" rel="autocomplete"
-							   id="whtype" name="whtype" autocomplete="off" minlength="0"
-							   value="" placeholder="K162" element="eve-elements-WHType"
-							   style="width: 50px; margin-top: 2px;">
-					{/if}
+					    <div id="whTypeInputContainer">
+
+                        </div>
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />
@@ -260,7 +249,7 @@
 						Cosmic Anomalies will be added to the systems anomaly list.</i>
 					</div>
 				</div>
-				<form method="post" action="index.php?module=scanning&section=sigs&action=copypaste">
+				<form method="post" action="/index.php?module=scanning&section=sigs&action=copypaste">
 				<div class="form">
 					<textarea name="copypastesignatures" style="width: 98%; height: 40px;"></textarea>
 				</div>
@@ -397,3 +386,25 @@
 </form>
 
 {/if}
+
+
+
+<script id="whTypeSelectTPL" type="text/template">
+{literal}
+    <select id="siginput{{sigID}}whtype" name="whtype" style="width: 65px;" onchange="selectSignatureWhType($(this))"
+            data-sigid="{{sigID}}" data-whtype="{{whType}}">
+{/literal}
+        <option value=""></option>
+        <option value="9999">K162</option>
+    {foreach from=$system->getWormholeTypes() item=type}
+        <option value="{$type->name}">{$type->name} ({$type->getDestinationclass()->tag})</option>
+    {/foreach}
+        <option value="other">-- Other --</option>
+    </select>
+</script>
+<script id="whTypeInputTPL" type="text/template">
+{literal}
+    <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}"
+           placeholder="K162" style="width: 60px; margin-top: 2px;" autocomplete="off">
+{/literal}
+</script>

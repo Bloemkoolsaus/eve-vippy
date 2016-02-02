@@ -28,13 +28,13 @@
 		<th class="sigID" style="cursor: pointer;" onclick="sortSigList('sigid');">
 			ID
 		{if $sortby == "sigid"}
-			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+			<img src="/images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
 		{/if}
 		</th>
 		<th class="sigType" style="cursor: pointer;" onclick="sortSigList('sigtype');">
 			Type
 		{if $sortby == "sigtype"}
-			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+			<img src="/images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
 		{/if}
 		</th>
 		<th class="sigInfo">
@@ -45,7 +45,7 @@
 		<th class="sigUpdate" style="cursor: pointer;" onclick="sortSigList('scandate');">
 			Last Update
 		{if $sortby == "scandate"}
-			<img src="images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
+			<img src="/images/default/{if $sortdir == "ASC"}down{else}up{/if}.small.png" align="right" />
 		{/if}
 		</th>
 		<th class="sigControls">&nbsp;</th>
@@ -130,35 +130,24 @@
 		{/if}
 			</div>
 			<div id="sigedit{$sig.id}type" style="display:none;">
-				<select id="siginput{$sig.id}type" style="width: 65px;" autocomplete="off">
-					<option value=""></option>
-					<option value="wh" {if $sig.sigtype|upper == "WH"}selected{/if}>WH</option>
-					<option value="data" {if $sig.sigtype|upper == "DATA"}selected{/if}>Data</option>
-					<option value="gas" {if $sig.sigtype|upper == "GAS"}selected{/if}>Gas</option>
-					<option value="ore" {if $sig.sigtype|upper == "ORE"}selected{/if}>Ore</option>
-					<option value="relic" {if $sig.sigtype|upper == "RELIC"}selected{/if}>Relic</option>
-					<option value="combat" {if $sig.sigtype|upper == "COMBAT"}selected{/if}>Combat</option>
-					<option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
-				</select>
-		{if $sig.sigtype == 'wh'}
-			{if $App->user->getSetting('whtypefield') == 'select'}
-				<select id="siginput{$sig.id}whtype" style="width: 65px; margin-top: 2px;">
-					<option value=""></option>
-					<option value="9999" {if $sig.whtypeid} == 9999}selected{/if}>K162</option>
-					{foreach from=$system->getWormholeTypes() item=type}
-						<option value="{$type.type}" {if $type.type == $sig.whtypename}selected{/if}>
-							{$type.type} (to {$type.to})
-						</option>
-					{/foreach}
-				</select>
-			{else}
-				<input type="text" class="ui-autocomplete-input" rel="autocomplete" onfocus="setWhTypeAutocomplete('{$sig.id}')"
-					   id="siginput{$sig.id}whtype" name="whtype" autocomplete="off" minlength="0"
-					   value="{if $sig.whtypeid > 0}{$sig.whtypename}{/if}" placeholder="K162"
-					   element="eve-elements-WHType" style="width: 50px; margin-top: 2px;">
-			{/if}
-		{/if}
-			</div>
+                <div>
+                    <select id="siginput{$sig.id}type" style="width: 65px;">
+                        <option value=""></option>
+                        <option value="wh" {if $sig.sigtype|upper == "WH"}selected{/if}>WH</option>
+                        <option value="data" {if $sig.sigtype|upper == "DATA"}selected{/if}>Data</option>
+                        <option value="gas" {if $sig.sigtype|upper == "GAS"}selected{/if}>Gas</option>
+                        <option value="ore" {if $sig.sigtype|upper == "ORE"}selected{/if}>Ore</option>
+                        <option value="relic" {if $sig.sigtype|upper == "RELIC"}selected{/if}>Relic</option>
+                        <option value="combat" {if $sig.sigtype|upper == "COMBAT"}selected{/if}>Combat</option>
+                        <option value="pos" {if $sig.sigtype|upper == "POS"}selected{/if}>POS</option>
+                    </select>
+                </div>
+            {if $sig.sigtype == 'wh'}
+                <div id="signWhTypeInput{$sig.id}" data-sig-id="{$sig.id}" data-sig-whtype="{$sig.whtypename}"
+                     data-whtype-input="{$App->user->getSetting('whtypefield')}">
+
+                </div>
+            {/if}
 		</td>
 		<td onclick="editSig('{$sig.id}');">
 			<div id="siglist{$sig.id}info">
@@ -183,12 +172,12 @@
 		</td>
 		<td style="text-align: center;">
 			<div id="siglist{$sig.id}buttons">
-				<img src="images/default/information.png" style="height: 12px;" onmouseover="showSigInfo('{$sig.id}')" onmouseout="hideSigInfo('{$sig.id}')" />
-				<img src="images/default/edit.png" style="height: 12px;" onclick="editSig('{$sig.id}');"/>
-				<img src="images/default/cross.png" style="height: 12px;" onclick="removeSig('{$sig.id}');" />
+				<img src="/images/default/information.png" style="height: 12px;" onmouseover="showSigInfo('{$sig.id}')" onmouseout="hideSigInfo('{$sig.id}')" />
+				<img src="/images/default/edit.png" style="height: 12px;" onclick="editSig('{$sig.id}');"/>
+				<img src="/images/default/cross.png" style="height: 12px;" onclick="removeSig('{$sig.id}');" />
 			</div>
 			<div id="sigedit{$sig.id}buttons" style="display:none;">
-				<img src="images/default/save.png" onclick="document.formEditSig{$sig.id}.submit();" />
+				<img src="/images/default/save.png" onclick="document.formEditSig{$sig.id}.submit();" />
 			</div>
 		</td>
 	</tr>
@@ -196,5 +185,5 @@
 {/foreach}
 </table>
 <div style="text-align: right; padding: 10px;">
-	<a href="index.php?module=scanning&section=sigs&action=deleteall&id={$wormhole->id}">Delete all Signatures</a>
+	<a href="/index.php?module=scanning&section=sigs&action=deleteall&id={$wormhole->id}">Delete all Signatures</a>
 </div>

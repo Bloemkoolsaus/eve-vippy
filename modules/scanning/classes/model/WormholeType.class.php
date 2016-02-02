@@ -11,6 +11,8 @@ namespace scanning\model
 		public $jumpmass;
 		public $maxmass;
 
+        private $destinationClass;
+
 		function __construct($id=false)
 		{
 			if ($id) {
@@ -68,6 +70,20 @@ namespace scanning\model
 			return false;
 		}
 
+        /**
+         * Get destination class
+         * @return \scanning\model\SystemClass
+         */
+        function getDestinationclass()
+        {
+            if ($this->destinationClass == null)
+                $this->destinationClass = new \scanning\model\SystemClass($this->destination);
+
+            return $this->destinationClass;
+        }
+
+
+
 
         /**
          * Find by name
@@ -84,6 +100,58 @@ namespace scanning\model
             }
 
             return null;
+        }
+
+        /**
+         * Find by solarsystem
+         * @param $solarSystemID
+         * @return \scanning\model\WormholeType[]
+         */
+        public static function findBySystemID($solarSystemID)
+        {
+            $system = new \scanning\model\System($solarSystemID);
+            $whTypeID = $system->getClassID();
+
+            $whTypes = [];
+            if ($results = \MySQL::getDB()->getRows("select t.*
+                                                    from   mapwormholetypes t
+                                                        left join mapwormholetypespawns s on s.whtypeid = t.id
+                                                    where s.fromclass = ?
+                                                    group by t.id order by t.name"
+                                            , [$whTypeID]))
+            {
+                foreach ($results as $result)
+                {
+                    $type = new \scanning\model\WormholeType();
+                    $type->load($result);
+                    $whTypes[] = $type;
+                }
+            }
+
+            return $whTypes;
+        }
+
+        /**
+         * Find by solarsystem
+         * @return \scanning\model\WormholeType[]
+         */
+        public static function findAll()
+        {
+            $whTypes = [];
+            if ($results = \MySQL::getDB()->getRows("select t.*
+                                                    from   mapwormholetypes t
+                                                        left join mapwormholetypespawns s on s.whtypeid = t.id
+                                                    group by t.id order by t.name"))
+            {
+                foreach ($results as $result)
+                {
+                    $type = new \scanning\model\WormholeType();
+                    $type->load($result);
+                    $whTypes[] = $type;
+                }
+            }
+
+            return $whTypes;
         }
 	}
 }

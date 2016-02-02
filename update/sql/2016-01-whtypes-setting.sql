@@ -1,2 +1,2 @@
-insert into users_setting (name, title) values ('whtypefield', 'WH-Type input field');
-ALTER TABLE eve_vippy.user_settings RENAME TO eve_vippy.users_setting;
+insert into user_settings (name, title) values ('whtypefield', 'WH-Type input field');
+ALTER TABLE user_settings RENAME TO users_setting;
