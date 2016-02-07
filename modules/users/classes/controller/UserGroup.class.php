@@ -67,14 +67,14 @@ namespace users\controller
                 }
 
 				$usergroup->clearRights();
-				foreach ($permissions as $module => $rights)
-				{
-					foreach ($rights as $right)
-					{
-						if (\Tools::POST($module."_".$right["name"]))
-							$usergroup->addRight($module, $right["name"], $right["title"]);
-					}
-				}
+                if (\Tools::POST("roles"))
+                {
+                    foreach ($_POST["roles"] as $role => $value)
+                    {
+                        if ($role == "admin")
+                            $usergroup->addRight("admin", "admin", "Vippy Admin");
+                    }
+                }
 
 				$usergroup->store();
                 \AppRoot::redirect("index.php?module=users&section=usergroups");

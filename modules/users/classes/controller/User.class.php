@@ -39,7 +39,7 @@ namespace users\controller
 							else
 								$allowedCorporationIDs[] = $corp->id;
 						}
-						else if (\User::getUSER()->getIsDirector($corp->id))
+						else if (\User::getUSER()->isAdmin())
 						{
 							// Mag deze corp zien
 							$allowedCorporationIDs[] = $corp->id;
@@ -81,7 +81,7 @@ namespace users\controller
 
 		function getEditForm($userID)
 		{
-			if (!\User::getUSER()->getIsDirector())
+			if (!\User::getUSER()->isAdmin())
 				\AppRoot::redirect(APP_URL);
 
 			$errors = array();

@@ -861,11 +861,11 @@ namespace users\model
 			return \User::getUSER()->hasRight("admin","sysadmin");
 		}
 
-		/**
-		 * Is a director?
-		 * @param string $corpid|false
-		 * @return boolean
-		 */
+        /**
+         * Is a director?
+         * @param bool|string $corpid |false
+         * @return bool
+         */
 		public function getIsDirector($corpid=false)
 		{
 			if ($this->getIsSysAdmin())
@@ -888,11 +888,27 @@ namespace users\model
 			return false;
 		}
 
-		/**
-		 * Is ceo?
-		 * @param string $corpid
-		 * @return boolean
-		 */
+        /**
+         * Is user vippy admin?
+         * @param bool $corpid
+         * @return bool
+         */
+        public function isAdmin($corpid=false)
+        {
+            if ($this->getIsDirector($corpid))
+                return true;
+
+            if ($this->hasRight("admin","admin"))
+                return true;
+
+            return false;
+        }
+
+        /**
+         * Is ceo?
+         * @param bool|string $corpid
+         * @return bool
+         */
 		public function getIsCEO($corpid=false)
 		{
 			if ($this->getIsSysAdmin())
@@ -945,7 +961,7 @@ namespace users\model
             {
                 $actions->$action = true;
 
-                if (!$this->getIsDirector())
+                if (!$this->isAdmin())
                 {
                     if ($chain->getSetting('control-' . $action))
                     {
@@ -1259,7 +1275,7 @@ namespace users\model
 
 					if ($chain->directorsOnly && !$this->hasRight("admin","sysadmin"))
 					{
-						if (!$this->getIsDirector())
+						if (!$this->isAdmin())
 							continue;
 					}
 
@@ -1363,7 +1379,7 @@ namespace users\model
 				// Heb ik directors in deze groep?
 				foreach ($group->getAllowedCorporations() as $corp)
 				{
-					if (\User::getUSER()->getIsDirector($corp->id))
+					if (\User::getUSER()->isAdmin($corp->id))
 					{
 						$authGroups[] = $group;
 						continue;

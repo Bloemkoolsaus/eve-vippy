@@ -25,14 +25,14 @@ namespace users
 
 			if ($section == "logs")
 			{
-				if (!\User::getUSER()->getIsDirector())
+				if (!\User::getUSER()->isAdmin())
 					\AppRoot::redirect(APP_URL);
 
 				$logView = new \users\view\Log();
 				return $logView->getOverview();
 			}
 
-			if (!\User::getUSER()->hasRight("users", "manageusers") && !\User::getUSER()->getIsDirector())
+			if (!\User::getUSER()->hasRight("users", "manageusers") && !\User::getUSER()->isAdmin())
 			{
 				\AppRoot::redirect(APP_URL);
 			}

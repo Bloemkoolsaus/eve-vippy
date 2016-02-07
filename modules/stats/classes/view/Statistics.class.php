@@ -5,7 +5,7 @@ namespace stats\view
 	{
 		function getOverview()
 		{
-			if (!\User::getUSER()->getIsDirector())
+			if (!\User::getUSER()->isAdmin())
 				return \Tools::noRightMessage();
 
 

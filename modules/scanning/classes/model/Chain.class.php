@@ -269,14 +269,17 @@ namespace scanning\model
 				return true;
 
 			// Is deze persoon director?
-			if (\User::getUSER()->getIsDirector())
+			if (\User::getUSER()->isAdmin())
 			{
 				// Is hij ook director van de juiste corp?
 				foreach ($this->getAllowedCorporations() as $corp)
 				{
-					if (\User::getUSER()->getIsDirector($corp->id))
-						return true;
-				}
+                    foreach (\User::getUSER()->getCorporations() as $ucorp)
+                    {
+                        if ($ucorp->id == $corp->id)
+                            return true;
+                    }
+                }
 			}
 
 			return false;

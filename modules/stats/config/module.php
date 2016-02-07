@@ -9,7 +9,7 @@ $config["submenu"][] = array("type" => "link",
 							"name"	=> "Leaderboard",
 							"section"=> "leaderboard");
 
-if (\User::getUSER()->getIsDirector())
+if (\User::getUSER()->isAdmin())
 {
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Statistics",

@@ -37,6 +37,17 @@
                 <label class="field">Name:</label>
                 <label class="value"><input type="text" name="name" value="{$usergroup->name}" /></label>
             </div>
+            <div style="clear:both;"></div>
+            <br />
+            <div class="form">
+                <label class="field">&nbsp;</label>
+                <h3>Group Roles</h3>
+            </div>
+            <div class="form">
+                <label class="field">&nbsp;</label>
+                <input type="checkbox" name="roles[admin]" id="roles-admin" {if $usergroup->hasRight('admin','admin')}checked{/if}>
+                <label for="roles-admin" style="float: none;">VIPPY Admin</label>
+            </div>
             <div class="form">
                 <div class="buttons">
                     <button type="submit">Save</button>
@@ -47,21 +58,21 @@
     </div>
     <div style="float: right; width: 45%;">
         <h2>Members</h2>
-        {if $usergroup->getUsers()|@count > 0}
-            <ul>
-                {foreach from=$usergroup->getUsers() item=user}
-                    <li style="margin-bottom: 5px;">
-                        <a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
-                        &nbsp;
-                        <a href="/index.php?module=users&section=usergroups&action=edit&id={$usergroup->id}&deleteuser={$user->id}">
-                            <img src="/images/default/cross.small.png" style="top: 3px;">
-                        </a>
-                    </li>
-                {/foreach}
-            </ul>
-        {else}
-            <i>No members</i>
-        {/if}
+    {if $usergroup->getUsers()|@count > 0}
+        <ul>
+        {foreach from=$usergroup->getUsers() item=user}
+            <li style="margin-bottom: 5px;">
+                <a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
+                &nbsp;
+                <a href="/index.php?module=users&section=usergroups&action=edit&id={$usergroup->id}&deleteuser={$user->id}">
+                    <img src="/images/default/cross.small.png" style="top: 3px;">
+                </a>
+            </li>
+        {/foreach}
+        </ul>
+    {else}
+        <i>No members</i>
+    {/if}
         <div style="padding: 10px;">
             <form method="post" action="">
                 <div class="form">

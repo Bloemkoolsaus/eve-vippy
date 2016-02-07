@@ -25,7 +25,7 @@ namespace admin
 
 			if ($section == "chains")
 			{
-				if (!\User::getUSER()->getIsDirector())
+				if (!\User::getUSER()->isAdmin())
 					\AppRoot::redirect(APP_URL);
 
 				\AppRoot::config("no-cache-chains", 1);

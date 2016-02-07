@@ -5,7 +5,7 @@ namespace admin\controller
 	{
 		public function getOverview()
 		{
-			if (!\User::getUSER()->getIsDirector())
+			if (!\User::getUSER()->isAdmin())
 				\AppRoot::redirect(APP_URL);
 
 			$chains = array();
@@ -73,7 +73,7 @@ namespace admin\controller
 
 		public function getEditForm()
 		{
-			if (!\User::getUSER()->getIsDirector())
+			if (!\User::getUSER()->isAdmin())
 				\AppRoot::redirect(APP_URL);
 
 
