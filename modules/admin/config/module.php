@@ -2,8 +2,8 @@
 // DEFAULT CONFIGURATION
 $config = array();
 $config["name"] = "Admin";
-$config["public"] = (\User::getUSER()->isAdmin()) ? true : false;
-$config["enabled"] = (\User::getUSER()->isAuthorized()) ? true : false;
+$config["public"] = true;
+$config["enabled"] = true;
 
 
 if (\User::getUSER()->isAdmin())

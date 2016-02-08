@@ -89,10 +89,9 @@ namespace admin\controller
 				if (!$authgroup->getMayAdmin(\User::getUSER()))
 				{
 					// Oops!
-					$authgroup->addCorporation(\Tools::REQUEST("deletecorp"));
+                    $corporation = new \eve\model\Corporation(\Tools::REQUEST("deletecorp"));
+					$authgroup->addCorporation($corporation);
 					$authgroup->store();
-
-					$corporation = new \eve\model\Corporation(\Tools::REQUEST("deletecorp"));
 					$errors[] = "<b>Cannot remove $corporation->name</b><br />That would revoke your own access to this group.";
 				}
 				else
@@ -112,6 +111,14 @@ namespace admin\controller
 
 				if (\Tools::POST("alliance"))
 					$authgroup->addAllianceById(\Tools::POST("alliance"));
+
+                $authgroup->clearConfig();
+                if (\Tools::POST("config"))
+                {
+                    foreach ($_POST["config"] as $var => $val) {
+                        $authgroup->setConfig($var, $val);
+                    }
+                }
 
 				$authgroup->store();
 

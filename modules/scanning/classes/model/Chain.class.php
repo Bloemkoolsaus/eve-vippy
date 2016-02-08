@@ -276,7 +276,7 @@ namespace scanning\model
 				{
                     foreach (\User::getUSER()->getCorporations() as $ucorp)
                     {
-                        if ($ucorp->id == $corp->id)
+                        if ($ucorp == $corp->id)
                             return true;
                     }
                 }

@@ -12,6 +12,7 @@ namespace users\model
 		public $deleted = false;
 		public $mainCharId = 0;
 		public $updatedate;
+        public $isAdmin = null;
 		public $isDirector = false;
 		public $isCEO = false;
 		public $isValid = null;
@@ -382,7 +383,7 @@ namespace users\model
 		 */
 		public function hasRight($module, $right="allowed")
 		{
-			\AppRoot::debug("hasRight($module, $right)");
+            \AppRoot::debug("hasRight($module, $right)");
 			$cacheFilename = $this->getCacheDirectory()."permissionss.json";
 
 			if ($this->permissions == null)
@@ -402,6 +403,7 @@ namespace users\model
                 \Cache::file()->set($cacheFilename, json_encode($this->permissions));
 			}
 
+            \AppRoot::debug("/hasRight($module, $right): ".(($this->permissions[$module][$right])?"<span style='color:green;'>true</span>":"<span style='color:red;'>false</span>"));
 			return $this->permissions[$module][$right];
 		}
 
@@ -412,10 +414,13 @@ namespace users\model
             if (class_exists($moduleClass))
                 $moduleObject = new $moduleClass();
 
+            \AppRoot::debug(\Approot::$config);
             $modulePublic = \AppRoot::config($module."public");
             if ($moduleObject != null)
                 $modulePublic = $moduleObject->public;
 
+            if ($module == "admin")
+                $modulePublic = true;
 
 			if ($right == "allowed")
 			{
@@ -449,10 +454,11 @@ namespace users\model
 				}
 			}
 
-            \AppRoot::debug($module."-".$right." is public? ".$modulePublic);
             // Check of de module public is.
             if ($modulePublic)
             {
+                \AppRoot::debug($module."-".$right." is public");
+
                 // Ja, iedereen mag deze module.
                 if ($right == "availible")
                     return true;
@@ -486,7 +492,7 @@ namespace users\model
                                                         FROM 	user_auth_groups_modules
                                                         WHERE	authgroupid = ?
                                                         AND		module = ?"
-                        , array($groupID, $module)))
+                                            , array($groupID, $module)))
                     {
                         foreach ($results as $result)
                         {
@@ -503,6 +509,7 @@ namespace users\model
                         }
                     }
                 }
+                \AppRoot::debug("<span style='color:red;'>module ".$module." not allowed in authgroup</span>");
             }
 
 			return false;
@@ -895,13 +902,20 @@ namespace users\model
          */
         public function isAdmin($corpid=false)
         {
-            if ($this->getIsDirector($corpid))
-                return true;
+            if ($this->isAdmin === null)
+            {
+                $this->isAdmin = false;
 
-            if ($this->hasRight("admin","admin"))
-                return true;
+                if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
+                    if ($this->getIsDirector($corpid))
+                        $this->isAdmin = true;
+                }
 
-            return false;
+                if ($this->hasRight("admin", "admin"))
+                    $this->isAdmin = true;
+            }
+
+            return $this->isAdmin;
         }
 
         /**
@@ -1299,14 +1313,23 @@ namespace users\model
 
 		public function getCurrentAuthGroupID()
 		{
-			if ($this->currentAuthGroup === null)
-			{
-				$chain = new \scanning\model\Chain(\User::getSelectedChain());
-				$this->currentAuthGroup = $chain->authgroupID;
-			}
-
-			return $this->currentAuthGroup;
+            return $this->getCurrentAuthGroup()->id;
 		}
+
+        /**
+         * Get authgroup
+         * @return \admin\model\AuthGroup
+         */
+        public function getCurrentAuthGroup()
+        {
+            if ($this->currentAuthGroup === null)
+            {
+                $chain = new \scanning\model\Chain(\User::getSelectedChain());
+                $this->currentAuthGroup = new \admin\model\AuthGroup($chain->authgroupID);
+            }
+
+            return $this->currentAuthGroup;
+        }
 
 		/**
 		 * Get auth-group ids

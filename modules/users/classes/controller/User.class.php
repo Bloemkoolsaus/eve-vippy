@@ -88,8 +88,8 @@ namespace users\controller
 			$messages = array();
 			$user = new \users\model\User($userID);
 
-			if (!\User::getUSER()->getIsSysAdmin())
-			{
+            // Directors may only manage their own members.
+            if (\User::getUSER()->getIsDirector()) {
 				if ($user->getMainCorporationID() !== \User::getUSER()->getMainCorporationID())
 					\AppRoot::redirect(APP_URL);
 			}

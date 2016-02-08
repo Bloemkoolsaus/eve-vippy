@@ -4,7 +4,7 @@ class AppRoot
 	public static $debug = array();
 	public static $errors = array();
 	private static $title = array();
-	private static $config = array();
+    public static $config = array();
 	private static $timeMeasures = array();
 	public static $startTime = 0;
 	public static $currentTime = 0;

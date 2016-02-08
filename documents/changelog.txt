@@ -5,10 +5,16 @@
 	{/if}
 {/foreach}
 
+<h3>February 8, 2016</h3>
 <b><u>Scanning</u></b>
  - Added an option in "Profile -> <a href="/index.php?module=profile">Account Settings</a>" to change the wormhole-type field back to a dropdown box, instead of the current text field.
     I have had complaints since removing it. This way, every one can choose wich they like best.
 
+<b><u>Admin</u></b>
+ - Add an option to enable admin access to non-directors.
+ 	<i>Set these roles by creating a user-group and adding users to that group</i>.
+ - Add an option to disable admin access to directors.
+ 	<i>You can set this option at your Access Control Group. Please make sure you don't disable access for yourself lol!!</i>.
 
 
 

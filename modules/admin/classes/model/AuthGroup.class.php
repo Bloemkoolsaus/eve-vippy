@@ -160,9 +160,18 @@ namespace admin\model
 				}
 			}
 
-            /*
-             * Reset cache
-             */
+            if ($this->config !== null)
+            {
+                \MySQL::getDB()->delete("user_auth_group_config", ["authgroupid" => $this->id]);
+                foreach ($this->config as $var => $val)
+                {
+                    \MySQL::getDB()->insert("user_auth_group_config", ["authgroupid" => $this->id,
+                                                                       "var" => $var,
+                                                                       "val" => $val]);
+                }
+            }
+
+            // Reset cache
             \Cache::file()->remove($this->getCacheFilename());
             foreach ($this->getAllowedCorporations() as $corp) {
                 foreach (\users\model\User::getUsersByCorporation($corp->id) as $user) {
@@ -391,6 +400,24 @@ namespace admin\model
 			return false;
 		}
 
+        function clearConfig()
+        {
+            $this->config = [];
+        }
+
+        private function fetchConfig()
+        {
+            $this->clearConfig();
+            if ($results = \MySQL::getDB()->getRows("SELECT *
+                                                    FROM 	user_auth_group_config
+                                                    WHERE 	authgroupid = ?", array($this->id)))
+            {
+                foreach ($results as $result) {
+                    $this->setConfig($result["var"],$result["val"]);
+                }
+            }
+        }
+
 		/**
 		 * Get config option
 		 * @param string $option
@@ -399,23 +426,26 @@ namespace admin\model
 		function getConfig($option)
 		{
 			if ($this->config === null)
-			{
-				$this->config = array();
-				if ($results = \MySQL::getDB()->getRows("SELECT *
-														FROM 	user_auth_group_config
-														WHERE 	authgroupid = ?", array($this->id)))
-				{
-					foreach ($results as $result) {
-						$this->config[$result["var"]] = $result["val"];
-					}
-				}
-			}
+                $this->fetchConfig();
 
 			if (isset($this->config[$option]))
 				return $this->config[$option];
 
 			return false;
 		}
+
+        /**
+         * Set config
+         * @param $var
+         * @param $val
+         */
+        function setConfig($var, $val)
+        {
+            if ($this->config === null)
+                $this->fetchConfig();
+
+            $this->config[$var] = $val;
+        }
 
 		/**
 		 * Get allowed users
@@ -445,12 +475,15 @@ namespace admin\model
 		 * @param \users\model\User $user
 		 * @return boolean
 		 */
-		function getMayAdmin(\users\model\User $user)
+		function getMayAdmin(\users\model\User $user=null)
 		{
-			if (\User::getUSER()->getIsSysAdmin())
+            if ($user == null)
+                $user = \User::getUSER();
+
+			if ($user->getIsSysAdmin())
 				return true;
 
-			foreach (\User::getUSER()->getAuthGroupsAdmins() as $group)
+			foreach ($user->getAuthGroupsAdmins() as $group)
 			{
 				if ($group->id == $this->id)
 					return true;

@@ -12,6 +12,9 @@
 
 	<form method="post" name="formAuthGroup" action="">
 	<input type="hidden" name="id" value="{$authgroup->id}" />
+{if $authgroup->getConfig('wh_naming_numeric')}
+	<input type="text" name="config[wh_naming_numeric]" value="1">
+{/if}
 
 	<div style="float: left; width: 40%;">
 		<div class="form">
@@ -37,6 +40,11 @@
 			</label>
 		</div>
 	{/if}
+		<div class="form">
+			<label class="field">&nbsp;</label>
+			<input type="checkbox" id="dir_admin_disabled" name="config[dir_admin_disabled]" {if $authgroup->getConfig('dir_admin_disabled')}checked{/if} value="1">
+			<label for="dir_admin_disabled" style="float: none;">Disable default admin roles for Directors</label>
+		</div>
 		<div style="clear:both;"></div>
 		<br />
 		<div class="form" style="text-align: right;">
@@ -53,7 +61,7 @@
 				{foreach from=$authgroup->getAlliances() item=alliance}
 					<div style="margin: 2px;">
 						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
-						<a href="index.php?module=admin&section=authgroups&action=edit&id={$authgroup->id}&deletealliance={$alliance->id}"><img src="images/eve/cross.png" align="right"></a>
+						<a href="/index.php?module=admin&section=authgroups&action=edit&id={$authgroup->id}&deletealliance={$alliance->id}"><img src="images/eve/cross.png" align="right"></a>
 						&nbsp; {$alliance->name}
 					</div>
 					<div style="clear:both;"></div>
