@@ -13,7 +13,10 @@
 	<form method="post" name="formAuthGroup" action="">
 	<input type="hidden" name="id" value="{$authgroup->id}" />
 {if $authgroup->getConfig('wh_naming_numeric')}
-	<input type="text" name="config[wh_naming_numeric]" value="1">
+	<input type="hidden" name="config[wh_naming_numeric]" value="1">
+{/if}
+{if $authgroup->getConfig('atlas_url')}
+	<input type="hidden" name="config[atlas_url]" value="{$authgroup->getConfig('atlas_url')}">
 {/if}
 
 	<div style="float: left; width: 40%;">
