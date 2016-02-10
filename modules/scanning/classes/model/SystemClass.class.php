@@ -20,7 +20,7 @@ namespace scanning\model
 		{
 			if (!$result)
 			{
-				$cacheFileName = "whtype/".$this->id.".json";
+				$cacheFileName = "systemclass/".$this->id.".json";
 				if ($cache = \Cache::file()->get($cacheFileName))
 					$result = json_decode($cache, true);
 				else

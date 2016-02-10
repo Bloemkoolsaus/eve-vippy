@@ -89,7 +89,7 @@ namespace users\controller
 			$user = new \users\model\User($userID);
 
             // Directors may only manage their own members.
-            if (\User::getUSER()->getIsDirector()) {
+            if (\User::getUSER()->getIsDirector() && !\User::getUSER()->getIsSysAdmin()) {
 				if ($user->getMainCorporationID() !== \User::getUSER()->getMainCorporationID())
 					\AppRoot::redirect(APP_URL);
 			}
