@@ -199,7 +199,7 @@ namespace scanning\controller
 															s.solarsystemname, wh.name AS solarsystemtitle,
 													        c2.homesystemname, k.name AS knownname,
 													        IF(k.status IS NOT NULL, k.status, 0) AS known,
-													        s.security, s.regionid, wh.x, wh.y, wh.status
+													        s.security, s.regionid, wh.x, wh.y, wh.status, wh.permanent
 													FROM 	mapwormholes wh
     													INNER JOIN mapwormholechains c1 ON c1.id = wh.chainid
 													    LEFT JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = wh.solarsystemid
@@ -226,6 +226,7 @@ namespace scanning\controller
 					$data["status"] = $result["status"];
 					$data["position"]["x"] = $result["x"];
 					$data["position"]["y"] = $result["y"];
+                    $data["persistant"] = ($result["permanent"] > 0) ? true : false;
 
 					if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0)
 					{

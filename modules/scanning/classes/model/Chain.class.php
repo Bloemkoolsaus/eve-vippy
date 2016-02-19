@@ -811,7 +811,9 @@ namespace scanning\model
 		{
 			$wormhole = new \scanning\model\Wormhole($wormholeID);
 			$connectedWormholes = $wormhole->getConnectedSystems();
-			$this->removeWormhole($wormhole, false);
+
+            if (!$wormhole->permanent)
+                $this->removeWormhole($wormhole, false);
 
 			if ($wormhole->getSolarsystem() !== null) {
 				foreach ($connectedWormholes as $wh) {

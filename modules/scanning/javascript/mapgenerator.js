@@ -456,7 +456,7 @@ function generateSystems(data)
 			x: x1,
           	y: y1,
 			draggable: true,
-			name: data[i].id,
+			name: data[i].id
 		});
 
 		var wormholeBox = new Kinetic.Rect({
@@ -749,6 +749,20 @@ function generateSystems(data)
 				wormhole.add(img);
 			}
 
+            // Persistant?
+            if (data[i].persistant)
+            {
+                console.log("PERSISTANT");
+                var img = new Kinetic.Image({
+                    x: whWidth-15,
+                    y: 2,
+                    image: pinIcon,
+                    width: 13,
+                    height: 13
+                });
+                wormhole.add(img);
+            }
+
 			if (data[i].attributes != null)
 			{
 				// Faction?
@@ -767,19 +781,19 @@ function generateSystems(data)
 					}
 				}
 
-				// Station system?
-				if (data[i].attributes.stations != null)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: stationIcon,
-						width: 12,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 12;
-				}
+                // Station system?
+                if (data[i].attributes.stations != null)
+                {
+                    var img = new Kinetic.Image({
+                        x: xtraIconX,
+                        y: bottomHeight,
+                        image: stationIcon,
+                        width: 12,
+                        height: 12
+                    });
+                    wormhole.add(img);
+                    xtraIconX += 12;
+                }
 
 				// Caps in range?
 				if (data[i].attributes.cyno != null)

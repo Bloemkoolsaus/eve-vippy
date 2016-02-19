@@ -8,6 +8,7 @@ var hsIslandIcon = createImage('images/eve/stargate.red.png');
 var directHsIcon = createImage('images/eve/stargate.green.png');
 var cynoIcon = createImage('images/eve/cyno.png');
 var rifterIcon = createImage('images/eve/rifter.png');
+var pinIcon = createImage('images/eve/pin-dark.png');
 
 var factionIcons = [];
 for (var i=500001; i<=500020; i++) {

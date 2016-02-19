@@ -5,6 +5,11 @@
 	{/if}
 {/foreach}
 
+<b><u>SCANNING</u></b>
+ - Add marker for systems that are marked persistant. These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
+
+
+
 <h3>February 8, 2016</h3>
 <b><u>SCANNING</u></b>
  - Added an option in "Profile -> <a href="/index.php?module=profile">Account Settings</a>" to change the wormhole-type field back to a dropdown box, instead of the current text field.

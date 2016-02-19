@@ -1,10 +1,16 @@
 <div id="contextTitle">
-{if $wormhole->getSolarsystem() != null}
-	{$wormhole->getSolarsystem()->name}
-{else}
-	Unkown
-{/if}
-	- {$wormhole->name}
+	<div style="float: left;">
+	{if $wormhole->getSolarsystem() != null}
+		<span style="color: {$wormhole->getSolarsystem()->getClassColor()};">{$wormhole->getSolarsystem()->getClass(1)}</span>
+		{$wormhole->getSolarsystem()->name}
+	{else}
+		Unkown
+	{/if}
+	</div>
+	<div style="float: right; text-align: right;">
+		{$wormhole->name}
+	</div>
+	<div style="clear:both;"></div>
 </div>
 <div style="clear:both;"></div>
 <div id="contextMenu">
@@ -28,11 +34,11 @@
 {if $App->user->isAllowedChainAction($wormhole->getChain(), 'delete')}
 	<div onclick="deleteWormhole('{$wormhole->id}'); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
-		Remove system from map
+		Remove {$wormhole->getSolarsystem()->name}
 	</div>
 	<div onclick="deleteWormhole('{$wormhole->id}',true); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
-		Remove ALL connected systems
+		Remove Connected Systems
 	</div>
 {/if}
 {if $wormhole->getSolarsystem() != null}
@@ -45,12 +51,12 @@
     {if $App->user->isAllowedChainAction($wormhole->getChain(), 'known')}
         {if $wormhole->getSolarsystem()->isKnownSystem()}
             <div onclick="removeFromKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-                <img src="/images/eve/pin.small.png" align="left" />
+                <img src="/images/eve/note-apply.png" align="left" />
                 Remove from known-systems
             </div>
         {else}
             <div onclick="addToKnownSystems('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
-                <img src="/images/eve/pin.small.png" align="left" />
+                <img src="/images/eve/note-apply.png" align="left" />
                 Add to known-systems
             </div>
         {/if}
@@ -58,13 +64,13 @@
     {if $App->user->isAllowedChainAction($wormhole->getChain(), 'move')}
         {if $wormhole->permanent == 0}
             <div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
-                <img src="/images/eve/browser.small.png" align="left" />
-                Mark system as permanent
+                <img src="/images/eve/pin.png" align="left" />
+                Mark system as persistant
             </div>
         {else}
             <div onclick="unsetSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
-                <img src="/images/eve/browser.small.png" align="left" />
-                Unmark system as permanent
+                <img src="/images/eve/pin.png" align="left" />
+                Unmark system as persistant
             </div>
         {/if}
     {/if}
