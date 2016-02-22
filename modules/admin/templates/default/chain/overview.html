@@ -2,7 +2,7 @@
 	<h1>
 		Manage Chains
 		<div style="float: right;">
-			<button type="button" onclick="document.location='index.php?module=admin&section=chains&action=new'">
+			<button type="button" onclick="document.location='/admin/chain/new/'">
 				Add new chain
 			</button>
 		</div>
@@ -27,44 +27,44 @@
 	{foreach from=$chains key=c item=chain}
 		<tr class="{if $c%2==0}even{else}odd{/if}">
 		{if $App->user->getIsSysAdmin()}
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->getAuthGroup()->name}
 			</td>
 		{/if}
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->name}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->getHomeSystem()->getFullname()}
 			{if $chain->getHomeSystem()->name != $chain->systemName}
 				&nbsp; - &nbsp;
 				{$chain->systemName}
 			{/if}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{foreach from=$chain->getAlliances() item=ally}
 					{$ally->name}<br />
 				{/foreach}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{foreach from=$chain->getCorporations() item=corp}
 					{$corp->name}<br />
 				{/foreach}
 			</td>
 		{if $App->user->getIsSysAdmin()}
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 			{if $chain->lastActive != null}
 				{$chain->lastActive|date_full}
 			{/if}
 			</td>
 		{/if}
 			<td style="text-align: center;"
-					onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+					onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->prio}
 			</td>
 			<td style="text-align: center;">
-				<a href="index.php?module=admin&section=chains&action=edit&id={$chain->id}"><img src="images/default/edit.png" style="border:0px;"></a>
-				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="images/default/cross.png" style="border:0px;"></a>
+				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/edit.png" style="border:0px;"></a>
+				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = '/admin/chain/delete/{$chain->id}'; {literal}}{/literal}"><img src="/images/default/cross.png" style="border:0px;"></a>
 			</td>
 		</tr>
 	{/foreach}
@@ -93,50 +93,50 @@
 		</tr>
 	{foreach from=$adminchains key=c item=chain}
 		<tr class="{if $c%2==0}even{else}odd{/if}">
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 			{if $chain->getAuthGroup() != null}
 					{$chain->getAuthGroup()->name}
 				{if $chain->getAuthGroup()->isAllowed()}
-					<img src="images/eve/apply.png" align="right">
+					<img src="/images/eve/apply.png" align="right">
 				{else}
-					<img src="images/eve/stop.png" align="right">
+					<img src="/images/eve/stop.png" align="right">
 				{/if}
 			{/if}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				<b>{$chain->name}</b>
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->getHomeSystem()->getFullname()}
 			{if $chain->getHomeSystem()->name != $chain->systemName}
 				&nbsp; - &nbsp;
 				{$chain->systemName}
 			{/if}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{foreach from=$chain->getAlliances() item=ally}
 					<div style="width: 130px; overflow: hidden; white-space: nowrap;">{$ally->name}</div>
 				{/foreach}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{foreach from=$chain->getCorporations() item=corp}
 					<div style="width: 130px; overflow: hidden; white-space: nowrap;">{$corp->name}</div>
 				{/foreach}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
 			{if $chain->lastActive != null}
 				{$chain->lastActive|date_full}
 			{/if}
 			</td>
 			<td style="text-align: center;"
-					onclick="document.location='index.php?module=admin&section=chains&action=edit&id={$chain->id}'">
+					onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->prio}
 			</td>
 			<td style="text-align: center;">
-				<a href="index.php?module=scanning&section=overview&chain={$chain->id}"><img src="images/default/view.png" style="border:0px;"></a>
+				<a href="/index.php?module=scanning&section=overview&chain={$chain->id}"><img src="/images/default/view.png" style="border:0px;"></a>
 				&nbsp;
-				<a href="index.php?module=admin&section=chains&action=edit&id={$chain->id}"><img src="images/default/edit.png" style="border:0px;"></a>
-				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="images/default/cross.png" style="border:0px;"></a>
+				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/edit.png" style="border:0px;"></a>
+				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="/images/default/cross.png" style="border:0px;"></a>
 			</td>
 		</tr>
 	{/foreach}

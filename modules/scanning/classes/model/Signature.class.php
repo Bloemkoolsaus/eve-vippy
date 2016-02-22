@@ -56,26 +56,22 @@ namespace scanning\model
 		{
 			// Is gewijzigd?
 			$countInStats = false;
-            if (\scanning\model\Chain::getCurrentChain()->countInStats)
+            if (\scanning\model\Chain::getCurrentChain()->getSetting("count-statistics"))
             {
-                if ($this->id > 0)
-                {
+                if ($this->id > 0) {
                     if (strlen(trim($this->sigType)) > 0) {
                         $oldsig = new \scanning\model\Signature($this->id);
                         if ($oldsig->sigType != $this->sigType)
                             $countInStats = true;
                     }
-                }
-                else
-                {
+                } else {
                     // Het is een nieuwe
                     if (strlen(trim($this->sigType)) > 0)
                         $countInStats = true;
                 }
             }
 
-			if ($this->scandate == null)
-			{
+			if ($this->scandate == null) {
 				$this->scandate = date("Y-m-d H:i:s");
 				$this->scannedBy = \User::getUSER()->id;
 			}
@@ -131,8 +127,10 @@ namespace scanning\model
 
 
 			// Systeem toevoegen?
-			if (strtolower(trim($this->sigType)) == "wh" && !$this->deleted)
-				$this->addWormholeToMap();
+            if ($this->getChain()->getSetting("create-unmapped")) {
+                if (strtolower(trim($this->sigType)) == "wh" && !$this->deleted)
+                    $this->addWormholeToMap();
+            }
 
 
 			// Check wh-nummber. Connection bijwerken.
@@ -152,15 +150,12 @@ namespace scanning\model
 						$connection = \scanning\model\Connection::getConnectionByWormhole($this->getWormhole()->id, $wormhole->id, $wormhole->chainID);
 						if ($connection != null)
 						{
-							if ($connection->fromWormholeID == $wormhole->id)
-							{
+							if ($connection->fromWormholeID == $wormhole->id) {
 								$connection->fromWHTypeID = 9999;
 								$connection->toWHTypeID = $this->sigTypeID;
-							}
-							else
-							{
-								$connection->fromWHTypeID = $this->sigTypeID;
+							} else {
 								$connection->toWHTypeID = 9999;
+								$connection->fromWHTypeID = $this->sigTypeID;
 							}
 							$connection->store(false);
 						}

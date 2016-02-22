@@ -2,24 +2,24 @@
 
     <div class="content">
         <h1>
-            {if $chain->id > 0}
-                Chain: &nbsp;
-                {if $chain->getHomesystem() != null}
-                    {$chain->getHomesystem()->getFullname()}
-                    -
-                {/if}
-                {$chain->name}
-            {else}
-                New Chain
-            {/if}
+		{if $chain->id > 0}
+			Chain: &nbsp;
+			{if $chain->getHomesystem() != null}
+				{$chain->getHomesystem()->getFullname()}
+				-
+			{/if}
+			{$chain->name}
+		{else}
+			New Chain
+		{/if}
         </h1>
-        {if isset($errors)}
-            <div class="error">
-                {foreach from=$errors item=error}
-                    <p>{$error}</p>
-                {/foreach}
-            </div>
-        {/if}
+	{if isset($errors)}
+		<div class="error">
+		{foreach from=$errors item=error}
+			<p>{$error}</p>
+		{/foreach}
+		</div>
+	{/if}
 
         <div style="float: left; width: 45%; min-width: 450px;">
             <input type="hidden" name="store" value="1"/>
@@ -68,37 +68,42 @@
                     <input type="text" name="sortorder" value="{$chain->prio}" />
                 </label>
             </div>
-            {if $chain->getAuthGroup() != null}
-                <div class="form">
-                    {if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
-                        <label class="field">Auto-name Wormholes:</label>
-                        <label class="value">
-                            <select name="autonamewhs">
-                                <option value="0"></option>
-                            {foreach from=$namingschemes item=scheme}
-                                <option value="{$scheme->id}" {if $chain->autoNameNewWormholes == $scheme->id}selected{/if}>
-                                    {$scheme->title}
-                                </option>
-                            {/foreach}
-                            </select>
-                        </label>
-                    {else}
-                        <label class="field">&nbsp;</label>
-                        <input type="checkbox" name="autonamewhs" {if $chain->autoNameNewWormholes}checked{/if} value="1" />
-                        Auto-name Wormholes
-                    {/if}
-                </div>
-                <div class="form">
-                    <label class="field">&nbsp;</label>
-                    <input type="checkbox" name="countinstats" {if $chain->countInStats}checked{/if} />
-                    Count in statistics / leaderboard
-                </div>
-                <div class="form">
-                    <label class="field">&nbsp;</label>
-                    <input type="checkbox" name="dironly" {if $chain->directorsOnly}checked{/if} />
-                    <u><b>Only</b></u> visible for CEO and Directors
-                </div>
-            {/if}
+		{if $chain->getAuthGroup() != null}
+			<div class="form">
+			{if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
+				<label class="field">Auto-name systems:</label>
+				<label class="value">
+					<select name="settings[wh-autoname-scheme]">
+						<option value="0">-- do not name systems --</option>
+					{foreach from=$namingschemes item=scheme}
+						<option value="{$scheme->id}" {if $chain->getSetting('wh-autoname-scheme') == $scheme->id}selected{/if}>
+							{$scheme->title}
+						</option>
+					{/foreach}
+					</select>
+				</label>
+			{else}
+				<label class="field">&nbsp;</label>
+				<input type="checkbox" name="settings[wh-autoname-scheme]" {if $chain->getSetting('wh-autoname-scheme')}checked{/if} value="1" />
+				Auto-name Wormholes
+			{/if}
+			</div>
+		{/if}
+			<div class="form">
+				<label class="field">&nbsp;</label>
+				<input type="checkbox" id="create-unmapped" name="settings[create-unmapped]" {if $chain->getSetting('create-unmapped')}checked{/if} value="1" />
+				<label for="create-unmapped" style="float: none;">Create an unmapped system when a wh signature is added?</label>
+			</div>
+			<div class="form">
+				<label class="field">&nbsp;</label>
+				<input type="checkbox" id="count-statistics" name="settings[count-statistics]" {if $chain->getSetting('count-statistics')}checked{/if} value="1" />
+				<label for="count-statistics" style="float: none;">Count in statistics / leaderboard</label>
+			</div>
+			<div class="form">
+				<label class="field">&nbsp;</label>
+				<input type="checkbox" id="directors-only" name="settings[directors-only]" {if $chain->getSetting('directors-only')}checked{/if} value="1" />
+				<label for="directors-only" style="float: none;"><u><b>Only</b></u> visible for CEO and Directors</label>
+			</div>
         </div>
         <div style="float: right; width: 45%; min-width: 450px;">
             <h3>Control Settings:</h3>
@@ -216,15 +221,17 @@
             </div>
         {if $chain->getAuthGroup()->getAlliances()|@count > 0}
             <div style="padding: 5px;">
-                {foreach $chain->getAuthGroup()->getAlliances() item=ally}
-                    <div>
-                        <input type="checkbox" name="alliances[]" value="{$ally->id}"
-                                {foreach from=$chain->getAlliances() item=cally}
-                            {if $ally->id == $cally->id}checked{/if}
-                                {/foreach}>
-                        {$ally->name}
-                    </div>
-                {/foreach}
+			{foreach from=$chain->getAuthGroup()->getAlliances() item=ally}
+				<div>
+					<input type="checkbox" id="alliance{$ally->id}" name="alliances[]" value="{$ally->id}"
+						{foreach from=$chain->getAlliances() item=cally}
+							{if $ally->id == $cally->id}checked{/if}
+						{/foreach}>
+					<label for="alliance{$ally->id}" style="float: none;">
+						{$ally->name}
+					</label>
+				</div>
+			{/foreach}
             </div>
         {/if}
         </div>
@@ -234,18 +241,20 @@
             </div>
         {if $chain->getAuthGroup()->getCorporations()|@count > 0 || $chain->getAuthGroup()->getAlliances()|@count > 0}
             <div style="padding: 5px;">
-                {foreach $chain->getAuthGroup()->getAllowedCorporations() item=corp}
-                    <div>
-                        <input type="checkbox" name="corporations[]" value="{$corp->id}"
-                            {foreach from=$chain->getCorporations() item=ccorp}
-                                {if $corp->id == $ccorp->id}checked{/if}
-                            {/foreach}>
-                        {$corp->name}
-                    {if $corp->getAlliance() != null && $corp->getAlliance()->ticker}
-                        (<i>{$corp->getAlliance()->ticker}</i>)
-                    {/if}
-                    </div>
-                {/foreach}
+			{foreach from=$chain->getAuthGroup()->getAllowedCorporations() item=corp}
+				<div>
+					<input type="checkbox" id="corp{$corp->id}" name="corporations[]" value="{$corp->id}"
+						{foreach from=$chain->getCorporations() item=ccorp}
+							{if $corp->id == $ccorp->id}checked{/if}
+						{/foreach}>
+					<label for="corp{$corp->id}" style="float:none;">
+						{$corp->name}
+					{if $corp->getAlliance() != null && $corp->getAlliance()->ticker}
+						(<i>{$corp->getAlliance()->ticker}</i>)
+					{/if}
+					</label>
+				</div>
+			{/foreach}
             </div>
         {/if}
         </div>

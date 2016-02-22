@@ -18,7 +18,7 @@ class Modules
 			$this->loadStylesheets();
 		}
 
-		$class = "\\".$this->name."\Module";
+		$class = "\\".$this->name."\\Module";
 		return new $class();
 	}
 
@@ -178,18 +178,20 @@ class Modules
 			{
 				foreach ($submenu as $linkkey => $link)
 				{
-					$linkUrlParts = array();
+                    if (!isset($link["url"]))
+                    {
+                        $linkUrlParts = [];
+                        if (!isset($link["module"]))
+                            $linkUrlParts[] = "module=" . $module;
 
-					if (!isset($link["module"]))
-						$linkUrlParts[] = "module=".$module;
+                        foreach ($link as $var => $val)
+                        {
+                            if (!in_array($var, $submenuExceptions) && strlen(trim($val)) > 0)
+                                $linkUrlParts[] = $var . "=" . $val;
+                        }
 
-					foreach ($link as $var => $val) {
-						if (!in_array($var, $submenuExceptions) && strlen(trim($val)) > 0)
-							$linkUrlParts[] = $var."=".$val;
-					}
-
-					$link["url"] = implode("&", $linkUrlParts);
-
+                        $link["url"] = "index.php?".implode("&", $linkUrlParts);
+                    }
 					$links[$key]["subMenu"][] = $link;
 				}
 			}
@@ -239,6 +241,7 @@ class Modules
 
 
 		\AppRoot::redirect("index.php?module=scanning");
+        return true;
 	}
 }
 ?>

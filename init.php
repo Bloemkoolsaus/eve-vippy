@@ -19,7 +19,7 @@ function autoLoader($classname)
 			for ($i=1; $i<count($parts); $i++) {
 				$classFile .= $parts[$i].(($i<count($parts)-1)?"/":"");
 			}
-			$classFile .= ".class.php";
+            $classFile = (file_exists($classFile.".php")) ? $classFile.".php" : $classFile.".class.php";
 		}
 	}
 

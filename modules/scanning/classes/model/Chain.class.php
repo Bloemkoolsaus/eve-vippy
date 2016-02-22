@@ -225,8 +225,10 @@ namespace scanning\model
         function getSetting($setting)
         {
             foreach ($this->getsettings() as $var => $val) {
-                if ($var == $setting)
+                if ($var == $setting) {
+                    \AppRoot::debug("getSetting($setting): ".$val);
                     return $val;
+                }
             }
 
             return null;

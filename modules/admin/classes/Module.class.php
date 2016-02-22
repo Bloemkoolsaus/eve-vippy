@@ -23,42 +23,6 @@ namespace admin
 				}
 			}
 
-			if ($section == "chains")
-			{
-				if (!\User::getUSER()->isAdmin())
-					\AppRoot::redirect(APP_URL);
-
-				\AppRoot::config("no-cache-chains", 1);
-
-				$controller = new \admin\controller\Chain();
-				if (\Tools::REQUEST("ajax"))
-				{
-					if ($action == "editcorps")
-						return $controller->getEditCorporations();
-					if ($action == "editalliances")
-						return $controller->getEditAlliances();
-					if ($action == "getcorpid")
-					{
-						$corpController = new \eve\controller\Corporation();
-						$corporation = $corpController->getCorporationByName(\Tools::REQUEST("query"));
-						echo $corporation->id;
-						exit;
-					}
-					if ($action == "getallyid")
-					{
-						$allyController = new \eve\controller\Alliance();
-						$alliance = $allyController->getAllianceByName(\Tools::REQUEST("query"));
-						echo $alliance->id;
-						exit;
-					}
-				}
-
-				if ($action == "new" || $action == "edit")
-					return $controller->getEditForm();
-				else
-					return $controller->getOverview();
-			}
-
 			if ($section == "changelog")
 			{
 				\User::getUSER()->setConfig("patchnotes", strtotime("now")+600);
