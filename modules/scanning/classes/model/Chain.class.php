@@ -497,7 +497,7 @@ namespace scanning\model
 			if ($addSystemID !== null)
 			{
 				// Wat zou de naam moeten zijn?
-				if ($this->autoNameNewWormholes > 0)
+				if ($this->getSetting("wh-autoname-scheme") > 0)
 				{
 					$reservation = null;
 					$wormholeName = $this->nameNewWormhole($addingHole, true);
