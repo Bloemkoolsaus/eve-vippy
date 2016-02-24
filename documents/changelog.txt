@@ -8,7 +8,12 @@
 <b><u>SCANNING</u></b>
  - Add an option on maps to not automatically name new solarsystems.
  - Add an option on maps to not create an unmapped wormhole when a new wh signature is found.
- - Add marker for systems that are marked persistant. These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
+ - Add marker for systems that are marked persistant (<img src="/images/eve/pin.png">). These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
+
+<b><u>STATISTICS</u></b>
+ - Add amount of wormhole systems mapped to statistics.
+ - Add an option to rank the leaderboard based on amount of systems mapped, instead of amount of signatures scanned.
+
 
 
 

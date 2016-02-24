@@ -3,11 +3,11 @@
 		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Statistics {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -7px;">
-			<button type="button" class="small" style="width: 160px;" onclick="document.location='index.php?module=stats&section=full&date={$sdate}&month=-1'">
+			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/statistics/{$sdate}?month=-1'">
 				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&section=full&date={$sdate}&month=1'">
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/statistics/{$sdate}?&month=1'">
 				Next Month
 				<img src="/images/default/right.png" align="right" />
 			</button>
@@ -21,19 +21,22 @@
 				<tr>
 					<th class="large">Corporation</th>
 					<th style="width: 50px; text-align: center;">Active Members</th>
-					<th style="width: 50px; text-align: center;">Total Sigs Scanned</th>
+					<th style="width: 60px; text-align: center;">Total Sigs Scanned</th>
 					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/User</th>
 					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/Time</th>
+					<th style="width: 60px; text-align: center;">Total WHs Mapped</th>
 				</tr>
 	{assign var=i value=0}
 	{foreach from=$corporations item=corp}
 		{if $corp.users|@count > 0}
 			{assign var=totalHours value=0}
-			{assign var=totalAmount value=0}
+			{assign var=totalSigs value=0}
+			{assign var=totalWhs value=0}
 			{assign var=totsigs value=0}
 			{foreach from=$corp.users key=s item=user}
 				{assign var=totalHours value=$totalHours+$user.user->getHoursOnline($sdate, $edate)}
-				{assign var=totalAmount value=$totalAmount+$user.amount}
+				{assign var=totalSigs value=$totalSigs+$user.sigs}
+				{assign var=totalWhs value=$totalWhs+$user.whs}
 			{/foreach}
 				<tr class="{if $i%2==0}even{else}odd{/if}">
 					<td>
@@ -47,13 +50,16 @@
 						{$corp.users|@count}
 					</td>
 					<td style="text-align: center;">
-						{$totalAmount}
-					</td>
-					<td style="text-align: center; font-weight: bold;">
-						{($totalAmount/$corp.users|@count)|@round}
+						{$totalSigs}
 					</td>
 					<td style="text-align: center;">
-						{($totalAmount/$totalHours)|round:1}
+						{$totalWhs}
+					</td>
+					<td style="text-align: center; font-weight: bold;">
+						{($totalSigs/$corp.users|@count)|@round}
+					</td>
+					<td style="text-align: center;">
+						{($totalSigs/$totalHours)|round:1}
 					</td>
 				</tr>
 			{assign var=i value=$i+1}
@@ -65,8 +71,8 @@
 	<div style="float: right; width: 40%;">
 		<div class="message">
 			<ul>
-				<li>These statistics are only availible for CEO's and Directors!</li>
-				<li>Users that have logged in to VIPPY in the Ingame Browser are counted as active</li>
+				<li>These statistics are only availible for Admins!</li>
+				<li>Users that have logged in to VIPPY via the Ingame Browser are considered active.</li>
 			</ul>
 		</div>
 	</div>
@@ -77,7 +83,8 @@
 	<h2>Corporation details</h2>
 {foreach from=$corporations item=corp}
 	{assign var=totalHours value=0}
-	{assign var=totalAmount value=0}
+	{assign var=totalSigs value=0}
+	{assign var=totalWHs value=0}
 	{if $corp.users|@count > 0}
 	<div style="float: left; margin: 10px;">
 		<table class="sectionoverview">
@@ -91,41 +98,15 @@
 				</th>
                 <th style="width: 30px; text-align: center;">Total Sigs</th>
                 <th style="width: 30px; text-align: center;">Sigs p/hour</th>
+                <th style="width: 30px; text-align: center;">Total WHs</th>
                 <th style="width: 30px; text-align: center;">Hours Online</th>
 			</tr>
 	{assign var=i value=0}
-	{foreach from=$scanners item=user}
-		{if $user.user->getMainCharacter()->corporationID == $corp.corp->id}
-            {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
-			{assign var=totalHours value=$totalHours+$nrhours}
-			{assign var=totalAmount value=$totalAmount+$user.amount}
-            <tr class="{if $i%2==0}even{else}odd{/if}"
-                onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
-                <td style="padding: 0; width: 20px;">
-                    <img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
-                         style="height: 20px; margin: 1px; margin-bottom: -2px;">
-                </td>
-                <td>
-                    &nbsp;{$user.user->getMainCharacter()->name}&nbsp;
-                </td>
-				<td style="text-align: center;">
-					{if $user.amount > 0}{$user.amount}{/if}
-				</td>
-				<td style="text-align: center;">
-					{if $nrhours > 0}{($user.amount/$nrhours)|round:1}{/if}
-				</td>
-				<td style="text-align: center;">
-					{$nrhours}
-				</td>
-            </tr>
-			{assign var=i value=$i+1}
-		{/if}
-	{/foreach}
 	{foreach from=$corp.users key=s item=user}
-		{if $user.amount == 0}
             {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
 			{assign var=totalHours value=$totalHours+$nrhours}
-			{assign var=totalAmount value=$totalAmount+$user.amount}
+			{assign var=totalSigs value=$totalSigs+$user.sigs}
+			{assign var=totalWHs value=$totalWHs+$user.whs}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
 				<td style="padding: 0; width: 20px;">
@@ -135,31 +116,36 @@
 				<td>
 					&nbsp;{$user.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center;">
-					{if $user.amount > 0}{$user.amount}{/if}
+				<td style="text-align: center; color: #ffffff;">
+					{if $user.sigs > 0}{$user.sigs}{/if}
 				</td>
-				<td style="text-align: center;">
-				{if $nrhours > 0 && $user.amount > 0}
-					{($user.amount/$nrhours)|round:1}
+				<td style="text-align: center; color: #aaaaaa;">
+				{if $nrhours > 0 && $user.sigs > 0}
+					{($user.sigs/$nrhours)|round:1}
 				{/if}
 				</td>
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #ffffff;">
+					{if $user.whs > 0}{$user.whs}{/if}
+				</td>
+				<td style="text-align: center; color: #aaaaaa;">
 					{$nrhours}
 				</td>
 			</tr>
 			{assign var=i value=$i+1}
-		{/if}
 	{/foreach}
 			<tr>
 				<td></td>
 				<td></td>
 				<th style="text-align: center;">
-					{$totalAmount}
+					{$totalSigs}
 				</th>
 				<th style="text-align: center;">
 				{if $nrhours > 0}
-					{($totalAmount/$totalHours)|round:1}
+					{($totalSigs/$totalHours)|round:1}
 				{/if}
+				</th>
+				<th style="text-align: center;">
+					{$totalWHs}
 				</th>
 				<th style="text-align: center;">
 					{$totalHours}

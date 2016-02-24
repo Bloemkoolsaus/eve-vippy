@@ -94,8 +94,5 @@ if ($handle = @opendir($directory)) {
 
 // Patches
 if (!\Tools::REQUEST("ajax") && \Tools::REQUEST("action") != "keepalive")
-{
 	\AppRoot::readSqlUpdates();
-	\AppRoot::readPhpUpdates();
-}
 ?>

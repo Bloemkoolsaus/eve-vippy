@@ -66,6 +66,7 @@ class AppRoot
 		@closedir($handle);
 		unset($handle);
 		\AppRoot::debug("== Finished UPDATE SQL");
+        return true;
 	}
 
 	/**
@@ -110,6 +111,7 @@ class AppRoot
 		@closedir($handle);
 		unset($handle);
 		\AppRoot::debug("== Finished UPDATE Scripts");
+        return true;
 	}
 
 
