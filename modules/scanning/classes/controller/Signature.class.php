@@ -101,9 +101,10 @@ namespace scanning\controller
 			if (isset($_SESSION["trackingonly"]) && $_SESSION["trackingonly"] === true)
 				$tpl->assign("trackingonlymode", 1);
 
+            /*
 			if (!isset($_SESSION["hidesignatures"]) || $_SESSION["hidesignatures"] === true)
 				$tpl->assign("hidesignatures", 1);
-
+            */
 
 			if ($notes = $system->getNotes())
 			{
