@@ -125,7 +125,6 @@ namespace eve\model
 				$this->info["statics"] = $controller->getWormholeStatics($this->id);
 				$this->info["effect"] = $controller->getWormholeEffect($this->id);
 				$this->info["stations"] = $controller->getStations($this->id);
-				$this->info["tradehubs"] = $controller->getClosestTradehub($this->id);
 				$this->info["hsisland"] = false;
 				$this->info["direcths"] = false;
 
@@ -342,11 +341,12 @@ namespace eve\model
 				return false;
 		}
 
-		/**
-		 * Aantal normale gate-jumps tussen 2 systemen.
-		 * @param int $destinationSystemID
-		 * @param int $minSecurity 				minimale sec-status van systemen.
-		 */
+        /**
+         * Aantal normale gate-jumps tussen 2 systemen.
+         * @param int $systemID
+         * @param int $minSecurity minimale sec-status van systemen.
+         * @return int
+         */
 		function getNrJumpsTo($systemID, $minSecurity=null)
 		{
 			if ($this->jumps === null)
@@ -565,14 +565,6 @@ namespace eve\model
 				$this->fetchSystemInfo();
 
 			return $this->info["contested"];
-		}
-
-		function getTradehub()
-		{
-			if ($this->info == null || !isset($this->info["tradehubs"]))
-				$this->fetchSystemInfo();
-
-			return $this->info["tradehubs"];
 		}
 
 		/**
@@ -924,6 +916,28 @@ namespace eve\model
 
 			return null;
 		}
+
+        /**
+         * Get trade hub systems
+         * @return \eve\model\SolarSystem[]
+         */
+        public static function getTradehubs()
+        {
+            $systems = [];
+            if ($results = \MySQL::getDB()->getRows("select s.*
+                                                    from    ".\eve\Module::eveDB().".mapsolarsystems s
+                                                        inner join maptradehubs t on t.solarsystemid = s.solarsystemid
+                                                    order by s.solarsystemname"))
+            {
+                foreach ($results as $result)
+                {
+                    $system = new \eve\model\SolarSystem();
+                    $system->load($result);
+                    $systems[] = $system;
+                }
+            }
+
+            return $systems;
+        }
 	}
 }
-?>

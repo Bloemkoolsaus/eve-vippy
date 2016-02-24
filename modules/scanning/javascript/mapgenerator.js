@@ -921,7 +921,7 @@ function openContextMenu(whName, mouseX, mouseY)
 	$("#maincontent").append(contextContainer);
 
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=contextmenu&ajax=1&id=" + whName,
+		url: "/index.php?module=scanning&section=map&action=contextmenu&ajax=1&id=" + whName,
 		success: function(data) {
 			$("#wormholeContextMenu").html(data);
 		}
@@ -997,7 +997,7 @@ function fetchWormholeDetails(systemID)
 		return false;
 
 	$.ajax({
-		url: "index.php?module=scanning&section=getwhdetails&ajax=1",
+		url: "/index.php?module=scanning&section=getwhdetails&ajax=1",
 		data: {
 			system: systemID
 		},
@@ -1006,9 +1006,28 @@ function fetchWormholeDetails(systemID)
 				return false;
 
 			$("#whInfo"+systemID+"Details").html(data);
-			fetchWormholeDetailsActivity(systemID);
+            fetchSystemTradeHubs(systemID);
+            fetchWormholeDetailsActivity(systemID);
 		}
 	});
+}
+function fetchSystemTradeHubs(systemID)
+{
+    if (isContextOpen())
+        return false;
+
+    $.ajax({
+        url: "/index.php?module=scanning&section=getwhdetails&action=gettradehubs&ajax=1",
+        data: {
+            system: systemID
+        },
+        success: function(data) {
+            if (isContextOpen())
+                return false;
+
+            $("#whinfotradehubs").html(data);
+        }
+    });
 }
 function fetchWormholeDetailsActivity(systemID)
 {
@@ -1016,7 +1035,7 @@ function fetchWormholeDetailsActivity(systemID)
 		return false;
 
 	$.ajax({
-		url: "index.php?module=scanning&section=getwhdetails&action=getactivity&ajax=1",
+		url: "/index.php?module=scanning&section=getwhdetails&action=getactivity&ajax=1",
 		data: {
 			system: systemID
 		},
@@ -1079,13 +1098,13 @@ function closeConnectionDetails(who)
 function fetchConnectionInfo(who)
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=getconndetails&ajax=1&connection="+who,
+		url: "/index.php?module=scanning&section=getconndetails&ajax=1&connection="+who,
 		success: function(data) {
 			$("#conndetailsinfo").html(data);
 			$("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
 			// Jumplog halen
 			$.ajax({
-				url: "index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
+				url: "/index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
 				success: function(data) {
 					$("#jumplogsummary").html(data);
 				}

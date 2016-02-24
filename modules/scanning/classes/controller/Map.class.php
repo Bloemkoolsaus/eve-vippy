@@ -325,10 +325,12 @@ namespace scanning\controller
 						// K-Space? Zoek dichtsbijzijnde tradehub
 						if (!$system->isWSpace())
 						{
-							$tradeHubRoute = $system->getTradehub();
-							if (isset($tradeHubRoute["systemname"])) {
-								$data["tradehub"]["name"] = $tradeHubRoute["systemname"];
-								$data["tradehub"]["jumps"] = $tradeHubRoute["nrjumps"];
+                            $closeSysConsole = new \map\console\ClosestSystems();
+                            $closestSystems = $closeSysConsole->getClosestSystems($system, true);
+
+							if (count($closestSystems) > 0) {
+								$data["tradehub"]["name"] = $closestSystems[0]->name;
+								$data["tradehub"]["jumps"] = $closestSystems[0]->nrJumps;
 							}
 						}
 

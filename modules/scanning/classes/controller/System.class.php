@@ -5,21 +5,13 @@ namespace scanning\controller
 	{
 		function getWHDetailsTradehubs($systemID)
 		{
-			$hubs = array();
-			$wormhole = new \scanning\model\Wormhole($systemID);
-			$system = new \scanning\model\System($systemID);
-			$controller = new \eve\controller\SolarSystem();
+            $system = new \eve\model\SolarSystem($systemID);
+            $closeSysConsole = new \map\console\ClosestSystems();
+            $closestSystems = $closeSysConsole->getClosestSystems($system, true);
 
-			if (!$system->isWSpace())
-			{
-				foreach ($this->getTradeHubs() as $id)
-				{
-					$csystem = new \eve\model\SolarSystem($id);
-					$hubs[] = array("name"	=> $csystem->name,
-									"jumps"	=> $system->getNrJumpsTo($csystem->id));
-				}
-			}
-			return json_encode($hubs);
+            $tpl = \SmartyTools::getSmarty();
+            $tpl->assign("systems", $closestSystems);
+            return $tpl->fetch("scanning/system/tradehub");
 		}
 
 		function getWHDetailsActivity($systemID)
@@ -49,8 +41,6 @@ namespace scanning\controller
 										"droneRangeMultiplier"		=> "Drone Control Range",
 										"aoeVelocityMultiplier"		=> "Missile Explosion Velocity multiplier",
 										"overloadBonusMultiplier"	=> "Overload boost",
-										"droneRangeMultiplier"		=> "Drone Control Range",
-										"droneRangeMultiplier"		=> "Drone Control Range",
 										"energyTransferAmountBonus"	=> "Energy Transfer amount multiplier");
 
 			$names = array("bonus","multiplier","resistance","modifier");
@@ -157,12 +147,7 @@ namespace scanning\controller
 
 				if ($system->isWSpace())
 					$tpl->assign("whEffectsData", self::getWHEffectsData($system->id));
-				else
-				{
-					$tradehubTpl = \SmartyTools::getSmarty();
-					$tradehubTpl->assign("tradehubs", json_decode(self::getWHDetailsTradehubs($system->id),true));
-					$tpl->assign("tradehubData", $tradehubTpl->fetch("scanning/system/tradehub"));
-				}
+
 
 				$cache = $tpl->fetch("scanning/system/details");
 
