@@ -23,6 +23,7 @@ namespace admin\controller
 
 				$section->addElement("Last Active","active","id",'\\admin\\elements\\AuthGroup\\Activity');
 				$section->allowEdit = true;
+                $section->urlEdit = "/admin/authgroup/edit/";
 
 				if (!\User::getUSER()->getIsSysAdmin() || !\Tools::REQUEST("admin"))
 				{
@@ -56,7 +57,7 @@ namespace admin\controller
 		/**
 		 * Get corporations by authgroupID
 		 * @param int $authGroupID
-		 * @return multitype:\eve\model\Corporation
+		 * @return \eve\model\Corporation[]
 		 */
 		function getCorporationsByAuthGroupID($authGroupID)
 		{
@@ -88,7 +89,7 @@ namespace admin\controller
 		/**
 		 * Get alliances by authgroupID
 		 * @param int $authGroupID
-		 * @return multitype:\eve\model\Alliance
+		 * @return \eve\model\Alliance[]
 		 */
 		function getAlliancesByAuthGroupID($authGroupID)
 		{

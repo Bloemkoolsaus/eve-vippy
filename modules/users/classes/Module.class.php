@@ -41,6 +41,8 @@ namespace users
                         return User::getPasswordResetForm();
                     else if ($action == "banform")
                         return User::getBanUserForm();
+                    else if ($action == "authorizeform")
+                        return User::getAuthorizeForm();
                     else if ($action == "showlog")
                     {
                         $log = new \users\view\Log();

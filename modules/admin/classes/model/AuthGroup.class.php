@@ -470,6 +470,30 @@ namespace admin\model
 			return $users;
 		}
 
+        /**
+         * Get users that have been manually granted access
+         * @return \users\model\User[]
+         */
+        function getGrantedUsers()
+        {
+            $users = [];
+            if ($results = \MySQL::getDB()->getRows("select u.*
+                                                     from   users u
+                                                        inner join users_auth_groups_users g on g.userid = u.id
+                                                     where  g.authgroupid = ?"
+                                            , [$this->id]))
+            {
+                foreach ($results as $result)
+                {
+                    $user = new \users\model\User();
+                    $user->load($result);
+                    $users[] = $user;
+                }
+            }
+
+            return $users;
+        }
+
 		/**
 		 * Mag deze user deze auth-group beheren?
 		 * @param \users\model\User $user

@@ -19,12 +19,12 @@ namespace users\controller
 			return $section;
 		}
 
-		public function getUsergroups($user=null)
+		public function getUsergroups(\users\model\User $user=null)
 		{
             $query = ["authgroupid is not null"];
 			$groups = [];
 
-            if ($user != null)
+            if ($user != null && count($user->getAuthGroupsIDs()) > 0)
                 $query[] = "authgroupid IN (".implode(",",$user->getAuthGroupsIDs()).")";
 
 

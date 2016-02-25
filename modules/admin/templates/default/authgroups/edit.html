@@ -56,6 +56,13 @@
 			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="dir_admin_disabled" name="config[dir_admin_disabled]" {if $authgroup->getConfig('dir_admin_disabled')}checked{/if} value="1">
 			<label for="dir_admin_disabled" style="float: none;">Disable default admin roles for Directors</label>
+			<img src="/images/eve/info.png" align="right" onclick="helpPopupAdmin();">
+		</div>
+		<div class="form">
+			<label class="field">&nbsp;</label>
+			<input type="checkbox" id="access_control" name="config[access_control]" {if $authgroup->getConfig('access_control') == "manual"}checked{/if} value="manual">
+			<label for="access_control" style="float: none;">Members require authorization by an admin.</label>
+			<img src="/images/eve/info.png" align="right" onclick="helpPopupAuthorization();">
 		</div>
 		<div style="clear:both;"></div>
 		<br />
@@ -63,7 +70,6 @@
 			<button type="submit">Save</button>
 		</div>
 	</div>
-
 	<div style="float: right; width: 55%;">
 	{if $authgroup->id > 0}
 		<div style="float: left; width: 300px;">
@@ -323,7 +329,7 @@
 	{foreach from=$authgroup->getAllowedUsers() item=user}
 		<div style="float: left; width: 200px; padding: 2px;">
 			<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
-			<a href="index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
+			<a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
 			<div style="clear:both;"></div>
 		</div>
 	{/foreach}
@@ -331,3 +337,24 @@
 	<div style="clear:both;"></div>
 </div>
 {/if}
+
+
+
+
+<script type="text/javascript">
+function helpPopupAdmin()
+{
+	html = "<h3>Disable dfeault admin roles for Directors</h3>" +
+			"<p>By default, CEO and Directors are the VIPPY administrators (pulled via the API).</p>" +
+			"<p>Check this option to not make CEO / Directors admins by default, and be able to assign admin to other users</p>";
+	showHelp(html);
+}
+function helpPopupAuthorization()
+{
+	html = "<h3>Members require authorization by an admin</h3>" +
+			"<p>A users characters is pulled via the API. If they have a toon that is in an allowed corp/alliance, the user will get access.</p>" +
+			"<p>If you check this option, a user will also need to be manually authorized by an admin.<br />" +
+			"<span style='color:red;'><b>WARNING:</b> Toggling this option can potentially disable access for a lot of users!</span></p>";
+	showHelp(html);
+}
+</script>

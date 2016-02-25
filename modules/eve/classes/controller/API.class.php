@@ -103,11 +103,14 @@ namespace eve\controller
 
 				return $xml;
 			}
+            else if ($httpCode > 500)
+            {
+                throw new \Exception("eve api down?\n".$this->url, $httpCode);
+            }
 			else if ($httpCode == 403)
 			{
 				// Forbidden. Return authentication failure
 				$this->addError(202, "403 forbidden received. API key authentication failure.");
-				return false;
 			}
 			else
 			{
@@ -115,18 +118,13 @@ namespace eve\controller
 				{
 					$xml = new \SimpleXMLElement($result);
 					if (isset($xml->error))
-					{
 						$this->addError((int)$xml->error["code"], (string)$xml->error);
-						return false;
-					}
 				}
 				else
 				{
 					// Andere fout. Server down?
 					throw new \Exception("eve api error", $httpCode);
 				}
-
-				return false;
 			}
 
 			return false;

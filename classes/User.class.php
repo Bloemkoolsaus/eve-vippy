@@ -155,7 +155,7 @@ class User extends \users\model\User
 			}
 		}
 
-		return $_SESSION["CURRENT_SELECTED_CHAIN"];
+		return (isset($_SESSION["CURRENT_SELECTED_CHAIN"]))?$_SESSION["CURRENT_SELECTED_CHAIN"]:0;
 	}
 
 	public static function setSelectedChain($chainID)

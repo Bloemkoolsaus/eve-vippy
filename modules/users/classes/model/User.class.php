@@ -1358,8 +1358,32 @@ namespace users\model
 															GROUP BY IF (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid)"
 											, array($this->id)))
 					{
-						foreach ($results as $result) {
-							$this->authGroupIDs[] = $result["authgroupid"];
+						foreach ($results as $result)
+                        {
+                            $authgroup = new \admin\model\AuthGroup($result["authgroupid"]);
+
+                            // Check if manual authorization is required
+                            $allowed = false;
+                            if ($authgroup->getConfig("access_control") == "manual")
+                            {
+                                if ($this->isAdmin())
+                                    $allowed = true;
+                                else {
+                                    foreach ($authgroup->getGrantedUsers() as $user) {
+                                        if ($user->id == $this->id) {
+                                            $allowed = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                $allowed = true;
+
+                            if ($allowed) {
+                                $this->authGroups[] = $authgroup;
+                                $this->authGroupIDs[] = $authgroup->id;
+                            }
 						}
 					}
                     \Cache::file()->set($cacheFilename, json_encode($this->authGroupIDs));
