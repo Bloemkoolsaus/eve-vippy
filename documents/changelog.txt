@@ -14,6 +14,8 @@
  - Add amount of wormhole systems mapped to statistics.
  - Add an option to rank the leaderboard based on amount of systems mapped, instead of amount of signatures scanned.
 
+<b><u>ADMIN</u></b>
+ - Add an option for your access control group to also require manual authentication for each user by an admin.
 
 
 
