@@ -5,7 +5,7 @@ namespace scanning
 	{
 		public static $defaultWidth = 130;
 		public static $defaultHeight = 40;
-		public static $defaultOffset = 40;
+		public static $defaultOffset = 30;
 
 		public static function getWormholeByField($byfield,$byvalue,$chainid,$getfield="id")
 		{
