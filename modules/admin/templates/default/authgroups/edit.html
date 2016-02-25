@@ -56,26 +56,65 @@
 			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="dir_admin_disabled" name="config[dir_admin_disabled]" {if $authgroup->getConfig('dir_admin_disabled')}checked{/if} value="1">
 			<label for="dir_admin_disabled" style="float: none;">Disable default admin roles for Directors</label>
-			<img src="/images/eve/info.png" align="right" onclick="helpPopupAdmin();">
+			<img src="/images/eve/info.png" onclick="helpPopupAdmin();" style="cursor: pointer;">
 		</div>
 		<div class="form">
 			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="access_control" name="config[access_control]" {if $authgroup->getConfig('access_control') == "manual"}checked{/if} value="manual">
 			<label for="access_control" style="float: none;">Members require authorization by an admin.</label>
-			<img src="/images/eve/info.png" align="right" onclick="helpPopupAuthorization();">
-		</div>
-		<div style="clear:both;"></div>
-		<br />
-		<div class="form" style="text-align: right;">
-			<button type="submit">Save</button>
+			<img src="/images/eve/info.png" onclick="helpPopupAuthorization();" style="cursor: pointer;">
 		</div>
 	</div>
-	<div style="float: right; width: 55%;">
+
+	<div style="float: left; width: 16%;">
+		<h3>
+			Systems of interest
+			<img src="/images/eve/info.png" onclick="helpPopupTradehubs();" style="cursor: pointer;" align="right">
+		</h3>
+		<input type="hidden" name="removeSystem" value="">
+		<table class="sectionoverview">
+			<tr>
+				<th>SolarSystem</th>
+				<th style="text-align: center;">On Map</th>
+				<th></th>
+			</tr>
+		{assign var=i value=0}
+		{foreach from=$authgroup->getClosestSystems() item=system}
+			<tr id="closeSystem{$system->getSolarSystem()->id}" class="{if $i%2==0}even{else}odd{/if}">
+				<td>
+				{if !isset($system->tradeHub)}
+					<input type="hidden" name="closestsystems[systems][]" value="{$system->getSolarSystem()->id}">
+				{/if}
+					{$system->getSolarSystem()->name}
+				</td>
+				<td style="text-align: center; padding: 0;">
+					<input type="checkbox" name="closestsystems[onmap][{$system->getSolarSystem()->id}]" style="margin: 0;"
+						   {if isset($system->tradeHub) || $system->showOnMap}checked{/if}>
+				</td>
+				<td style="text-align: center;">
+				{if !isset($system->tradeHub)}
+					<img src="/images/eve/cross.png" onclick="$('input[name=removeSystem]').val('{$system->getSolarSystem()->id}'); document.formAuthGroup.submit();">
+				{/if}
+				</td>
+			</tr>
+		{assign var=i value=$i+1}
+		{/foreach}
+		</table>
+		<br />
+		<div>
+			<div class="field"><b>Add System:</b></div>
+			<div style="padding: 5px;">
+				{$addSolarsystemElement->getEditHTML()}
+			</div>
+		</div>
+	</div>
+
+	<div style="float: right; width: 38%;">
 	{if $authgroup->id > 0}
-		<div style="float: left; width: 300px;">
+		<div style="float: left; width: 250px;">
 			<div class="form">
-				<div class="field"><b><u>Alliances:</u></b></div>
-				<div class="value" style="width: 270px;">
+				<div class="field"><h3>Authorized Alliances:<h3></div>
+				<div class="value" style="width: 230px;">
 				{foreach from=$authgroup->getAlliances() item=alliance}
 					<div style="margin: 2px;">
 						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
@@ -89,8 +128,8 @@
 			<div style="clear:both;"></div>
 			<br />
 			<div class="form">
-				<div class="field"><b><u>Corporations:</u></b></div>
-				<div class="value" style="width: 270px;">
+				<div class="field"><h3>Authorized Corporations:</h3></div>
+				<div class="value" style="width: 230px;">
 				{foreach from=$authgroup->getCorporations() item=corp}
 					<div style="margin: 2px;">
 						<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 18px;" align="left">
@@ -118,7 +157,7 @@
 			<br />
 	{/if}
 		</div>
-		<div style="float: left; width: 200px;">
+		<div style="float: left; width: 180px;">
 			<div>
 				<div class="field"><b>Add Alliance</b></div>
 				<div style="padding: 10px;">
@@ -160,8 +199,22 @@
 					Untill: &nbsp; <input type="text" name="subscription[tilldate]" rel="datepicker" style="width: 80px;">
 				</label>
 			</div>
-	</div>
+		</div>
 	{/if}
+		<div>
+			<i>When you add an alliance, <u>all</u> corporations in that alliance will be authorized!</i>
+		</div>
+	</div>
+
+	<div style="clear:both;"></div>
+	<br />
+	<br />
+
+	<div class="form" style="text-align: right;">
+		<button type="submit">
+			<img src="/images/default/save.png" align="left"> &nbsp;
+			Save Settings
+		</button>
 	</div>
 
 	{literal}
@@ -171,6 +224,9 @@
 			document.formAuthGroup.submit();
 		});
 		$("input#alliance").change(function() {
+			document.formAuthGroup.submit();
+		});
+		$("input#addclosesystem").change(function() {
 			document.formAuthGroup.submit();
 		});
 	});
@@ -355,6 +411,14 @@ function helpPopupAuthorization()
 			"<p>A users characters is pulled via the API. If they have a toon that is in an allowed corp/alliance, the user will get access.</p>" +
 			"<p>If you check this option, a user will also need to be manually authorized by an admin.<br />" +
 			"<span style='color:red;'><b>WARNING:</b> Toggling this option can potentially disable access for a lot of users!</span></p>";
+	showHelp(html);
+}
+function helpPopupTradehubs()
+{
+	html = "<h3>Systems of interest</h3>" +
+			"<p>These are the systems that VIPPY will show the distance (in nr jumps) to on the map.</p>" +
+			"<p>The 'On Map' parameter sets wether or not to use for the closest system on the map. When off, the system is only shown on the mouse over details of a system.</p>" +
+			"<p>*<i>The default trade hubs cannot be removed, but can be hidden on the map.</i></p>";
 	showHelp(html);
 }
 </script>

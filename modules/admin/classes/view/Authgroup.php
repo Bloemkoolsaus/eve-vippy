@@ -75,6 +75,51 @@ class Authgroup
             if (\Tools::POST("alliance"))
                 $authgroup->addAllianceById(\Tools::POST("alliance"));
 
+            if (\Tools::POST("closestsystems"))
+            {
+                \MySQL::getDB()->delete("map_closest_systems", ["authgroupid" => $authgroup->id, "userid" => 0]);
+                if (isset($_POST["closestsystems"]["systems"]))
+                {
+                    foreach ($_POST["closestsystems"]["systems"] as $key => $systemID)
+                    {
+                        $system = new \map\model\ClosestSystem();
+                        $system->solarSystemID = $systemID;
+                        $system->authGroupID = $authgroup->id;
+                        $system->store();
+                    }
+                }
+
+                foreach (\map\model\ClosestSystem::getClosestSystemsBySystemID() as $system)
+                {
+                    // check of onmap aan is gevinkt.
+                    if (isset($system->tradeHub)) {
+                        if (!isset($_POST["closestsystems"]["onmap"][$system->solarSystemID])) {
+                            $system->authGroupID = $authgroup->id;
+                            $system->showOnMap = false;
+                            $system->store();
+                        }
+                    } else {
+                        if (isset($_POST["closestsystems"]["onmap"][$system->solarSystemID])) {
+                            $system->showOnMap = true;
+                            $system->store();
+                        }
+                    }
+                }
+            }
+
+            if (\Tools::POST("removeSystem"))
+            {
+                \MySQL::getDB()->delete("map_closest_systems", ["solarsystemid" => \Tools::POST("removeSystem"), "authgroupid" => $authgroup->id, "userid" => 0]);
+            }
+
+            if (\Tools::POST("addclosesystem"))
+            {
+                $system = new \map\model\ClosestSystem();
+                $system->solarSystemID = \Tools::POST("addclosesystem");
+                $system->authGroupID = $authgroup->id;
+                $system->store();
+            }
+
             $authgroup->clearConfig();
             if (\Tools::POST("config"))
             {
@@ -109,6 +154,10 @@ class Authgroup
 
         $corporationEdit = new \eve\elements\Corporation("Corporation", "corporation");
         $tpl->assign("addCorporationElement", $corporationEdit);
+
+
+        $systemEdit = new \eve\elements\SolarSystem("Solarsystem", "addclosesystem");
+        $tpl->assign("addSolarsystemElement", $systemEdit);
 
         if ($authgroup->getSubscription() != null)
         {

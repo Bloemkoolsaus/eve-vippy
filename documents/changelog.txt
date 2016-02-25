@@ -10,13 +10,12 @@
  - Add an option on maps to not create an unmapped wormhole when a new wh signature is found.
  - Add marker for systems that are marked persistant (<img src="/images/eve/pin.png">). These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
  - Editing signature: Fix a bug that disabled save on enter.
-
 <b><u>STATISTICS</u></b>
  - Add amount of wormhole systems mapped to statistics.
  - Add an option to rank the leaderboard based on amount of systems mapped, instead of amount of signatures scanned.
-
 <b><u>ADMIN</u></b>
  - Add an option for your access control group to also require manual authentication for each user by an admin.
+ - Add an option to add/remove systems that Vippy will calculate and show the distance to (tradehubs).
 
 
 
@@ -24,7 +23,6 @@
 <b><u>SCANNING</u></b>
  - Added an option in "Profile -> <a href="/index.php?module=profile">Account Settings</a>" to change the wormhole-type field back to a dropdown box, instead of the current text field.
     I have had complaints since removing it. This way, every one can choose wich they like best.
-
 <b><u>ADMIN</u></b>
  - Add an option to enable admin access to non-directors.
  	<i>Set these roles by creating a user-group and adding users to that group</i>.

@@ -566,6 +566,11 @@ namespace admin\model
             return $this->usergroups;
         }
 
+        function getClosestSystems()
+        {
+            return \map\model\ClosestSystem::getClosestSystemsBySystemID();
+        }
+
 
 
 

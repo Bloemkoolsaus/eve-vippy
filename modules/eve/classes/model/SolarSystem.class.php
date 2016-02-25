@@ -629,6 +629,19 @@ namespace eve\model
 			return true;
 		}
 
+        /**
+         * Is system tradehub?
+         * @return bool
+         */
+        function isTradehub()
+        {
+            foreach (\eve\model\SolarSystem::getTradehubs() as $hub) {
+                if ($hub->id == $this->id)
+                    return true;
+            }
+            return false;
+        }
+
 		/**
 		 * Has frigate only connections?
 		 * @return boolean
