@@ -1,7 +1,7 @@
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
 	<div style="font-size: 13px; margin-bottom: 10px;">
 		<span style="color:{$system->getClassColor()}">{$system->getClass()}</span>
-		{$system->name}		
+		{$system->name}
 	{if isset($systemtitle)}
 		&nbsp;|&nbsp;
 		{$systemtitle}
@@ -10,7 +10,7 @@
 		&nbsp;|&nbsp;
 		<span style="color:{$system->getKnownSystem()->getColor()};">{$system->getKnownSystem()->name}</span>
 	{/if}
-	</div>		
+	</div>
 	<div style="float: left; width: 160px; padding: 5px;">
 {literal}
 {if $system->getNotes()}
@@ -60,21 +60,21 @@
 	{if !$system->isWSpace()}
 		{if $system->isHSIsland() > 0}
 			<div class="form">
-				<img src="images/eve/stargate.red.png" align="left"/>
+				<img src="/images/eve/stargate.red.png" align="left"/>
 				&nbsp;
 				<span style="color:#CC0000;">High-Sec Island</span>
 			</div>
 		{/if}
 		{if $system->isDirectHS() > 0}
 			<div class="form">
-				<img src="images/eve/stargate.green.png" align="left"/>
+				<img src="/images/eve/stargate.green.png" align="left"/>
 				&nbsp;
 				<span style="color:#00CC00;">Direct gate to High-Sec</span>
 			</div>
 		{/if}
 		{if $system->getNrStations() > 0}
 			<div class="form">
-				<img src="images/eve/station.png" align="left"/>
+				<img src="/images/eve/station.png" align="left"/>
 				&nbsp;
 				{$system->getNrStations()} Stations / Outposts
 			</div>
@@ -82,9 +82,9 @@
 		{if $system->isFactionWarfareSystem()}
 			<div class="form">
 			{if $system->isContested()}
-				<img src="images/eve/fw.contested.png" align="left"/>
+				<img src="/images/eve/fw.contested.png" align="left"/>
 			{else}
-				<img src="images/eve/fw.png" align="left"/>
+				<img src="/images/eve/fw.png" align="left"/>
 			{/if}
 				Faction Warfare system
 			</div>
@@ -94,17 +94,17 @@
 			{literal}
 			<div class="form">
 		{if $wormhole->fullScanDate != null && $wormhole->fullScanDate|strtotime > 0}
-				<img src="images/default/scanned.recently.png" align="left">
+				<img src="/images/default/scanned.recently.png" align="left">
 				&nbsp; <span style="color: #FFFFFF;"><b>Recently scanned</b></span><br />
 				&nbsp; <i>{$wormhole->fullScanDate|date_age} ago</i><br />
 				<b>By:</b>
-			{if $wormhole->getFullyScannedByUser() != null} 
+			{if $wormhole->getFullyScannedByUser() != null}
 				<i>{$wormhole->getFullyScannedByUser()->getFullname()}</i>
 			{else}
 				<i>Unknown</i>
 			{/if}
 		{else}
-			<img src="images/default/scanned.not.png" align="left"> 
+			<img src="/images/default/scanned.not.png" align="left">
 			&nbsp; <span style="color: #FFFFFF;"><b>Not scanned</b></span>
 		{/if}
 			</div>
@@ -114,23 +114,21 @@
 	</div>
 	<div style="float: right; width: 170px; padding: 5px;">
 {if $system->isWSpace()}
-	{if isset($whEffectsData)}	
+	{if isset($whEffectsData)}
 		<div id="whinfoeffects">
 		{if $system->getEffect()}
-			<h3 style="font-size: 13px; margin: 0px; padding: 0px;">{$system->getEffect()}</h3>
+			<h3 style="font-size: 13px; margin: 0; padding: 0;">{$system->getEffect()}</h3>
 		{/if}
 			{$whEffectsData}
 		</div>
 	{/if}
 {else}
-	{if isset($tradehubData)}		
 		<div id="whinfotradehubs" style="margin-top: 10px;">
-			{$tradehubData}
+            <img src="/images/loading.gif" style="margin: 5px; margin-right: 10px;" align="left" />
 		</div>
-	{/if}
 {/if}
 	</div>
-	
+
 	<div style="clear:both;"></div>
 	<br />
 
@@ -177,12 +175,12 @@
 			* {$pilot.name} ({$pilot.ship})
 		</div>
 		<div style="float: right; text-align: left; width: 100px; overflow: hidden;">
-			&nbsp;&nbsp; 
+			&nbsp;&nbsp;
 			<i>{$pilot.lastdate|date_age:1}</i> ago
 		</div>
 	{/foreach}
 	</div>
-	
+
 	<div style="clear:both;"></div>
 	<br />
 {/if}
@@ -194,7 +192,7 @@
 	</div>
 	<div>
 		<div id="whInfoActivity">
-			<img src="images/loading.gif" style="margin: 5px; margin-right: 10px;" align="left" />
+            <img src="/images/loading.gif" style="margin: 5px; margin-right: 10px;" align="left" />
 		</div>
 		<div id="whActivityDate"></div>
 	</div>

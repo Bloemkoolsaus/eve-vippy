@@ -1,9 +1,9 @@
 <div class="form">
-	<u>Distance to trade hubs</u>
-</div>	
-{foreach from=$tradehubs item=system}
+	<u>Distance to systems of interest</u>
+</div>
+{foreach from=$systems item=system}
 <div class='form'>
-	<label class='field'>&nbsp;{$system.name}</label>
-	<label class='value' style='width: 30px;'>{$system.jumps}</label>
+	<label class='field'>&nbsp;{$system->name}</label>
+	<label class='value' style='width: 30px;'>{$system->nrJumps}</label>
 </div>
 {/foreach}

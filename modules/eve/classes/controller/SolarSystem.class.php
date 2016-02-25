@@ -182,67 +182,12 @@ namespace eve\controller
             return $hubs;
         }
 
-        public function getClosestTradehub($systemID)
-        {
-            \AppRoot::debug("getClosestTradehub(".$systemID.")");
-            $closest = array();
-
-            $system = new \eve\model\SolarSystem($systemID);
-            if ($system->isWSpace()) {
-                \AppRoot::debug("w-space... abort finding tadehubs");
-                return null;
-            }
-
-            // Kijk eerst in cache.
-            if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapclosesttradehub WHERE systemid = ?", array($system->id)))
-            {
-                $tradehub = $this->getSolarsystemByID($result["hubid"]);
-
-                $closest["systemid"] = $tradehub->id;
-                $closest["systemname"] = $tradehub->name;
-                $closest["nrjumps"] = $result["nrjumps"];
-
-                // Get tradehub station
-                $closest["stationid"] = 0;
-                if ($station = \MySQL::getDB()->getRow("SELECT * FROM maptradehubs WHERE solarsystemid = ?", array($tradehub->id)))
-                    $closest["stationid"] = $station["stationid"];
-
-                if ($closest["nrjumps"] > 0)
-                    return $closest;
-            }
-
-            \AppRoot::debug("-- calculate --");
-            // Uitrekenen
-            $hubs = $this->getTradeHubs();
-            $leastNrJumps = 0;
-            foreach ($hubs as $hubID)
-            {
-                $nrJumps = $this->getNrJumps($system->id, $hubID);
-                if ($leastNrJumps == 0 || $nrJumps < $leastNrJumps)
-                {
-                    $tradehub = $this->getSolarsystemByID($hubID);
-
-                    $closest["systemid"] = $tradehub->id;
-                    $closest["systemname"] = $tradehub->name;
-                    $closest["nrjumps"] = $nrJumps;
-                    $leastNrJumps = $nrJumps;
-                }
-            }
-
-            \MySQL::getDB()->insert("mapclosesttradehub",
-                array(	"systemid" 	=> $system->id,
-                          "hubid" 	=> $closest["systemid"],
-                          "nrjumps" 	=> $closest["nrjumps"]));
-
-            return $closest;
-        }
-
         /**
          * Aantal cyno jumps tussen 2 systemen.
          * @param int $startSystemID
          * @param int $destinationSystemID
-         * @param int $shipTypeID
-         * @param boolean $stationOnly		alleen met dockable midways?
+         * @param float $maxJumpRange
+         * @return int
          */
         public function getNrCynoJumps($startSystemID, $destinationSystemID, $maxJumpRange)
         {
@@ -379,11 +324,14 @@ namespace eve\controller
                         if ($sid == $did)
                         {
                             // We hebben em!!! Opslaan in cache
-                            \MySQL::getDB()->insert("mapnrofjumps",
-                                array(	"startid" => $startSystemID,
-                                          "destid" => $destinationSystemID,
-                                          "nrjumps" => $weight,
-                                          "minsecurity" => round($minSecurity*100)));
+                            \MySQL::getDB()->updateinsert("mapnrofjumps",
+                                ["startid" => $startSystemID,
+                                 "destid" => $destinationSystemID,
+                                 "nrjumps" => $weight,
+                                 "minsecurity" => round($minSecurity*100)],
+                                ["startid" => $startSystemID,
+                                 "destid" => $destinationSystemID]
+                            );
                             return $weight;
                         }
                         else
