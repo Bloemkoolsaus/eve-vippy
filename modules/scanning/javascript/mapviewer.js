@@ -16,7 +16,7 @@ $(window).load(function() {
 function callLocationTracker()
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=locationtracker&ajax=1"
+		url: "/index.php?module=scanning&section=map&action=locationtracker&ajax=1"
 	});
 	setTimeout(callLocationTracker, 1500);
 }
@@ -72,7 +72,7 @@ function loadSignatureMap(extraURL, ignorepopup)
 
 		loadingSigMap = true;
 		$.ajax({
-			url: "index.php?module=scanning&section=map&action=sigmap&ajax=1&system="+system+extraURL,
+			url: "/index.php?module=scanning&section=map&action=sigmap&ajax=1&system="+system+extraURL,
 			success: function(data) {
 				if (!mayResetMap())
 					return false;
@@ -122,7 +122,7 @@ function loadSignatureMap(extraURL, ignorepopup)
 function editConnection(from,to)
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=editconnection&ajax=1&from="+from+"&to="+to,
+		url: "/index.php?module=scanning&section=map&action=editconnection&ajax=1&from="+from+"&to="+to,
 		success: function(data) {
 			showPopup("<div id='editConnectionPopup'>"+data+"</div>", 600, 400);
 		}
@@ -132,19 +132,22 @@ function editConnection(from,to)
 function addWormhole(from,to)
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=addwormhole&ajax=1&from="+from+"&to="+to,
+		url: "/index.php?module=scanning&section=map&action=addwormhole&ajax=1",
+        data: {
+            from: from,
+            to: to
+        },
 		success: function(data) {
-			if (data == "added")
-			{
+			if (data == "added") {
 				cancelAddWormhole();
-				showLoadingPopup();
-				loadSignatureMap("&nocache=1",true);
-			}
-			else
-			{
+				showLoadingPopup(function() {
+                    location.reload();
+                });
+			} else {
 				$("#mapButtons").hide();
 				$("#addWormholeForm").fadeIn();
 				$("#addWormholeForm").html(data);
+                setAutoCompletes();
 			}
 		}
 	});
@@ -315,7 +318,7 @@ function confirmSnapToGrid()
 	$("#snapToGridConfirmation").fadeOut(100,function() {$("#mapButtons").fadeIn();});
 	showLoadingPopup();
 	$.ajax({
-		url: "index.php?module=scanning&section=snaptogrid&ajax=1",
+		url: "/index.php?module=scanning&section=snaptogrid&ajax=1",
 		success: function(data) {
 			loadSignatureMap("",true);
 		}
@@ -330,7 +333,7 @@ function cancelSnapToGrid()
 function copypasteAnoms()
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=anoms&action=copypaste&ajax=1",
+		url: "/index.php?module=scanning&section=anoms&action=copypaste&ajax=1",
 		success: function(data) {
 			showPopup(data, 500, 400);
 		}
@@ -356,7 +359,7 @@ function showActivePilots()
 {
 	showLoadingPopup();
 	$.ajax({
-		url: "index.php?module=scanning&section=activepilots&ajax=1",
+		url: "/index.php?module=scanning&section=activepilots&ajax=1",
 		success: function(data) {
 			setPopupContent(data,500,400);
 		}
@@ -366,7 +369,7 @@ function showActivePilots()
 function showTrackingOnlyModeHelp()
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=trackingonly&action=showhelp&ajax=1",
+		url: "/index.php?module=scanning&section=trackingonly&action=showhelp&ajax=1",
 		success: function(data) {
 			showPopup(data,500,400);
 		}
@@ -386,7 +389,7 @@ function disableTrackingOnly()
 function addToKnownSystems(system)
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=addtoknownsystems&ajax=1&system="+system,
+		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=1&system="+system,
 		success: function(data) {
 			showPopup(data, 400, 250);
 		}
@@ -395,7 +398,7 @@ function addToKnownSystems(system)
 function removeFromKnownSystems(system)
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=map&action=addtoknownsystems&ajax=remove&system="+system,
+		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=remove&system="+system,
 		success: function(data) {
 			showPopup(data,500,200);
 		}
@@ -405,7 +408,7 @@ function removeFromKnownSystems(system)
 function mapLegend()
 {
 	$.ajax({
-		url: "index.php?module=scanning&section=maplegend&ajax=1",
+		url: "/index.php?module=scanning&section=maplegend&ajax=1",
 		success: function(data) {
 			showPopup(data,930,750);
 		}
@@ -425,7 +428,7 @@ function exitFinder()
 	$("#exitFinderResults").html("<img src='/images/loading.gif'> Calculating..");
 
 	$.ajax({
-		url: "index.php?module=scanning&section=exitfinder&ajax=1",
+		url: "/index.php?module=scanning&section=exitfinder&ajax=1",
 		data: {
 			system: $("#exitFinderSystem").val(),
 		},

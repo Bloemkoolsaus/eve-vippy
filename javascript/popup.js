@@ -140,9 +140,9 @@ function destroyPopup(cancelCallback)
 	popupPostLoadHandler = null;
 }
 
-function showLoadingPopup()
+function showLoadingPopup(postLoadHandler)
 {
-    showPopup("Loading", 300, 100);
+    showPopup("Loading", 300, 100, null, null, postLoadHandler);
 }
 
 function addDiv(id, element)

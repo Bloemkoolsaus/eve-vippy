@@ -58,16 +58,14 @@
 				<img src="/images/default/zoom_in.png" style="cursor:pointer;" onclick="mapZoomIn()" align="right"/>
 				<img src="/images/default/zoom_out.png" style="cursor:pointer;" onclick="mapZoomOut()" align="right"/>
 				*}
-            {if !$App->user->isAllowedChainAction($chain, 'move') ||
-            !$App->user->isAllowedChainAction($chain, 'add') ||
-            !$App->user->isAllowedChainAction($chain, 'delete')}
+{if !$App->user->isAllowedChainAction($chain, 'move') || !$App->user->isAllowedChainAction($chain, 'add') || !$App->user->isAllowedChainAction($chain, 'delete')}
                 <span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
                     <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
                     <span style="padding: 2px; display: inline-block; color: #ffdd00;">
                         You have restricted controls on this map.
                     </span>
                 </span>
-            {/if}
+{/if}
 			</div>
 		</div>
 		<div style="clear:both;"></div>

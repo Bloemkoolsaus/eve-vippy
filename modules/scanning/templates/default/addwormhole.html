@@ -5,13 +5,15 @@
 		<div class="form">
 			<label class="field" style="width: 70px;">From:</label>
 			<label class="value" style="width: 210px;">
-				<input type="text" id="addWormholeFrom" value="{$system->name}" style="width: 200px;" />
+				<input type="text" id="addWormholeFrom" name="addWormholeFrom" autocomplete="off" value="{$system->name}"
+						rel="autocomplete" element="eve-elements-SolarSystem">
 			</label>
 		</div>
 		<div class="form">
 			<label class="field" style="width: 70px;">To:</label>
 			<label class="value" style="width: 210px;">
-				<input type="text" id="addWormholeTo" value="" style="width: 200px;" />
+				<input type="text" id="addWormholeTo" name="addWormholeTo" autocomplete="off"
+						rel="autocomplete" element="eve-elements-SolarSystem">
 			</label>
 		</div>
 		<div style="clear:both;"></div>
