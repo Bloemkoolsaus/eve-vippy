@@ -4,7 +4,7 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
-
+<h3>February 29, 2016</h3>
 <b><u>SCANNING</u></b>
  - Add an option on maps to not automatically name new solarsystems.
  - Add an option on maps to not create an unmapped wormhole when a new wh signature is found.
