@@ -255,8 +255,16 @@ namespace scanning\model
 
 		function showContextMenu()
 		{
+            $closeSysConsole = new \map\console\ClosestSystems();
+            $closestSystems = $closeSysConsole->getClosestSystems($this->getSolarsystem(), true);
+
+
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("wormhole", $this);
+
+            if (count($closestSystems) > 0)
+                $tpl->assign("closestsystem", $closestSystems[0]);
+
 			return $tpl->fetch("scanning/system/contextmenu");
 		}
 

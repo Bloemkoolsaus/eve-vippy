@@ -20,11 +20,12 @@
 		<img src="/images/eve/route.png" align="left" />
 		Set Destination to <span style="color:#FFFFFF;">{$wormhole->getSolarsystem()->name}</span>
 	</div>
-	{assign var=tradehub value=$wormhole->getSolarsystem()->getTradehub()}
-	<div onclick="setDestination('{$tradehub.systemid}'); closeContextMenu();">
-		<img src="/images/eve/route.png" align="left" />
-		Set Destination to {$tradehub.systemname}
-	</div>
+	{if isset($closestsystem)}
+		<div onclick="setDestination('{$closestsystem->solarSystemID}'); closeContextMenu();">
+			<img src="/images/eve/route.png" align="left" />
+			Set Destination to {$closestsystem->name}
+		</div>
+	{/if}
 {/if}
 	<div onclick="switchSystem('{$wormhole->id}'); closeContextMenu();">
 		<img src="/images/eve/apply.png" align="left" />
