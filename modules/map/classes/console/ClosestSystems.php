@@ -5,9 +5,14 @@ class ClosestSystems
 {
     function getClosestSystems(\eve\model\SolarSystem $system, $showOnMapOnly=false)
     {
+        if ($system == null)
+            return [];
+        
         $data = [];
         foreach (\map\model\ClosestSystem::getClosestSystemsBySystemID() as $sys)
         {
+            if ($sys->getSolarSystem() == null)
+                continue;
             if ($showOnMapOnly && !$sys->showOnMap)
                 continue;
 
