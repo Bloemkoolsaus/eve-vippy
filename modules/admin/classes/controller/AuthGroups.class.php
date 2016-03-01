@@ -8,7 +8,7 @@ namespace admin\controller
 
 		/**
 		 * Get authorized corporations
-		 * @return multitype:\eve\model\Corporation
+		 * @return \eve\model\Corporation[]
 		 */
 		function getAuthorizedCorporations()
 		{
@@ -42,7 +42,7 @@ namespace admin\controller
 
 		/**
 		 * Get authorized alliances
-		 * @return multitype:\eve\model\Alliance
+		 * @return \eve\model\Alliance[]
 		 */
 		function getAuthorizedAlliances()
 		{

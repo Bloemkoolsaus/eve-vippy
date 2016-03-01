@@ -55,15 +55,13 @@ if (\User::getUSER()->getIsSysAdmin())
 	$config["submenu"][] = array("type" => "seperator");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Authorization Groups",
-								"section" => "authgroups",
-								"admin" => 1);
+								"url"   => "admin/authgroup/");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Subscriptions",
 								"section" => "subscriptions");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Clear Cache",
 								"section" => "clearcache");
-
 }
 
 

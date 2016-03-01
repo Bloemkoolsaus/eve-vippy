@@ -9,11 +9,6 @@ class Module
 
 	private $template;
 
-	function __construct()
-	{
-
-	}
-
 	function getContent()
 	{
         // Pretty url stuff
@@ -43,6 +38,7 @@ class Module
             $method = "get" . ucfirst($action);
             if (!method_exists($view, $method))
                 $method = "getOverview";
+
             if (method_exists($view, $method))
                 return $view->$method($arguments);
         }

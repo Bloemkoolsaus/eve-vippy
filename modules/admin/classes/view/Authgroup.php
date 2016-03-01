@@ -8,7 +8,14 @@ class Authgroup
         if (!\User::getUSER()->getIsSysAdmin())
             \AppRoot::redirect("admin/authgroup/edit/".\User::getUSER()->getCurrentAuthGroupID());
 
-        return "OVERVIEW";
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("authgroups", \admin\model\AuthGroup::getAuthGroups());
+        return $tpl->fetch("admin/authgroups/overview");
+    }
+
+    function getNew($arguments=[])
+    {
+        return $this->getEdit($arguments);
     }
 
     function getEdit($arguments=[])

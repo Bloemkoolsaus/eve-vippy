@@ -1511,8 +1511,8 @@ namespace users\model
 		 */
 		public function getIsActive($sdate=null, $edate=null)
 		{
-            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
-            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
+            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y")));
+            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d"),date("Y")));
 
 			foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
 			{

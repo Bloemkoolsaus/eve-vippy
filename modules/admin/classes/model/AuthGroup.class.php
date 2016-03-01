@@ -180,6 +180,16 @@ namespace admin\model
             }
 		}
 
+        function getLastActiveDate()
+        {
+            $date = 0;
+            foreach ($this->getChains() as $chain) {
+                if (strtotime($date) < strtotime($chain->lastActive))
+                    $date = $chain->lastActive;
+            }
+            return $date;
+        }
+
 		/**
 		 * Get chains
 		 * @return \scanning\model\Chain[]
@@ -385,6 +395,17 @@ namespace admin\model
 			return false;
 		}
 
+        function isActive()
+        {
+            if (count($this->getAllowedUsers()) == 0)
+                return false;
+
+            if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)
+                return false;
+
+            return true;
+        }
+
 		/**
 		 * Has access to module?
 		 * @param string $name
@@ -469,6 +490,20 @@ namespace admin\model
 			}
 			return $users;
 		}
+
+        /**
+         * Get active and allowed users
+         * @return \users\model\User[]
+         */
+        function getActiveUsers()
+        {
+            $users = [];
+            foreach ($this->getAllowedUsers() as $user) {
+                if ($user->getIsActive())
+                    $users[] = $user;
+            }
+            return $users;
+        }
 
         /**
          * Get users that have been manually granted access

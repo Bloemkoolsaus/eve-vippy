@@ -7,7 +7,7 @@ class ClosestSystems
     {
         if ($system == null)
             return [];
-        
+
         $data = [];
         foreach (\map\model\ClosestSystem::getClosestSystemsBySystemID() as $sys)
         {
