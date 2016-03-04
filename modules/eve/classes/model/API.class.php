@@ -199,12 +199,6 @@ namespace eve\model
 					$this->status = "This key is not a `Character` type key";
 				}
 
-				// Toegang tot characterSheet?
-				if (!$this->hasAccess(8)) {
-					$this->valid = false;
-					$this->status = "This key does not provide access to `Private Information` > `CharacterSheet`";
-				}
-
 				$this->store();
 
 				if ($linkCharacters)
@@ -231,8 +225,11 @@ namespace eve\model
 									$corpController->importCorporation($corporation->id);
 								}
 
-								$char = new \eve\controller\Character();
-								$char->importCharacter($character->id);
+                                // Toegang tot characterSheet?
+                                if ($this->hasAccess(8)) {
+                                    $char = new \eve\controller\Character();
+                                    $char->importCharacter($character->id);
+                                }
 							}
 						}
 					}
