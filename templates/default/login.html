@@ -23,7 +23,7 @@
 		</div>
 		<div class="form" style="text-align: right;">
 			<br />
-			<button type="button" onclick="document.location='index.php?register=1';return false;">Register</button>
+			<button type="button" onclick="document.location='/users/register';return false;">Register</button>
 			<button type="submit">Login</button>
 		</div>
 		</form>
@@ -31,10 +31,10 @@
 	<div class="loginSubForm">
 		<form method="post" action="">
 		<input type="hidden" name="forgotPW" value="true"/>
-		{if isset($forgotpwerror)}	
+		{if isset($forgotpwerror)}
 			<div class="form" style="color: red;">{$forgotpwerror}</div>
 		{/if}
-		{if isset($forgotpwmsg)}	
+		{if isset($forgotpwmsg)}
 			<div class="form" style="color: green;">{$forgotpwmsg}</div>
 		{/if}
 		<div id="forgotPwLink" class="form">

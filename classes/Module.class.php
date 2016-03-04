@@ -32,6 +32,7 @@ class Module
         if (!class_exists($viewClass))
             $viewClass = '\\'.$this->moduleName.'\\common\\view\\'.ucfirst($classname);
 
+        \AppRoot::debug("view: ".$viewClass);
         if (class_exists($viewClass))
         {
             $view = new $viewClass();
@@ -39,6 +40,7 @@ class Module
             if (!method_exists($view, $method))
                 $method = "getOverview";
 
+            \AppRoot::debug("view: ".$viewClass."->".$method."()");
             if (method_exists($view, $method))
                 return $view->$method($arguments);
         }

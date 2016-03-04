@@ -267,7 +267,10 @@ namespace users\model
 				return ((strlen(trim($ticker)) > 0)?"[".$ticker."] ":"").$this->getMainCharacter()->name;
 			}
 
-			return $this->displayname;
+            if (strlen(trim($this->displayname)) > 0)
+			    return $this->displayname;
+
+            return $this->username;
 		}
 
 		public function store()
@@ -810,7 +813,8 @@ namespace users\model
 				if ($this->mainCharId == 0)
 					$this->resetMainCharacter();
 
-				$this->character = new \eve\model\Character($this->mainCharId);
+                if ($this->mainCharId > 0)
+				    $this->character = new \eve\model\Character($this->mainCharId);
 			}
 
 			return $this->character;

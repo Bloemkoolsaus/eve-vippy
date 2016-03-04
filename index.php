@@ -41,36 +41,6 @@ if (Tools::POST("forgotPW") == "true")
 		$forgotPwError = "Email not fount. Could not send password.";
 }
 
-// Register
-if (Tools::POST("doRegister") == "true")
-{
-	$check = true;
-
-	// Check if passwords match
-	if (!Tools::POST("password1") || (Tools::POST("password1") != Tools::POST("password2")))
-	{
-		$check = false;
-		$registerDifferentPasswords = "Passwords do not match.";
-	}
-	// Anti spam check
-	if (\Tools::POST("street")) {
-		$check = false;
-		$registerIncorrectCaptcha = "Suspected bot. Registration failed.";
-	}
-
-	if ($check)
-	{
-		$user = new \users\model\User();
-		$user->username = Tools::POST("username");
-		$user->displayname = Tools::POST("username");
-		$user->password = \User::generatePassword(Tools::POST("password1"));
-		$user->email = Tools::POST("email");
-		$user->store();
-		$user->setLoginStatus();
-		AppRoot::redirect("index.php");
-	}
-}
-
 // Login
 if (Tools::POST("doLogin") == "true")
 {

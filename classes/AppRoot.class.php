@@ -145,6 +145,10 @@ class AppRoot
         if (\Tools::GET("module") == "screenshots")
             return false;
 
+        // Register
+        if (\Tools::GET("module") == "users" && \Tools::GET("section") == "register")
+            return false;
+
 		return true;
 	}
 
