@@ -4,6 +4,12 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+<h3>March 10, 2016</h3>
+<b><u>VIPPY</u></b>
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-march-2016-release" target="_blank">YC118.3</a> data export.
+
+
+
 <h3>February 29, 2016</h3>
 <b><u>SCANNING</u></b>
  - Add an option on maps to not automatically name new solarsystems.

@@ -1,0 +1,1 @@
+update config set val = 'eve_db_march2016' where var = 'mysql_eve_db';
