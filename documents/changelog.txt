@@ -5,6 +5,8 @@
 	{/if}
 {/foreach}
 <h3>March 10, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Correctly track the amount of wormholes mapped.
 <b><u>VIPPY</u></b>
  - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-march-2016-release" target="_blank">YC118.3</a> data export.
 

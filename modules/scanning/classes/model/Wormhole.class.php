@@ -121,7 +121,7 @@ namespace scanning\model
                     $stat->userID = \User::getUSER()->id;
                     $stat->pilotID = \eve\model\IGB::getIGB()->getPilotID();
                     $stat->corpID = \User::getUSER()->getMainCorporationID();
-                    $stat->chainID = $this->id;
+                    $stat->chainID = $this->chainID;
                     $stat->systemID = $this->solarSystemID;
                     $stat->mapdate = date("Y-m-d H:i:s");
                     $stat->store();
