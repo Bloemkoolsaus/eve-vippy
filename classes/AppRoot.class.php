@@ -495,13 +495,16 @@ class AppRoot
 		self::redirect(\Tools::getCurrentURL());
 	}
 
-	public static function redirect($url)
-	{
+	public static function redirect($url, $inclAppUrl=true)
+    {
+        if ($inclAppUrl)
+            $url = APP_URL.trim($url,"/");
+
 		\AppRoot::debug("<div style='background-color: #FFAA00; color: #222222; font-weight: bold; padding: 5px; border: dashed 1px #000000;'>REDIRECT: :".$url."</div>");
 		if (\AppRoot::doDebug())
 		{
 			echo "	<div style='margin: 20px; padding-top: 20px; padding-bottom: 20px;
-								font-family: Arial; font-size: 14px; text-align: center; color: #FFFFFF;
+								font-family: Arial, sans-serif; font-size: 14px; text-align: center; color: #FFFFFF;
 								background-color: #222222; border: dashed 5px #FFAA00;'>
 						<div style='padding: 5px; font-size: 16px;'><b>REDIRECTING</b></div>
 						<a href='".$url."' style='color: #FFAA00;'>".$url."</a>
