@@ -9,14 +9,16 @@ namespace atlas
 		function getContent()
 		{
 			foreach (\User::getUSER()->getAuthGroups() as $authGroup) {
-				\AppRoot::redirect($authGroup->getConfig("atlas_url"));
+				\AppRoot::redirect($authGroup->getConfig("atlas_url"),false);
 			}
 		}
 
-		/**
-		 * (non-PHPdoc)
-		 * @see Module::isAvailable()
-		 */
+        /**
+         * (non-PHPdoc)
+         * @see Module::isAvailable()
+         * @param \users\model\User $user
+         * @return bool
+         */
 		function isAvailable(\users\model\User $user=null)
 		{
 			if ($user == null)
