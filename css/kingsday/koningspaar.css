@@ -2,8 +2,8 @@ div#levedekoning {
 	color: #FFFFFF;
 }
 div#levedekoning #banner {
-	margin: 5px;
-	padding: 15px;
+	margin: 1em;
+	padding: 1em;
 	text-align: center;
 	text-decoration: none;
 	border: 0px;
@@ -11,36 +11,36 @@ div#levedekoning #banner {
 	border-radius: 15px;
 	background-position: center;
 	background-color: #ffaa00;
-	background-image: url(../../images/oranje/tulpen.jpg);
+	background-image: url(/images/oranje/tulpen.jpg);
 }
 
 div#levedekoning #banner .banner {
-	background: none repeat scroll 0 0 rgba(200, 200, 200, 0.6);
+	background: none repeat scroll 0 0 rgba(200, 200, 200, 0.8);
 }
 div#levedekoning .description {
-	background: none repeat scroll 0 0 rgba(200, 200, 200, 0.6);
+	background: none repeat scroll 0 0 rgba(200, 200, 200, 0.8);
 	padding: 0px;
-	color: #FFAA00;
-	text-shadow: 2px 2px 3px #000000;
+	color: #ff8800;
+	text-shadow: 1px 1px 2px #000000;
 	font-weight: bold;
 	text-align: center;
-	font-size: 14px;
+	font-size: 1.5em;
 }
 
 div#levedekoning .description h1 {
 	margin: 0px;
 	padding: 0px;
-	padding-top: 5px;
+	padding-top: .5em;
 	text-decoration: none;
 	border: none;
 	color: #ffffff;
 	text-shadow: 1px 1px 2px #ffffff;
-	font-family: Verdana;
+	font-family: Verdana, sans-serif;
 }
 
 div#alexander {
 	position: fixed;
-	background-image: url(../../images/oranje/alexander.png);
+	background-image: url(/images/oranje/alexander.png);
 	background-repeat: no-repeat;
 	width: 250px;
 	height: 600px;
@@ -49,10 +49,14 @@ div#alexander {
 }
 div#maxima {
 	position: fixed;
-	background-image: url(../../images/oranje/maxima.png);
+	background-image: url(/images/oranje/maxima.png);
 	background-repeat: no-repeat;
 	width: 250px;
 	height: 600px;
 	right: 0px;
 	top: 0px;
+}
+
+h1, h2 {
+    color: #ffaa00;
 }

@@ -7,7 +7,6 @@ $mainMenu = null;
 
 \AppRoot::title(APP_TITLE);
 
-
 // KONINGSDAG
 if (date("Y-m-d") == date("Y")."-04-27") {
 	\SmartyTools::setTemplate("kingsday");
