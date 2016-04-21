@@ -6,6 +6,7 @@ namespace admin\model
 		public $id = 0;
 		public $name;
 		public $mainChainID;
+        public $contactID;
 
         private $config = null;
 		private $corporations = null;
@@ -17,6 +18,7 @@ namespace admin\model
 		private $subscriptions = null;
 		private $payments = null;
         private $usergroups = null;
+        private $contactUser = null;
 
 		function __construct($id=false)
 		{
@@ -129,13 +131,17 @@ namespace admin\model
 				$this->id = $result["id"];
 				$this->name = $result["name"];
 				$this->mainChainID = $result["mainchain"];
+                $this->contactID = $result["contactuserid"];
 			}
 		}
 
 		function store()
 		{
-			$data = array("name"	=> $this->name,
-						"mainchain"	=> $this->mainChainID);
+			$data = [
+                "name"	=> $this->name,
+                "mainchain"	=> $this->mainChainID,
+                "contactuserid" => $this->contactID
+            ];
 			if ($this->id > 0)
 				$data["id"] = $this->id;
 
@@ -179,6 +185,30 @@ namespace admin\model
                 }
             }
 		}
+
+        /**
+         * Get contact user
+         * @return \users\model\User|null
+         */
+        function getContactUser()
+        {
+            if ($this->contactUser === null)
+            {
+                if (!$this->contactID) {
+                    foreach ($this->getAllowedUsers() as $user) {
+                        if ($user->isAdmin()) {
+                            if (!$this->contactID || $this->contactID > $user->id)
+                                $this->contactID = $user->id;
+                        }
+                    }
+                    $this->store();
+                }
+
+                $this->contactUser = new \users\model\User($this->contactID);
+            }
+
+            return $this->contactUser;
+        }
 
         function getLastActiveDate()
         {

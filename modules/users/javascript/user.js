@@ -31,11 +31,6 @@ function validateAPI(userID)
 	document.location = '/index.php?module=users&action=edit&id='+userID+'&validateapi=1';
 }
 
-function showUserEditTab(tab)
-{
-	$("[rel=detailtab]").hide();
-	$("#detailtab-"+tab).fadeIn();
-}
 
 function showUserLogs()
 {

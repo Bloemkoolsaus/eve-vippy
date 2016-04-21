@@ -11,46 +11,53 @@
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
+				<th>Contact</th>
 				<th style="width: 200px; text-align: center;">License</th>
 				<th style="width: 80px; text-align: center;">Active Users</th>
 				<th style="width: 80px; text-align: center;">Allowed Users</th>
 				<th style="width: 200px; text-align: center;">Last Active</th>
 				<th style="width: 50px;"></th>
 			</tr>
-			{foreach from=$authgroups key=i item=group}
-				{if $group->isActive()}
-					<tr class="{if $i%2==0}even{else}odd{/if}" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-						<td>{$group->name}</td>
-						<td style="text-align: right;">
-							<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
-							{if $group->getSubscription() != null}
-								{if $group->getSubscription()->getAmount() == 0}
-									<div style='text-align: center;'><i>free license</i></div>
-								{else}
-									<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
-								{/if}
-							{/if}
-						</td>
-						<td style="text-align: center;">
-							{$group->getActiveUsers()|@count}
-						</td>
-						<td style="text-align: center;">
-							{$group->getAllowedUsers()|@count}
-						</td>
-						<td style="text-align: center;">
-						{if $group->getLastActiveDate()}
-							{$group->getLastActiveDate()|date_age}
+	{foreach from=$authgroups key=i item=group}
+		{if $group->isActive()}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->name}
+				</td>
+				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getContactUser()->getFullname()}
+				</td>
+				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
+					{if $group->getSubscription() != null}
+						{if $group->getSubscription()->getAmount() == 0}
+							<div style='text-align: center;'><i>free license</i></div>
+						{else}
+							<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
 						{/if}
-						</td>
-						<td style="text-align: center;">
-							<a href="/admin/authgroup/edit/{$group->id}/"><img src="/images/default/edit.png"></a>
-						</td>
-					</tr>
-					{assign var=activeUsers value=$activeUsers+$group->getActiveUsers()|@count}
-					{assign var=totalUsers value=$totalUsers+$group->getAllowedUsers()|@count}
-				{/if}
-			{/foreach}
+					{/if}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getActiveUsers()|@count}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getAllowedUsers()|@count}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{if $group->getLastActiveDate()}
+						{$group->getLastActiveDate()|date_age} ago
+					{/if}
+				</td>
+				<td style="text-align: center;">
+					<a href="/admin/authgroup/edit/{$group->id}/"><img src="/images/default/edit.png"></a>
+				</td>
+			</tr>
+			{assign var=activeUsers value=$activeUsers+$group->getActiveUsers()|@count}
+			{assign var=totalUsers value=$totalUsers+$group->getAllowedUsers()|@count}
+		{/if}
+	{/foreach}
 			<tr>
+				<td></td>
 				<td></td>
 				<td></td>
 				<th style="text-align: center;">{$activeUsers}</th>
@@ -64,40 +71,49 @@
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
+				<th>Contact</th>
 				<th style="width: 200px; text-align: center;">License</th>
-				<th style="width: 80px; text-align: center;">Users</th>
-				<th style="width: 80px; text-align: center;">Users</th>
+				<th style="width: 80px; text-align: center;">Active Users</th>
+				<th style="width: 80px; text-align: center;">Allowed Users</th>
 				<th style="width: 200px; text-align: center;">Last Active</th>
 				<th style="width: 50px;"></th>
 			</tr>
-			{foreach from=$authgroups key=i item=group}
-				{if !$group->isActive()}
-					<tr class="{if $i%2==0}even{else}odd{/if}" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-						<td>{$group->name}</td>
-						<td style="text-align: right;">
-							<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
-							{if $group->getSubscription() != null}
-								{if $group->getSubscription()->getAmount() == 0}
-									<div style='text-align: center;'><i>free license</i></div>
-								{else}
-									<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
-								{/if}
-							{/if}
-						</td>
-						<td style="text-align: center;">
-							{$group->getAllowedUsers()|@count}
-						</td>
-						<td style="text-align: center;">
-							{if $group->getLastActiveDate()}
-								{$group->getLastActiveDate()|date_age}
-							{/if}
-						</td>
-						<td style="text-align: center;">
-							<a href="/admin/authgroup/edit/{$group->id}/"><img src="/images/default/edit.png"></a>
-						</td>
-					</tr>
-				{/if}
-			{/foreach}
+	{foreach from=$authgroups key=i item=group}
+		{if !$group->isActive()}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->name}
+				</td>
+				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getContactUser()->getFullname()}
+				</td>
+				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
+					{if $group->getSubscription() != null}
+						{if $group->getSubscription()->getAmount() == 0}
+							<div style='text-align: center;'><i>free license</i></div>
+						{else}
+							<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
+						{/if}
+					{/if}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getActiveUsers()|@count}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{$group->getAllowedUsers()|@count}
+				</td>
+				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					{if $group->getLastActiveDate()}
+						{$group->getLastActiveDate()|date_age} ago
+					{/if}
+				</td>
+				<td style="text-align: center;">
+					<a href="/admin/authgroup/edit/{$group->id}/"><img src="/images/default/edit.png"></a>
+				</td>
+			</tr>
+		{/if}
+	{/foreach}
 		</table>
 	</div>
 </div>
