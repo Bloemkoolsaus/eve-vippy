@@ -69,13 +69,22 @@ namespace eve\elements
 			$results = array();
 			if (count($query) > 0)
 			{
-				$records = \MySQL::getDB()->getRows("SELECT solarsystemid, solarsystemname
+				if ($records = \MySQL::getDB()->getRows("SELECT *
 													FROM	".\eve\Module::eveDB().".mapsolarsystems
 													WHERE	".implode(" AND ", $query)."
-													ORDER BY solarsystemname ");
-				foreach ($records as $record) {
-					$results[] = array("id" => $record[0], "label" => $record[1]);
-				}
+													ORDER BY solarsystemname "))
+                {
+                    foreach ($records as $record)
+                    {
+                        $system = new \eve\model\SolarSystem();
+                        $system->load($record);
+
+                        $results[] = [
+                            "id" => $system->id,
+                            "label" => $system->name." (".$system->getClass(true)." - ".$system->getRegion()->name.")"
+                        ];
+                    }
+                }
 			}
 			return json_encode($results);
 		}

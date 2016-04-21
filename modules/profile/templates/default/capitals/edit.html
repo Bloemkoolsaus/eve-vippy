@@ -1,0 +1,43 @@
+<div class="content">
+	<h1>My Capital Ships - {$capital->getShip()->name}</h1>
+
+{if $errors|@count > 0}
+	<div class="error">
+	{foreach from=$errors item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+{/if}
+
+	<div style="max-width: 500px;">
+		<form method="post" action="">
+			<div class="form">
+				<label class="field">Ship:</label>
+				<label class="value">
+					<input type="text" id="ship" name="ship" value="{$capital->getShip()->name}"
+						   autocomplete="off" rel="autocomplete" element="eve-elements-CapitalShip">
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">System:</label>
+				<label class="value">
+					<input type="text" id="system" name="system" value="{$capital->getSolarSystem()->name}"
+						   autocomplete="off" rel="autocomplete" element="eve-elements-SolarSystem">
+				</label>
+			</div>
+			<div class="form">
+				<label class="field">Description:</label>
+				<label class="value">
+					<input type="text" name="description" value="{$capital->description}">
+				</label>
+			</div>
+			<div class="form" style="margin-top: 1em; text-align: right;">
+				<button type="submit" style="width: 100px;">
+					<img src="/images/default/save.png" align="left">
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
+	<div style="clear:both;"></div>
+</div>

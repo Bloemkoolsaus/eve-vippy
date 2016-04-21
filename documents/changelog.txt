@@ -4,6 +4,15 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+<h3>April 21, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Stat pages for previous months were broken. They are now available again.
+<b><u>VIPPY</u></b>
+ - Fixed adding or updating a capitalship in Profile. It could give errors on certain solarsystems.
+ - wh.pasta.gg died and is replaced by <a href="http://wh.vps-city.com/" target="_blank">wh.vps-city.com</a>. Updated the links.
+
+
+
 <h3>March 10, 2016</h3>
 <b><u>STATISTICS</u></b>
  - Correctly track the amount of wormholes mapped.
