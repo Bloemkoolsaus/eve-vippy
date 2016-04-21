@@ -3,11 +3,11 @@
 		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Leaderboard {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -6px;">
-			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/leaderboard{$sdate}?month=-1'">
+			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")-1}'">
 				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/leaderboard{$sdate}?month=1'">
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
 				Next Month
 				<img src="/images/default/right.png" align="right" />
 			</button>
@@ -41,8 +41,8 @@
 					&nbsp;
 					{$user.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center;">{$user.sigs}</td>
-				<td style="text-align: center;">{$user.whs}</td>
+				<td style="text-align: center;">{if isset($user.sigs)}{$user.sigs}{/if}</td>
+				<td style="text-align: center;">{if isset($user.whs)}{$user.whs}{/if}</td>
 			</tr>
 	{/foreach}
 		</table>
@@ -77,11 +77,13 @@
 					&nbsp;
 					{$usersignature.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center; {if $usersignature.sigs == 0}background-color: #CC0000; color: #FFFFFF; font-weight: bold;{/if}">
-					{$usersignature.sigs}
+				<td style="text-align: center; {if !isset($usersignature.sigs) || $usersignature.sigs == 0}background-color: #CC0000; color: #FFFFFF; font-weight: bold;{/if}">
+					{if isset($usersignature.sigs)}{$usersignature.sigs}{else}0{/if}
 				</td>
 				<td style="text-align: center;">
+				{if isset($usersignature.whs)}
 					{$usersignature.whs}
+				{/if}
 				</td>
 			</tr>
 		</table>

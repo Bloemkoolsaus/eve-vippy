@@ -37,8 +37,10 @@ class Module
         {
             $view = new $viewClass();
             $method = "get" . ucfirst($action);
-            if (!method_exists($view, $method))
+            if (!method_exists($view, $method)) {
+                array_unshift($arguments, $action);
                 $method = "getOverview";
+            }
 
             \AppRoot::debug("view: ".$viewClass."->".$method."()");
             if (method_exists($view, $method))

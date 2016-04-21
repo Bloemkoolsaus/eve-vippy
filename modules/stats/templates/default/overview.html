@@ -3,11 +3,11 @@
 		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Statistics {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -7px;">
-			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/statistics/{$sdate}?month=-1'">
+			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")-1}'">
 				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/statistics/{$sdate}?&month=1'">
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
 				Next Month
 				<img src="/images/default/right.png" align="right" />
 			</button>
@@ -52,14 +52,14 @@
 					<td style="text-align: center;">
 						{$totalSigs}
 					</td>
-					<td style="text-align: center;">
-						{$totalWhs}
-					</td>
 					<td style="text-align: center; font-weight: bold;">
 						{($totalSigs/$corp.users|@count)|@round}
 					</td>
 					<td style="text-align: center;">
 						{($totalSigs/$totalHours)|round:1}
+					</td>
+					<td style="text-align: center;">
+						{$totalWhs}
 					</td>
 				</tr>
 			{assign var=i value=$i+1}

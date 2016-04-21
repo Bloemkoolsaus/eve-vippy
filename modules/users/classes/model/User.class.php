@@ -859,7 +859,7 @@ namespace users\model
 				}
 				else
 				{
-					$this->capitalShips = \profile\model\Capital::getCapitalShipsByUser($this->id);
+					$this->capitalShips = \profile\model\Capital::findAll(["userid" => $this->id]);
                     \Cache::file()->set($cacheFilename, json_encode($this->capitalShips));
 				}
 			}
