@@ -4,6 +4,12 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+<h3>April 28, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Statistics/leaderboard for non directors/admins showed an empty page.
+
+
+
 <h3>April 21, 2016</h3>
 <b><u>STATISTICS</u></b>
  - Stat pages for previous months were broken. They are now available again.

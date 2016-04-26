@@ -2,6 +2,7 @@
 // DEFAULT CONFIGURATION
 $config = array();
 $config["name"] = "Statistics";
+$config["url"] = "stats/leaderboard";
 $config["public"] = true;
 $config["enabled"] = (\User::getUSER()->isAuthorized()) ? true : false;
 
