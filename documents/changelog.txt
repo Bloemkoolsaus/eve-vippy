@@ -6,7 +6,9 @@
 {/foreach}
 <h3>April 28, 2016</h3>
 <b><u>STATISTICS</u></b>
- - Statistics/leaderboard for non directors/admins showed an empty page.
+ - Statistics/leaderboard for non directors/admins could show an empty page.
+<b><u>VIPPY</u></b>
+ - Updated to <a href="https://community.eveonline.com/news/patch-notes/patch-notes-for-eve-online-citadel" target="_blank">Citadel</a> data export.
 
 
 
