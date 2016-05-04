@@ -4,10 +4,11 @@ namespace map\model;
 class ClosestSystem extends \Model
 {
     protected $_table = "map_closest_systems";
+    protected $_keyfield = ["solarsystemid","authgroupid","userid"];
 
     public $solarSystemID;
-    public $authGroupID;
-    public $userID;
+    public $authGroupID = 0;
+    public $userID = 0;
     public $showOnMap = false;
 
     private $_solarSystem = null;
@@ -39,8 +40,10 @@ class ClosestSystem extends \Model
         }
 
         // authgroup defined
-        foreach (self::findAll(["authgroupid" => \User::getUSER()->id]) as $system) {
-            $systems[$system->solarSystemID] = $system;
+        foreach (\User::getUSER()->getAuthGroups() as $group) {
+            foreach (self::findAll(["authgroupid" => $group->id]) as $system) {
+                $systems[$system->solarSystemID] = $system;
+            }
         }
 
         // trade hubs
@@ -51,6 +54,7 @@ class ClosestSystem extends \Model
                 $system = new \map\model\ClosestSystem();
                 $system->solarSystemID = $tradehub->id;
                 $system->showOnMap = true;
+                $system->tradeHub = true;
                 $systems[$tradehub->id] = $system;
             }
         }

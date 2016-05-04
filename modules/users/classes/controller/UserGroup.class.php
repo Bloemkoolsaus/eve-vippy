@@ -19,24 +19,28 @@ namespace users\controller
 			return $section;
 		}
 
-		public function getUsergroups($user=null)
+		public function getUsergroups(\users\model\User $user=null)
 		{
-            $query = ["authgroupid is not null"];
 			$groups = [];
 
-            if ($user != null)
-                $query[] = "authgroupid IN (".implode(",",$user->getAuthGroupsIDs()).")";
+            if ($user != null && count($user->getAuthGroupsIDs()) > 0)
+            {
+                $query = [
+                    "authgroupid is not null",
+                    "authgroupid IN (" . implode(",", $user->getAuthGroupsIDs()) . ")"
+                ];
 
+                if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_groups WHERE " . implode(" AND ", $query) . " ORDER BY name"))
+                {
+                    foreach ($results as $result)
+                    {
+                        $group = new \users\model\UserGroup();
+                        $group->load($result);
+                        $groups[] = $group;
+                    }
+                }
+            }
 
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_groups WHERE ".implode(" AND ", $query)." ORDER BY name"))
-			{
-				foreach ($results as $result)
-				{
-					$group = new \users\model\UserGroup();
-					$group->load($result);
-					$groups[] = $group;
-				}
-			}
 			return $groups;
 		}
 

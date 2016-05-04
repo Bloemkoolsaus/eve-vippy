@@ -55,22 +55,6 @@ namespace admin
 				}
 			}
 
-			if ($section == "authgroups")
-			{
-				if (count(\User::getUSER()->getAuthGroupsAdmins()) > 0 || \User::getUSER()->getIsSysAdmin())
-				{
-					$this->moduleTitle = "Access Control Groups";
-
-					$controller = new \admin\controller\AuthGroup();
-					if ($action == "edit" || $action == "new")
-						return $controller->getEditForm(\Tools::REQUEST("id"));
-					else
-						$this->moduleSection = $controller->getOverviewSection();
-				}
-				else
-					\AppRoot::redirect("index.php");
-			}
-
 			if ($section == "subscriptions")
 			{
 				if (\User::getUSER()->getIsSysAdmin())

@@ -23,6 +23,7 @@
 </div>
 {/if}
 
+<form method="post" name="formEditSignature" action="Javascript: saveEditSig()">
 <table id="signatureTable" class="sectionoverview" style="margin-top: 5px;">
 	<tr>
 		<th class="sigID" style="cursor: pointer;" onclick="sortSigList('sigid');">
@@ -51,12 +52,11 @@
 		<th class="sigControls">&nbsp;</th>
 	</tr>
 {foreach from=$signatures key=s item=sig}
-	<form method="post" name="formEditSig{$sig.id}" action="Javascript: saveEditSig('{$sig.id}')">
 	<tr id="signatureList{$sig.id}" class="odd {$sig.sigtype}">
 		<td onclick="editSig('{$sig.id}');">
 			<div id="siglist{$sig.id}id">{$sig.sigid|upper}</div>
 			<div id="sigedit{$sig.id}id" style="display:none;">
-				<input type="text" id="siginput{$sig.id}id" style="width: 40px;" value="{$sig.sigid|strtoupper}" />
+				<input type="text" name="sigid" data-sigid="{$sig.id}" value="{$sig.sigid|strtoupper}" style="width: 40px;" />
 			</div>
 
 			<!-- Extra info popup -->
@@ -131,7 +131,7 @@
 			</div>
 			<div id="sigedit{$sig.id}type" style="display:none;">
                 <div>
-                    <select id="siginput{$sig.id}type" style="width: 65px;">
+                    <select name="sigtype" data-sigid="{$sig.id}" style="width: 65px;">
                         <option value=""></option>
                         <option value="wh" {if $sig.sigtype|upper == "WH"}selected{/if}>WH</option>
                         <option value="data" {if $sig.sigtype|upper == "DATA"}selected{/if}>Data</option>
@@ -154,7 +154,7 @@
 				{$sig.siginfo}
 			</div>
 			<div id="sigedit{$sig.id}info" style="display:none;">
-				<input type="text" id="siginput{$sig.id}info" style="width: 97%;" value="{$sig.siginfo}" />
+				<input type="text" name="siginfo" data-sigid="{$sig.id}" style="width: 97%;" value="{$sig.siginfo}" />
 			</div>
 		</td>
 		<td class="sigStrength" onclick="editSig('{$sig.id}');" style="width: 60px;">
@@ -164,7 +164,7 @@
 			{/if}
 			</div>
 			<div id="sigedit{$sig.id}signalstrength" style="display:none;">
-				<input type="text" id="siginput{$sig.id}signalstrength" style="width: 97%;" value="{$sig.signalstrength}" />
+				<input type="text" name="sigstrength" data-sigid="{$sig.id}" style="width: 90%;" value="{$sig.signalstrength}" />
 			</div>
 		</td>
 		<td class="sigUpdate" onclick="editSig('{$sig.id}');">
@@ -177,13 +177,16 @@
 				<img src="/images/default/cross.png" style="height: 12px;" onclick="removeSig('{$sig.id}');" />
 			</div>
 			<div id="sigedit{$sig.id}buttons" style="display:none;">
-				<img src="/images/default/save.png" onclick="document.formEditSig{$sig.id}.submit();" />
+				<img src="/images/default/save.png" onclick="document.formEditSignature.submit();" />
 			</div>
 		</td>
 	</tr>
-	</form>
 {/foreach}
 </table>
+<div style="display:none;">
+	<button type="submit">Save</button>
+</div>
+</form>
 <div style="text-align: right; padding: 10px;">
 	<a href="/index.php?module=scanning&section=sigs&action=deleteall&id={$wormhole->id}">Delete all Signatures</a>
 </div>

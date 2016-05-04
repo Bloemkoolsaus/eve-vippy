@@ -171,6 +171,22 @@ class Model
     }
 
     /**
+     * Find one instances
+     * @param array $conditions
+     * @param array $orderby
+     * @param null $class
+     * @return static|null
+     */
+    public static function findOne($conditions=array(), $orderby=array(), $class=null)
+    {
+        $objects = self::findAll($conditions, $orderby, $class);
+        if (count($objects) > 0)
+            return $objects[0];
+
+        return null;
+    }
+
+    /**
      * Find all instances
      * @param array $conditions
      * @param array $orderby

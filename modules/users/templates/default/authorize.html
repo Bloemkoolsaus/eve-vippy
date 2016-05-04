@@ -1,0 +1,46 @@
+<div style="padding: 10px;">
+	<form method="post" action="">
+	<input type="hidden" name="{if $user->isAuthorized()}revoke{else}authorize{/if}" value="1" />
+	<input type="hidden" name="id" value="{$userid}" />
+
+	<div class="form">
+		<h2>
+			{if $user->isAuthorized()}Revoke access:{else}Authorize user:{/if}
+			{$user->displayname}
+		</h2>
+	</div>
+
+	<div class="form">
+		<label class="field">Control Group:</label>
+		<label class="value">
+			<select name="authgroupid">
+			{foreach from=$authgroups item=group}
+				<option value="{$group->id}">{$group->name}</option>
+			{/foreach}
+			</select>
+		</label>
+	</div>
+
+	<div class="form" style="text-align: left;">
+		<p>
+			For {$user->displayname} to have access, he/she also needs to maintain valid characters (<i>pulled via api key</i>)
+			for the selected access control group!
+		</p>
+	</div>
+
+	<div class="form" style="text-align: right; padding-top: 2em;">
+	{if $user->isAuthorized()}
+		<button type="submit">
+			<img src="/images/eve/cross.png" align="left"> &nbsp;
+			Revoke Access
+		</button>
+	{else}
+		<button type="submit">
+			<img src="/images/eve/apply.png" align="left"> &nbsp;
+			Grant Access
+		</button>
+	{/if}
+	</div>
+
+	</form>
+</div>

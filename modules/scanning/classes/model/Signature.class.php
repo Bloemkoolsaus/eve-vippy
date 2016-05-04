@@ -56,19 +56,16 @@ namespace scanning\model
 		{
 			// Is gewijzigd?
 			$countInStats = false;
-            if (\scanning\model\Chain::getCurrentChain()->getSetting("count-statistics"))
-            {
-                if ($this->id > 0) {
-                    if (strlen(trim($this->sigType)) > 0) {
-                        $oldsig = new \scanning\model\Signature($this->id);
-                        if ($oldsig->sigType != $this->sigType)
-                            $countInStats = true;
-                    }
-                } else {
-                    // Het is een nieuwe
-                    if (strlen(trim($this->sigType)) > 0)
+            if ($this->id > 0) {
+                if (strlen(trim($this->sigType)) > 0) {
+                    $oldsig = new \scanning\model\Signature($this->id);
+                    if ($oldsig->sigType != $this->sigType)
                         $countInStats = true;
                 }
+            } else {
+                // Het is een nieuwe
+                if (strlen(trim($this->sigType)) > 0)
+                    $countInStats = true;
             }
 
 			if ($this->scandate == null) {

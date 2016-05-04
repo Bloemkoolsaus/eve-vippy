@@ -37,25 +37,23 @@
 		</div>
 		<div class="form">
 			<label class="field"><b>Status:</b></label>
-		{if $user->deleted > 0}
-			<span style="color: #FF3322;">BANNED</span>
-		{else}
-			<span style="color: #22FF22;">Active</span>
-		{/if}
+			{$statusTxt}
 		</div>
 		<div class="form">
 			<label class="field"><b>Last loggedin:</b></label>
 		{if isset($lastlogindate)}
 			<div>{$lastlogindate}</div>
 			<div>
+			{if $lastloginip.country_code}
 				<img src="/images/flags/16/{$lastloginip.country_code|strtolower}.png" align="left" title="{$lastloginip.city}, {$lastloginip.country_name}" />
+			{/if}
 				<i>{$lastloginip.ip}</i>
 			</div>
 		{else}
 			<i>Unknown</i>
 		{/if}
 		</div>
-	{if isset($issysadmin)}
+	{if $App->user->getIsSysAdmin()}
 		<div class="form">
 			<label class="field"><b>Auth. Group:</b></label>
 		{foreach from=$user->getAuthGroups() item=group}
@@ -86,7 +84,7 @@
 	{/if}
 
 	<div style="float: right; width: 250px; text-align: right;">
-		<div style="margin-bottom: 1px;">
+		<div style="margin-bottom: 2px;">
 			<button type="button" style="width: 200px;" onclick="resetPassword('{$user->id}')">
 				<img src="/images/eve/refresh.png" align="left" />
 				Reset Password
@@ -100,7 +98,7 @@
 			</button>
 		</div>
 	-->
-		<div style="margin-bottom: 1px;">
+		<div style="margin-bottom: 2px;">
 			{if $user->deleted > 0}
 				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
 					<img src="/images/eve/apply.png" align="left" />
@@ -113,7 +111,26 @@
 				</button>
 			{/if}
 		</div>
-	{if isset($issysadmin)}
+{foreach from=$App->user->getAuthGroups() item=authgroup}
+	{if $authgroup->getMayAdmin($App->user) && $authgroup->getConfig('access_control') == "manual"}
+		{if $user->isAuthorized()}
+			<div style="margin-bottom: 2px;">
+				<button type="button" style="width: 200px;" onclick="authorizeUser('{$user->id}')">
+					<img src="/images/eve/cross.png" align="left" />
+					Revoke Access
+				</button>
+			</div>
+		{else}
+			<div style="margin-bottom: 2px;">
+				<button type="button" style="width: 200px;" onclick="authorizeUser('{$user->id}')">
+					<img src="/images/eve/apply.png" align="left" />
+					Authorize User
+				</button>
+			</div>
+		{/if}
+	{/if}
+{/foreach}
+	{if $App->user->getIsSysAdmin()}
 		<div style="margin-bottom: 1px;">
 			<button type="button" style="width: 200px;" onclick="document.location='index.php?module=users&loginas={$user->id}'">
 				<img src="/images/eve/undock.small.png" align="left" />
@@ -139,9 +156,9 @@
 <div class="content">
 	<div class="tabs">
 		<ul>
-			<li><a href="#" onclick="showUserEditTab('characters'); return false;">Known Characters</a></li>
-			<li><a href="#" onclick="showUserEditTab('apikeys'); return false;">API Keys</a></li>
-			<li><a href="#" onclick="showUserEditTab('logs'); showUserLogs(); return false;">Logs</a></li>
+			<li><a href="#" onclick="showTabs('characters'); return false;">Known Characters</a></li>
+			<li><a href="#" onclick="showTabs('apikeys'); return false;">API Keys</a></li>
+			<li><a href="#" onclick="showTabs('logs'); showUserLogs(); return false;">Logs</a></li>
 		</ul>
 		<div style="clear:both;"></div>
 	</div>

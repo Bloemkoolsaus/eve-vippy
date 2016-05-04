@@ -1,8 +1,5 @@
-
 <div class="content">
-
 	<h1>API Key Management</h1>
-
 {if isset($errors)}
 	<div class="error">
 		{foreach from=$errors item=error}
@@ -10,44 +7,38 @@
 		{/foreach}
 	</div>
 {/if}
-
 	<form method="post" name="apiForm" action="">
-	<input type="hidden" name="save" value="true"/>
-	<input type="hidden" id="nrkeys" name="nrkeys" value="{$user->getApiKeys()|@count}"/>
-
-	<div class="twothird left">
-		<div id="apikeys">
-		</div>
-		<div style="text-align: right;margin-top: 10px;">
-			<button type="button" onclick="addApiKey(); return false;">Add API Key</button>
-			<button type="submit">Save</button>
-		</div>
-	</div>
-
-	<div class="onethird right">
-		<div class="message">
-			<div>
-				Create a <u>new</u> API key and enable the access to:
+		<input type="hidden" name="save" value="true"/>
+		<input type="hidden" id="nrkeys" name="nrkeys" value="{$user->getApiKeys()|@count}"/>
+		<div class="twothird left">
+			<div id="apikeys">
 			</div>
-			<div>
-				&nbsp;&nbsp;&nbsp;
-				`<span style="color: #66aaff;"><b>Private Information</b></span>`
-				&nbsp; <strong>&gt;</strong> &nbsp;
-				`<span style="color: #66aaff;"><b>CharacterSheet</b></span>`
+			<div style="text-align: right;margin-top: 10px;">
+				<button type="button" onclick="addApiKey(); return false;">Add API Key</button>
+				<button type="submit">Save</button>
 			</div>
-			<p>
-				Access mask should be: &nbsp; <span style="color: #66aaff;"><b>8</b></span>
-			</p>
-			<br />
-			<p style="text-align: right;">
-				<a href="https://support.eveonline.com/api/Key/Index" target="_blank">https://support.eveonline.com/api/Key/Index</a>
-			</p>
 		</div>
-	</div>
+		<div class="onethird right">
+			<div class="message">
+				<div>
+					<b>Create a <u>new</u> API key.</b>
+				</div>
+				<div>
+					<ul>
+						<li>Make sure <b>Type</b> is set to character.</li>
+						<li>Make sure <b>Expires</b> is set to 'No Expiry'.</li>
+					</ul>
+					You do not need to enable any pages (access mask can be 0)
+				</div>
+				<p style="text-align: right;">
+					<a href="https://community.eveonline.com/support/api-key/" target="_blank">https://community.eveonline.com/support/api-key/</a>
+				</p>
+			</div>
+		</div>
+	</form>
 
 	<div style="clear:both;"></div>
 </div>
-</form>
 
 {literal}
 <script type="text/javascript">

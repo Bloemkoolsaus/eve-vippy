@@ -7,7 +7,7 @@ namespace scanning\controller
 		{
             $system = new \eve\model\SolarSystem($systemID);
             $closeSysConsole = new \map\console\ClosestSystems();
-            $closestSystems = $closeSysConsole->getClosestSystems($system, true);
+            $closestSystems = $closeSysConsole->getClosestSystems($system);
 
             $tpl = \SmartyTools::getSmarty();
             $tpl->assign("systems", $closestSystems);

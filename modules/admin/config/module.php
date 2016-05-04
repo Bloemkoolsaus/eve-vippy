@@ -22,10 +22,11 @@ if (\User::getUSER()->isAdmin())
 
 if (count(\User::getUSER()->getAuthGroupsAdmins()) > 0)
 {
-	$config["submenu"][] = array("type" => "link",
-								"name"	=> "Access Control Group",
-								"module" => "admin",
-								"section" => "authgroups");
+	$config["submenu"][] = [
+        "type" => "link",
+        "name" => "Access Control Group",
+        "url" => "admin/authgroup/edit/".\User::getUSER()->getCurrentAuthGroupID()
+    ];
 }
 // USERS
 if (\User::getUSER()->hasRight("users", "manageusers") || \User::getUSER()->isAdmin())
@@ -54,15 +55,13 @@ if (\User::getUSER()->getIsSysAdmin())
 	$config["submenu"][] = array("type" => "seperator");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Authorization Groups",
-								"section" => "authgroups",
-								"admin" => 1);
+								"url"   => "admin/authgroup/");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Subscriptions",
 								"section" => "subscriptions");
 	$config["submenu"][] = array("type" => "link",
 								"name"	=> "Clear Cache",
 								"section" => "clearcache");
-
 }
 
 

@@ -4,11 +4,43 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+<h3>April 28, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Statistics/leaderboard for non directors/admins could show an empty page.
+<b><u>VIPPY</u></b>
+ - Updated to <a href="https://community.eveonline.com/news/patch-notes/patch-notes-for-eve-online-citadel" target="_blank">Citadel</a> data export.
 
+
+
+<h3>April 21, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Stat pages for previous months were broken. They are now available again.
+<b><u>VIPPY</u></b>
+ - Fixed adding or updating a capitalship in Profile. It could give errors on certain solarsystems.
+ - wh.pasta.gg died and is replaced by <a href="http://wh.vps-city.com/" target="_blank">wh.vps-city.com</a>. Updated the links.
+
+
+
+<h3>March 10, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Correctly track the amount of wormholes mapped.
+<b><u>VIPPY</u></b>
+ - Updated to <a href="http://community.eveonline.com/news/patch-notes/patch-notes-for-march-2016-release" target="_blank">YC118.3</a> data export.
+
+
+
+<h3>February 29, 2016</h3>
 <b><u>SCANNING</u></b>
  - Add an option on maps to not automatically name new solarsystems.
  - Add an option on maps to not create an unmapped wormhole when a new wh signature is found.
- - Add marker for systems that are marked persistant. These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
+ - Add marker for systems that are marked persistant (<img src="/images/eve/pin.png">). These will not be deleted by 'DELETE ALL' or 'Remove connected systems'.
+ - Editing signature: Fix a bug that disabled save on enter.
+<b><u>STATISTICS</u></b>
+ - Add amount of wormhole systems mapped to statistics.
+ - Add an option to rank the leaderboard based on amount of systems mapped, instead of amount of signatures scanned.
+<b><u>ADMIN</u></b>
+ - Add an option for your access control group to also require manual authentication for each user by an admin.
+ - Add an option to add/remove systems that Vippy will calculate and show the distance to (tradehubs).
 
 
 
@@ -16,7 +48,6 @@
 <b><u>SCANNING</u></b>
  - Added an option in "Profile -> <a href="/index.php?module=profile">Account Settings</a>" to change the wormhole-type field back to a dropdown box, instead of the current text field.
     I have had complaints since removing it. This way, every one can choose wich they like best.
-
 <b><u>ADMIN</u></b>
  - Add an option to enable admin access to non-directors.
  	<i>Set these roles by creating a user-group and adding users to that group</i>.

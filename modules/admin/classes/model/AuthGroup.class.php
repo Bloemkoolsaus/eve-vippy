@@ -6,6 +6,7 @@ namespace admin\model
 		public $id = 0;
 		public $name;
 		public $mainChainID;
+        public $contactID;
 
         private $config = null;
 		private $corporations = null;
@@ -17,6 +18,7 @@ namespace admin\model
 		private $subscriptions = null;
 		private $payments = null;
         private $usergroups = null;
+        private $contactUser = null;
 
 		function __construct($id=false)
 		{
@@ -129,13 +131,17 @@ namespace admin\model
 				$this->id = $result["id"];
 				$this->name = $result["name"];
 				$this->mainChainID = $result["mainchain"];
+                $this->contactID = $result["contactuserid"];
 			}
 		}
 
 		function store()
 		{
-			$data = array("name"	=> $this->name,
-						"mainchain"	=> $this->mainChainID);
+			$data = [
+                "name"	=> $this->name,
+                "mainchain"	=> $this->mainChainID,
+                "contactuserid" => $this->contactID
+            ];
 			if ($this->id > 0)
 				$data["id"] = $this->id;
 
@@ -179,6 +185,40 @@ namespace admin\model
                 }
             }
 		}
+
+        /**
+         * Get contact user
+         * @return \users\model\User|null
+         */
+        function getContactUser()
+        {
+            if ($this->contactUser === null)
+            {
+                if (!$this->contactID) {
+                    foreach ($this->getAllowedUsers() as $user) {
+                        if ($user->isAdmin()) {
+                            if (!$this->contactID || $this->contactID > $user->id)
+                                $this->contactID = $user->id;
+                        }
+                    }
+                    $this->store();
+                }
+
+                $this->contactUser = new \users\model\User($this->contactID);
+            }
+
+            return $this->contactUser;
+        }
+
+        function getLastActiveDate()
+        {
+            $date = 0;
+            foreach ($this->getChains() as $chain) {
+                if (strtotime($date) < strtotime($chain->lastActive))
+                    $date = $chain->lastActive;
+            }
+            return $date;
+        }
 
 		/**
 		 * Get chains
@@ -385,6 +425,17 @@ namespace admin\model
 			return false;
 		}
 
+        function isActive()
+        {
+            if (count($this->getAllowedUsers()) == 0)
+                return false;
+
+            if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)
+                return false;
+
+            return true;
+        }
+
 		/**
 		 * Has access to module?
 		 * @param string $name
@@ -470,6 +521,44 @@ namespace admin\model
 			return $users;
 		}
 
+        /**
+         * Get active and allowed users
+         * @return \users\model\User[]
+         */
+        function getActiveUsers()
+        {
+            $users = [];
+            foreach ($this->getAllowedUsers() as $user) {
+                if ($user->getIsActive())
+                    $users[] = $user;
+            }
+            return $users;
+        }
+
+        /**
+         * Get users that have been manually granted access
+         * @return \users\model\User[]
+         */
+        function getGrantedUsers()
+        {
+            $users = [];
+            if ($results = \MySQL::getDB()->getRows("select u.*
+                                                     from   users u
+                                                        inner join users_auth_groups_users g on g.userid = u.id
+                                                     where  g.authgroupid = ?"
+                                            , [$this->id]))
+            {
+                foreach ($results as $result)
+                {
+                    $user = new \users\model\User();
+                    $user->load($result);
+                    $users[] = $user;
+                }
+            }
+
+            return $users;
+        }
+
 		/**
 		 * Mag deze user deze auth-group beheren?
 		 * @param \users\model\User $user
@@ -540,6 +629,11 @@ namespace admin\model
                 $this->usergroups = \users\model\UserGroup::findAll(["authgroupid" => $this->id]);
 
             return $this->usergroups;
+        }
+
+        function getClosestSystems()
+        {
+            return \map\model\ClosestSystem::getClosestSystemsBySystemID();
         }
 
 

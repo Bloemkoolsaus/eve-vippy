@@ -17,7 +17,7 @@ $config["submenu"][] = array("type" => "link",
 $config["submenu"][] = array("type" => "seperator");
 $config["submenu"][] = array("type" => "link",
 							"name"	=> "My Capital-ships",
-							"section" => "capitals");
+							"url" => "profile/capitals/");
 
 // SET CONFIG
 foreach ($config as $var => $val) {

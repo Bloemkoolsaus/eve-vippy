@@ -168,7 +168,7 @@ class Modules
 				continue;
 
 			$key = count($links);
-			$links[$key]["url"] = $module;
+			$links[$key]["url"] = (\AppRoot::config($module."url"))?:$module;
 			$links[$key]["name"] = ucfirst(\AppRoot::config($module."name"));
 
 			if (isset($submenu[0]["newwindow"]))

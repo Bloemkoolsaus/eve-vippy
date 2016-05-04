@@ -125,11 +125,13 @@
                     <select name="control[move]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-move') == 'dir'}selected{/if}>CEO & Directors</option>
+				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-move') == $group->id}selected{/if}>
                             {$group->name}
                         </option>
                     {/foreach}
+				{/if}
                     </select>
                 </label>
             </div>
@@ -139,11 +141,13 @@
                     <select name="control[delete]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-delete') == 'dir'}selected{/if}>CEO & Directors</option>
-                        {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
-                            <option value="{$group->id}" {if $chain->getSetting('control-delete') == $group->id}selected{/if}>
-                                {$group->name}
-                            </option>
-                        {/foreach}
+				{if $chain->getAuthgroup() != null}
+					{foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
+						<option value="{$group->id}" {if $chain->getSetting('control-delete') == $group->id}selected{/if}>
+							{$group->name}
+						</option>
+					{/foreach}
+				{/if}
                     </select>
                 </label>
             </div>
@@ -153,11 +157,13 @@
                     <select name="control[add]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-add') == 'dir'}selected{/if}>CEO & Directors</option>
+				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-add') == $group->id}selected{/if}>
                             {$group->name}
                         </option>
                     {/foreach}
+				{/if}
                     </select>
                 </label>
             </div>
@@ -167,11 +173,13 @@
                     <select name="control[mass]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-mass') == 'dir'}selected{/if}>CEO & Directors</option>
+				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-mass') == $group->id}selected{/if}>
                             {$group->name}
                         </option>
                     {/foreach}
+				{/if}
                     </select>
                 </label>
             </div>
@@ -181,11 +189,13 @@
                     <select name="control[known]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-known') == 'dir'}selected{/if}>CEO & Directors</option>
+				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-known') == $group->id}selected{/if}>
                             {$group->name}
                         </option>
                     {/foreach}
+				{/if}
                     </select>
                 </label>
             </div>
@@ -195,11 +205,13 @@
                     <select name="control[notice]">
                         <option value="0">All users</option>
                         <option value="dir" {if $chain->getSetting('control-notice') == 'dir'}selected{/if}>CEO & Directors</option>
+				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-notice') == $group->id}selected{/if}>
                             {$group->name}
                         </option>
                     {/foreach}
+				{/if}
                     </select>
                 </label>
             </div>

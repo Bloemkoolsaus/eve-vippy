@@ -267,7 +267,10 @@ namespace users\model
 				return ((strlen(trim($ticker)) > 0)?"[".$ticker."] ":"").$this->getMainCharacter()->name;
 			}
 
-			return $this->displayname;
+            if (strlen(trim($this->displayname)) > 0)
+			    return $this->displayname;
+
+            return $this->username;
 		}
 
 		public function store()
@@ -810,7 +813,8 @@ namespace users\model
 				if ($this->mainCharId == 0)
 					$this->resetMainCharacter();
 
-				$this->character = new \eve\model\Character($this->mainCharId);
+                if ($this->mainCharId > 0)
+				    $this->character = new \eve\model\Character($this->mainCharId);
 			}
 
 			return $this->character;
@@ -855,7 +859,7 @@ namespace users\model
 				}
 				else
 				{
-					$this->capitalShips = \profile\model\Capital::getCapitalShipsByUser($this->id);
+					$this->capitalShips = \profile\model\Capital::findAll(["userid" => $this->id]);
                     \Cache::file()->set($cacheFilename, json_encode($this->capitalShips));
 				}
 			}
@@ -1358,8 +1362,32 @@ namespace users\model
 															GROUP BY IF (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid)"
 											, array($this->id)))
 					{
-						foreach ($results as $result) {
-							$this->authGroupIDs[] = $result["authgroupid"];
+						foreach ($results as $result)
+                        {
+                            $authgroup = new \admin\model\AuthGroup($result["authgroupid"]);
+
+                            // Check if manual authorization is required
+                            $allowed = false;
+                            if ($authgroup->getConfig("access_control") == "manual")
+                            {
+                                if ($this->isAdmin())
+                                    $allowed = true;
+                                else {
+                                    foreach ($authgroup->getGrantedUsers() as $user) {
+                                        if ($user->id == $this->id) {
+                                            $allowed = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                                $allowed = true;
+
+                            if ($allowed) {
+                                $this->authGroups[] = $authgroup;
+                                $this->authGroupIDs[] = $authgroup->id;
+                            }
 						}
 					}
                     \Cache::file()->set($cacheFilename, json_encode($this->authGroupIDs));
@@ -1487,8 +1515,8 @@ namespace users\model
 		 */
 		public function getIsActive($sdate=null, $edate=null)
 		{
-            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
-            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
+            $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y")));
+            $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d"),date("Y")));
 
 			foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
 			{

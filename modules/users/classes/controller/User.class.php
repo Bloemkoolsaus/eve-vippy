@@ -119,6 +119,20 @@ namespace users\controller
 				\AppRoot::refresh();
 			}
 
+			if (\Tools::POST("authorize") || \Tools::POST("revoke"))
+			{
+                \MySQL::getDB()->delete("users_auth_groups_users", ["authgroupid" => \Tools::POST("authgroupid"), "userid" => $user->id]);
+                if (\Tools::POST("authorize")) {
+                    \MySQL::getDB()->insert("users_auth_groups_users", [
+                        "authgroupid" => \Tools::POST("authgroupid"),
+                        "userid" => $user->id,
+                        "allowed" => 1
+                    ]);
+                    $user->store();
+                }
+				\AppRoot::refresh();
+			}
+
 			if (\Tools::POST("saveusergroups"))
 			{
                 $user->clearUserGroups();
@@ -166,8 +180,9 @@ namespace users\controller
 			$tpl->assign("errors", $errors);
 			$tpl->assign("messages", $messages);
 
-			if (\User::getUSER()->getIsSysAdmin())
-				$tpl->assign("issysadmin",1);
+            $statusElement = new \users\elements\User\Status("Status","id");
+            $statusElement->setValue($user->id);
+            $tpl->assign("statusTxt", $statusElement->getValue());
 
             $usergroupController = new \users\controller\UserGroup();
             $tpl->assign("usergroups", $usergroupController->getUsergroups($user));

@@ -1,37 +1,60 @@
 <?php
-namespace eve\elements
+namespace eve\elements;
+
+class Ship extends \AutoCompleteElement\Element
 {
-	class Ship extends \SelectElement\Element
-	{
-		public $keyfield = "typeid";
-		public $namefield = "typename";
-		public $table = "invtypes";
-		public $orderbyfield = "typename";
-		public $whereQuery = null;
+    public $showLogo = false;
+    public $showType = false;
 
-		public $showLogo = false;
-		public $showType = false;
+    function getValue()
+    {
+        $ship = new \eve\model\Ship($this->value);
+        $html = $ship->name;
 
-		function __construct($title, $field=false)
-		{
-			$this->table = \eve\Module::eveDB().".invtypes";
-			$this->whereQuery = "WHERE groupid IN (SELECT groupid FROM ".\eve\Module::eveDB().".invgroups WHERE categoryid = 6)";
-			parent::__construct($title, $field);
-		}
+        if ($this->showType && $ship->getShipType() != $ship->name)
+            $html .= " - <i>".$ship->getShipType()."</i>";
 
-		function getValue()
-		{
-			$ship = new \eve\model\Ship($this->value);
-			$html = $ship->name;
+        if ($this->showLogo)
+            $html .= "<img src='https://image.eveonline.com/Render/".$ship->id."_32.png' style='height: 20px; margin: -2px; margin-right: 6px; border-radius: 3px;' align='left'/>";
 
-			if ($this->showType && $ship->getShipType() != $ship->name)
-				$html .= " - <i>".$ship->getShipType()."</i>";
+        return $html;
+    }
 
-			if ($this->showLogo)
-				$html .= "<img src='https://image.eveonline.com/Render/".$ship->id."_32.png' style='height: 20px; margin: -2px; margin-right: 6px; border-radius: 3px;' align='left'/>";
+    public static function getValues()
+    {
+        $query = ["g.categoryid = 6"];
 
-			return $html;
-		}
-	}
+        $searchMinLength = \Tools::Escape(\Tools::REQUEST("minsearchlen"))-0;
+        if (\Tools::Escape(\Tools::REQUEST("term")))
+        {
+            foreach (explode(" ", \Tools::Escape(\Tools::REQUEST("term"))) as $term) {
+                if (strlen(trim($term)) >= $searchMinLength)
+                    $query[] = "typename LIKE '%".\MySQL::escape($term)."%'";
+            }
+        }
+
+        $results = array();
+        if (count($query) > 0)
+        {
+            if ($records = \MySQL::getDB()->getRows("
+                                select i.*
+                                from    " . \eve\Module::eveDB() . ".invtypes i
+                                    inner join " . \eve\Module::eveDB() . ".invgroups g on g.groupid = i.groupid
+                                where   " . implode(" and ", $query) . "
+                                order by i.typename"))
+            {
+                foreach ($records as $record)
+                {
+                    $ship = new \eve\model\Ship();
+                    $ship->load($record);
+
+                    $results[] = [
+                        "id" => $ship->id,
+                        "label" => $ship->name . " (" . $ship->getShipType() . ")"
+                    ];
+                }
+            }
+        }
+        return json_encode($results);
+    }
 }
-?>

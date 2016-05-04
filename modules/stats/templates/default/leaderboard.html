@@ -1,15 +1,15 @@
 <div class="content">
 	<h1>
-		<img src="images/default/stats.png" style="width: 32px;" align="left">
+		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Leaderboard {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -6px;">
-			<button type="button" class="small" style="width: 160px;" onclick="document.location='index.php?module=stats&date={$sdate}&month=-1'">
-				<img src="images/default/left.png" align="left" />
+			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")-1}'">
+				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='index.php?module=stats&date={$sdate}&month=1'">
+			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
 				Next Month
-				<img src="images/default/right.png" align="right" />
+				<img src="/images/default/right.png" align="right" />
 			</button>
 		</div>
 	</h1>
@@ -23,15 +23,16 @@
 					Top Scanners
 				</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
+				<th style="width: 70px; text-align: center;">Wormholes</th>
 			</tr>
 	{foreach from=$topsignatures key=s item=user}
-			<tr class="{if $s%2==0}even{else}odd{/if}">				
+			<tr class="{if $s%2==0}even{else}odd{/if}">
 				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg" 
+					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Corporation/{$user.user->getMainCharacter()->corporationID}_32.png" 
+					<img src="http://image.eveonline.com/Corporation/{$user.user->getMainCharacter()->corporationID}_32.png"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td style="{if $s==0}color: #ffffff; font-weight: bold;{/if}">
@@ -40,7 +41,8 @@
 					&nbsp;
 					{$user.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center;">{$user.amount}</td>
+				<td style="text-align: center;">{if isset($user.sigs)}{$user.sigs}{/if}</td>
+				<td style="text-align: center;">{if isset($user.whs)}{$user.whs}{/if}</td>
 			</tr>
 	{/foreach}
 		</table>
@@ -52,14 +54,15 @@
 					You
 				</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
+				<th style="width: 70px; text-align: center;">Wormholes</th>
 			</tr>
-			<tr class="even">				
+			<tr class="even">
 				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$usersignature.user->getMainCharacter()->id}_32.jpg" 
+					<img src="http://image.eveonline.com/Character/{$usersignature.user->getMainCharacter()->id}_32.jpg"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td style="padding: 0px; width: 20px;">
-					<img src="http://image.eveonline.com/Corporation/{$usersignature.user->getMainCharacter()->corporationID}_32.png" 
+					<img src="http://image.eveonline.com/Corporation/{$usersignature.user->getMainCharacter()->corporationID}_32.png"
 						style="height: 20px; margin: 1px; margin-bottom: -2px;">
 				</td>
 				<td>
@@ -74,28 +77,37 @@
 					&nbsp;
 					{$usersignature.user->getMainCharacter()->name}&nbsp;
 				</td>
-				<td style="text-align: center; {if $usersignature.amount == 0}background-color: #CC0000; color: #FFFFFF; font-weight: bold;{/if}">
-					{$usersignature.amount}
+				<td style="text-align: center; {if !isset($usersignature.sigs) || $usersignature.sigs == 0}background-color: #CC0000; color: #FFFFFF; font-weight: bold;{/if}">
+					{if isset($usersignature.sigs)}{$usersignature.sigs}{else}0{/if}
+				</td>
+				<td style="text-align: center;">
+				{if isset($usersignature.whs)}
+					{$usersignature.whs}
+				{/if}
 				</td>
 			</tr>
 		</table>
-	
-		<br />	
+
 		<br />
-	
+		<br />
+
 		<table class="sectionoverview">
 			<tr>
 				<th class="large">
 					Total Signatures scanned
 				</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
+				<th style="width: 70px; text-align: center;">Wormholes</th>
 			</tr>
-	{foreach from=$totalsignatures key=s item=signatures}
-			<tr class="{if $s%2==0}even{else}odd{/if}">
+		{assign var=i value=0}
+		{foreach from=$totalsignatures key=s item=signatures}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
 				<td>{$signatures.date}</td>
-				<td style="text-align: center;">{$signatures.amount}</td>
+				<td style="text-align: center;">{$signatures.sigs}</td>
+				<td style="text-align: center;">{$signatures.whs}</td>
 			</tr>
-	{/foreach}
+		{assign var=i value=$i+1}
+		{/foreach}
 		</table>
 	</div>
 	<div style="float: right; width: 45%;">
@@ -104,7 +116,7 @@
 			<h2>MONTHLY RAFFLE</h2>
 			<p style="color: #CC0000;"><b>At the end of each month, 3 isk prizes will be awarded to scanners via a Raffle!</b></p>
 			<p>The goal is to encourage you to get out there!</p>
-			<p><u><b>The rules are simple:</b></u></p> 
+			<p><u><b>The rules are simple:</b></u></p>
 			<ul>
 				<li>For every signature you scanned, you get 1 ticket;</li>
 				<li><u>Everyone</u> counts! not just people on the leaderboard;</li>

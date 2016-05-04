@@ -64,17 +64,11 @@ function editSig(id)
     if ($("#sigedit"+id+"id").is(":visible"))
         return false;
 
-	$("#siglist"+id+"id").hide();
-	$("#siglist"+id+"type").hide();
-	$("#siglist"+id+"info").hide();
-	$("#siglist"+id+"signalstrength").hide();
-	$("#siglist"+id+"buttons").hide();
+	$("div[id^=siglist]").show();
+	$("div[id^=sigedit]").hide();
 
-	$("#sigedit"+id+"id").fadeIn();
-	$("#sigedit"+id+"type").fadeIn();
-	$("#sigedit"+id+"info").fadeIn();
-	$("#sigedit"+id+"signalstrength").fadeIn();
-	$("#sigedit"+id+"buttons").fadeIn();
+	$("div[id^=siglist"+id+"]").hide();
+	$("div[id^=sigedit"+id+"]").fadeIn();
 
     var data = {
         sigID: id,
@@ -94,28 +88,34 @@ function setWhTypeAutocomplete(sigID)
     //setAutoComplete($("#siginput"+sigID+"whtype"));
 }
 
-function saveEditSig(id)
+function saveEditSig()
 {
-	var reqURL = "index.php?module=scanning&section=map&action=updatesignature&id="+id+"&ajax=1";
-	reqURL += "&sig=" + $("#siginput"+id+"id").val();
-	reqURL += "&type=" + $("#siginput"+id+"type").val();
-	if ($("#siginput"+id+"type").val() == "wh")
-		reqURL += "&typeid=" + $("#siginput"+id+"whtype").val();
-	reqURL += "&info=" + $("#siginput"+id+"info").val();
-	if ($("#siginput"+id+"signalstrength").length > 0)
-		reqURL += "&signalstrength=" + $("#siginput"+id+"signalstrength").val();
+    var sigID = 0;
+    $("input[name=siginfo]").each(function() {
+        if ($(this).is(":visible"))
+            sigID = $(this).attr("data-sigid");
+    });
+    var params = {
+        id: sigID,
+        sig: $("input[name=sigid][data-sigid="+sigID+"]").val(),
+        type: $("select[name=sigtype][data-sigid="+sigID+"]").val(),
+        typeid: $("#siginput"+sigID+"whtype").val(),
+        info: $("input[name=siginfo][data-sigid="+sigID+"]").val(),
+        signalstrength: $("input[name=sigstrength][data-sigid="+sigID+"]").val()
+    };
 
-	$("#sigedit"+id+"id").fadeOut(500, function() { $("#siglist"+id+"id").show(); } );
-	$("#sigedit"+id+"type").fadeOut(500, function() { $("#siglist"+id+"type").show(); } );
-	$("#sigedit"+id+"whtype").fadeOut(500, function() { $("#siglist"+id+"whtype").show(); } );
-	$("#sigedit"+id+"info").fadeOut(500, function() { $("#siglist"+id+"info").show(); } );
-	$("#sigedit"+id+"signalstrength").fadeOut(500, function() { $("#siglist"+id+"whtype").show(); } );
-	$("#sigedit"+id+"buttons").fadeOut(500, function() { $("#siglist"+id+"buttons").show(); } );
-	$("#siglist"+id+"info").html("<img src='/images/loading.gif'> Saving");
+	$("#sigedit"+sigID+"id").fadeOut(500, function() { $("#siglist"+sigID+"id").show(); } );
+	$("#sigedit"+sigID+"type").fadeOut(500, function() { $("#siglist"+sigID+"type").show(); } );
+	$("#sigedit"+sigID+"whtype").fadeOut(500, function() { $("#siglist"+sigID+"whtype").show(); } );
+	$("#sigedit"+sigID+"info").fadeOut(500, function() { $("#siglist"+sigID+"info").show(); } );
+	$("#sigedit"+sigID+"signalstrength").fadeOut(500, function() { $("#siglist"+sigID+"whtype").show(); } );
+	$("#sigedit"+sigID+"buttons").fadeOut(500, function() { $("#siglist"+sigID+"buttons").show(); } );
+	$("#siglist"+sigID+"info").html("<img src='/images/loading.gif'> Saving");
 
 	editingSigList = false;
 	$.ajax({
-		url: reqURL,
+		url: "/index.php?module=scanning&section=map&action=updatesignature&ajax=1",
+        data: params,
 		success: function(data) {
 			loadingSigList = false;
 			loadSignatureList(false,true);

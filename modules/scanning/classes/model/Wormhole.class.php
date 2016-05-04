@@ -107,14 +107,29 @@ namespace scanning\model
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
+            // New wormhole
 			if ($this->id == 0)
 			{
 				$result = \MySQL::getDB()->insert("mapwormholes", $data);
 				$system = array("id" => $this->solarSystemID);
 				if ($this->getSolarsystem() !== null)
-					$system["name"] = $this->getSolarsystem()->name;
+                {
+                    $system["name"] = $this->getSolarsystem()->name;
+
+                    // add to stats
+                    $stat = new \stats\model\Whmap();
+                    $stat->userID = \User::getUSER()->id;
+                    $stat->pilotID = \eve\model\IGB::getIGB()->getPilotID();
+                    $stat->corpID = \User::getUSER()->getMainCorporationID();
+                    $stat->chainID = $this->chainID;
+                    $stat->systemID = $this->solarSystemID;
+                    $stat->mapdate = date("Y-m-d H:i:s");
+                    $stat->store();
+                }
 
 				$this->id = $result;
+
+                // User log
 				\User::getUSER()->addLog("add-wormhole", $this->solarSystemID,
 										array("chain"	=> array("id" => $this->getChain()->id,
 																"name"=> $this->getChain()->name),
@@ -240,8 +255,16 @@ namespace scanning\model
 
 		function showContextMenu()
 		{
+            $closeSysConsole = new \map\console\ClosestSystems();
+            $closestSystems = $closeSysConsole->getClosestSystems($this->getSolarsystem(), true);
+
+
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("wormhole", $this);
+
+            if (count($closestSystems) > 0)
+                $tpl->assign("closestsystem", $closestSystems[0]);
+
 			return $tpl->fetch("scanning/system/contextmenu");
 		}
 

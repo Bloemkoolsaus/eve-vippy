@@ -1,7 +1,7 @@
 <?php
 namespace eve\elements
 {
-	class SolarSystem extends \TextElement\Element
+	class SolarSystem extends \AutoCompleteElement\Element
 	{
 		function setValue($value)
 		{
@@ -45,6 +45,48 @@ namespace eve\elements
 		{
 			$system = new \eve\model\SolarSystem($this->value);
 			return $system->name;
+		}
+
+		function getEditHTML($extraAttributes=array())
+		{
+			$extraAttributes = array_merge($extraAttributes, array("element" => "eve-elements-SolarSystem"));
+			return parent::getEditHTML($extraAttributes);
+		}
+
+		public static function getValues()
+		{
+			$query = array();
+
+			$searchMinLength = \Tools::Escape(\Tools::REQUEST("minsearchlen"))-0;
+			if (\Tools::Escape(\Tools::REQUEST("term")))
+			{
+				foreach (explode(" ", \Tools::Escape(\Tools::REQUEST("term"))) as $term) {
+					if (strlen(trim($term)) >= $searchMinLength)
+						$query[] = "solarsystemname LIKE '%".\MySQL::escape($term)."%'";
+				}
+			}
+
+			$results = array();
+			if (count($query) > 0)
+			{
+				if ($records = \MySQL::getDB()->getRows("SELECT *
+													FROM	".\eve\Module::eveDB().".mapsolarsystems
+													WHERE	".implode(" AND ", $query)."
+													ORDER BY solarsystemname "))
+                {
+                    foreach ($records as $record)
+                    {
+                        $system = new \eve\model\SolarSystem();
+                        $system->load($record);
+
+                        $results[] = [
+                            "id" => $system->id,
+                            "label" => $system->name." (".$system->getClass(true)." - ".$system->getRegion()->name.")"
+                        ];
+                    }
+                }
+			}
+			return json_encode($results);
 		}
 	}
 }

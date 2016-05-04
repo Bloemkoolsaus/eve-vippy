@@ -39,20 +39,6 @@ namespace profile
 				return $controller->getAccountSettings();
 			}
 
-			if ($section == "capitals")
-			{
-				$this->moduleTitle = "My Capital-ships";
-				$capController = new \profile\controller\Capitals();
-
-				if ($action == "delete")
-				{
-					$capController->deleteCapitalShip(\Tools::REQUEST("id"));
-					\AppRoot::redirect("index.php?module=profile&section=capitals&action=overview");
-				}
-				else
-					$this->moduleSection = $capController->getOverviewSection();
-			}
-
 			return parent::getContent();
 		}
 

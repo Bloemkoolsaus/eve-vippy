@@ -58,16 +58,14 @@
 				<img src="/images/default/zoom_in.png" style="cursor:pointer;" onclick="mapZoomIn()" align="right"/>
 				<img src="/images/default/zoom_out.png" style="cursor:pointer;" onclick="mapZoomOut()" align="right"/>
 				*}
-            {if !$App->user->isAllowedChainAction($chain, 'move') ||
-            !$App->user->isAllowedChainAction($chain, 'add') ||
-            !$App->user->isAllowedChainAction($chain, 'delete')}
+{if !$App->user->isAllowedChainAction($chain, 'move') || !$App->user->isAllowedChainAction($chain, 'add') || !$App->user->isAllowedChainAction($chain, 'delete')}
                 <span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
                     <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
                     <span style="padding: 2px; display: inline-block; color: #ffdd00;">
                         You have restricted controls on this map.
                     </span>
                 </span>
-            {/if}
+{/if}
 			</div>
 		</div>
 		<div style="clear:both;"></div>
@@ -289,7 +287,7 @@
 			<a href="{$evesurvival}" target="_blank" title="eve-survival"><img src="/images/eve/bear.png" align="right" /></a>
 			<a href="http://zkillboard.com/system/{$system->name}" target="_blank" title="zKillboard"><img src="/images/eve/killboard.png" align="right" /></a>
 			<a href="http://evemaps.dotlan.net/system/{$system->name}" target="_blank" title="DOTLAN EveMaps"><img src="/images/eve/dotlan.png" align="right" /></a>
-			<a href="http://wormhol.es/{$system->name}" target="_blank" title="wormhole.es"><img src="/images/eve/wormhole.es.png" align="right" /></a>
+			<a href="http://wh.vps-city.com/{$system->name}" target="_blank" title="wormhole.es"><img src="/images/eve/wormhole.es.png" align="right" /></a>
 		</h2>
 		<table class="sectionoverview nohover">
 			<tr class="even">
@@ -404,7 +402,7 @@
 </script>
 <script id="whTypeInputTPL" type="text/template">
 {literal}
-    <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}"
+    <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}" data-sigid="{{sigID}}"
            placeholder="K162" style="width: 60px; margin-top: 2px;" autocomplete="off">
 {/literal}
 </script>
