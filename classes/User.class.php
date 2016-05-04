@@ -176,12 +176,14 @@ class User extends \users\model\User
 			}
 		}
 
-		$_SESSION["CURRENT_SELECTED_CHAIN"] = $chainID;
-		return $_SESSION["CURRENT_SELECTED_CHAIN"];
+        if ($allowedChain)
+        {
+            $_SESSION["CURRENT_SELECTED_CHAIN"] = $chainID;
+            return $_SESSION["CURRENT_SELECTED_CHAIN"];
+        }
 
+        // Reset
 		\AppRoot::debug("Chain not available!!");
-
-		// Reset
 		self::getSelectedChain();
 		return true;
 	}
