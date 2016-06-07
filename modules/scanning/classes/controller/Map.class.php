@@ -222,7 +222,7 @@ namespace scanning\controller
 						$system = new \scanning\model\System($result["solarsystemid"]);
 
 					$data["id"] = $result["id"];
-					$data["name"] = $result["solarsystemname"];
+					$data["name"] = htmlentities($result["solarsystemname"]);
 					$data["status"] = $result["status"];
 					$data["position"]["x"] = $result["x"];
 					$data["position"]["y"] = $result["y"];
@@ -237,16 +237,16 @@ namespace scanning\controller
 						}
 					}
 
-					$data["whsystem"]["name"] = $result["solarsystemtitle"];
+					$data["whsystem"]["name"] = htmlentities($result["solarsystemtitle"]);
 
 					if (strlen(trim($result["homesystemname"])) > 0)
-						$data["whsystem"]["homesystem"] = $result["homesystemname"];
+						$data["whsystem"]["homesystem"] = htmlentities($result["homesystemname"]);
 
 					if ($system != null)
 					{
 						$data["solarsystem"]["id"] = $result["solarsystemid"];
-						$data["solarsystem"]["name"] = $result["solarsystemname"];
-						$data["solarsystem"]["region"] = $result["regionname"];
+						$data["solarsystem"]["name"] = htmlentities($result["solarsystemname"]);
+						$data["solarsystem"]["region"] = htmlentities($result["regionname"]);
 						$data["solarsystem"]["class"]["name"] = ($system->isWSpace())?"WH":$system->getClass(true);
 						$data["solarsystem"]["class"]["color"] = $system->getClassColor();
 
@@ -271,7 +271,7 @@ namespace scanning\controller
 					// Known system. Toevoegen als title.
 					if (strlen(trim($result["knownname"])) > 0)
 					{
-						$title = array("name" => $result["knownname"]);
+						$title = array("name" => htmlentities($result["knownname"]));
 						if ($result["known"] < 0)
 							$title["color"] = "#CC0000";
 						if ($result["known"] > 0)
