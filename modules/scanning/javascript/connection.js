@@ -1,0 +1,124 @@
+function Connection(id) {
+    this.id = id;
+    this.type = "normal";
+    this.map = {
+        color: "#338844",
+        border: "#338844",
+        fill: "solid"
+    };
+    this.solarsystems = {
+        from: {
+            position: {x:0, y:0}
+        },
+        to: {
+            position: {x:0, y:0}
+        }
+    }
+}
+
+/** Setters **/
+Connection.prototype.setEndOfLife = function() {
+    this.map.fill = "blocked";
+};
+Connection.prototype.setMassCritical = function() {
+    this.map.color = "#bb2222";
+    this.map.border = "#bb2222";
+};
+Connection.prototype.setMassReduced = function() {
+    this.map.color = "#ffaa22";
+    this.map.border = "#ffaa22";
+};
+Connection.prototype.setJumpGates = function() {
+    this.map.color = "#0088ff";
+    this.map.border = "#0088ff";
+};
+Connection.prototype.setFrigate = function() {
+    this.type = "frigate";
+};
+Connection.prototype.setCapital = function() {
+    this.type = "capital";
+};
+
+
+/** Getters **/
+Connection.prototype.getPoints = function() {
+    var points = [
+        this.solarsystems.from.position.x-0 + Math.round(whDefaultWidth/2),
+        this.solarsystems.from.position.y-0 + Math.round(whDefaultHeight/2),
+        this.solarsystems.to.position.x-0 + Math.round(whDefaultWidth/2),
+        this.solarsystems.to.position.y-0 + Math.round(whDefaultHeight/2)
+    ];
+    return points;
+};
+Connection.prototype.getCenter = function() {
+    var points = this.getPoints();
+    var position = {
+        x: Math.round((points[0]+points[2])/2),
+        y: Math.round((points[1]+points[3])/2)
+    };
+    console.log(position);
+    return position;
+};
+Connection.prototype.isFrigate = function() {
+    return (this.type == "frigate")
+};
+Connection.prototype.isCapital = function() {
+    return (this.type == "capital");
+};
+
+
+/** Render **/
+Connection.prototype.render = function(canvas) {
+
+    var connection = new Kinetic.Group();
+
+    connection.add(new Kinetic.Line({
+        points: this.getPoints(),
+        draggable: false,
+        stroke: this.map.border,
+        strokeWidth: 10
+    }));
+    if (this.map.fill == "bocked") {
+        connection.add(new Kinetic.Line({
+            points: this.getPoints(),
+            draggable: false,
+            stroke: "#111111",
+            strokeWidth: 8
+        }));
+    }
+    connection.add(new Kinetic.Line({
+        points: this.getPoints(),
+        draggable: false,
+        stroke: this.map.color,
+        strokeWidth: 8,
+        dash: (this.map.fill=="blocked")?[5,7]:null
+    }));
+
+    if (this.isCapital()) {
+        connection.add(new Kinetic.Circle({
+            x: this.getCenter().x,
+            y: this.getCenter().y,
+            radius: 8,
+            fill: '#000000',
+            stroke: this.map.border,
+            strokeWidth: 1
+        }));
+        connection.add(new Kinetic.Image({
+            x: this.getCenter().x-6,
+            y: this.getCenter().y-6,
+            image: createImage('images/eve/cyno.png'),
+            width: 12,
+            height: 12
+        }));
+    }
+
+    if (this.isFrigate()) {
+        /**
+         *
+         *  frigate!
+         *
+         */
+    }
+
+    canvas.add(connection);
+};

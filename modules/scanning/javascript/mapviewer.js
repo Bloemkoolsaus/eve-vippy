@@ -18,7 +18,7 @@ function callLocationTracker()
 	$.ajax({
 		url: "/index.php?module=scanning&section=map&action=locationtracker&ajax=1"
 	});
-	setTimeout(callLocationTracker, 1500);
+	//setTimeout(callLocationTracker, 1500);
 }
 
 function refreshSigMapPage()
@@ -38,7 +38,7 @@ function reloadSignatureMap(noReload)
 	{
 		loadSignatureMap();
 		loadSignatureList();
-		setTimeout(reloadSignatureMap, 3000);
+		//setTimeout(reloadSignatureMap, 3000);
 	}
 }
 

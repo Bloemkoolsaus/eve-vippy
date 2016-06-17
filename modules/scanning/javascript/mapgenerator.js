@@ -16,11 +16,14 @@ var totalWidth = 0;
 var totalHeight = 0;
 
 var whDefaultWidth = 130;
-var whDefaultHeight = 50;
+var whDefaultHeight = 60;
+var whDefaultLineHeight = 11;
 
 var massDeleteMode = false;
 var blockMapRefresh = false;
 
+var whDragX = 0;
+var whDragY = 0;
 
 
 function mapRendered()
@@ -98,12 +101,10 @@ function resizeMap()
 	$("#signatureMap").width(stageWidth);
 	$("#signatureMapContainer").width(stageWidth);
 
-	if ($(window).width() > stageWidth)
-	{
+	if ($(window).width() > stageWidth) {
 		var left = Math.round(($(window).width() - stageWidth) / 2);
 		$("#signatureMapContainer").css("left", left);
-	}
-	else
+	} else
 		$("#signatureMapContainer").css("left", 0);
 
 	var top = $("#mapHeader").position().top + $("#mapHeader").height() + 14;
@@ -115,18 +116,35 @@ function resizeMap()
 
 function generateConnections(data)
 {
-	var i = 0;
-	for (i=0; i<data.length; i++)
+	for (var i=0; i<data.length; i++)
 	{
-		var connectionColor = "#338844";
+        var connection = new Connection(data[i].id);
 
-        // Mass reduced of crit
-        if (data[i].attributes.mass != null)
-            connectionColor = (data[i].attributes.mass == 1) ? "#FFAA22" : "#BB2222";
+        if (data[i].attributes.mass != null) {      // Mass reduced of crit
+            if (data[i].attributes.mass == 1)
+                connection.setMassReduced();
+            else
+                connection.setMassCritical();
+        }
+        if (data[i].attributes.eol != null)         // End of Life
+            connection.setEndOfLife();
+        if (data[i].attributes.normalgates != null) // Normal gate connectie
+            connection.setJumpGates();
 
-        // Normal gate connectie
-        if (data[i].attributes.normalgates != null)
-            connectionColor = "#0088FF";
+
+        connection.solarsystems.from.position.x = data[i].from.position.x;
+        connection.solarsystems.from.position.y = data[i].from.position.y;
+        connection.solarsystems.to.position.x = data[i].to.position.x;
+        connection.solarsystems.to.position.y = data[i].to.position.y;
+
+
+        if (data[i].attributes.capital > 0) {
+            if (data[i].attributes.normalgates == null)
+                connection.setCapital();
+        }
+
+        connection.render(layer);
+        continue;
 
 		var connGroup = new Kinetic.Group();
 		var outlineColor = connectionColor;
@@ -330,579 +348,74 @@ function generateConnections(data)
 
 function generateSystems(data)
 {
-	var i = 0;
-	for (i=0; i<data.length; i++)
+	for (var i=0; i<data.length; i++)
 	{
-    	var j = 0;
-    	var lineHeight = 11;
-        var whClass = "??";
-        var whColor = "#000000";
-    	var whTextColor = "#222222";
-    	var whTextBold = false;
-		var whBGcolor = "#FFFFFF";
-    	var whBorderColor = "#555555";
-    	var whWidth = whDefaultWidth;
-    	var whHeight = whDefaultHeight;
-    	var homeSystem = false;
-        var startContentWidth = 5;
+        var wormhole = new Wormhole(data[i].id);
+        wormhole.setPosition(data[i].position.x, data[i].position.y);
 
-    	if (data[i].solarsystem != null)
-    	{
-	    	if (data[i].solarsystem.class.name == "WH")
-	    	{
-	    		whClass = data[i].whsystem.class;
-	    		whColor = data[i].solarsystem.class.color;
-
-				if (data[i].statics != null)
-			    	whHeight += (lineHeight * data[i].statics.length-1);	// reserveer ruimte voor static(s)
-
-	    		if (data[i].whsystem.effect != null)
-	        		whHeight += lineHeight;									// reserveer ruimte voor effect
-	    	}
-	    	else
-	    	{
-	    		whClass = data[i].solarsystem.class.name;
-	    		whColor = data[i].solarsystem.class.color;
-        		whHeight += lineHeight;										// reserveer ruimte voor region-name
-	    	}
-    	}
-
-    	if (data[i].whsystem != null && data[i].whsystem.homesystem != null)
-    		homeSystem = data[i].whsystem.homesystem;
-
-		if (data[i].characters != null) {
-			var charLength = data[i].characters.length;
-			if (charLength > 5)
-				charLength = 5;
-			whHeight += (lineHeight * charLength);
-		}
-    	whHeight += 5;
-
-
-    	if (data[i].known != null) {
-			if (data[i].known.type > 2) {
-				whTextBold = true;
-				whTextColor = "#0066FF";
-			}
-        }
-
-        if (data[i].status-0 == 2) {
-        	whBorderColor = "#00CC00";
-        } else if (data[i].status-0 == 3) {
-        	whBorderColor = "#FFAA00";
-        } else if (data[i].status-0 == 4) {
-        	whBorderColor = "#CC0000";
-        } else if (homeSystem) {
-        	whBorderColor = "#0066FF";
-			whTextColor = "#0066FF";
-			whTextBold = true;
-        }
-
-		var x1 = data[i].position.x-0;
-		var y1 = data[i].position.y-0;
-		var fx1 = data[i].position.x-0;
-		var fy1 = data[i].position.y-0;
-
-		whWidth = (whWidth/100)*mapZoom;
-		whHeight = (whHeight/100)*mapZoom;
-
-		x1 = (x1/100)*mapZoom;
-		y1 = (y1/100)*mapZoom;
-		fx1 = (fx1/100)*mapZoom;
-		fy1 = (fy1/100)*mapZoom;
-
-		if (totalWidth < (x1 + whWidth)) {
-			totalWidth = x1 + whWidth;
-		}
-		if (totalHeight < (y1 + whHeight)) {
-			totalHeight = y1 + whHeight;
-		}
-
-		var wormholeFade = new Kinetic.Group({
-			x: x1,
-			y: y1,
-			draggable: true
-		});
-		var wormholeBoxFade = new Kinetic.Rect({
-			width: whWidth,
-			height: whHeight,
-			fill: "#666666",
-			stroke: "#444444",
-			strokeWidth: 2,
-			draggable: true
-		});
-        var wormholeClassFade = new Kinetic.Text({
-        	x: 4,
-            y: 4,
-            text: whClass,
-            fontSize: 9,
-            fontFamily: "Calibri",
-            textFill: "#444444"
-        });
-        var wormholeSystemFade = new Kinetic.Text({
-            x: 20,
-            y: 4,
-            text: data[i].name,
-            fontSize: 9,
-            fontFamily: "Calibri",
-            textFill: "#444444"
-        });
-
-		if ((data[i].position.y-0)+whHeight+10 > maxHeight)
-			maxHeight = (data[i].position.y-0)+whHeight+10;
-
-
-		var wormhole = new Kinetic.Group({
-			x: x1,
-          	y: y1,
-			draggable: true,
-			name: data[i].id
-		});
-
-		var wormholeBox = new Kinetic.Rect({
-			width: whWidth,
-			height: whHeight,
-			fill: whBGcolor,
-			stroke: whBorderColor,
-			strokeWidth: 3,
-			draggable: true
-		});
-
-		var wormholeSystemName = data[i].name;
-		var wormholeTitleBar = null;
-		var wormholeUnscannedBar = null;
-
-		if (data[i].solarsystem == null)
-		{
-			// Unknown system
-			wormholeUnscannedBar = new Kinetic.Rect({
-				x: 2,
-				y: 2,
-				width: 17,
-				height: whHeight-4,
-				fill: "#AAAAAA"
-			});
-
-			whColor = "#000000";
-			whClass = "??";
-		}
-		else
-		{
-			if (data[i].solarsystem != null && data[i].solarsystem.class.name == "WH")
-			{
-				// Wspace-system
-		        if (data[i].fullyscanned == null)
-		        {
-		        	wormholeUnscannedBar = new Kinetic.Rect({
-						x: 2,
-						y: 15,
-						width: 17,
-						height: whHeight-17,
-						fill: "#AAAAAA"
-					});
-		        	startContentWidth = 20;
-		        }
-		        else if (data[i].fullyscanned >= 1)
-		        {
-		        	wormholeUnscannedBar = new Kinetic.Rect({
-						x: 2,
-						y: (Math.round(whHeight/3)*2),
-						width: 17,
-						height: whHeight-(Math.round(whHeight/3)*2)-2,
-						fill: "#AAAAAA"
-					});
-		        	startContentWidth = 20;
-		        }
-			}
-			else
-			{
-				// Kspace system
-				wormholeTitleBar = new Kinetic.Rect({
-					x: 2,
-					y: 2,
-					width: 17,
-					height: whHeight-4,
-					fill: whColor
-				});
-
-		        if (data[i].fullyscanned == null)
-		        {
-		        	wormholeUnscannedBar = new Kinetic.Rect({
-						x: 2,
-						y: 25,
-						width: 17,
-						height: whHeight-27,
-						fill: "#AAAAAA"
-					});
-		        }
-		        else if (data[i].fullyscanned >= 1)
-		        {
-		        	wormholeUnscannedBar = new Kinetic.Rect({
-						x: 2,
-						y: (Math.round(whHeight/3)*2),
-						width: 17,
-						height: whHeight-(Math.round(whHeight/3)*2)-2,
-						fill: "#AAAAAA"
-					});
-		        }
-
-				whColor = "#FFFFFF";
-	        	startContentWidth = 20;
-			}
-		}
-
-        var wormholeClass = new Kinetic.Text({
-        	x: 4,
-            y: 4,
-            text: whClass,
-            fontSize: 9,
-            fontFamily: "Calibri",
-            fontStyle: "bold",
-            textFill: whColor
-        });
-
-		var wormholeSystem = new Kinetic.Text({
-            x: 20,
-            y: 4,
-            text: wormholeSystemName,
-            fontSize: 9,
-            fontFamily: "Calibri",
-            fontStyle: (whTextBold) ? "bold" : "normal",
-            textFill: whTextColor
-        });
-
-        wormhole.on("dragstart", function() {
-        	if (!mapIsMassDeleteMode()) {
-    			closeWormholeDetails(this.getName());
-        		loadingSigMap = true;
-        	}
-        });
-        wormhole.on("dragend", function() {
-        	if (!mapIsMassDeleteMode()) {
-	        	loadingSigMap = false;
-	        	var zoomLvl = 100+(100-mapZoom);
-	        	var newX = ((this.getAbsolutePosition().x/100)*zoomLvl);
-	        	var newY = ((this.getAbsolutePosition().y/100)*zoomLvl);
-	        	loadSignatureMap("&move="+this.getName()+"&x="+newX+"&y="+newY);
-        	}
-        });
-
-        if (data[i].solarsystem != null)
-        {
-	        wormhole.on("mouseover", function() {
-	        	document.body.style.cursor = "pointer";
-	        	if (!massDeleteMode) {
-	        		loadingSigMap = true;
-	        		openWormholeDetails(this.getName(),this.getAbsolutePosition().x,this.getAbsolutePosition().y);
-	        	}
-	        });
-	        wormhole.on("mouseout", function() {
-	        	document.body.style.cursor = "default";
-				closeWormholeDetails(this.getName());
-	        });
-        }
-        wormhole.on("click", function(evt) {
-        	closeContextMenu();
-			closeWormholeDetails(this.getName());
-			var rightClick = evt.which ? evt.which == 3 : evt.button == 2;
-			if (rightClick) {
-				openContextMenu(this.getName(),mousePosX,mousePosY);
-				return false;
-			} else {
-				if (mapIsMassDeleteMode())
-					deleteWormhole(this.getName());
-				else
-					switchSystem(this.getName());
-			}
-        });
-
-        wormhole.add(wormholeBox);
-        if (wormholeTitleBar !== null)
-        	wormhole.add(wormholeTitleBar);
-        if (wormholeUnscannedBar !== null)
-        	wormhole.add(wormholeUnscannedBar);
-        wormhole.add(wormholeClass);
-        wormhole.add(wormholeSystem);
-
-
-
-        // Extra text toevoegen..?
-		if (mapZoom > 80)
-		{
-			var extraTxtHeight = 14;
-			var activePilotHeight = 20;
-
-
-			// Wormhole titles
-			if (data[i].whsystem.titles != null)
-			{
-				for (var t=0; t<data[i].whsystem.titles.length; t++)
-				{
-					var titleName = data[i].whsystem.titles[t].name;
-					var titleColor = "#444444";
-
-					if (data[i].whsystem.titles[t].color != null)
-						titleColor = data[i].whsystem.titles[t].color;
-
-					var systemTitle = new Kinetic.Text({
-			            x: 20,
-			            y: extraTxtHeight+1,
-			            text: titleName,
-			            fontSize: 8,
-			            fontFamily: "Calibri",
-			            fontStyle: "bold",
-			            textFill: titleColor
-			        });
-					wormhole.add(systemTitle);
-					extraTxtHeight += lineHeight;
-					activePilotHeight += lineHeight;
-				}
-			}
-
-
-			var extraText = false;
-
-			// Tradhubs
-			if (data[i].tradehub != null && data[i].tradehub.jumps != null)
-				extraText = data[i].tradehub.jumps + " jumps to " + data[i].tradehub.name;
-
-			// WH-effects
-			if (data[i].whsystem.effect != null)
-				extraText = data[i].whsystem.effect;
-
-			if (extraText != false)
-			{
-				var whExtraText = new Kinetic.Text({
-					x: 20,
-					y: extraTxtHeight,
-					text: extraText,
-					fontSize: 8,
-					fontFamily: "Calibri",
-					fontStyle: "normal",
-					textFill: "#888888"
-				});
-				wormhole.add(whExtraText);
-				extraTxtHeight += lineHeight;
-			}
-
-			// Statics van dit gat.
-			var j = 0;
-			var bottomHeight = whHeight-lineHeight-4;
-
-			if (data[i].whsystem.statics != null)
-			{
-				for (j=1; j<=data[i].whsystem.statics.length; j++)
-				{
-					var wormholeStatic = new Kinetic.Text({
-						x: 65,
-						y: bottomHeight-((lineHeight-1)*(j-1)),
-						text: data[i].whsystem.statics[j-1],
-						fontSize: 8,
-						fontFamily: "Calibri",
-						fontStyle: "normal",
-						textFill: "#888888"
-					});
-					wormhole.add(wormholeStatic);
-				}
-			}
-
-
-			// Piloten in dat systeem.
-			if (data[i].characters != null)
-			{
-				var nrOfCharLines = data[i].characters.length;
-				if (nrOfCharLines > 5)
-					nrOfCharLines = 5;
-
-				var j = 0;
-				for (j=1; j<=nrOfCharLines; j++)
-				{
-					var characterName = data[i].characters[j-1].name;
-					if (j == 5 && data[i].characters.length > 5)
-						characterName = "  + " + (data[i].characters.length-j+1) + " others";
-
-					var charLocations = new Kinetic.Text({
-						x: startContentWidth,
-						y: activePilotHeight+(j*10),
-						text: characterName,
-						fontSize: 8,
-						fontFamily: "Calibri",
-						textFill: "#666666"
-					});
-					wormhole.add(charLocations);
-				}
-				bottomHeight -= 3;
-			}
-
-			var xtraIconX = startContentWidth;
-
-			// Heb ik een toon in dit systeem?
-			if (data[i].insystem != null && data[i].insystem > 0)
-			{
-				var img = new Kinetic.Image({
-					x: 5,
-					y: 16,
-					image: starIcon,
-					width: 12,
-					height: 12
-				});
-				wormhole.add(img);
-			}
-
-            // Persistant?
-            if (data[i].persistant)
-            {
-                console.log("PERSISTANT");
-                var img = new Kinetic.Image({
-                    x: whWidth-15,
-                    y: 2,
-                    image: pinIcon,
-                    width: 13,
-                    height: 13
-                });
-                wormhole.add(img);
-            }
-
-			if (data[i].attributes != null)
-			{
-				// Faction?
-				if (data[i].attributes.factionid != null)
-				{
-					if (factionIcons[data[i].attributes.factionid] != null)
-					{
-						var img = new Kinetic.Image({
-							x: whWidth-25,
-							y: bottomHeight-lineHeight,
-							image: factionIcons[data[i].attributes.factionid],
-							width: 24,
-							height: 24
-						});
-						wormhole.add(img);
-					}
-				}
-
-                // Station system?
-                if (data[i].attributes.stations != null)
-                {
-                    var img = new Kinetic.Image({
-                        x: xtraIconX,
-                        y: bottomHeight,
-                        image: stationIcon,
-                        width: 12,
-                        height: 12
-                    });
-                    wormhole.add(img);
-                    xtraIconX += 12;
+        if (data[i].whsystem != undefined) {
+            wormhole.name = data[i].whsystem.name;
+            if (data[i].whsystem.class)
+                wormhole.solarsystem.class.tag = data[i].whsystem.class;
+            if (data[i].whsystem.effect)
+                wormhole.addSubTitle(data[i].whsystem.effect);
+            if (data[i].whsystem.statics) {
+                for (var s=0; s<data[i].whsystem.statics.length; s++) {
+                    wormhole.addStatic(data[i].whsystem.statics[s]);
                 }
+            }
+            if (data[i].whsystem.homesystem)
+                wormhole.setAsHomesystem();
+        }
+        if (data[i].solarsystem != undefined) {
+            wormhole.solarsystem.name = data[i].solarsystem.name;
+            wormhole.solarsystem.class.color = data[i].solarsystem.class.color;
+            if (data[i].solarsystem.class.name == "WH")
+                wormhole.solarsystem.type = "wormhole";
+            else {
+                wormhole.solarsystem.type = data[i].solarsystem.class.name;
+                wormhole.solarsystem.class.tag = data[i].solarsystem.class.name;
+            }
+        }
 
-				// Caps in range?
-				if (data[i].attributes.cyno != null)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: cynoIcon,
-						width: 12,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 12;
-				}
+        if (wormhole.isKspace()) {
+            wormhole.addTitle(data[i].solarsystem.region);
+            if (data[i].tradehub != null && data[i].tradehub.jumps != null)
+                wormhole.addSubTitle(data[i].tradehub.jumps + " jumps to " + data[i].tradehub.name);
+        }
 
-				// HS-Island?
-				if (data[i].attributes.hsisland != null)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: hsIslandIcon,
-						width: 13,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 14;
-				}
+        if (data[i].attributes != null)
+        {
+            if (data[i].attributes.persistant != null)
+                wormhole.status.persistant = data[i].persistant;
+            if (data[i].attributes.factionid != null)
+                wormhole.solarsystem.faction = data[i].attributes.factionid;
 
-				// Direct-HS
-				if (data[i].attributes.direcths != null)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: directHsIcon,
-						width: 13,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 14;
-				}
+            if (data[i].attributes.stations != null)            // Station system?
+                wormhole.addIcon('images/eve/station.png');
+            if (data[i].attributes.cyno != null)                // Caps in range?
+                wormhole.addIcon('images/eve/cyno.png');
+            if (data[i].attributes.hsisland != null)            // HS-Island?
+                wormhole.addIcon('images/eve/stargate.red.png');
+            if (data[i].attributes.direcths != null)            // Direct-HS
+                wormhole.addIcon('images/eve/stargate.green.png');
 
+            // Contested / faction warfare
+            if (data[i].attributes.contested != null)
+                wormhole.addIcon('images/eve/fw.contested.png');
+            else if (data[i].attributes.fwsystem)
+                wormhole.addIcon('images/eve/fw.png');
+        }
 
-				// Contested / faction warfare
-				if (data[i].attributes.contested != null)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: fwContestedIcon,
-						width: 13,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 14;
-				}
-				else if (data[i].attributes.fwsystem)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: fwIcon,
-						width: 13,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 14;
-				}
-			}
+        // Recent kills
+        if (data[i].whsystem.class && data[i].kills != null) {
+            if (data[i].kills.pvp > 0)
+                wormhole.addIcon('images/eve/skull.red.png');
+            if (data[i].kills.pve > 0)
+                wormhole.addIcon('images/eve/skull.orange.png');
+        }
 
-
-			if (whClass != "HS" && data[i].kills != null)
-			{
-				// Recente pvp kills
-				if (data[i].kills.pvp > 0)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: pvpIcon,
-						width: 12,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 12;
-				}
-				// Recente pve kills
-				if (data[i].kills.pve > 0)
-				{
-					var img = new Kinetic.Image({
-						x: xtraIconX,
-						y: bottomHeight,
-						image: pveIcon,
-						width: 12,
-						height: 12
-					});
-					wormhole.add(img);
-					xtraIconX += 12;
-				}
-			}
-		}
-
-        wormholeFade.add(wormholeBoxFade);
-        wormholeFade.add(wormholeClassFade);
-        wormholeFade.add(wormholeSystemFade);
-
-        layer.add(wormholeFade);
-        layer.add(wormhole);
+        wormhole.render(layer);
 	}
 }
 

@@ -187,8 +187,8 @@ namespace scanning\model
 		{
             if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
             {
-                $this->x = $newX;
-                $this->y = $newY;
+                $this->x += $newX;
+                $this->y += $newY;
                 $this->store($modifier);
 
                 $extrainfo = array("delete-all" => false,
