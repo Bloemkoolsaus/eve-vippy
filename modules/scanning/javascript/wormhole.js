@@ -99,8 +99,8 @@ Wormhole.prototype.isWspace = function() {
 
 
 /** Render **/
-Wormhole.prototype.render = function(canvas) {
-
+Wormhole.prototype.render = function(canvas)
+{
     if (!this.isUnknown())
     {
         var wormholeFade = new Kinetic.Group({
@@ -138,8 +138,8 @@ Wormhole.prototype.render = function(canvas) {
     }
 
     var wormhole = new Kinetic.Group({
-        x: this.map.position.x,
-        y: this.map.position.y,
+        x: this.map.position.x-0,
+        y: this.map.position.y-0,
         name: this.id,
         draggable: true
     });
@@ -149,7 +149,8 @@ Wormhole.prototype.render = function(canvas) {
         height: this.map.height,
         fill: this.map.colors.background,
         stroke: this.map.colors.border,
-        strokeWidth: 3
+        strokeWidth: 3,
+        draggable: false
     }));
 
     if (this.isKspace()) {
@@ -158,7 +159,8 @@ Wormhole.prototype.render = function(canvas) {
             y: 2,
             width: 17,
             height: this.map.height-4,
-            fill: this.solarsystem.class.color
+            fill: this.solarsystem.class.color,
+            draggable: false
         }));
     }
 
@@ -168,7 +170,8 @@ Wormhole.prototype.render = function(canvas) {
             y: 2,
             width: 17,
             height: (this.scanned.finished) ? this.map.height-(Math.round(this.map.height/3)*2)-2 : this.map.height,
-            fill: "#aaaaaa"
+            fill: "#aaaaaa",
+            draggable: false
         }));
     }
 
@@ -179,7 +182,8 @@ Wormhole.prototype.render = function(canvas) {
         fontFamily: "Calibri",
         fontStyle: "bold",
         text: this.solarsystem.class.tag,
-        fill: (this.isKspace()) ? "#ffffff" : this.solarsystem.class.color
+        fill: (this.isKspace()) ? "#ffffff" : this.solarsystem.class.color,
+        draggable: false
     }));
     wormhole.add(new Kinetic.Text({
         x: 20,
@@ -188,7 +192,8 @@ Wormhole.prototype.render = function(canvas) {
         fontSize: 12,
         fontFamily: "Calibri",
         fontStyle: this.map.colors.style,
-        fill: this.map.colors.title
+        fill: this.map.colors.title,
+        draggable: false
     }));
 
     var extraTxtHeight = 14;
@@ -202,7 +207,8 @@ Wormhole.prototype.render = function(canvas) {
             fontSize: 11,
             fontFamily: "Calibri",
             fontStyle: "bold",
-            fill: this.titles[t].color
+            fill: this.titles[t].color,
+            draggable: false
         }));
         extraTxtHeight += whDefaultLineHeight;
     }
@@ -214,7 +220,8 @@ Wormhole.prototype.render = function(canvas) {
             fontSize: 11,
             fontFamily: "Calibri",
             fontStyle: "normal",
-            fill: this.subtitles[t].color
+            fill: this.subtitles[t].color,
+            draggable: false
         }));
         extraTxtHeight += whDefaultLineHeight;
     }
@@ -228,7 +235,8 @@ Wormhole.prototype.render = function(canvas) {
             fontSize: 11,
             fontFamily: "Calibri",
             fontStyle: "normal",
-            fill: "#888888"
+            fill: "#888888",
+            draggable: false
         }));
     }
 
@@ -244,7 +252,8 @@ Wormhole.prototype.render = function(canvas) {
             text: this.characters[c].name,
             fontSize: 11,
             fontFamily: "Calibri",
-            fill: "#666666"
+            fill: "#666666",
+            draggable: false
         }));
         extraTxtHeight += whDefaultLineHeight;
     }
@@ -254,7 +263,8 @@ Wormhole.prototype.render = function(canvas) {
             y: 16,
             image: createImage('images/eve/star.png'),
             width: 12,
-            height: 12
+            height: 12,
+            draggable: false
         }));
     }
 
@@ -266,7 +276,8 @@ Wormhole.prototype.render = function(canvas) {
             y: this.map.height-25,
             image: createImage('images/eve/factions/'+this.solarsystem.faction+'.png'),
             width: 24,
-            height: 24
+            height: 24,
+            draggable: false
         }));
     }
     if (this.solarsystem.persistant) {
@@ -275,7 +286,8 @@ Wormhole.prototype.render = function(canvas) {
             y: 2,
             image: createImage('images/eve/pin-dark.png'),
             width: 13,
-            height: 13
+            height: 13,
+            draggable: false
         }));
     }
 
@@ -289,7 +301,8 @@ Wormhole.prototype.render = function(canvas) {
             y: iconPosition.y,
             image: createImage(this.icons[j]),
             width: 12,
-            height: 12
+            height: 12,
+            draggable: false
         }));
         iconPosition.x += 13;
     }
@@ -300,6 +313,23 @@ Wormhole.prototype.render = function(canvas) {
     /**
      * Events
      */
+    wormhole.on("dragstart", function() {
+        if (!mapIsMassDeleteMode()) {
+            whDragX = mousePosX;
+            whDragY = mousePosY;
+            loadingSigMap = true;
+            this.setPosition(100,100);
+            closeWormholeDetails(this.getName());
+        }
+    });
+    wormhole.on("dragend", function() {
+        if (!mapIsMassDeleteMode()) {
+            var newX = mousePosX-whDragX;
+            var newY = mousePosY-whDragY;
+            loadingSigMap = false;
+            loadSignatureMap("&move="+this.getName()+"&x="+newX+"&y="+newY);
+        }
+    });
     if (!this.isUnknown()) {
         wormhole.on("mouseover", function () {
             document.body.style.cursor = "pointer";
@@ -327,21 +357,6 @@ Wormhole.prototype.render = function(canvas) {
             }
         });
     }
-    wormhole.on("dragstart", function() {
-        if (!mapIsMassDeleteMode()) {
-            whDragX = mousePosX;
-            whDragY = mousePosY;
-            loadingSigMap = true;
-        }
-    });
-    wormhole.on("dragend", function() {
-        if (!mapIsMassDeleteMode()) {
-            var newX = mousePosX-whDragX;
-            var newY = mousePosY-whDragY;
-            loadingSigMap = false;
-            loadSignatureMap("&move="+this.getName()+"&x="+newX+"&y="+newY);
-        }
-    });
 
 
 

@@ -38,7 +38,7 @@ function reloadSignatureMap(noReload)
 	{
 		loadSignatureMap();
 		loadSignatureList();
-		//setTimeout(reloadSignatureMap, 3000);
+		setTimeout(reloadSignatureMap, 3000);
 	}
 }
 

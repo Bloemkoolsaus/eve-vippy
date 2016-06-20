@@ -126,223 +126,32 @@ function generateConnections(data)
             else
                 connection.setMassCritical();
         }
-        if (data[i].attributes.eol != null)         // End of Life
+        if (data[i].attributes.eol)         // End of Life
             connection.setEndOfLife();
-        if (data[i].attributes.normalgates != null) // Normal gate connectie
+        if (data[i].attributes.normalgates) // Normal gate connectie
             connection.setJumpGates();
 
-
+        connection.solarsystems.from.system = data[i].from.system;
         connection.solarsystems.from.position.x = data[i].from.position.x;
         connection.solarsystems.from.position.y = data[i].from.position.y;
+
+        connection.solarsystems.to.system = data[i].to.system;
         connection.solarsystems.to.position.x = data[i].to.position.x;
         connection.solarsystems.to.position.y = data[i].to.position.y;
 
 
-        if (data[i].attributes.capital > 0) {
+        if (data[i].attributes.capital) {
             if (data[i].attributes.normalgates == null)
                 connection.setCapital();
         }
+        if (data[i].attributes.frigate) {
+            connection.setFrigate();
+        }
+        if (data[i].attributes.kspacejumps) {
+            connection.solarsystems.jumps = data[i].attributes.kspacejumps;
+        }
 
         connection.render(layer);
-        continue;
-
-		var connGroup = new Kinetic.Group();
-		var outlineColor = connectionColor;
-//			outlineColor = "#AA44CC";				// Route plotter
-
-
-
-		// Bereken de positie van de connection
-		var x1 = (((data[i].from.position.x-0)+60)/100)*mapZoom;
-		var x2 = (((data[i].to.position.x-0)+60)/100)*mapZoom;
-		var y1 = (((data[i].from.position.y-0)+20)/100)*mapZoom;
-		var y2 = (((data[i].to.position.y-0)+20)/100)*mapZoom;
-
-		// Bereken het midden van de lijn
-		var jPosX = Math.round((x1+x2)/2);
-		var jPosY = Math.round((y1+y2)/2);
-
-
-		var connectionBase = new Kinetic.Line({
-			points: [x1,y1,x2,y2],
-			stroke: "#222222",
-			strokeWidth: 6,
-			lineCap: "butt",
-			lineJoin: "butt"
-		});
-		var connection = new Kinetic.Line({
-			points: [x1,y1,x2,y2],
-			stroke: connectionColor,
-			strokeWidth: 8,
-			lineCap: "butt",
-			lineJoin: "butt",
-			detectionType: "pixel"
-		});
-		var connectionBorder = new Kinetic.Line({
-			points: [x1,y1,x2,y2],
-			stroke: connectionColor,
-			strokeWidth: 10,
-			lineCap: "butt",
-			lineJoin: "butt"
-		});
-
-		if (data[i].attributes.eol != null)
-			connection.setDashArray([5,5,0,0]);
-
-		var connectionJumps = null;
-		var connectionJumpsTxt = null;
-		var connectionJumpsImg = null;
-
-		if (data[i].attributes.kspacejumps != null ||
-			data[i].attributes.frigate != null ||
-			data[i].attributes.capital != null)
-		{
-			// Positie voor plaatje
-			var jTxtPosX = jPosX-6;
-			var jTxtPosY = jPosY-4;
-
-			if (data[i].attributes.kspacejumps == null)
-				jTxtPosX += 3;
-
-			if (data[i].attributes.frigate > 0)
-			{
-                if (data[i].attributes.normalgates == null)
-                {
-                    connectionJumps = new Kinetic.Circle({
-                        x: jPosX,
-                        y: jPosY,
-                        radius: 14,
-                        fill: '#000000',
-                        stroke: outlineColor,
-                        strokeWidth: 2
-                    });
-                    connectionJumpsImg = new Kinetic.Image({
-                        x: jTxtPosX - 12,
-                        y: jTxtPosY - 3,
-                        image: rifterIcon,
-                        width: 32,
-                        height: 16
-                    });
-                }
-			}
-			else if (data[i].attributes.capital > 0)
-			{
-                if (data[i].attributes.normalgates == null)
-                {
-                    connectionJumps = new Kinetic.Circle({
-                        x: jPosX,
-                        y: jPosY,
-                        radius: 7,
-                        fill: '#000000',
-                        stroke: outlineColor,
-                        strokeWidth: 1
-                    });
-                    connectionJumpsImg = new Kinetic.Image({
-                        x: jTxtPosX - 3,
-                        y: jTxtPosY - 1,
-                        image: cynoIcon,
-                        width: 12,
-                        height: 12
-                    });
-                }
-			}
-			else
-			{
-                if (data[i].attributes.kspacejumps > 1)
-                {
-                    connectionJumps = new Kinetic.Circle({
-                        x: jPosX,
-                        y: jPosY,
-                        radius: 9,
-                        fill: '#DDDDDD',
-                        stroke: connectionColor,
-                        strokeWidth: 1
-                    });
-                    if (data[i].attributes.kspacejumps < 10)
-                        jTxtPosX += 3;
-                    connectionJumpsTxt = new Kinetic.Text({
-                        x: jTxtPosX,
-                        y: jTxtPosY,
-                        text: data[i].attributes.kspacejumps,
-                        fontSize: 8,
-                        fontFamily: "Calibri",
-                        textFill: "#222222"
-                    });
-                }
-			}
-		}
-
-		var x1 = (data[i].from.position.x-0)+60-5;
-		var y1 = (data[i].from.position.y-0)+20-5;
-		var x2 = (data[i].from.position.x-0)+60+5;
-		var y2 = (data[i].from.position.y-0)+20+5;
-
-		var x3 = (data[i].to.position.x-0)+60-5;
-		var y3 = (data[i].to.position.y-0)+20-5;
-		var x4 = (data[i].to.position.x-0)+60+5;
-		var y4 = (data[i].to.position.y-0)+20+5;
-
-		x1 -= 10;
-		x2 += 10;
-		y2 -= 10;
-
-		x3 -= 10;
-		x4 += 10;
-		y4 -= 10;
-
-		var diffy = y1-y3;
-		if (diffy < 0)
-			diffy = diffy*-1;
-		if (diffy < 100) {
-			y1 += 10;
-			y3 += 10;
-		}
-
-		x1 = (x1/100)*mapZoom;
-		x2 = (x2/100)*mapZoom;
-		x3 = (x3/100)*mapZoom;
-		x4 = (x4/100)*mapZoom;
-		y1 = (y1/100)*mapZoom;
-		y2 = (y2/100)*mapZoom;
-		y3 = (y3/100)*mapZoom;
-		y4 = (y4/100)*mapZoom;
-
-		var connectionBox = new Kinetic.Polygon({
-			points: [x1,y1,x2,y2,x4,y4,x3,y3],
-			stroke: "transparent",
-			strokeWidth: 1,
-			listening: true,
-			name: data[i].from.system+","+data[i].to.system
-		});
-
-		connectionBox.on("mouseover", function() {
-        	document.body.style.cursor = "pointer";
-        	openConnectionDetails(this.getName(),mousePosX,mousePosY);
-		});
-		connectionBox.on("mouseout", function() {
-        	document.body.style.cursor = "default";
-        	closeConnectionDetails(this.getName());
-        });
-		connectionBox.on("click", function() {
-			var fromto = this.getName().split(",");
-			editConnection(fromto[0],fromto[1]);
-		});
-
-		connGroup.add(connectionBorder);
-		connGroup.add(connectionBase);
-		connGroup.add(connection);
-
-		if (connectionJumps != null)
-		{
-			connGroup.add(connectionJumps);
-			if (connectionJumpsTxt !== null)
-				connGroup.add(connectionJumpsTxt);
-			if (connectionJumpsImg !== null)
-				connGroup.add(connectionJumpsImg);
-		}
-
-        layer.add(connGroup);
-        layer.add(connectionBox);
 	}
 }
 
