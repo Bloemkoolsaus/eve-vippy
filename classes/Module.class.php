@@ -11,6 +11,22 @@ class Module
 
 	function getContent()
 	{
+        $view = $this->getView();
+        if ($view)
+            return $view;
+
+        // oude stuff
+		if ($this->moduleSection != null)
+			$this->moduleContent = $this->moduleSection->getOverview();
+
+		$tpl = \SmartyTools::getSmarty();
+		$tpl->assign("moduleTitle", $this->moduleTitle);
+		$tpl->assign("moduleContent", $this->moduleContent);
+		return $tpl->fetch("module/index");
+	}
+
+    function getView()
+    {
         // Pretty url stuff
         $arguments = array();
         if (\Tools::REQUEST("arguments")) {
@@ -47,16 +63,8 @@ class Module
                 return $view->$method($arguments);
         }
 
-
-        // oude stuff
-		if ($this->moduleSection != null)
-			$this->moduleContent = $this->moduleSection->getOverview();
-
-		$tpl = \SmartyTools::getSmarty();
-		$tpl->assign("moduleTitle", $this->moduleTitle);
-		$tpl->assign("moduleContent", $this->moduleContent);
-		return $tpl->fetch("module/index");
-	}
+        return null;
+    }
 
 	function getTemplate($file)
 	{

@@ -119,8 +119,7 @@ class SmartyTools
 		$appData->datetime = date("Y-m-d H:i:s");
 		$appData->theme = self::getTemplate();
 
-		foreach (\Modules::getModuleObjects() as $module)
-		{
+		foreach (\Modules::getModuleObjects() as $module) {
 			if (method_exists($module, "getAppData"))
 				$appData = $module->getAppData($appData);
 		}

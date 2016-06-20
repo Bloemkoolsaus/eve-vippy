@@ -1,0 +1,408 @@
+{if $App->map->trackingMode}
+	<div id="trackingOnlyModeActive" style="text-align: center; margin: 20px;">
+		<button type="button" onclick="disableTrackingOnly()">Disable Tracking-Only Mode</button>
+	</div>
+{else}
+
+{if $App->eve->igb && !$App->eve->igb->isTrusted()}
+	<div class="error">
+		<div style="padding: 10px;">
+			<b>You have not trusted VIPPY. Please trust VIPPY to enable location tracking.</b>
+		</div>
+		<button type="button" class="small" style="width: 150px;"
+			onclick="CCPEVE.requestTrust('{$App->url}*'); $(window).reload();">
+			Trust VIPPY now
+		</button>
+	</div>
+	<div style="clear:both;"></div>
+	<div id="mapHeader" style="margin-bottom: 10px;"></div>
+{else}
+	<div id="mapHeader" class="content nomargin">
+		<div id="mapHeaderTitle">
+			<div id="divNoTracking" style="text-align: right;">
+			{if $App->eve->igb}
+				<a href="#" onclick="showTrackingOnlyModeHelp();">What is this?</a> =>
+				<button type="button" onclick="enableTrackingOnly()">Enable Tracking-Only Mode</button>
+			{/if}
+			</div>
+			<div id="divNotices"></div>
+			<div id="divSystemTitle">
+				<h1>
+					<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+					{$system->name}
+				{if $wormhole->name|strlen > 0}
+					-
+					{$wormhole->name}
+				{/if}
+				</h1>
+			</div>
+			<div id="divRefreshTimer">
+				<div>
+					Last update:
+					&nbsp;
+					<span id="lastupdatetime"></span>
+					&nbsp;
+					(<i>Local time</i>)
+				</div>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+		<div style="clear:both;"></div>
+		<div style="padding: 4px;">
+			<div style="float: left; width: 50%;">
+				<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$map->name}</h3>
+			</div>
+			<div id="mapControls" style="float: right; width: 300px;">
+                <img src="/images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
+				{*
+				<img src="/images/default/zoom_in.png" style="cursor:pointer;" onclick="mapZoomIn()" align="right"/>
+				<img src="/images/default/zoom_out.png" style="cursor:pointer;" onclick="mapZoomOut()" align="right"/>
+				*}
+{if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
+                <span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
+                    <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+                    <span style="padding: 2px; display: inline-block; color: #ffdd00;">
+                        You have restricted controls on this map.
+                    </span>
+                </span>
+{/if}
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+{/if}
+
+<script id="restrictionsTPL" type="text/template">
+<div style="text-align: left; padding: 20px;">
+    <div style="font-size: 1.1em; font-weight: bold;">
+        <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+        <span style="padding: 2px; display: inline-block; color: #ffdd00;">You have restricted controls on this map:</span>
+    </div>
+    <ul>
+    {if !$App->user->isAllowedChainAction($map, 'move')}
+        <li>You are not allowed to re-position systems on the map.</li>
+    {/if}
+    {if !$App->user->isAllowedChainAction($map, 'add')}
+        <li>You are not allowed to manually add systems to the map.</li>
+    {/if}
+    {if !$App->user->isAllowedChainAction($map, 'delete')}
+        <li>You are not allowed to remove systems from the map.</li>
+    {/if}
+    {if !$App->user->isAllowedChainAction($map, 'mass')}
+        <li>You are not allowed to manually add mass to a wormhole connection.</li>
+    {/if}
+    {if !$App->user->isAllowedChainAction($map, 'known')}
+        <li>You are not allowed to add/remove systems to the known-systems list.</li>
+    {/if}
+    {if !$App->user->isAllowedChainAction($map, 'notice')}
+        <li>You are not allowed to add a system notice.</li>
+    {/if}
+    </ul>
+</div>
+</script>
+
+<div id="signatureMapContainer" oncontextmenu="return false;">
+	<div id="signatureMap" oncontextmenu="return false;"></div>
+</div>
+
+<div id="filler">&nbsp;</div>
+
+<div class="content">
+
+	<!-- CONTROLS -->
+	<div id="mapButtons">
+    {if $App->user->isAllowedChainAction($map, 'add')}
+		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');" style="width: 140px;">Add Wormhole</button>
+    {/if}
+    {if $App->user->isAllowedChainAction($map, 'delete')}
+		<button id="massDeleteButton" onclick="massDeleteWormholes();" style="width: 120px;">Mass Delete</button>
+    {/if}
+    {if $App->user->isAllowedChainAction($map, 'delete')}
+		<button id="clearChainButton" onclick="clearChain();" style="width: 120px;">Delete ALL</button>
+    {/if}
+		<button id="showActivePeople" onclick="showActivePilots();" style="float: right; width: 150px;">Show Online Pilots</button>
+		<button id="exitFinderButton" onclick="showExitFinder({if isset($igb)}'{$igb->getSolarsystemName()}'{/if});" style="float: right; width: 120px;">Exit Finder</button>
+	</div>
+	<div id="addWormholeForm" style="display:none;"></div>
+
+	<!-- MASS DELETE -->
+	<div id="massDeleteInstruction" style="display:none;">
+		<div class="message">
+			<h3>Mass Delete</h3>
+			<span style="color:#CC0000;font-weight:bold;">WARNING: Deleting wormholes cannot be undone!!!</span><br />
+			<br />
+			Click on the systems you want to delete.<br />
+			<br />
+			<button class="small" onclick="cancelMassDeleteWormholes();">Done</button>
+		</div>
+	</div>
+
+	<!-- DELETE ALL -->
+	<div id="clearChainConfirmation" style="display:none;">
+		<div class="message">
+			<h3>Delete ALL</h3>
+			<span style="color:#CC0000;font-weight:bold;">WARNING: This will delete all wormhole on this map.</span><br />
+			<br />
+			Are you sure you want to delete all the wormholes on this map?<br />
+			<br />
+			<button class="small" onclick="document.location='index.php?module=scanning&action=clearchain'">YES</button>
+			<button class="small" onclick="cancelClearChain();">NO</button>
+		</div>
+	</div>
+
+	<!-- EXIT FINDER -->
+	<div id="exitFinderForm" style="display: none; margin-top: 15px;">
+		<div class="message">
+			<form method="post" action="Javascript: exitFinder();">
+			<div style="padding: 5px;">
+				<h3>
+					Exit Finder
+					<button type="button" class="small" style="float: right;" onclick="$('#exitFinderForm').slideUp('fast');">
+						<img src="/images/default/cross.png" style="height: 14px;" align="left">
+						Close
+					</button>
+				</h3>
+			</div>
+			<div style="padding: 5px;">
+				Find closest exit to:
+				&nbsp;
+				<input type="text" id="exitFinderSystem" value="" />
+				&nbsp;
+				<button type="submit" class="small">Find</button>
+			</div>
+			</form>
+			<div id="exitFinderResults" style="padding: 5px;"></div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+
+<div class="content">
+	<div id="signatureListContainer">
+		<div id="signatureToggle" style="padding-top: 25px;{if !isset($hidesignatures)}display: none;{/if}">
+			<button type="button" onclick="showSignatureList()">
+				Show Signatures List
+			</button>
+		</div>
+		<a name="signatures"></a>
+		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
+			<h2 style="margin-bottom: 0;">
+				Add signature
+			{if isset($igb) && $igb->isTrusted()}
+				<div style="float: right; width: 300px; text-align: right; font-size: 12px;">
+					<a onclick="refreshToCurrentSystem(); return false;" href="#">Switch active system to current location</a>
+				</div>
+			{/if}
+			</h2>
+			<input type="hidden" id="sigsystem" value="{$system->name}" style="width: 230px;" />
+			<form method="post" action="Javascript: addSignature()">
+			<table id="addSignatureTable" style="width: 99%;">
+				<tr>
+					<td style="width: 70px;">
+						<b>Signature:</b><br />
+						<input type="text" id="sigid" style="width: 60px; text-transform: uppercase;" />
+					</td>
+					<td style="width: 65px;">
+						<b>Type:</b><br />
+						<select name="sigtype" id="sigtype" style="width: 60px;" onchange="selectSignatureType()">
+							<option value="" selected></option>
+							<option value="wh">WH</option>
+							<option value="data">Data</option>
+							<option value="gas">Gas</option>
+							<option value="ore">Ore</option>
+							<option value="relic">Relic</option>
+							<option value="combat">Combat</option>
+							<option value="pos">POS</option>
+						</select>
+					</td>
+					<td rel="addsig_wormhole" data-whtype-input="{$App->user->getSetting('whtypefield')}" style="display: none; width: 60px;">
+						<b>WH Type:</b><br />
+					    <div id="whTypeInputContainer">
+
+                        </div>
+					</td>
+					<td rel="addsig_normal">
+						<b>Info:</b><br />
+						<input type="text" id="siginfo" style="width: 95%;" />
+					</td>
+					<td style="width: 60px;">
+						<br />
+						<button type="submit" class="small" style="width: 50px;">Add</button>
+					</td>
+				</tr>
+			</table>
+			</form>
+			<div id="copyPasteSignatures" style="padding-top: 5px; padding-bottom: 10px;">
+				<h3>
+					Copy-Paste Signatures:
+					&nbsp;
+					<img src="/images/default/help.png" style="height: 12px; cursor: pointer;" onclick="$('#copyPasteHelp').fadeIn();">
+				</h3>
+				<div id="copyPasteHelp" class="message" style="text-align: left; display: none;">
+					<div style="padding: 3px;">
+						Select all signatures in your scanner window, press ctrl+c.
+						Then paste them below and press the add button.<br />
+						&nbsp;&nbsp;&nbsp;<i><u>Note:</u>&nbsp;&nbsp;&nbsp;
+						Cosmic Anomalies will be added to the systems anomaly list.</i>
+					</div>
+				</div>
+				<form method="post" action="/index.php?module=scanning&section=sigs&action=copypaste">
+				<div class="form">
+					<textarea name="copypastesignatures" style="width: 98%; height: 40px;"></textarea>
+				</div>
+				<div class="form" style="text-align: right;">
+					<button type="submit" class="small">Add Signatures</button>
+				</div>
+				</form>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+
+		<div id="signatureList" style="margin-top: 4px;{if isset($hidesignatures)}display: none;{/if}"></div>
+	</div>
+
+	<div id="systemDetailsContainer">
+		<form method="post" action="">
+		<input type="hidden" name="renameid" id="renameid" value="{$system->id}"/>
+
+	{assign var=evesurvival value="http://eve-survival.org/"}
+	{if $system->getClass() == "Class 1"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass1"}
+	{elseif $system->getClass() == "Class 2"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass2"}
+	{elseif $system->getClass() == "Class 3"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass3"}
+	{elseif $system->getClass() == "Class 4"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass4"}
+	{elseif $system->getClass() == "Class 5"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass5"}
+	{elseif $system->getClass() == "Class 6"}
+		{assign var=evesurvival value="http://eve-survival.org/wikka.php?wakka=WormholeSpaceClass6"}
+	{/if}
+
+		<h2 class="systeminfotitle">
+			<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+			{$system->name}
+			<a href="{$evesurvival}" target="_blank" title="eve-survival"><img src="/images/eve/bear.png" align="right" /></a>
+			<a href="http://zkillboard.com/system/{$system->name}" target="_blank" title="zKillboard"><img src="/images/eve/killboard.png" align="right" /></a>
+			<a href="http://evemaps.dotlan.net/system/{$system->name}" target="_blank" title="DOTLAN EveMaps"><img src="/images/eve/dotlan.png" align="right" /></a>
+			<a href="http://wh.vps-city.com/{$system->name}" target="_blank" title="wormhole.es"><img src="/images/eve/wormhole.es.png" align="right" /></a>
+		</h2>
+		<table class="sectionoverview nohover">
+			<tr class="even">
+				<td><b>Title:</b></td>
+				<td><input type="text" name="renamename" id="renamename" value="{$systemTitle}" style="width: 95%;"/></td>
+			</tr>
+			<tr class="even">
+				<td><b>Class:</b></td>
+				<td>{$system->getClass()}</td>
+			</tr>
+			<tr class="even">
+				<td><b>Effect:</b></td>
+				<td>{$system->getEffect()}</td>
+			</tr>
+			<tr class="even">
+				<td><b>Static:</b></td>
+				<td>
+					{if $system->getStatics()|@count>0}
+						{foreach from=$system->getStatics() key=s item=static}
+							{$static}<br />
+						{/foreach}
+					{/if}
+				</td>
+			</tr>
+			<tr class="even">
+				<td><b>Status:</b></td>
+				<td><select name="whstatus" id="whstatus" style="width: 99%;">
+						<option value="1" {if $system->getStatus()==1}selected{/if}>Unknown</option>
+						<option value="2" {if $system->getStatus()==2}selected{/if}>Uninhabited</option>
+						<option value="3" {if $system->getStatus()==3}selected{/if}>Inhabited</option>
+						<option value="4" {if $system->getStatus()==4}selected{/if}>Active</option>
+					</select>
+				</td>
+			</tr>
+			<tr class="even">
+				<td style="vertical-align:top;"><b>Notes:</b></td>
+				<td>
+					<textarea id="notes" name="notes" style="width: 95%; height: 40px;">{if isset($notes)}{$notes}{/if}</textarea><br />
+					{if isset($noteslastdate)}
+					<div style="text-align: right;">
+						Last edit: <b>{$noteslastdate}</b>
+					</div>
+					{/if}
+					<div style="font-size: 10px;">
+						<i>These notes are persistant.<br />
+						If this system is deleted from the chain, the notes will be stored and displayed on the next connection.</i>
+					</div>
+				</td>
+			</tr>
+			<tr class="even">
+				<td style="vertical-align:top;"><b>Anoms:</b></td>
+				<td>
+					<div>
+				{if $system->getAnomalies()|@count>0}
+					{foreach from=$system->getAnomalies() key=s item=anom}
+						<div>
+							{$anom.sig}
+							-
+							{$anom.name}
+							&nbsp;
+							<img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom.id}')"/>
+						</div>
+					{/foreach}
+				{/if}
+					</div>
+					<div style="text-align: right;">
+						<a href="#" onclick="copypasteAnoms(); return false;">Add Anomalies</a>
+						|
+						<a href="#" onclick="removeAnomalies(); return false;">Clear Anomalies</a>
+					</div>
+				</td>
+			</tr>
+		</table>
+		<div style="text-align: right;">
+			<div style="padding: 3px;">
+				<button class="small" type="submit" style="width: 180px;">
+					<img src="/images/default/save.png" align="left">
+					Save System
+				</button>
+				<button class="small" type="button" style="width: 180px;" onclick="markFullyScanned('{$system->id}');">
+					<img src="/images/default/scanned.recently.png" align="left">
+					Mark Full-scanned
+				</button>
+			</div>
+		</div>
+		</form>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+
+<form name="formChangeCurrentSystem" method="post" action="">
+	<input type="hidden" id="currentSystem" name="currentSystem" value="{$system->id}" />
+	<input type="hidden" id="mapZoom" name="mapZoom" value="{$mapZoom}" />
+</form>
+
+{/if}
+
+
+
+<script id="whTypeSelectTPL" type="text/template">
+{literal}
+    <select id="siginput{{sigID}}whtype" name="whtype" style="width: 65px;" onchange="selectSignatureWhType($(this))"
+            data-sigid="{{sigID}}" data-whtype="{{whType}}">
+{/literal}
+        <option value=""></option>
+        <option value="9999">K162</option>
+    {foreach from=$system->getWormholeTypes() item=type}
+        <option value="{$type->name}">{$type->name} ({$type->getDestinationclass()->tag})</option>
+    {/foreach}
+        <option value="other">-- Other --</option>
+    </select>
+</script>
+<script id="whTypeInputTPL" type="text/template">
+{literal}
+    <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}" data-sigid="{{sigID}}"
+           placeholder="K162" style="width: 60px; margin-top: 2px;" autocomplete="off">
+{/literal}
+</script>

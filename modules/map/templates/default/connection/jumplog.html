@@ -1,0 +1,92 @@
+<h2>JUMP LOG</h2>
+<div class="subtle" style="text-align: right;">
+    ** <i>Only jumps from pilots with vippy <b>ON</b> will be registered</i> **
+</div>
+<div style="margin-top: 1em;">
+    <div class="col6"><b>Shiptype</b></div>
+    <div class="col3"><b>Manual Add</b></div>
+    <div class="col3 last"><b>Estimated Mass</b></div>
+    <div style="clear:both;"></div>
+</div>
+<div style="margin-top: 1em;">
+{assign var=totalmass value=0}
+{if isset($jumplog.beforemass) && $jumplog.beforemass|@count > 0}
+{assign var=subtotalmass value=0}
+{foreach from=$jumplog.beforemass item=ship}
+    <div class="col6" {if $ship.class == "none"}style="text-align: right; font-style: italic;"{/if}>
+    {if $ship.class == "none"}
+        custom mass
+    {else}
+        &nbsp; {if $ship.amount|strlen == 1}&nbsp;&nbsp;{/if}{$ship.amount}
+        &nbsp; {$ship.class}
+    {/if}
+    </div>
+    <div class="col3" style="text-align: right;">
+        {if $ship.manual > 0}{$ship.manual}{else}&nbsp;{/if}
+    </div>
+    <div class="col3 last" style="text-align: right;">
+        {$ship.mass|number} kg
+    </div>
+    {assign var=subtotalmass value=$subtotalmass+$ship.mass}
+    {assign var=totalmass value=$totalmass+$ship.mass}
+{/foreach}
+{if $subtotalmass > 0}
+    <div style="padding-top: 10px;">
+        <div class="col6">&nbsp;</div>
+        <div class="col3" style="text-align: right;">&nbsp;</div>
+        <div class="col3 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
+            <b>{$subtotalmass|number} kg</b>
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+{/if}
+{/if}
+{if isset($jumplog.aftermass) && $jumplog.aftermass|@count > 0}
+    <div class="col6" style="margin-bottom: 4px;">
+        <b>After marked</b>
+    {if $connection->mass == 1}
+        <b>Mass-Reduced</b>
+    {elseif $connection->mass == 2}
+        <b>Mass-Crit</b>
+    {/if}
+    </div>
+    <div style="clear:both;"></div>
+{assign var=subtotalmass value=0}
+{foreach from=$jumplog.aftermass item=ship}
+    <div class="col6">
+        &nbsp; {if $ship.amount|strlen == 1}&nbsp;{/if}{$ship.amount}
+        &nbsp; {$ship.class}
+    </div>
+    <div class="col3" style="text-align: right;">
+        {if $ship.manual > 0}{$ship.manual}{else}&nbsp;{/if}
+    </div>
+    <div class="col3 last" style="text-align: right;">
+        {$ship.mass|number} kg
+    </div>
+    {assign var=subtotalmass value=$subtotalmass+$ship.mass}
+    {assign var=totalmass value=$totalmass+$ship.mass}
+{/foreach}
+{if $subtotalmass > 0}
+<div style="padding-top: 10px;">
+    <div class="col6" style="text-align: right;">&nbsp;</div>
+    <div class="col3" style="text-align: right;">&nbsp;</div>
+    <div class="col3 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
+        <b>{$subtotalmass|number} kg</b>
+    </div>
+    <div style="clear:both;"></div>
+</div>
+{/if}
+{/if}
+{if $totalmass > 0}
+<div style="margin-top: 1em;">
+    <div class="col8" style="text-align: right; padding-top: .2em;">
+        Estimated total mass:
+    </div>
+    <div class="col4 last" style="text-align: right; font-size: 1.2em;">
+        <b>{$totalmass|number} kg</b>
+    </div>
+    <div style="clear:both;"></div>
+</div>
+{/if}
+    <div style="clear:both;"></div>
+</div>

@@ -20,32 +20,6 @@ namespace eve
 			return self::$eveDB;
 		}
 
-		function getContent()
-		{
-			$moduleSection = null;
-			$moduleMenu = "";
-			$section = (\Tools::REQUEST("section")) ?: "overview";
-			$action = (\Tools::REQUEST("action")) ?: "overview";
-
-			$this->template = \SmartyTools::getSmarty();
-			$template = "index.html";
-
-			if ($section == "overview")
-			{
-				$titles = new \eve\controller\Title();
-				$this->template->assign("content", $titles->getTitleManagement());
-			}
-
-			if ($section == "showinfo")
-			{
-				$item = new \eve\view\Item();
-				return $item->getShowInfo(\Tools::REQUEST("id"));
-			}
-
-			$this->template->assign("moduleTitle", $this->moduleTitle);
-			return $this->template->fetch($this->getTemplate($template));
-		}
-
 		function getCron($arguments=array())
 		{
 			$action = "default";
@@ -75,6 +49,13 @@ namespace eve
 
 			return "unknown action";
 		}
+
+        function getAppData(\stdClass $appData)
+        {
+            $appData->eve = new \stdClass();
+            $appData->eve->igb = \eve\model\IGB::getIGB()->isIGB();
+            return $appData;
+        }
 	}
 }
 ?>

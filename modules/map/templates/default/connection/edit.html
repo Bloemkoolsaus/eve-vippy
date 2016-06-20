@@ -1,0 +1,251 @@
+<div id="connection-form">
+	<h2>
+    {if $connection->getFromSystem() != null}
+        <span style="color: {$connection->getFromSystem()->getClassColor()};">{$connection->getFromSystem()->getClass(1)}</span>
+        {$connection->getFromSystem()->name}
+        -
+    {/if}
+        {$connection->getFromWormhole()->name}
+		&nbsp;
+        <img src="/images/default/right.png">
+        &nbsp;
+    {if $connection->getToSystem() != null}
+        <span style="color: {$connection->getToSystem()->getClassColor()};">{$connection->getToSystem()->getClass(1)}</span>
+        {$connection->getToSystem()->name}
+        -
+    {/if}
+		{$connection->getToWormhole()->name}
+    {if $connection->frigateHole}
+        <img src="/images/eve/rifter.png" align="right">
+    {/if}
+	</h2>
+
+    <div id="connection-form-edit">
+		<form method="post" name="formEditConnection" action="/map/connection/edit/{$connection->id}">
+            <input type="hidden" name="store" value="{$connection->id}"/>
+            <div class="col8">
+                <div class="form">
+                    <div class="field">Mass:</div>
+                    <div class="value">
+                        <label for="massFull" class="massSelector{if $connection->mass==0} active{/if}">
+                            <input type="radio" id="massFull" name="mass" value="0" {if $connection->mass==0}checked{/if}
+                                   onclick="$('label.massSelector').removeClass('active'); $('label[for=massFull]').addClass('active');">
+                            Not Reduced
+                        </label>
+                        <label for="massReduced" class="massSelector{if $connection->mass==1} active{/if}">
+                            <input type="radio" id="massReduced" name="mass" value="1" {if $connection->mass==1}checked{/if}
+                                   onclick="$('label.massSelector').removeClass('active'); $('label[for=massReduced]').addClass('active');">
+                            Reduced
+                        </label>
+                        <label for="massCritical" class="massSelector{if $connection->mass==2} active{/if}">
+                            <input type="radio" id="massCritical" name="mass" value="2" {if $connection->mass==2}checked{/if}
+                                   onclick="$('label.massSelector').removeClass('active'); $('label[for=massCritical]').addClass('active');">
+                            Critical
+                        </label>
+                    </div>
+                </div>
+                <div class="form">
+                    <div class="field">End of Life:</div>
+                    <div class="value">
+                        <input type="checkbox" id="eol" name="eol" {if $connection->eol}checked{/if}>
+                        <label for="eol" class="subtle">Wormhole is reaching the end of its lifetime</label>
+                    </div>
+                </div>
+                <div class="form">
+                    <div class="field">Small-Ship Hole:</div>
+                    <div class="value">
+                        <input type="checkbox" id="frigate" name="frigatehole" {if $connection->frigateHole}checked{/if}>
+                        <label for="frigate" class="subtle">Wormhole only allows small ships to jump through.</label>
+                    </div>
+                </div>
+                <div class="form">
+                    <div class="field">Capital Hole:</div>
+                    <div class="value">
+                        <input type="checkbox" id="capitals" name="allowcapitals" {if $connection->allowCapitals}checked{/if}>
+                        <label for="capitals" class="subtle">Wormhole allows capitals to jump through.</label>
+                    </div>
+                </div>
+        {if $connection->getFromSystem() != null && $connection->getToSystem() != null}
+            {if $connection->getFromSystem()->isKSpace() && $connection->getToSystem()->isKSpace()}
+                <div class="form">
+                    <div class="field">Normal Jumpgates:</div>
+                    <div class="value">
+                        <input type="checkbox" id="gates" name="normalgates" {if $connection->normalgates}checked{/if}>
+                        <label for="gates" class="subtle">Mark this as a regular jumpgate, not a wormhole.</label>
+                    </div>
+                </div>
+            {/if}
+        {/if}
+
+                <div style="clear:both;"></div>
+                <br />
+
+                <div class="form">
+                    <div class="field">Connection Type:</div>
+                    <div class="value">
+                        <div class="col6">
+                            <div style="margin-bottom: .3em;">
+                            {if $connection->getFromSystem() != null}
+                                {$connection->getFromSystem()->name} -
+                            {/if}
+                                {$connection->getFromWormhole()->name}
+                            </div>
+                            <div>
+                                <select name="fromtype">
+                                    <option value="0">K162</option>
+                                {foreach from=$whtypes item=type}
+                                    <option value="{$type.id}" {if $type.id == $connection->fromWHTypeID}selected{/if}>{$type.name}</option>
+                                {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col6 last">
+                            <div style="margin-bottom: .3em;">
+                            {if $connection->getToSystem() != null}
+                                {$connection->getToSystem()->name} -
+                            {/if}
+                                {$connection->getToWormhole()->name}
+                            </div>
+                            <div>
+                                <select name="totype">
+                                    <option value="0">K162</option>
+                                {foreach from=$whtypes item=type}
+                                    <option value="{$type.id}" {if $type.id == $connection->toWHTypeID}selected{/if}>{$type.name}</option>
+                                {/foreach}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="clear:both;"></div>
+                <br />
+
+                <div style="text-align: right;">
+                    <button type="submit" style="width: 100px;">
+                        <img src="/images/default/save.png" align="left">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </form>
+
+		<div class="col4 right last" style="text-align: right;">
+			<div style="margin: 3px;">
+				<button type="button" onclick="$('#connection-form-edit').hide();$('#connection-form-mass').fadeIn();" style="width: 200px;">
+					<img src="/images/eve/mass.png" align="left">
+					Manually Add Mass
+				</button>
+			</div>
+			<div style="margin: 3px;">
+				<button type="button" style="width: 200px;" onclick="$('#connection-form-edit').hide();$('#connection-form-delete').fadeIn();">
+					<img src="/images/eve/cross.png" align="left">
+					Delete Connection
+				</button>
+			</div>
+            <div style="clear:both;"></div>
+		</div>
+        <div style="clear:both;"></div>
+	</div>
+
+    <div id="connection-form-mass" class="hidden">
+		<form method="post" name="formDeleteConnection" action="/map/connection/mass/{$connection->id}">
+            <input type="hidden" name="addmass" value="{$connection->id}" />
+            <div class="col7">
+                <h3>
+                    <img src="/images/eve/mass.png" align="left">
+                    &nbsp; Manually Add Mass
+                </h3>
+                <div style="clear:both;"></div>
+                <br />
+                <div class="form">
+                    <div class="field">
+                        <b>Description:</b>
+                    </div>
+                    <div class="value">
+                        <input type="text" name="description">
+                    </div>
+                </div>
+                <div class="form">
+                    <div class="field">
+                        <b>Amount:</b>
+                    </div>
+                    <div class="value">
+                        <input type="text" name="amount" style="width: 100px; text-align: right">
+                        .000.000 kg
+                    </div>
+                </div>
+                <div class="form">
+                    <div class="field">
+                        <b>Nr of Jumps:</b>
+                    </div>
+                    <div class="value">
+                        <input type="text" name="jumps" value="1" style="width: 50px; text-align: center;">
+                    </div>
+                </div>
+                <div class="form">
+                    <div style="text-align: right;">
+                        <button type="submit" style="width: 100px;">
+                            <img src="/images/default/save.png" align="left">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col5 right last">
+                <div class="message" style="margin-top: 0;">
+                    <ul>
+                        <li>A round trip from one ship, counts as 2!</li>
+                        <li>10 ships making a single trip count as 10</li>
+                        <li>10 ships making a round trip count as 20</li>
+                    </ul>
+                </div>
+            </div>
+		</form>
+	</div>
+
+    <div id="connection-form-delete" class="hidden">
+		<form method="post" action="/map/connection/delete/{$connection->id}">
+            <input type="hidden" name="delete" value="{$connection->id}">
+            <div class="message">
+                <div style="text-align: center;">
+                    <strong>Do you really want to delete this connection?</strong>
+                </div>
+                <div style="text-align: center; padding: 1em;">
+                    <button type="button" style="width: 100px;" onclick="$('#connection-form-delete').hide();$('#connection-form-edit').fadeIn();">
+                        Ooops, no!
+                    </button>
+                    &nbsp;
+                    <button type="submit" style="width: 100px;">
+                        Yes! DELETE
+                    </button>
+                </div>
+            </div>
+		</form>
+	</div>
+</div>
+
+
+<script id="addShipMassTpl" type="text/template">
+<div style="padding: 5px;">
+	<div style="float: left; width: 70%;">
+		<select name="ship[]" style="width: 98%;">
+			<option value="0">-- Select a Ship class or type --</option>
+			<optgroup label="Ship-Class">
+			{foreach from=$shiptypes item=type}
+				<option value="group{$type->id}">{$type->name}</option>
+			{/foreach}
+			</optgroup>
+			<optgroup label="Ship-Type">
+			{foreach from=$ships item=ship}
+				<option value="ship{$ship->id}">{$ship->name}</option>
+			{/foreach}
+			</optgroup>
+		</select>
+	</div>
+	<div style="float: left; width: 70px; text-align: center;">
+		<input type="text" name="amount[]" value="1" style="width: 30px; text-align: center;">
+	</div>
+</div>
+<div style="clear:both;"></div>
+</script>

@@ -1,0 +1,71 @@
+div#signatureListContainer {
+	float: left;
+	width: 68%;
+	margin-top: 20px;
+}
+div#systemDetailsContainer {
+	float: right;
+	width: 30%;
+	margin-top: 20px;
+}
+
+@media (max-width: 950px) {
+	div#signatureListContainer {
+		float: none;
+		width: 100%;
+		margin-top: 20px;
+	}
+	div#systemDetailsContainer {
+		float: none;
+		width: 100%;
+		margin-top: 20px;
+	}
+}
+
+table#signatureTable .sigID {
+	width: 50px;
+}
+table#signatureTable .sigType {
+	width: 70px;
+}
+table#signatureTable .sigInfo {
+
+}
+table#signatureTable .sigStrength {
+	width: 50px;
+	text-align: center;
+}
+table#signatureTable .sigUpdate {
+	width: 120px;
+}
+table#signatureTable .sigControls {
+	width: 50px;
+}
+
+@media (max-width: 500px) {
+    table#signatureTable .sigID {
+		width: 30px;
+	}
+	table#signatureTable .sigType {
+		width: 50px;
+	}
+	table#signatureTable .sigUpdate {
+		width: 50px;
+	}
+	table#signatureTable .sigStrength {
+		display: none;
+	}
+	table#signatureTable .sigUpdate {
+		display: none;
+	}
+}
+
+div#signaturesFullyscanned {
+	text-align: right;
+	margin: 3px;
+}
+@media (max-width: 500px) {
+	div#signaturesFullyscanned {
+		display: none;
+	}
+}
