@@ -29,6 +29,12 @@ function generateMap(data)
     if (!allowMapLoadingFinish)
         return false;
 
+    totalWidth = $("#mapHeader").innerWidth()-90;
+    totalHeight = 200;
+
+    if (totalWidth > $(window).width())
+        totalWidth = $(window).width();
+
     var currentTime = new Date();
     $("#lastupdatetime").html(currentTime.toLocaleTimeString());
     generateConnections(data.connections);
@@ -58,9 +64,9 @@ function generateMap(data)
     for (var c=0; c<mapConnections.length; c++) {
         mapConnections[c].render(layer);
     }
-    for (var w=0; w<mapWormholes.length; w++) {
-        mapWormholes[w].render(layer);
-    }
+    mapWormholes.forEach(function(wh, key) {
+        wh.render(layer);
+    });
 
     // add the layer to the stage
     stage.add(layer);
@@ -204,7 +210,7 @@ function generateSystems(data)
                 wormhole.addIcon(mapIcons.pve);
         }
 
-        mapWormholes.push(wormhole);
+        mapWormholes[wormhole.id] = wormhole;
 	}
 }
 

@@ -8,7 +8,7 @@ class Map
         if (count($arguments) > 0)
             $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
         else
-            $system = \map\model\System::getCurrentSystem();
+            $system = $map->getHomeSystem();
 
         $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
         if (!isset($wormhole)) {

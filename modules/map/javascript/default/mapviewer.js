@@ -7,7 +7,7 @@ var allowMapLoadingFinish = true;
 $(window).load(function() {
 	if ($("#signatureMap").length > 0) {
 		reloadSignatureMap();
-		$("#signatureMapContainer").bind("contextmenu", function() { return false; });
+		$(document).bind("contextmenu", function() { return false; });
 	}
 });
 

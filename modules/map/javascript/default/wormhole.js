@@ -358,7 +358,7 @@ Wormhole.prototype.render = function(canvas)
                 if (mapIsMassDeleteMode())
                     deleteWormhole(this.getName());
                 else
-                    switchSystem(this.getName());
+                    document.location = "/map/"+$("#mapName").val()+"/"+mapWormholes[this.getName()].solarsystem.name;
             }
         });
     }

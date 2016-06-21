@@ -23,13 +23,14 @@ class Module extends \Module
                 if ($map->getUserAllowed())
                 {
                     $view = new \map\view\Map();
-                    $action = (count($arguments)>0)?array_shift($arguments):"overview";
-                    $method = "get".ucfirst($action);
+                    $action = (count($arguments)>0)?array_shift($arguments):null;
+                    $method = ($action) ? "get".ucfirst($action) : "defualt";
                     if (!method_exists($view, $method)) {
                         $method = "getOverview";
-                        array_unshift($arguments, $action);
+                        if ($action)
+                            array_unshift($arguments, $action);
                     }
-                    return $view->$method($map);
+                    return $view->$method($map, $arguments);
                 }
             }
         }
