@@ -8,34 +8,92 @@ namespace map\view
             return "connection-overview";
         }
 
-        function getEdit($arguments=[])
-        {
-            $connection = new \map\model\Connection(array_shift($arguments));
-
-            if (\Tools::POST("store"))
-            {
-                $connection->mass = \Tools::POST("mass");
-                $connection->eol = (\Tools::POST("eol"))?true:false;
-                $connection->frigateHole = (\Tools::POST("frigatehole"))?true:false;
-                $connection->allowCapitals = (\Tools::POST("allowcapitals"))?true:false;
-                $connection->normalgates = (\Tools::POST("normalgates"))?true:false;
-                $connection->store();
-
-                \AppRoot::redirect("/map/".$connection->getChain()->name."/");
-            }
-
-            $tpl = \SmartyTools::getSmarty();
-            $tpl->assign("connection", $connection);
-            return $tpl->fetch("map/connection/edit");
-        }
-
         function getDetails($arguments=[])
         {
             $connection = new \map\model\Connection(array_shift($arguments));
 
             $tpl = \SmartyTools::getSmarty();
             $tpl->assign("connection", $connection);
+            $tpl->assign("adddate", \Tools::getAge($connection->addDate));
+            $tpl->assign("updatedate", \Tools::getAge($connection->updateDate));
+            $tpl->assign("fromtype", \scanning\Connection::getWHTypeNameById($connection->fromWHTypeID));
+            $tpl->assign("totype", \scanning\Connection::getWHTypeNameById($connection->toWHTypeID));
             return $tpl->fetch("map/connection/details");
+        }
+
+        function getEdit($arguments=[])
+        {
+            $connection = new \map\model\Connection(array_shift($arguments));
+
+            if (\Tools::POST("addmass"))
+            {
+                foreach ($_POST["ship"] as $key => $val)
+                {
+                    $shipTypeID = null;
+                    if (substr($val, 0, 5) == "group")
+                    {
+                        $id = str_replace("group","",$val);
+                        $group = new \eve\model\ShipType($id);
+                        $shipTypeID = $group->getShipBasedOnAvarageMass()->id;
+                    }
+                    else
+                        $shipTypeID = str_replace("ship","",$val);
+
+                    if (is_numeric($shipTypeID) && $shipTypeID > 0)
+                    {
+                        for ($i = 0; $i < $_POST["amount"][$key]; $i++) {
+                            $connection->addJump($shipTypeID);
+                        }
+                    }
+                }
+
+                if (isset($_POST["manual"]))
+                {
+                    if (strlen(trim($_POST["manual"]["mass"])) > 0 && $_POST["manual"]["mass"] > 0)
+                    {
+                        for ($i=0; $i<$_POST["manual"]["amount"]; $i++) {
+                            $connection->addMass($_POST["manual"]["mass"]*1000000);
+                        }
+                    }
+                }
+
+                \AppRoot::redirect("map/".$connection->getChain()->name);
+            }
+
+            if (\Tools::POST("delete"))
+            {
+                if ($connection != null)
+                    $connection->delete();
+
+                \AppRoot::redirect("map/".$connection->getChain()->name);
+            }
+
+            if (\Tools::POST("connectionid"))
+            {
+                $connection->eol = (\Tools::REQUEST("eol"))?1:0;
+                $connection->mass = (\Tools::REQUEST("mass"))?\Tools::REQUEST("mass"):0;
+                $connection->normalgates = (\Tools::REQUEST("normalgates"))?1:0;
+                $connection->frigateHole = (\Tools::REQUEST("frigatehole"))?1:0;
+                $connection->fromWHTypeID = (\Tools::REQUEST("fromtype"))?\Tools::REQUEST("fromtype"):0;
+                $connection->toWHTypeID = (\Tools::REQUEST("totype"))?\Tools::REQUEST("totype"):0;
+                $connection->store();
+
+                \AppRoot::redirect("map/".$connection->getChain()->name);
+            }
+
+            $whtypes = array();
+            if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholetypes ORDER BY name")) {
+                foreach ($results as $result) {
+                    $whtypes[] = array("id" => $result["id"], "name" => $result["name"]);
+                }
+            }
+
+            $tpl = \SmartyTools::getSmarty();
+            $tpl->assign("connection", $connection);
+            $tpl->assign("whtypes", $whtypes);
+            $tpl->assign("ships", \eve\model\Ship::getShips());
+            $tpl->assign("shiptypes", \eve\model\ShipType::getShipTypes());
+            return $tpl->fetch("map/connection/edit");
         }
 
         function getJumplog($arguments=[])

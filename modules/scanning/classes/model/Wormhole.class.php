@@ -175,6 +175,8 @@ namespace scanning\model
 				\MySQL::getDB()->doQuery("UPDATE mapwormholes SET y = y + $y WHERE chainid = ".$this->chainID);
 				$this->load();
 			}
+
+            $this->getChain()->setMapUpdateDate();
 		}
 
 		function delete()

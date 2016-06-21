@@ -6,7 +6,7 @@ function loadSignatureList(extraURL, addNoCache)
 
 	if ((!loadingSigList && $("#disabledPage").length == 0 && $("#signatureList").is(":visible")) || extraURL)
 	{
-		var system = $("#sigsystem").val();
+		var system = $("#mapSystem").val();
 		if (system.length == 0)
 			return false;
 

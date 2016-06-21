@@ -7,7 +7,7 @@ class Wormhole extends \scanning\model\Wormhole
 
     /**
      * Get solarsystem
-     * @return \scanning\model\System|null
+     * @return \map\model\System|null
      */
     function getSolarsystem()
     {

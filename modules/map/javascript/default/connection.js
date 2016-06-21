@@ -73,7 +73,7 @@ Connection.prototype.isCapital = function() {
 Connection.prototype.render = function(canvas) {
 
     var connection = new Kinetic.Group({
-        name: this.solarsystems.from.system+","+this.solarsystems.to.system
+        name: this.id
     });
 
     connection.add(new Kinetic.Line({
@@ -166,7 +166,7 @@ Connection.prototype.render = function(canvas) {
     });
     connection.on("click", function() {
         var fromto = this.getName().split(",");
-        editConnection(fromto[0],fromto[1]);
+        editConnection(this.getName());
     });
 
     canvas.add(connection);

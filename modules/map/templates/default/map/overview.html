@@ -1,3 +1,7 @@
+<input type="hidden" id="mapID" value="{$map->id}">
+<input type="hidden" id="mapName" value="{$map->name}">
+<input type="hidden" id="mapSystem" value="{$system->name}" style="width: 230px;" />
+
 {if $App->map->trackingMode}
 	<div id="trackingOnlyModeActive" style="text-align: center; margin: 20px;">
 		<button type="button" onclick="disableTrackingOnly()">Disable Tracking-Only Mode</button>
@@ -195,7 +199,6 @@
 				</div>
 			{/if}
 			</h2>
-			<input type="hidden" id="sigsystem" value="{$system->name}" style="width: 230px;" />
 			<form method="post" action="Javascript: addSignature()">
 			<table id="addSignatureTable" style="width: 99%;">
 				<tr>
@@ -377,12 +380,6 @@
 	</div>
 	<div style="clear:both;"></div>
 </div>
-
-<form name="formChangeCurrentSystem" method="post" action="">
-	<input type="hidden" id="currentSystem" name="currentSystem" value="{$system->id}" />
-	<input type="hidden" id="mapZoom" name="mapZoom" value="{$mapZoom}" />
-</form>
-
 {/if}
 
 

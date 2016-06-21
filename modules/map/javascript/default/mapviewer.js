@@ -1,128 +1,81 @@
-var loadingSigMap = false;
 var loadingSigList = false;
 var editingSigList = false;
+
+var allowMapLoadingStart = true;
+var allowMapLoadingFinish = true;
 
 $(window).load(function() {
 	if ($("#signatureMap").length > 0) {
 		reloadSignatureMap();
-		setTimeout(refreshSigMapPage, 600000);
-		$(document).bind("contextmenu", function() { return false; });
-	}
-	if (isIGB()) {
-		callLocationTracker();
+		$("#signatureMapContainer").bind("contextmenu", function() { return false; });
 	}
 });
 
-function callLocationTracker()
+function reloadSignatureMap()
 {
-	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=locationtracker&ajax=1"
-	});
-	//setTimeout(callLocationTracker, 1500);
-}
-
-function refreshSigMapPage()
-{
-	document.formChangeCurrentSystem.submit();
-}
-function refreshToCurrentSystem()
-{
-	showLoadingPopup();
-	$("#currentSystem").val("current");
-	document.formChangeCurrentSystem.submit();
-}
-
-function reloadSignatureMap(noReload)
-{
-	if (!mapIsMassDeleteMode())
-	{
+	if (!mapIsMassDeleteMode()) {
 		loadSignatureMap();
 		loadSignatureList();
-		setTimeout(reloadSignatureMap, 3000);
 	}
+    setTimeout(reloadSignatureMap, 3000);
 }
 
-function mayResetMap()
+function disableMapRefresh()
 {
-	if ($("#createNoticePopup").length > 0)
-		return false;
-
-	if ($("#editConnectionPopup").length > 0)
-		return false;
-
-	return true;
+    allowMapLoadingStart = false;
+    allowMapLoadingFinish = false;
 }
-
-function loadSignatureMap(extraURL, ignorepopup)
+function enableMapRefresh()
 {
-	if (loadingSigMap)
-		return false;
+    allowMapLoadingStart = true;
+    allowMapLoadingFinish = true;
+}
+function allowMapRefresh()
+{
+    if (!allowMapLoadingStart)
+        return false;
+    if ($("#popup").length > 0)
+        return false;
 
-	if (($("#disabledPage").length == 0 || ignorepopup) || extraURL)
-	{
-		var system = $("#sigsystem").val();
-		if (system.length == 0)
-			return false;
-
-		if (!extraURL)
-			extraURL = "";
-
-		if (!mapRendered())
-			extraURL = "&nocache=1";
-
-		loadingSigMap = true;
-		$.ajax({
-			url: "/index.php?module=scanning&section=map&action=sigmap&ajax=1&system="+system+extraURL,
-			success: function(data) {
-				if (!mayResetMap())
-					return false;
-
-				var currentTime = new Date();
-				var hour = currentTime.getHours()-0;
-				var min = currentTime.getMinutes()-0;
-				var sec = currentTime.getSeconds()-0;
-
-				if (hour < 10)
-					hour = "0"+hour;
-				if (min < 10)
-					min = "0"+min;
-				if (sec < 10)
-					sec = "0"+sec;
-
-				$("#lastupdatetime").html(hour+":"+min+":"+sec);
-
-				if (data != "cached")
-				{
-					var data = $.parseJSON(data);
-					destroyPopup();
-					generateMap(data);
-
-					// Zaten er notices in?
-					if (data.notices.length > 0)
-					{
-						var n = 0;
-						var noticeIDs = new Array();
-						for (n=0; n<data.notices.length; n++) {
-							addNotice(data.notices[n]);
-							noticeIDs.push(data.notices[n].id);
-						}
-						$("[rel=notice]").each(function() {
-							var id = $(this).attr("id").replace("shownotice","");
-							if ($.inArray(id, noticeIDs) < 0)
-								$("#shownotice"+id).fadeOut("slow", function() { $("#shownotice"+id).remove(); });
-						});
-					}
-				}
-				loadingSigMap = false;
-			}
-		});
-	}
+    return true;
 }
 
-function editConnection(from,to)
+function loadSignatureMap(action, params)
+{
+    if (!allowMapRefresh())
+        return false;
+
+    if (!action)
+        action = "map";
+
+    if (!params)
+        params = { };
+    if (!mapRendered())
+        params.nocache = 1;
+    params.ajax = 1;
+
+    allowMapLoadingStart = false;
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/"+action+"/"+$("#mapSystem").val(),
+        data: params,
+        success: function(data) {
+            if (data != "cached") {
+                destroyPopup();
+                var data = $.parseJSON(data);
+                generateMap(data);
+            }
+            allowMapLoadingStart = true;
+        }
+    });
+}
+
+function editConnection(connectionID)
 {
 	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=editconnection&ajax=1&from="+from+"&to="+to,
+		url: "/map/connection/edit/"+connectionID,
+        data: {
+            ajax: 1
+        },
 		success: function(data) {
 			showPopup("<div id='editConnectionPopup'>"+data+"</div>", 600, 400);
 		}
@@ -308,26 +261,6 @@ function cancelClearChain()
 	$("#clearChainConfirmation").fadeOut(100,function() {$("#mapButtons").fadeIn();});
 }
 
-function snapToGrid()
-{
-	$("#mapButtons").hide();
-	$("#snapToGridConfirmation").fadeIn();
-}
-function confirmSnapToGrid()
-{
-	$("#snapToGridConfirmation").fadeOut(100,function() {$("#mapButtons").fadeIn();});
-	showLoadingPopup();
-	$.ajax({
-		url: "/index.php?module=scanning&section=snaptogrid&ajax=1",
-		success: function(data) {
-			loadSignatureMap("",true);
-		}
-	});
-}
-function cancelSnapToGrid()
-{
-	$("#clearChainConfirmation").fadeOut(100,function() {$("#mapButtons").fadeIn();});
-}
 
 
 function copypasteAnoms()

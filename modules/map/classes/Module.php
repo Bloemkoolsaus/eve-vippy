@@ -8,13 +8,28 @@ class Module extends \Module
 
     function getContent()
     {
+        $arguments = [];
+        foreach (explode(",", \Tools::REQUEST("arguments")) as $arg) {
+            if (strlen(trim($arg)) > 0)
+                $arguments[] = $arg;
+        }
+
         $mapName = (\Tools::REQUEST("section"))?:null;
-        if ($mapName) {
+        if ($mapName)
+        {
             $map = \map\model\Map::findByName($mapName);
-            if ($map) {
-                if ($map->getUserAllowed()) {
+            if ($map)
+            {
+                if ($map->getUserAllowed())
+                {
                     $view = new \map\view\Map();
-                    return $view->getOverview($map);
+                    $action = (count($arguments)>0)?array_shift($arguments):"overview";
+                    $method = "get".ucfirst($action);
+                    if (!method_exists($view, $method)) {
+                        $method = "getOverview";
+                        array_unshift($arguments, $action);
+                    }
+                    return $view->$method($map);
                 }
             }
         }

@@ -26,9 +26,11 @@ function mapRendered()
 
 function generateMap(data)
 {
-	if (blockMapRefresh)
-		return true;
+    if (!allowMapLoadingFinish)
+        return false;
 
+    var currentTime = new Date();
+    $("#lastupdatetime").html(currentTime.toLocaleTimeString());
     generateConnections(data.connections);
     generateSystems(data.wormholes);
 
@@ -62,6 +64,10 @@ function generateMap(data)
 
     // add the layer to the stage
     stage.add(layer);
+
+    /**
+     * @todo notices
+     */
 }
 
 function resizeMap()
@@ -249,26 +255,22 @@ function openWormholeDetails(system,x,y)
 	if (isContextOpen())
 		return false;
 
-	popupActive = true;
-	loadingSigMap = true;
-	blockMapRefresh = true;
+    disableMapRefresh();
 
 	var className = "";
 	var posLeft = x + whDefaultWidth + $("#signatureMap").position().left;
 	var posTop = y + $("#signatureMap").position().top - 20;
 
-	if (($(window).width()-posLeft) < 380)
-	{
+	if (($(window).width()-posLeft) < 380) {
 		posLeft = posLeft - whDefaultWidth - 400;
 		className += "right";
-	}
-	else
+	} else
 		className += "left";
 
 	var html = "<div class='sigInfo' id='whInfo"+system+"'>";
 	html += "<div id='whInfo"+system+"Header' class='header"+className+"'></div>";
 	html += "<div id='whInfo"+system+"Details' class='content"+className+"'>";
-	html += "<img src='images/loading.gif'> &nbsp; Loading system data";
+	html += "<img src='/images/loading.gif'> &nbsp; Loading system data";
 	html += "</div>";
 	html += "<div id='whInfo"+system+"Footer' class='footer"+className+"'></div>";
 	html += "</div>";
@@ -278,80 +280,69 @@ function openWormholeDetails(system,x,y)
 	$("#whInfo"+system).css("left", posLeft);
 	$("#whInfo"+system).css("top", posTop);
 	$("#whInfo"+system).fadeIn();
-	fetchWormholeDetails(system);
-}
-function closeWormholeDetails(system)
-{
-	$("#whInfo"+system).remove();
-	popupActive = true;
-	loadingSigMap = false;
-	blockMapRefresh = false;
-}
-function fetchWormholeDetails(systemID)
-{
-	if (isContextOpen())
-		return false;
-
-	$.ajax({
-		url: "/index.php?module=scanning&section=getwhdetails&ajax=1",
-		data: {
-			system: systemID
-		},
-		success: function(data) {
-			if (isContextOpen())
-				return false;
-
-			$("#whInfo"+systemID+"Details").html(data);
-            fetchSystemTradeHubs(systemID);
-            fetchWormholeDetailsActivity(systemID);
-		}
-	});
-}
-function fetchSystemTradeHubs(systemID)
-{
-    if (isContextOpen())
-        return false;
 
     $.ajax({
-        url: "/index.php?module=scanning&section=getwhdetails&action=gettradehubs&ajax=1",
+        url: "/map/system/details/"+system,
         data: {
-            system: systemID
+            ajax: 1
         },
         success: function(data) {
             if (isContextOpen())
                 return false;
 
-            $("#whinfotradehubs").html(data);
+            $("#whInfo"+system+"Details").html(data);
+            fetchSystemTradeHubs(system);
+            fetchWormholeDetailsActivity(system);
         }
     });
 }
-function fetchWormholeDetailsActivity(systemID)
+function closeWormholeDetails(system)
+{
+    if ($("#whInfo"+system).length > 0) {
+        $("#whInfo"+system).remove();
+        enableMapRefresh();
+    }
+}
+
+function fetchSystemTradeHubs(system)
+{
+    if (isContextOpen())
+        return false;
+
+    $.ajax({
+        url: "/map/system/tradehubs/"+system,
+        data: {
+            ajax: 1
+        },
+        success: function(data) {
+            if (!isContextOpen())
+                $("#whinfotradehubs").html(data);
+        }
+    });
+}
+function fetchWormholeDetailsActivity(system)
 {
 	if (isContextOpen())
 		return false;
 
 	$.ajax({
-		url: "/index.php?module=scanning&section=getwhdetails&action=getactivity&ajax=1",
+		url: "/map/system/activity/"+system,
 		data: {
-			system: systemID
+			ajax: 1
 		},
 		success: function(data) {
-			if (isContextOpen())
-				return false;
-
-			data = $.parseJSON(data);
-			$("#whActivityDate").html(data.date);
-			$("#whInfoActivity").html("<img src='"+data.url+"'/>");
+			if (!isContextOpen()) {
+                data = $.parseJSON(data);
+                $("#whActivityDate").html(data.date);
+                $("#whInfoActivity").html("<img src='/"+data.url+"'/>");
+            }
 		}
 	});
 }
 
-function openConnectionDetails(who, x, y)
+function openConnectionDetails(connectionID, x, y)
 {
-	popupActive = true;
-	loadingSigMap = true;
-	blockMapRefresh = true;
-
+    disableMapRefresh();
 	var className = "";
 	var posLeft = mousePosX+15;
 	var posTop = mousePosY-50;
@@ -361,7 +352,7 @@ function openConnectionDetails(who, x, y)
 	else
 		className += "left";
 
-	var popupID = "connInfo"+who.replace(",","-");
+	var popupID = "connInfo"+connectionID;
 	var html = "<div class='sigInfo' id='"+popupID+"'>";
 	html += "<div class='header"+className+"'></div>";
 	html += "<div class='content"+className+"' id='conndetailsinfo' style='padding-left: 30px;'>";
@@ -379,35 +370,37 @@ function openConnectionDetails(who, x, y)
 	$("#"+popupID).css("left", posLeft);
 	$("#"+popupID).css("top", posTop);
 	$("#"+popupID).fadeIn();
+	$("#connInfo"+connectionID).fadeIn();
 
-	$("#connInfo"+who).fadeIn();
-	fetchConnectionInfo(who);
+    $.ajax({
+        url: "/map/connection/details/"+connectionID,
+        data: {
+            ajax: 1
+        },
+        success: function(data) {
+            $("#conndetailsinfo").html(data);
+            $("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
+            // Jumplog halen
+            $.ajax({
+                url: "/map/connection/jumplog/"+connectionID,
+                data: {
+                    ajax: 1
+                },
+                //url: "/index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
+                success: function(data) {
+                    $("#jumplogsummary").html(data);
+                }
+            });
+        }
+    });
 }
 function closeConnectionDetails(who)
 {
+    enableMapRefresh();
 	var popupID = "connInfo"+who.replace(",","-");
 	$("#"+popupID).remove();
-	popupActive = true;
-	loadingSigMap = false;
-	blockMapRefresh = false;
 }
-function fetchConnectionInfo(who)
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=getconndetails&ajax=1&connection="+who,
-		success: function(data) {
-			$("#conndetailsinfo").html(data);
-			$("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
-			// Jumplog halen
-			$.ajax({
-				url: "/index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
-				success: function(data) {
-					$("#jumplogsummary").html(data);
-				}
-			});
-		}
-	});
-}
+
 function isContextOpen()
 {
 	if ($("#wormholeContext").length > 0)

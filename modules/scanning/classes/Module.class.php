@@ -55,12 +55,6 @@ namespace scanning
 
 			if ($section == "map")
 			{
-				if ($action == "editconnection")
-				{
-					$connectionController = new \scanning\controller\Connection();
-					return $connectionController->getEditForm(\Tools::REQUEST("from"), \Tools::REQUEST("to"));
-				}
-
 				if (\Tools::REQUEST("ajax"))
 				{
 					if ($action == "addwormhole")
@@ -171,38 +165,6 @@ namespace scanning
 
 					\AppRoot::redirect("index.php?module=scanning");
 				}
-			}
-
-			if ($section == "getwhdetails")
-			{
-				$controller = new \scanning\controller\System();
-				$wormhole = new \scanning\model\Wormhole(\Tools::REQUEST("system"));
-
-				if ($action == "gettradehubs")
-					return $controller->getWHDetailsTradehubs($wormhole->solarSystemID);
-				elseif ($action == "getactivity")
-					return $controller->getWHDetailsActivity($wormhole->solarSystemID);
-				elseif ($action == "geteffects")
-					return $controller->getWHEffectsData($wormhole->solarSystemID);
-				else
-					return $controller->getWHDetailsPopup($wormhole->solarSystemID);
-			}
-
-			if ($section == "getconndetails")
-			{
-				$controller = new \scanning\controller\Connection();
-				$systems = explode(",",\Tools::REQUEST("connection"));
-				$connection = \scanning\model\Connection::getConnectionByWormhole($systems[0], $systems[1], \User::getSelectedChain());
-
-				if ($connection !== null)
-				{
-					if ($action == "jumplog")
-						return $controller->getJumplogSummary($connection->id);
-					else
-						return $controller->getDetailsPopup($connection->id);
-				}
-				else
-					return "Connection not found";
 			}
 
 			if ($section == "exitfinder")

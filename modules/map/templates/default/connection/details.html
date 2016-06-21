@@ -1,191 +1,169 @@
-<div id="connection-details">
-    <h2>
-        <div class="col6">
-        {if $connection->getFromSystem()}
-            <span style="color:{$connection->getFromSystem()->getClassColor()}">
-            {$connection->getFromSystem()->getClass(1)}
-        </span>
-            {$connection->getFromSystem()->name}
-        {else}
-            <span style="color: #eeeeee;">Unmapped</span>
-        {/if}
-            -
-            {$connection->getFromWormhole()->name}
-        </div>
-        <div class="col6 right last" style="text-align: right;">
-        {if $connection->getToSystem()}
-            <span style="color:{$connection->getToSystem()->getClassColor()}">
-                {$connection->getToSystem()->getClass(1)}
-            </span>
-            {$connection->getToSystem()->name}
-        {else}
-            <span style="color: #eeeeee;">Unmapped</span>
-        {/if}
-            -
-            {$connection->getToWormhole()->name}
-        </div>
-        <div style="clear: both;"></div>
-    </h2>
-    <div style="clear: both;"></div>
-    <h3>
-        <div class="col6">
-            {$connection->getFromWormholeType()->name}
-        </div>
-        <div class="col6 right last" style="text-align: right;">
-            {$connection->getToWormholeType()->name}
-        </div>
-    </h3>
-    <div style="clear: both;"></div>
+<div style="float: left; width: 180px;">
+	<table>
+		<tr>
+			<th style="text-align: center; font-size: 12px; width: 60px;">
+				{$connection->getFromSystem()->name}
+			</th>
+			<td style="text-align: center; font-size: 12px;"> &gt; </td>
+			<th style="text-align: center; font-size: 12px; width: 60px;">
+				{$connection->getToSystem()->name}
+			</th>
+		</tr>
+		<tr>
+			<td style="text-align: center;">{$fromtype}</td>
+			<td style="text-align: center;"></td>
+			<td style="text-align: center;">{$totype}</td>
+		</tr>
+	</table>
+</div>
+<div style="float: right; width: 170px;">
+	<table>
+		<tr>
+			<th valign="top">Status:</th>
+			<td valign="top">
+			{if $connection->mass == 0}
+				<span style="color: #228822;">Mass Stable</span>
+			{elseif $connection->mass == 1}
+				<span style="color: #FFAA22;">Mass Reduced</span>
+			{else}
+				<span style="color: #BB2222;">Mass Critical</span>
+			{/if}
+			<br />
+			{if $connection->eol > 0}
+				<span style="color: #BB2222; font-weight: bold;">END OF LIFE</span>
+			{/if}
+			</td>
+		</tr>
+	</table>
+</div>
+<div style="clear:both;"></div>
 
+<div style="float: right; width: 100px; text-align: right; margin-right: 20px;">
+	<i>* Click to update</i>
+</div>
+{if !$connection->getWormholeType()->isK162()}
+<div style="float: left; width: 210px; margin-top: 5px;">
+	<div>
+		<div style="float: left; width: 100px;">
+			<b>Lifetime:</b>
+		</div>
+		<div style="float: left; width: 100px; white-space: nowrap; overflow: hidden;">
+			{$connection->getWormholeType()->lifetime} hours
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div>
+		<div style="float: left; width: 100px;">
+			<b>Allowed Mass:</b>
+		</div>
+		<div style="float: left; width: 100px; white-space: nowrap; overflow: hidden;">
+		{if $connection->getWormholeType()->jumpmass == 0}
+			<i>Unknown</i>
+		{else}
+			{($connection->getWormholeType()->jumpmass*1000000)|number}
+		{/if}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div>
+		<div style="float: left; width: 100px;">
+			<b>Maximum Mass:</b>
+		</div>
+		<div style="float: left; width: 100px; white-space: nowrap; overflow: hidden;">
+		{if $connection->getWormholeType()->maxmass == 0}
+			<i>Unknown</i>
+		{else}
+			{($connection->getWormholeType()->maxmass*1000000)|number}
+		{/if}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+{/if}
+<div style="clear:both;"></div>
+
+{if $connection->allowCapitals}
+<div style="margin-top: 15px; color: #FFFFFF; font-weight: bold;">
+	<img src="/images/eve/cyno.large.png" align="left" style="margin-right: 15px; width: 24px;">
+	This wormhole allows capitals to jump through.
+	<div style="clear:both;"></div>
+</div>
+{/if}
 {if $connection->frigateHole}
-    <div style="margin-top: 1em; color: #ffffff;">
-        <img src="/images/eve/rifter.png" align="left" style="margin-right: 1em; margin-top: 5px;">
-        <b>Small Ship Wormhole</b><br />
-        Only available for frigates and destroyers!
-        <div style="clear:both;"></div>
-    </div>
-    <div style="clear: both;"></div>
+<div style="margin-top: 15px; color: #FFFFFF; font-weight: bold;">
+	<img src="/images/eve/rifter.png" align="left" style="margin-right: 15px;">
+	Only available for frigates and destroyers!
+	<div style="clear:both;"></div>
+</div>
 {/if}
 
-    <div id="connection-details-properties" style="margin-top: 1em;">
-        <div id="connection-status" class="form">
-            <div class="field">Status:</div>
-            <div class="value">
-            {if $connection->mass == 0}
-                <span style="background-color: #228822;">Mass Stable</span>
-            {elseif $connection->mass == 1}
-                <span style="background-color: #FFAA22; color: #444444;">Mass Reduced</span>
-            {else}
-                <span style="background-color: #BB2222;">Mass Critical</span>
-            {/if}
-            <br />
-            {if $connection->eol > 0}
-                <span style="color: #BB2222; font-weight: bold;">END OF LIFE</span>
-            {/if}
-            </div>
-        </div>
-        <div class="form">
-            <div class="field">Type:</div>
-            <div class="value">
-            {if $connection->getWormholeType()->name}
-                {$connection->getWormholeType()->name}
-            {else}
-                <span class="subtle">Unknown</span>
-            {/if}
-            </div>
-        </div>
-        <div class="form">
-            <div class="field">Lifetime:</div>
-            <div class="value">
-                {if !$connection->getWormholeType()->isK162()}
-                    {$connection->getWormholeType()->lifetime} hours
-                {else}
-                    <span class="subtle">Unknown</span>
-                {/if}
-            </div>
-        </div>
-        <div class="form">
-            <div class="field">Allowed Mass:</div>
-            <div class="value">
-        {if !$connection->getWormholeType()->isK162()}
-            {if $connection->getWormholeType()->jumpmass > 0}
-                <span class="subtle">Unknown</span>
-            {else}
-                {($connection->getWormholeType()->jumpmass*1000000)|number}
-            {/if}
-        {else}
-                <span class="subtle">Unknown</span>
-        {/if}
-            </div>
-        </div>
-        <div class="form">
-            <div class="field">Maximum Mass:</div>
-            <div class="value">
-        {if !$connection->getWormholeType()->isK162()}
-            {if $connection->getWormholeType()->maxmass == 0}
-                <span class="subtle">Unknown</span>
-            {else}
-                {($connection->getWormholeType()->maxmass*1000000)|number}
-            {/if}
-        {else}
-                <span class="subtle">Unknown</span>
-        {/if}
-            </div>
-        </div>
-        <div style="clear:both;"></div>
 
-    {if $connection->allowCapitals}
-        <div style="margin-top: 1em;">
-            <img src="/images/eve/cyno.large.png" align="left" style="margin-right: 1em; width: 24px;">
-            This wormhole allows capitals to jump through.
-            <div style="clear:both;"></div>
-        </div>
-    {/if}
-    </div>
-    <div style="clear:both;"></div>
+<div style="margin-top: 15px;">
+	<div>
+		<div style="float: left; width: 80px;">
+			<b>Found:</b>
+		</div>
+		<div style="float: left; width: 250px; white-space: nowrap; overflow: hidden;">
+			{$connection->addDate|date_age:1} ago
+			&nbsp; - &nbsp;
+			{$connection->getAddedByUser()->getFullname()}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+{if $connection->addDate != $connection->updateDate}
+	<div>
+		<div style="float: left; width: 80px;">
+			<b>Updated:</b>
+		</div>
+		<div style="float: left; width: 250px; white-space: nowrap; overflow: hidden;">
+			{$connection->updateDate|date_age:1} ago
+			&nbsp; - &nbsp;
+			{$connection->getUpdatedByUser()->getFullname()}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+{/if}
 
-    <div style="margin-top: 1em;">
-        <div class="form">
-            <div class="field">Found:</div>
-            <div class="value" style="white-space: nowrap; overflow: hidden;">
-                {$connection->addDate|date_age:1} ago
-                &nbsp; - &nbsp;
-                {$connection->getAddedByUser()->getFullname()}
-            </div>
-        </div>
-    {if $connection->addDate != $connection->updateDate}
-        <div class="form">
-            <div class="field">Updated:</div>
-            <div class="value" style="white-space: nowrap; overflow: hidden;">
-                {$connection->updateDate|date_age:1} ago
-                &nbsp; - &nbsp;
-                {$connection->getUpdatedByUser()->getFullname()}
-            </div>
-        </div>
-    {/if}
-        <div style="clear:both;"></div>
-
-    {if $connection->massUpdateDate !== null && $connection->mass > 0}
-        <div style="margin-top: 1em;">
-            <div style="font-weight: bold; text-decoration: underline;">
-            {if $connection->mass == 1}
-                Marked Mass-Reduced:
-            {else}
-                Marked Mass-Crit:
-            {/if}
-            </div>
-            <div style="margin: 1px; margin-left: 15px;">
-                {$connection->massUpdateDate|date_age:1} ago
-                &nbsp; - &nbsp;
-                {$connection->getUpdatedByUser()->getFullname()}
-            </div>
-            <div style="clear:both;"></div>
-        </div>
-        <div style="clear:both;"></div>
-    {/if}
-    {if $connection->lifetimeUpdateDate !== null && $connection->eol > 0}
-        <div style="margin-top: 1em;">
-            <div style="font-weight: bold; text-decoration: underline;">
-                Marked End-Of-Life:
-            </div>
-            <div style="margin: 1px; margin-left: 15px;">
-                {$connection->lifetimeUpdateDate|date_age:1} ago
-                &nbsp; - &nbsp;
-                {$connection->getUpdatedByUser()->getFullname()}
-            </div>
-            <div style="clear:both;"></div>
-        </div>
-        <div style="clear:both;"></div>
-    {/if}
-    </div>
-    <div style="clear:both;"></div>
-
-    <div id="connection-details-jumplog" style="margin-top: 2em;">
-        <div style="padding: 1em;">
-            <img src="/images/loading.gif" align="left" />
-            &nbsp; Loading Logs
-        </div>
-    </div>
-    <div style="clear:both;"></div>
-
+{if $connection->massUpdateDate !== null && $connection->mass > 0}
+	<div style="margin-top: 10px;">
+		<div style="font-weight: bold; text-decoration: underline;">
+		{if $connection->mass == 1}
+			Marked Mass-Reduced:
+		{else}
+			Marked Mass-Crit:
+		{/if}
+		</div>
+		<div style="margin: 1px; margin-left: 15px;">
+			{$connection->massUpdateDate|date_age:1} ago
+			&nbsp; - &nbsp;
+			{$connection->getUpdatedByUser()->getFullname()}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+{/if}
+{if $connection->lifetimeUpdateDate !== null && $connection->eol > 0}
+	<div style="margin-top: 10px;">
+		<div style="font-weight: bold; text-decoration: underline;">
+			Marked End-Of-Life:
+		</div>
+		<div style="margin: 1px; margin-left: 15px;">
+			{$connection->lifetimeUpdateDate|date_age:1} ago
+			&nbsp; - &nbsp;
+			{$connection->getUpdatedByUser()->getFullname()}
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+{/if}
 </div>
+
+<div style="clear:both;"></div>
+<br />
+<div>
+	<div id="jumplogsummary"></div>
+</div>
+<div style="clear:both;"></div>
