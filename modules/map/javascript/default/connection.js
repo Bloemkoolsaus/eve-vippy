@@ -111,7 +111,7 @@ Connection.prototype.render = function(canvas) {
         connection.add(new Kinetic.Image({
             x: this.getCenter().x - 6,
             y: this.getCenter().y - 6,
-            image: createImage('/images/eve/cyno.png'),
+            image: mapIcons.cyno,
             width: 12,
             height: 12
         }));
@@ -129,7 +129,7 @@ Connection.prototype.render = function(canvas) {
         connection.add(new Kinetic.Image({
             x: this.getCenter().x - 9,
             y: this.getCenter().y - 7,
-            image: createImage('/images/eve/rifter.png'),
+            image: mapIcons.rifter,
             width: 20
         }));
     }

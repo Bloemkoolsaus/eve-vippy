@@ -39,14 +39,23 @@ function Wormhole(id) {
 
 /** Setters **/
 Wormhole.prototype.setPosition = function(x, y) {
-    this.map.position.x = x;
-    this.map.position.y = y;
+    this.map.position.x = x-0;
+    this.map.position.y = y-0;
+
+    if (totalWidth < this.map.width+this.map.position.x)
+        totalWidth = this.map.width+this.map.position.x;
+    if (totalHeight < this.map.height+this.map.position.y)
+        totalHeight = this.map.height+this.map.position.y;
 };
 Wormhole.prototype.setWidth = function(w) {
-    this.map.width = w;
+    this.map.width = w-0;
+    if (totalWidth < this.map.width+this.map.position.x)
+        totalWidth = this.map.width+this.map.position.x;
 };
 Wormhole.prototype.setHeight = function(h) {
-    this.map.height = h;
+    this.map.height = h-0;
+    if (totalHeight < this.map.height+this.map.position.y)
+        totalHeight = this.map.height+this.map.position.y;
 };
 Wormhole.prototype.addTitle = function(title, color) {
     this.titles.push({
@@ -152,6 +161,7 @@ Wormhole.prototype.render = function(canvas)
         strokeWidth: 3,
         draggable: false
     }));
+
 
     if (this.isKspace()) {
         wormhole.add(new Kinetic.Rect({
@@ -261,7 +271,7 @@ Wormhole.prototype.render = function(canvas)
         wormhole.add(new Kinetic.Image({
             x: 5,
             y: 16,
-            image: createImage('/images/eve/star.png'),
+            image: mapIcons.star,
             width: 12,
             height: 12,
             draggable: false
@@ -274,7 +284,7 @@ Wormhole.prototype.render = function(canvas)
         wormhole.add(new Kinetic.Image({
             x: this.map.width-25,
             y: this.map.height-25,
-            image: createImage('/images/eve/factions/'+this.solarsystem.faction+'.png'),
+            image: mapIcons.faction[this.solarsystem.faction],
             width: 24,
             height: 24,
             draggable: false
@@ -284,7 +294,7 @@ Wormhole.prototype.render = function(canvas)
         wormhole.add(new Kinetic.Image({
             x: this.map.width-15,
             y: 2,
-            image: createImage('/images/eve/pin-dark.png'),
+            image: mapIcons.pin,
             width: 13,
             height: 13,
             draggable: false
@@ -299,7 +309,7 @@ Wormhole.prototype.render = function(canvas)
         wormhole.add(new Kinetic.Image({
             x: iconPosition.x,
             y: iconPosition.y,
-            image: createImage(this.icons[j]),
+            image: this.icons[j],
             width: 12,
             height: 12,
             draggable: false

@@ -2,15 +2,6 @@ var canvas = null;
 var context = null;
 var stage = null;
 var layer = null;
-var mapZoom = 100;
-
-var x1 = 0;
-var y1 = 0;
-var x2 = 0;
-var y2 = 0;
-
-var maxWidth = 0;
-var maxHeight = 0;
 
 var totalWidth = 0;
 var totalHeight = 0;
@@ -25,26 +16,12 @@ var blockMapRefresh = false;
 var whDragX = 0;
 var whDragY = 0;
 
+var mapWormholes = [];
+var mapConnections = [];
 
 function mapRendered()
 {
-	if (stage == null)
-		return false;
-	else
-		return true;
-}
-
-function mapZoomIn()
-{
-	mapZoom += 10;
-	$("#mapZoom").attr("value",mapZoom);
-}
-function mapZoomOut()
-{
-	mapZoom -= 10;
-	if (mapZoom < 50)
-		mapZoom = 50;
-	$("#mapZoom").attr("value",mapZoom);
+	return (stage != null);
 }
 
 function generateMap(data)
@@ -52,17 +29,20 @@ function generateMap(data)
 	if (blockMapRefresh)
 		return true;
 
+    generateConnections(data.connections);
+    generateSystems(data.wormholes);
+
 	if (!mapRendered())
 	{
-		maxWidth = $("#maincontainer").width()-30;
-		maxHeight = $("#signatureMap").height()-20;
-
 	    stage = new Kinetic.Stage({
 	        container: "signatureMap",
-	        width: maxWidth,
-	        height: maxHeight,
+	        width: totalWidth,
+	        height: totalHeight,
 	        id: "sigmap"
 		});
+        $(window).resize(function() {
+            resizeMap();
+        });
 	}
 	else
 	{
@@ -70,17 +50,15 @@ function generateMap(data)
 		stage.remove(layer);
 		stage.clear();
 	}
-
-	var curHeight = maxHeight;
+    resizeMap();
 
 	layer = new Kinetic.Layer();
-	generateConnections(data.connections);
-	generateSystems(data.wormholes);
-
-	resizeMap();
-	$(window).resize(function() {
-		resizeMap();
-	});
+    for (var c=0; c<mapConnections.length; c++) {
+        mapConnections[c].render(layer);
+    }
+    for (var w=0; w<mapWormholes.length; w++) {
+        mapWormholes[w].render(layer);
+    }
 
     // add the layer to the stage
     stage.add(layer);
@@ -88,14 +66,8 @@ function generateMap(data)
 
 function resizeMap()
 {
-	var stageWidth = maxWidth;
-	var stageHeight = maxHeight;
-
-	if (stageWidth < (totalWidth + 100))
-		stageWidth = totalWidth + 100;
-
-	if (stageHeight < totalHeight)
-		stageHeight = totalHeight + 20;
+	var stageWidth = totalWidth + 100;
+	var stageHeight = totalHeight + 20;
 
 	stage.setSize(stageWidth, stageHeight);
 	$("#signatureMap").width(stageWidth);
@@ -110,12 +82,13 @@ function resizeMap()
 	var top = $("#mapHeader").position().top + $("#mapHeader").height() + 14;
 	$("#signatureMapContainer").css("top", top);
 
-	$("#signatureMapContainer").height(maxHeight+20);
+	$("#signatureMapContainer").height(stageHeight);
 	$("#filler").height($("#signatureMapContainer").height()-15);
 }
 
 function generateConnections(data)
 {
+    mapConnections = [];
 	for (var i=0; i<data.length; i++)
 	{
         var connection = new Connection(data[i].id);
@@ -151,12 +124,13 @@ function generateConnections(data)
             connection.solarsystems.jumps = data[i].attributes.kspacejumps;
         }
 
-        connection.render(layer);
+        mapConnections.push(connection);
 	}
 }
 
 function generateSystems(data)
 {
+    mapWormholes = [];
 	for (var i=0; i<data.length; i++)
 	{
         var wormhole = new Wormhole(data[i].id);
@@ -201,30 +175,30 @@ function generateSystems(data)
                 wormhole.solarsystem.faction = data[i].attributes.factionid;
 
             if (data[i].attributes.stations != null)            // Station system?
-                wormhole.addIcon('images/eve/station.png');
+                wormhole.addIcon(mapIcons.station);
             if (data[i].attributes.cyno != null)                // Caps in range?
-                wormhole.addIcon('images/eve/cyno.png');
+                wormhole.addIcon(mapIcons.station);
             if (data[i].attributes.hsisland != null)            // HS-Island?
-                wormhole.addIcon('images/eve/stargate.red.png');
+                wormhole.addIcon(mapIcons.hsisland);
             if (data[i].attributes.direcths != null)            // Direct-HS
-                wormhole.addIcon('images/eve/stargate.green.png');
+                wormhole.addIcon(mapIcons.direcths);
 
             // Contested / faction warfare
             if (data[i].attributes.contested != null)
-                wormhole.addIcon('images/eve/fw.contested.png');
+                wormhole.addIcon(mapIcons.contested);
             else if (data[i].attributes.fwsystem)
-                wormhole.addIcon('images/eve/fw.png');
+                wormhole.addIcon(mapIcons.fw);
         }
 
         // Recent kills
         if (data[i].whsystem.class && data[i].kills != null) {
             if (data[i].kills.pvp > 0)
-                wormhole.addIcon('images/eve/skull.red.png');
+                wormhole.addIcon(mapIcons.pvp);
             if (data[i].kills.pve > 0)
-                wormhole.addIcon('images/eve/skull.orange.png');
+                wormhole.addIcon(mapIcons.pve);
         }
 
-        wormhole.render(layer);
+        mapWormholes.push(wormhole);
 	}
 }
 
