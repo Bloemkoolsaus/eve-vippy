@@ -17,10 +17,11 @@ class Module extends \Module
         $mapName = (\Tools::REQUEST("section"))?:null;
         if ($mapName)
         {
-            foreach (\User::getUSER()->getAvailibleChains() as $map)
+            foreach (\User::getUSER()->getAvailibleChains() as $chain)
             {
-                if (strtolower($map->name) == strtolower($mapName))
+                if (strtolower($chain->name) == strtolower($mapName))
                 {
+                    $map = new \map\model\Map($chain->id);
                     $view = new \map\view\Map();
                     $action = (count($arguments)>0)?array_shift($arguments):null;
                     $method = ($action) ? "get".ucfirst($action) : "defualt";
