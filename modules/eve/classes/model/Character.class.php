@@ -72,19 +72,19 @@ namespace eve\model
 					$content[] = "You will get problems authenticating for VIPPY because of ambiguous API keys.";
 					$content[] = "Please remove API keys from your secondary VIPPY accounts and use only one VIPPY account per person!";
 
-					$note = new \users\model\Notification();
-					$note->userID = $this->userID;
-					$note->type = "error";
-					$note->title = "Duplicate API keys found!!";
-					$note->content = implode("\n", $content);
-					$note->store();
-
-					$note = new \users\model\Notification();
-					$note->userID = $old->userID;
-					$note->type = "error";
-					$note->title = "Duplicate API keys found!!";
-					$note->content = implode("\n", $content);
-					$note->store();
+                    $openApiNotifications = false;
+                    foreach (\users\model\Notification::findAll(["userid" => $this->userID]) as $note) {
+                        if (!$note->readDate)
+                            $openApiNotifications = true;
+                    }
+                    if (!$openApiNotifications) {
+                        $note = new \users\model\Notification();
+                        $note->userID = $this->userID;
+                        $note->type = "error";
+                        $note->title = "Duplicate API keys found!!";
+                        $note->content = implode("\n", $content);
+                        $note->store();
+                    }
 				}
 
 				// Check API Key
