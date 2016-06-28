@@ -7,7 +7,7 @@ class Chain
     {
         \AppRoot::config("no-cache-chains", 1);
         if (!\User::getUSER()->isAdmin())
-            \AppRoot::redirect(APP_URL);
+            \AppRoot::redirect("");
 
         $chains = array();
         $adminChains = array();
@@ -81,7 +81,7 @@ class Chain
     {
         \AppRoot::config("no-cache-chains", 1);
         if (!\User::getUSER()->isAdmin())
-            \AppRoot::redirect(APP_URL);
+            \AppRoot::redirect("");
 
         $id = (count($arguments) > 0) ? array_shift($arguments) : \Tools::REQUEST("id");
         $chain = new \scanning\model\Chain($id);
@@ -103,7 +103,7 @@ class Chain
                 }
             }
             if (!$allowed)
-                \AppRoot::redirect(APP_URL);
+                \AppRoot::redirect("");
         }
 
 

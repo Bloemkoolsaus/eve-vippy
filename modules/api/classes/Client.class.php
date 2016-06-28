@@ -4,13 +4,18 @@ namespace api
 	class Client
 	{
 		public $format = "json";
-		public $userAgent = APP_TITLE;
-		public $baseURL = "";
-		public $username = "";
-		public $password = "";
-		public $asArray = true;
+		public $userAgent;
+		public $baseURL;
+		public $username;
+		public $password;
+		public $asArray = false;
 
-		private function doRequest($requestType="get", $url, $params=array())
+        function __construct()
+        {
+            $this->userAgent = \Config::getCONFIG()->get("system_title");
+        }
+
+        private function doRequest($requestType="get", $url, $params=array())
 		{
 			$result = array();
 			$requestURL = $this->baseURL.$url;

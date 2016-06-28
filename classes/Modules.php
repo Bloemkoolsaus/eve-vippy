@@ -240,8 +240,7 @@ class Modules
 		}
 
 
-		\AppRoot::redirect("index.php?module=scanning");
+		\AppRoot::redirect("map");
         return true;
 	}
 }
-?>

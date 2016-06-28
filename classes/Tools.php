@@ -820,5 +820,39 @@ Class Tools
 
 		return array_reverse($path);
 	}
+
+    /**
+     * Get files from directory
+     * @param string $directory
+     * @return string[]
+     */
+    public static function getFilesFromDirectory($directory, $allowDirectory=false)
+    {
+        $directory = self::formatFilename(trim($directory,"/"),false);
+        $files = array();
+
+        \AppRoot::debug("getFilesFromDirectory([string]".$directory."[/string])");
+        if ($handle = @opendir($directory))
+        {
+            while (false !== ($file = readdir($handle)))
+            {
+                if ($file == "." || $file == "..")
+                    continue;
+                if (file_exists($directory."/".$file))
+                {
+                    if (!$allowDirectory)
+                    {
+                        if (is_file($directory."/".$file))
+                            $files[] = $directory."/".$file;
+                    }
+                    else
+                        $files[] = $directory."/".$file;
+                }
+            }
+        }
+
+        asort($files);
+        return $files;
+    }
 }
 ?>

@@ -5,7 +5,7 @@ require_once("init.php");
 $mainContent = null;
 $mainMenu = null;
 
-\AppRoot::title(APP_TITLE);
+\AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
 // KONINGSDAG
 if (date("Y-m-d") == date("Y")."-04-27") {
@@ -23,7 +23,7 @@ if (Tools::GET("action") == "logout")
 {
 	if (\User::getUSER())
 		\User::getUSER()->logout();
-	\AppRoot::redirect("index.php");
+	\AppRoot::redirect("");
 }
 
 // Forgot password

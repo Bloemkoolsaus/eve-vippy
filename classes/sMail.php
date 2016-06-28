@@ -14,8 +14,8 @@ class Mail
 
 	function __construct()
 	{
-		$this->fromName = APP_TITLE;
-		$this->fromAddress = APP_EMAIL;
+		$this->fromName = \Config::getCONFIG()->get("system_title");
+		$this->fromAddress = \Config::getCONFIG()->get("system_email");
 	}
 
 	function addRecipient($address)

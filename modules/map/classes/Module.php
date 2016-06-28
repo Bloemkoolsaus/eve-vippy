@@ -17,10 +17,9 @@ class Module extends \Module
         $mapName = (\Tools::REQUEST("section"))?:null;
         if ($mapName)
         {
-            $map = \map\model\Map::findByName($mapName);
-            if ($map)
+            foreach (\User::getUSER()->getAvailibleChains() as $map)
             {
-                if ($map->getUserAllowed())
+                if (strtolower($map->name) == strtolower($mapName))
                 {
                     $view = new \map\view\Map();
                     $action = (count($arguments)>0)?array_shift($arguments):null;
@@ -34,12 +33,15 @@ class Module extends \Module
                 }
             }
         }
+        else
+        {
+            // Geen map gekozen. Pak eerste map
+            foreach (\User::getUSER()->getAvailibleChains() as $chain) {
+                \AppRoot::redirect("map/" . $chain->name);
+            }
+        }
 
-        $view = $this->getView();
-        if ($view)
-            return $view;
-
-        return "Hai!";
+        return parent::getContent();
     }
 
     function getAppData(\stdClass $appData)

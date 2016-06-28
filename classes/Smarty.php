@@ -101,7 +101,7 @@ class SmartyTools
 	{
 		$smarty = new \Smarty();
 		$smarty->setPluginsDir("classes/smarty/plugins");
-		$smarty->compile_dir = self::getCompiledDir();
+		$smarty->setCompileDir(self::getCompiledDir());
 		$smarty->default_template_handler_func = "SmartyTools::getSmartyTemplate";
 		$smarty->assign("App", self::getAppData());
 		return $smarty;
@@ -114,7 +114,7 @@ class SmartyTools
 	public static function getAppData()
 	{
 		$appData = new \stdClass();
-		$appData->url = APP_URL;
+		$appData->url = \Config::getCONFIG()->get("system_url");
 		$appData->browser = \Tools::getBrowser();
 		$appData->datetime = date("Y-m-d H:i:s");
 		$appData->theme = self::getTemplate();
@@ -129,10 +129,7 @@ class SmartyTools
 
 	private static function getCompiledDir()
 	{
-		if (defined("DOCUMENTDIR"))
-			$directory = DOCUMENTDIR."smarty/compiled";
-		else
-			$directory = "documents/smarty/compiled";
+        $directory = \Config::getCONFIG()->get("system_document_dir")."smarty/compiled";
 
 		// Check if directory exists.
 		if (!file_exists($directory))
@@ -150,4 +147,3 @@ class SmartyTools
 		return $directory;
 	}
 }
-?>

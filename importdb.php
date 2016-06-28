@@ -168,7 +168,7 @@ for ($i=0; $i<count($lines); $i++)
 $mainTPL = \SmartyTools::getSmarty();
 $mainTPL->assign("javascript", $javascripts);
 $mainTPL->assign("stylesheet", $stylesheets);
-AppRoot::title(APP_TITLE);
+\AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
 // Finish page
 $mainTPL->assign("pageTitle", AppRoot::getTitle());

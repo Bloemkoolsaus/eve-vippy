@@ -89,16 +89,16 @@ class User extends \users\model\User
 			$user->password = User::generatePassword($newPassword);
 			$user->store();
 
-			$headers = "From: ".ADMIN_EMAIL."\r\n";
+			$headers = "From: ".\Config::getCONFIG()->get("system_email")."\r\n";
 
 			$message = "Hello ".$user->getFullName().",\n\n";
-			$message.= "You have requested a new password for " . APP_TITLE.".\n";
+			$message.= "You have requested a new password for " . \Config::getCONFIG()->get("system_title").".\n";
 			$message.= "You can now login with the following credentials:\n\n";
 			$message.= "Username: ".$user->username."\n";
 			$message.= "Password: ".$newPassword."\n\n";
-			$message.= APP_TITLE;
+			$message.= \Config::getCONFIG()->get("system_title");
 
-			if (mail($user->email, "New password: ".APP_TITLE, $message, $headers))
+			if (mail($user->email, "New password: ".\Config::getCONFIG()->get("system_title"), $message, $headers))
 				return true;
 			else
 				return -1;

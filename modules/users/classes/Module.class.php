@@ -25,7 +25,7 @@ namespace users
 			if ($section == "logs")
 			{
 				if (!\User::getUSER()->isAdmin())
-					\AppRoot::redirect(APP_URL);
+					\AppRoot::redirect("");
 
 				$logView = new \users\view\Log();
 				return $logView->getOverview();

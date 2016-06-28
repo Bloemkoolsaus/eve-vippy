@@ -82,7 +82,7 @@ namespace users\controller
 		function getEditForm($userID)
 		{
 			if (!\User::getUSER()->isAdmin())
-				\AppRoot::redirect(APP_URL);
+				\AppRoot::redirect("");
 
 			$errors = array();
 			$messages = array();
@@ -91,7 +91,7 @@ namespace users\controller
             // Directors may only manage their own members.
             if (\User::getUSER()->getIsDirector() && !\User::getUSER()->getIsSysAdmin()) {
 				if ($user->getMainCorporationID() !== \User::getUSER()->getMainCorporationID())
-					\AppRoot::redirect(APP_URL);
+					\AppRoot::redirect("");
 			}
 
 			if (\Tools::POST("resetpassword"))

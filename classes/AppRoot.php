@@ -18,6 +18,95 @@ class AppRoot
 	private static $cacheDir = "documents/cache/";
 
 
+    /**
+     * AUTO LOADER
+     * @param string $class
+     * @throws \Exception
+     */
+    public static function classLoader($class)
+    {
+        // Split class name in namespace parts and get root namespace
+        $parts = explode("\\", trim($class, "\\"));
+        $root  = array_shift($parts);
+
+        $moduleClass = "modules/".$root."/classes/Module.php";
+        if (file_exists($moduleClass))
+            require_once $moduleClass;
+
+        // Determine class file location
+        if (strpos($class, "Smarty_") === 0)
+            $file = "classes/smarty/sysplugins/" . strtolower($class);
+        elseif (!$parts)
+            $file = "classes/" . $root;
+        elseif ($root == "framework")
+            $file = "classes/common/classes/" . implode("/", $parts);
+        elseif ($root == "elements")
+            $file = "classes/common/classes/elements/" . implode("/", $parts);
+        elseif ($parts[0] == "common")
+            $file = "modules/" . $root . "/" . array_shift($parts) . "/classes/" . implode("/", $parts);
+        else
+            $file = "modules/" . $root . "/classes/" . implode("/", $parts);
+
+
+        // Find the file using .class.php or .php extension
+        if (file_exists($file . ".class.php"))
+            $file .= ".class.php";
+        elseif (file_exists($file . ".php"))
+            $file .= ".php";
+        else
+        {
+            if (array_pop($parts) == "Exception")
+                throw new \Exception("Exception triggered");
+
+            \AppRoot::debug("<span style='color:red;'>Failed to load class $class from file:</span> $file(.class).php");
+            return;
+        }
+
+        require_once($file);
+        \AppRoot::debug("Loaded Class file: " . $file);
+    }
+
+    /**
+     * ERROR HANDLER
+     * @param string $errno
+     * @param string $errstr
+     * @param string $errfile
+     * @param string $errline
+     * @return bool
+     */
+    public static function errorHandler($errno, $errstr, $errfile, $errline)
+    {
+        // @-operator
+        if ((error_reporting() & $errno) != $errno)
+            return false;
+
+        $aLevels = array(2 => 'WARNING', 8 => 'NOTICE', 256 => 'FATAL ERROR', 512 => 'WARNING', 1024 => 'NOTICE');
+        $errLevel = (isset($aLevels[$errno])) ? $aLevels[$errno] : "ERROR";
+
+        $trace = self::getStackTrace();
+        $message = "$errLevel - $errstr \n";
+        $message .= "FILE: ".str_replace(DIRECTORY_SEPARATOR,"/",$errfile)."\n";
+        $message .= "LINE: ".$errline."\n";
+        $message .= "\n".$trace;
+        \AppRoot::error($message);
+
+        /* Don't execute PHP internal error handler */
+        return true;
+    }
+
+    /**
+     * EXCEPTION HANDLER
+     * @param \Exception $exception
+     */
+    public static function exceptionHandler($exception)
+    {
+        $message = get_class($exception)." [".$exception->getCode()."] ".$exception->getMessage()."\n";
+        $message .= "FILE: ".$exception->getFile()."\n";
+        $message .= "LINE: ".$exception->getLine()."\n";
+        $message .= "\n".$exception->getTraceAsString();
+        \AppRoot::error($message);
+    }
+
 
 	/**
 	 * SQL UPDATES
@@ -463,12 +552,12 @@ class AppRoot
 			return "";
 	}
 
-	/**
-	 * Get or set config
-	 * @param string $var
-	 * @param string $val (if you want to set)
-	 * @return string|boolean false
-	 */
+    /**
+     * Get or set config
+     * @param bool|string $var
+     * @param bool|string $val (if you want to set)
+     * @return bool|string false
+     */
 	public static function config($var=false, $val=false)
 	{
 		if (!$var)
@@ -498,7 +587,7 @@ class AppRoot
 	public static function redirect($url, $inclAppUrl=true)
     {
         if ($inclAppUrl)
-            $url = APP_URL.trim($url,"/");
+            $url = \Config::getCONFIG()->get("system_url").trim($url,"/");
 
 		\AppRoot::debug("<div style='background-color: #FFAA00; color: #222222; font-weight: bold; padding: 5px; border: dashed 1px #000000;'>REDIRECT: :".$url."</div>");
 		if (\AppRoot::doDebug())
@@ -552,7 +641,7 @@ class AppRoot
 	public static function setCache($file, $cache)
 	{
         \AppRoot::depricated("setCache()", $file);
-        return \Cache::file()->get($file, $cache);
+        return \Cache::file()->set($file, $cache);
 	}
 
 	public static function removeCache($file)

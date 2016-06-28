@@ -1,1 +1,0 @@
-alter table user_auth_groups add column contactuserid int(11) unsigned default null;
