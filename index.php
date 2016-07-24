@@ -1,4 +1,6 @@
 <?php
+use users\model\Oauth;
+
 require_once("init.php");
 \AppRoot::debug("finished init");
 
@@ -51,6 +53,20 @@ if (Tools::POST("doLogin") == "true")
 			$loginMsg = "Incorrect username or password";
 	}
 }
+
+if (Tools::POST("sso") == "true") 
+{
+	Print " tring SSO login";	
+	
+	$oath = new users\model\Oauth();
+	$oath->requestAuthorization();
+	$oath->getCharacterID();
+}
+
+if (Tools::GET("state") && Tools::GET("code")) {
+	$oath = new users\model\Oauth();
+	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));	
+} 
 
 if (!\User::getLoggedInUserId())
 {

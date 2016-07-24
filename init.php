@@ -11,6 +11,7 @@ session_start();
 $startTime = microtime(true);
 
 // Class loader
+require_once("classes/AppRoot.php");
 function autoLoader($classname) {
     \AppRoot::classLoader($classname);
 }
@@ -28,8 +29,6 @@ function myExceptionHandler($e) {
 }
 set_exception_handler("myExceptionHandler");
 
-
-
 // Load Config & Classes
 $directories = array("config");
 foreach ($directories as $directory) {
@@ -42,9 +41,8 @@ foreach ($directories as $directory) {
             if (is_file($filename))
                 require_once($filename);
         }
-    }
+    } 
 }
-
 
 // Load Classes
 require_once("classes/AppRoot.php");

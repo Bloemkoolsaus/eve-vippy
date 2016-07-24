@@ -1633,6 +1633,16 @@ namespace users\model
 
 			return null;
 		}
+		
+		public static function getUserByToon($characterid) {
+			if ($result = \MySQL::getDB()->getRow("SELECT userid FROM characters WHERE id = ?", array($characterid)))
+			{
+				$user = new \users\model\User($result["userid"]);
+				return $user;
+			}
+			return null;
+			
+		}
 	}
 }
 ?>
