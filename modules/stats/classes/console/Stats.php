@@ -47,6 +47,7 @@ class Stats
                                                         ) whs on whs.userid = u.id
                                                     left join ( select  userid, nrkills as amount
                                                                 from    stats_kills
+                                                                where   killdate between '".$fromdate."' and '".$tilldate."'
                                                         ) kills on kills.userid = u.id
 
                                                 where   sigs.userid is not null

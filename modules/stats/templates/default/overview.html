@@ -85,6 +85,8 @@
 	{assign var=totalHours value=0}
 	{assign var=totalSigs value=0}
 	{assign var=totalWHs value=0}
+	{assign var=totalKills value=0}
+	{assign var=totalQuota value=0}
 	{if $corp.users|@count > 0}
 	<div style="float: left; margin: 10px;">
 		<table class="sectionoverview">
@@ -111,8 +113,10 @@
 		{assign var=totalWHs value=$totalWHs+$user.whs}
 		{assign var=sigsQuote value=0}
 		{if isset($user.kills) && $user.kills > 0}
+			{assign var=totalKills value=$totalKills+$user.kills}
 			{assign var=sigsQuote value=$user.kills*5}
 		{/if}
+		{assign var=totalQuota value=$totalQuota+$sigsQuote}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
 				<td style="padding: 0; width: 20px;">
@@ -132,7 +136,7 @@
 					{if isset($user.kills) && $user.kills > 0}{$user.kills}{/if}
 				</td>
 				<td style="text-align: center; color: {if $sigsQuote > $user.sigs}#ff0000{else}#ffffff{/if};">
-					{$sigsQuote}
+					{if $sigsQuote > 0}{$sigsQuote}{/if}
 				</td>
 				<td style="text-align: center; color: #aaaaaa;">
 					{$nrhours}
@@ -149,18 +153,24 @@
 				<td></td>
 				<td></td>
 				<th style="text-align: center;">
-					{$totalSigs}
-				</th>
-				<th style="text-align: center;">
-				{if $nrhours > 0}
-					{($totalSigs/$totalHours)|round:1}
-				{/if}
-				</th>
-				<th style="text-align: center;">
 					{$totalWHs}
 				</th>
 				<th style="text-align: center;">
+					{$totalSigs}
+				</th>
+				<th style="text-align: center;">
+					{$totalKills}
+				</th>
+				<th style="text-align: center;">
+					{$totalQuota}
+				</th>
+				<th style="text-align: center;">
 					{$totalHours}
+				</th>
+				<th style="text-align: center;">
+					{if $nrhours > 0}
+						{($totalSigs/$totalHours)|round:1}
+					{/if}
 				</th>
 			</tr>
 		</table>

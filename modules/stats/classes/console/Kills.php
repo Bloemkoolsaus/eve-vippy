@@ -5,19 +5,23 @@ class Kills
 {
     function doImport($arguments=[])
     {
-        $authgroup = null;
+        $date = date("Y-m")."-01";
         if (count($arguments) > 0)
-            $authgroup = new \admin\model\AuthGroup(array_shift($arguments));
+            $date = date("Y-m", strtotime(array_shift($arguments)))."-01";
 
-        if ($authgroup)
+        foreach (\admin\model\AuthGroup::getAuthGroups() as $authgroup)
         {
+            if (!$authgroup->getConfig("stats_kills"))
+                continue;
+
+            \AppRoot::doCliOutput($authgroup->name);
             $api = new \api\Client();
             $api->baseURL = "http://stats.limited-power.co.uk/api/";
 
             foreach ($authgroup->getAlliances() as $alliance)
             {
                 \AppRoot::doCliOutput(" => ".$alliance->name);
-                $result = $api->get("rethink/entity/".$alliance->id);
+                $result = $api->get("rethink/year/".date("Y", strtotime($date))."/month/".date("m", strtotime($date))."/entity/".$alliance->id);
                 if ($api->success())
                 {
                     $data = json_decode($api->getResult());
@@ -27,12 +31,13 @@ class Kills
                         if ($character && $character->getUser() && $character->id == $character->getUser()->getMainCharacterID())
                         {
                             \AppRoot::doCliOutput("     ".$dat->reduction." kills for ".$character->getUser()->getFullName());
-                            $stats = \stats\model\Kills::findOne(["userid" => $character->getUser()->id]);
+                            $stats = \stats\model\Kills::findOne(["userid" => $character->getUser()->id, "killdate" => $date]);
                             if (!$stats)
                                 $stats = new \stats\model\Kills();
 
                             $stats->userID = $character->getUser()->id;
                             $stats->nrKills = $dat->reduction;
+                            $stats->killdate = $date;
                             $stats->store();
                         }
                     }
@@ -41,7 +46,5 @@ class Kills
                     \AppRoot::doCliOutput("Api call failed", "red");
             }
         }
-        else
-            \AppRoot::doCliOutput("No access group selected", "red");
     }
 }

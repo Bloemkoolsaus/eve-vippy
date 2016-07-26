@@ -25,3 +25,4 @@ create table vippy_api_ips (
 );
 
 insert into vippy_api_key (id, authgroupid, description, apikey, deleted) values (1, 38, 'stats.limited-power.co.uk', 'aGVsbG9teW5hbWVpc2ZsaWdodHk=', 0);
+insert into vippy_api_ips (1, '104.28.26.30');
