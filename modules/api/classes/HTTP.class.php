@@ -3,75 +3,125 @@ namespace api
 {
 	class HTTP
 	{
+		private $httpCode = null;
+        private $contentType = 'application/json';
+
+        function setHttpStatus($code)
+        {
+            $this->httpCode = $code;
+        }
+
+		function getHttpStatus()
+		{
+			if ($this->httpCode !== null)
+				return $this->httpCode;
+
+			return 200;
+		}
+
+        function sendHTTPCode($code=null)
+        {
+            if ($code)
+                $this->setHttpStatus($code);
+
+            if (function_exists("http_response_code"))
+                http_response_code($this->getHttpStatus());
+
+            header("HTTP/1.1 ".$this->getHttpStatus());
+            return $this->getHttpStatus();
+        }
+
+        function getContentType()
+        {
+            return $this->contentType;
+        }
+
+        function setContentType($contentType)
+        {
+            $this->contentType = $contentType;
+        }
+
+		public static $http = null;
+
+		/**
+		 * get http
+		 * @return \api\HTTP
+		 */
 		public static function getHTTP()
 		{
-			return new HTTP();
+			if (self::$http === null)
+				self::$http = new \api\HTTP();
+
+			return self::$http;
 		}
 
-		function parseContentType($contenttype)
-		{
-			foreach (explode(";",$contenttype) as $type) {
-				foreach (explode("/",$type) as $part) {
-					if (in_array(trim($part), array("json","xml")))
-						return trim($part);
-				}
-			}
-
-			return "unknown";
-		}
-
-		function getErrorCode($code=500,$description=false,$details=array())
+		function getErrorCode($code=500,$description=false,$details=array(),$mailError=true)
 		{
 			$error = array();
 			$error["code"] = $code;
 			if ($description)
 				$error["description"] = $description;
 			foreach ($details as $key => $value) {
+                if (is_array($value) || is_object($value))
+                    $value = json_encode($value);
 				$error[$key] = $value;
 			}
 
-			header("HTTP/1.0 ".$code);
+			$errorMessage = "";
+			foreach ($error as $var => $val) {
+				$errorMessage .= "<b>".$var.":</b> ".$val."<br />";
+			}
+
+			if ($mailError)
+				\AppRoot::mailError($errorMessage, "api server");
+
+			self::getHTTP()->setHttpStatus($code);
 			return array("error" => $error);
 		}
 
-		function sendUnknownRequest($description="Unknown Request",$details=array())
+		function sendNoContent($description="No results",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(404,$description,$details);
+			return $this->getErrorCode("204",$description,$details,$mailError);
 		}
 
-		function sendBadRequest($description="Invalid Request",$details=array())
+		function sendUnknownRequest($description="Unknown Request",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(400,$description,$details);
+			return $this->getErrorCode(404,$description,$details,$mailError);
 		}
 
-		function sendNotLoggedIn($description="Login Required",$details=array())
+		function sendBadRequest($description="Invalid Request",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(401,$description,$details);
+			return $this->getErrorCode(400,$description,$details,$mailError);
 		}
 
-		function sendNotAllowed($description="Insufficient Permissions",$details=array())
+		function sendNotLoggedIn($description="Login Required",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(403,$description,$details);
+			return $this->getErrorCode(401,$description,$details,$mailError);
 		}
 
-		function sendServerError($description="Whoops",$details=array())
+		function sendNotAllowed($description="Insufficient Permissions",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(500,$description,$details);
+			return $this->getErrorCode(403,$description,$details,$mailError);
 		}
 
-		function sendMissingField($field)
+		function sendServerError($description="Herpederp",$details=array(),$mailError=true)
 		{
-			return $this->sendBadRequest($field . " missing");
+			return $this->getErrorCode(500,$description,$details,$mailError);
 		}
 
-		function sendEmptyField($field)
+		function sendMissingField($field,$mailError=false)
 		{
-			return $this->sendBadRequest($field . " empty");
+			return $this->sendBadRequest($field . " missing", array(), $mailError);
 		}
 
-		function sendDatatypeMismatch($field, $type)
+		function sendEmptyField($field,$mailError=false)
 		{
-			return $this->sendBadRequest("Datatype mismatch for ".$type." field: ".$field);
+			return $this->sendBadRequest($field . " empty", array(), $mailError);
+		}
+
+		function sendDatatypeMismatch($field, $type, $mailError=false)
+		{
+			return $this->sendBadRequest("Datatype mismatch for ".$type." field: ".$field, array(), $mailError);
 		}
 	}
 }
