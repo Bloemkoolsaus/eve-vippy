@@ -29,6 +29,7 @@ class Statistics
         }
 
         $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("authGroup", $authGroup);
         $tpl->assign("corporations", $corporations);
         $tpl->assign("sdate", $sdate);
         $tpl->assign("edate", $edate);

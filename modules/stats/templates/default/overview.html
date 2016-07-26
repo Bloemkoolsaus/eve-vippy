@@ -100,8 +100,10 @@
 				</th>
 				<th style="width: 30px; text-align: center;">Total WHs</th>
 				<th style="width: 30px; text-align: center;">Total Sigs</th>
+			{if $authGroup->getConfig('stats_kills')}
 				<th style="width: 30px; text-align: center;">Total Kills</th>
 				<th style="width: 30px; text-align: center;">Req. Sigs</th>
+			{/if}
                 <th style="width: 30px; text-align: center;">Hours Online</th>
 				<th style="width: 30px; text-align: center;">Sigs p/hour</th>
 			</tr>
@@ -132,12 +134,14 @@
 				<td style="text-align: center; color: #ffffff;">
 					{if $user.sigs > 0}{$user.sigs}{/if}
 				</td>
+			{if $authGroup->getConfig('stats_kills')}
 				<td style="text-align: center; color: #aaaaaa;">
 					{if isset($user.kills) && $user.kills > 0}{$user.kills}{/if}
 				</td>
 				<td style="text-align: center; color: {if $sigsQuote > $user.sigs}#ff0000{else}#ffffff{/if};">
 					{if $sigsQuote > 0}{$sigsQuote}{/if}
 				</td>
+			{/if}
 				<td style="text-align: center; color: #aaaaaa;">
 					{$nrhours}
 				</td>
@@ -158,12 +162,14 @@
 				<th style="text-align: center;">
 					{$totalSigs}
 				</th>
+			{if $authGroup->getConfig('stats_kills')}
 				<th style="text-align: center;">
 					{$totalKills}
 				</th>
 				<th style="text-align: center;">
 					{$totalQuota}
 				</th>
+			{/if}
 				<th style="text-align: center;">
 					{$totalHours}
 				</th>
