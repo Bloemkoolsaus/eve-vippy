@@ -1,6 +1,11 @@
 <?php
 Class Tools
 {
+    public static function getRequestType()
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
+
 	public static function GET($var, $raw=false)
 	{
 		if (!isset($_GET[$var]))

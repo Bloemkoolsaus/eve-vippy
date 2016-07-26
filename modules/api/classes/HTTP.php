@@ -72,9 +72,6 @@ namespace api
 				$errorMessage .= "<b>".$var.":</b> ".$val."<br />";
 			}
 
-			if ($mailError)
-				\AppRoot::mailError($errorMessage, "api server");
-
 			self::getHTTP()->setHttpStatus($code);
 			return array("error" => $error);
 		}
@@ -101,7 +98,7 @@ namespace api
 
 		function sendNotAllowed($description="Insufficient Permissions",$details=array(),$mailError=false)
 		{
-			return $this->getErrorCode(403,$description,$details,$mailError);
+			return $this->getErrorCode(401,$description,$details,$mailError);
 		}
 
 		function sendServerError($description="Herpederp",$details=array(),$mailError=true)

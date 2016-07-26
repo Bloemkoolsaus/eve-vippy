@@ -575,5 +575,16 @@ class AppRoot
 	{
 		\MySQL::getDB()->updateinsert("config", array("var" => $var, "val" => $val, "updatedate" => date("Y-m-d H:i:s")), array("var" => $var));
 	}
+
+    public static function getClientIP()
+    {
+        $ip = $_SERVER["REMOTE_ADDR"];
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        if (isset($_SERVER["HTTP_X_REAL_IP"]))
+            $ip = $_SERVER["HTTP_X_REAL_IP"];
+
+        return $ip;
+    }
 }
 ?>

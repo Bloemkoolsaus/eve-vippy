@@ -4,19 +4,9 @@ namespace api
 	class Server
 	{
 		private $http = null;
-		private $user = null;
-		private $authenticated = null;
+        private $authGroup = null;
 
-		/**
-		 * Get user (if credentials were provided)
-		 * @return \users\model\User|null
-		 */
-		function getUser()
-		{
-			return $this->user;
-		}
-
-		/**
+        /**
 		 * Get apache request headers (when available)
 		 * @return array
 		 */
@@ -43,37 +33,46 @@ namespace api
         }
 
         /**
+         * Get authgroup
+         * @return \admin\model\AuthGroup|null
+         */
+        function getAuthGroup()
+        {
+            return $this->authGroup;
+        }
+
+        /**
          * Mag jij wel iets opzoeken in deze api?
          * @return boolean
          */
         function authenticateClient()
         {
-            if ($this->authenticated === null)
+            if ($this->authGroup === null)
             {
-                $this->authenticated = false;
+                /** @var \api\model\Key $apikey */
+                $apikey = null;
+                if (\Tools::REQUEST("apikey"))
+                    $apikey = \api\model\Key::findOne(["apikey" => \Tools::REQUEST("apikey")]);
 
-                // Check api-key headers
-                $headers = $this->getHeaders();
-                if (isset($headers["API-Key"]) && isset($headers["API-Code"]))
+                if ($apikey)
                 {
-                    foreach (\users\model\User::getUsers() as $user)
+                    // Check ips
+                    $correctIP = false;
+                    foreach ($apikey->getIPAddresses() as $address) {
+                        if ($address->ipAddress == \AppRoot::getClientIP())
+                            $correctIP = true;
+                    }
+
+                    if ($correctIP)
                     {
-                        if (sha1($user->name) == $headers["API-Key"] && sha1($user->password) == $headers["API-Code"])
-                        {
-                            $this->user = $user;
-                            $this->authenticated = true;
-                            break;
-                        }
+                        $this->authGroup = $apikey->getAuthgroup();
+                        if ($this->authGroup)
+                            return true;
                     }
                 }
-
-                // Intern netwerk, altijd ok.
-                $ipparts = explode(".",$_SERVER["REMOTE_ADDR"]);
-                if ($ipparts[0] == 192 && $ipparts[1] == 168)
-                    $this->authenticated = true;
             }
 
-            return $this->authenticated;
+            return false;
         }
 
         /**
@@ -87,12 +86,10 @@ namespace api
 			$logData = "RESULT: ".json_encode($resultData)."\n";
 			$logData .= "GET: ".json_encode($_GET)."\n";
 			$logData .= "POST: ".json_encode($_POST)."\n";
-			$logData .= "USER: ".(($this->getUser()!=null)?$this->getUser()->name:"")."\n";
 			$logData .= "CONTENT: ".$this->getContent()."\n";
 			$logData .= "SERVER: ".json_encode($_SERVER)."\n";
 			$logData .= "HEADER: ".json_encode($this->getHeaders())."\n";
 
-			\AppRoot::addToLog($logData, strtolower($requestType), "api/server/".strtolower($requestModule));
 			if (isset($resultData["error"]) && isset($resultData["error"]["code"]))
             {
                 // Error string. Was it really an error?
