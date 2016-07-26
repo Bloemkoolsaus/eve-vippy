@@ -96,17 +96,23 @@
 						&nbsp; {$corp.corp->name}
 					</div>
 				</th>
-                <th style="width: 30px; text-align: center;">Total Sigs</th>
-                <th style="width: 30px; text-align: center;">Sigs p/hour</th>
-                <th style="width: 30px; text-align: center;">Total WHs</th>
+				<th style="width: 30px; text-align: center;">Total WHs</th>
+				<th style="width: 30px; text-align: center;">Total Sigs</th>
+				<th style="width: 30px; text-align: center;">Total Kills</th>
+				<th style="width: 30px; text-align: center;">Req. Sigs</th>
                 <th style="width: 30px; text-align: center;">Hours Online</th>
+				<th style="width: 30px; text-align: center;">Sigs p/hour</th>
 			</tr>
 	{assign var=i value=0}
 	{foreach from=$corp.users key=s item=user}
-            {assign nrhours $user.user->getHoursOnline($sdate, $edate)}
-			{assign var=totalHours value=$totalHours+$nrhours}
-			{assign var=totalSigs value=$totalSigs+$user.sigs}
-			{assign var=totalWHs value=$totalWHs+$user.whs}
+		{assign nrhours $user.user->getHoursOnline($sdate, $edate)}
+		{assign var=totalHours value=$totalHours+$nrhours}
+		{assign var=totalSigs value=$totalSigs+$user.sigs}
+		{assign var=totalWHs value=$totalWHs+$user.whs}
+		{assign var=sigsQuote value=0}
+		{if isset($user.kills) && $user.kills > 0}
+			{assign var=sigsQuote value=$user.kills*5}
+		{/if}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
 				<td style="padding: 0; width: 20px;">
@@ -117,18 +123,24 @@
 					&nbsp;{$user.user->getMainCharacter()->name}&nbsp;
 				</td>
 				<td style="text-align: center; color: #ffffff;">
+					{if $user.whs > 0}{$user.whs}{/if}
+				</td>
+				<td style="text-align: center; color: #ffffff;">
 					{if $user.sigs > 0}{$user.sigs}{/if}
 				</td>
 				<td style="text-align: center; color: #aaaaaa;">
-				{if $nrhours > 0 && $user.sigs > 0}
-					{($user.sigs/$nrhours)|round:1}
-				{/if}
+					{if isset($user.kills) && $user.kills > 0}{$user.kills}{/if}
 				</td>
-				<td style="text-align: center; color: #ffffff;">
-					{if $user.whs > 0}{$user.whs}{/if}
+				<td style="text-align: center; color: {if $sigsQuote > $user.sigs}#ff0000{else}#ffffff{/if};">
+					{$sigsQuote}
 				</td>
 				<td style="text-align: center; color: #aaaaaa;">
 					{$nrhours}
+				</td>
+				<td style="text-align: center; color: #aaaaaa;">
+					{if $nrhours > 0 && $user.sigs > 0}
+						{($user.sigs/$nrhours)|round:1}
+					{/if}
 				</td>
 			</tr>
 			{assign var=i value=$i+1}

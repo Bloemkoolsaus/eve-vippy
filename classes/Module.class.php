@@ -58,6 +58,36 @@ class Module
 		return $tpl->fetch("module/index");
 	}
 
+    function getCron($arguments=array())
+    {
+        print_r($arguments,true);
+        if (count($arguments) > 0)
+        {
+            $action = array_shift($arguments);
+            $className = '\\'.strtolower($this->moduleName).'\\console\\'.ucfirst($action);
+            if (!class_exists($className))
+                $className = '\\'.strtolower($this->moduleName).'\\common\\console\\'.ucfirst($action);
+
+            if (class_exists($className))
+            {
+                $method = (count($arguments) > 0) ? "do".ucfirst(array_shift($arguments)) : "doDefault";
+                $console = new $className();
+                if (method_exists($console, $method)) {
+                    return $console->$method($arguments);
+                } else {
+                    \AppRoot::error($this->moduleName."->".ucfirst($action)."->".$method."() not found");
+                    return null;
+                }
+            } else {
+                \AppRoot::error($this->moduleName."->".ucfirst($action)." not found");
+                return null;
+            }
+        }
+
+        \AppRoot::error("No (valid) action given for module ".$this->moduleName);
+        return null;
+    }
+
 	function getTemplate($file)
 	{
 		if ($dir = \SmartyTools::getTemplateDir($this->moduleName))

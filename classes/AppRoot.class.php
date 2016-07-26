@@ -246,14 +246,19 @@ class AppRoot
 
     public static function error($message)
     {
-        $error = $message."\n\n".self::getStackTrace();
+        if (\AppRoot::isCommandline()) {
+            echo "[\033[31mERROR\033[0m] ".$message.PHP_EOL;
+        } else {
+            $message .= "\n\n" . self::getStackTrace();
 
-        if (\AppRoot::doDebug())
-            echo "<pre>".print_r($error,true)."</pre>";
+            if (\AppRoot::doDebug())
+                echo "<pre>" . print_r($message, true) . "</pre>";
 
-        self::$errors[] = $error;
-        self::storeError($error);
-        self::debug("<span style='color:red;'>" . $error . "</span>");
+            self::$errors[] = $message;
+            self::debug("<span style='color:red;'>" . $message . "</span>");
+        }
+
+        self::storeError($message);
     }
 
     public static function depricated($what, $message="")
@@ -585,6 +590,30 @@ class AppRoot
             $ip = $_SERVER["HTTP_X_REAL_IP"];
 
         return $ip;
+    }
+
+    /**
+     * Executed via php command line?
+     * @return bool
+     */
+    public static function isCommandline()
+    {
+        global $argv;
+        return (isset($argv)) ? true : false;
+    }
+
+    public static function doCliOutput($var, $color=null)
+    {
+        if (\AppRoot::isCommandline())
+        {
+            $msg = $var;
+            if ($color == "red")
+                $msg = "\e[31m".$var."\e[0m";
+
+            echo $msg.PHP_EOL;
+        }
+        else
+            echo "<pre>".$var."</pre>";
     }
 }
 ?>

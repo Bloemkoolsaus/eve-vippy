@@ -138,7 +138,7 @@ namespace api
 			// Loggen
 			\AppRoot::debug("Result: ".$this->httpStatus);
 			if (isset($result["error"]))
-				\AppRoot::error($this->result, false);
+				\AppRoot::error($this->result);
 
 			\AppRoot::debug("*** Finish api call: ".strtoupper($requestType)." ".$requestURL);
 
@@ -167,11 +167,6 @@ namespace api
 			$logData .= "REQUEST:\n\t".$requestData."\n\n";
 			$logData .= "RETURN:\n\t".$requestResult."\n\n";
 			$logData .= "RESULT:\n\t".json_encode($requestInfo)."\n\n";
-
-			\AppRoot::addToLog($logData, strtolower($requestType), strtolower($logDir));
-
-			if ($sendMail && $this->httpStatus > 0)
-				\AppRoot::mailError($logData, str_replace("/"," ",strtolower($logDir)));
 		}
 
 		function get($url, $params=array())
