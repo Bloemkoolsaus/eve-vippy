@@ -40,6 +40,25 @@
 					<a href="index.php?module=profile&section=chars&setmain={$char->id}">Set {$char->name} as main</a>				
 				</div>
 			{/if}
+			
+			
+			<!--  if admin  -->
+			<i>Crest : 
+			{if $char->hasState() }
+			   state is present  </i><br />
+			   <i>Access Token :
+				{if $char->isTokenExpired() }
+					expired!
+				{else}
+			 		still current
+				{/if} 
+				</i></br>
+			{else}
+			   state is not set </i><br />
+			{/if}
+			
+			</i></br>
+
 			</div>
 		</div>
 	</div>

@@ -98,7 +98,8 @@ namespace profile\controller
 									"allianceid"	=> $char->getCorporation()->getAlliance()->id,
 									"alliance"		=> $char->getCorporation()->getAlliance()->name,
 									"ceo"		=> $char->isCEO,
-									"director"	=> $char->isDirector);
+									"director"	=> $char->isDirector,
+									"hasState"  => $char->hasState);
 				if (\User::getUSER()->getMainCharacter()->id == $char->id)
 					$character["main"] = 1;
 

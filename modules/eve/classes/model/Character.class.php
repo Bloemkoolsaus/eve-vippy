@@ -20,6 +20,12 @@ namespace eve\model
 		private $roles = null;
 		private $apikey = null;
 		private $user = null;
+		
+		private $crest_state = null;
+		private $crest_accesstoken = null;
+		private $crest_refreshtoken = null;
+		private $crest_expires = null;
+		private $crest_ownerhash = null;
 
 		function __construct($id=false)
 		{
@@ -45,6 +51,11 @@ namespace eve\model
 				$this->isCEO = ($result["isceo"]>0)?true:false;
 				$this->dateOfBirth = $result["dob"];
 				$this->updatedate = $result["updatedate"];
+				$this->crest_state = $result["crest_state"];
+				$this->crest_accesstoken = $result["crest_accesstoken"];
+				$this->crest_refreshtoken = $result["crest_refreshtoken"];
+				$this->crest_expires = $result["crest_expires"];
+				$this->crest_ownerhash = $result["crest_ownerhash"];
 			}
 		}
 
@@ -106,12 +117,26 @@ namespace eve\model
 							"isdirector"	=> ($this->isDirector())?1:0,
 							"isceo"			=> ($this->isCEO())?1:0,
 							"dob"			=> ($this->dateOfBirth!=null)?date("Y-m-d H:i:s",strtotime($this->dateOfBirth)):null,
-							"updatedate"	=> date("Y-m-d H:i:s"));
+							"updatedate"	=> date("Y-m-d H:i:s"),
+							"crest_state"	=> $this->crest_state,
+							"crest_accesstoken" => $this->accesstoken,
+							"crest_refreshtoken" => $this->refreshtoken,
+							"crest_ownerhash" => $this->crest_ownerhash
+					);
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
 
 
             if ($this->getUser() != null)
                 $this->getUser()->resetCache();
+		}
+		
+		function hasState() {
+			return $this->crest_state != null;
+		}
+		
+		function isTokenExpired() {
+			// still to do
+			return true;
 		}
 
 		function isCEO()
