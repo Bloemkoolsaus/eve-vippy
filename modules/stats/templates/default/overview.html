@@ -15,7 +15,7 @@
 	</h1>
 	<div style="clear:both;"></div>
 
-	<div style="float: left; width: 58%;">
+	<div style="float: left; width: 43%;">
 		<div style="margin: 10px;">
 			<table class="sectionoverview" style="width: 100%;">
 				<tr>
@@ -68,11 +68,36 @@
 			</table>
 		</div>
 	</div>
-	<div style="float: right; width: 40%;">
+	<div style="float: right; width: 54%;">
 		<div class="message">
 			<ul>
 				<li>These statistics are only availible for Admins!</li>
-				<li>Users that have logged in to VIPPY via the Ingame Browser are considered active.</li>
+				<li>
+					Active users:
+					<ul>
+						<li>Users that have logged in to VIPPY via the Ingame Browser</li>
+					</ul>
+				</li>
+			{if $authGroup->getConfig('stats_kills')}
+				<li>
+					Total kills:
+					<ul>
+						<li>Total amount of kills made in this month.</li>
+						<li>Kills from (known) alts are included.</li>
+						<li>Multiboxed kills are excluded. If you are on the same kill with 2 toons, only 1 counts.</li>
+						<li>Data from: <a href="http://stats.limited-power.co.uk/" target="_blank">http://stats.limited-power.co.uk/</a></li>
+					</ul>
+				</li>
+				<li>
+					Required Sigs:
+					<ul>
+						<li>Amount of signatures that should have been scanned, based on the amount of kills.</li>
+						<li>For each kill 5 signatures need to be scanned.</li>
+						<li>Kills made in a logistics ship are excluded.</li>
+						<li>Kills made in a recon only require 3 signatures.</li>
+					</ul>
+				</li>
+			{/if}
 			</ul>
 		</div>
 	</div>
@@ -113,10 +138,12 @@
 		{assign var=totalHours value=$totalHours+$nrhours}
 		{assign var=totalSigs value=$totalSigs+$user.sigs}
 		{assign var=totalWHs value=$totalWHs+$user.whs}
-		{assign var=sigsQuote value=0}
 		{if isset($user.kills) && $user.kills > 0}
 			{assign var=totalKills value=$totalKills+$user.kills}
-			{assign var=sigsQuote value=$user.kills*5}
+		{/if}
+		{assign var=sigsQuote value=0}
+		{if isset($user.reqsigs) && $user.reqsigs > 0}
+			{assign var=sigsQuote value=$totalKills+$user.reqsigs}
 		{/if}
 		{assign var=totalQuota value=$totalQuota+$sigsQuote}
 			<tr class="{if $i%2==0}even{else}odd{/if}"
@@ -138,8 +165,8 @@
 				<td style="text-align: center; color: #aaaaaa;">
 					{if isset($user.kills) && $user.kills > 0}{$user.kills}{/if}
 				</td>
-				<td style="text-align: center; color: {if $sigsQuote > $user.sigs}#ff0000{else}#ffffff{/if};">
-					{if $sigsQuote > 0}{$sigsQuote}{/if}
+				<td style="text-align: center; color: {if $user.reqsigs > $user.sigs}#ff0000{else}#ffffff{/if};">
+					{if isset($user.reqsigs) && $user.reqsigs > 0}{$user.reqsigs}{/if}
 				</td>
 			{/if}
 				<td style="text-align: center; color: #aaaaaa;">

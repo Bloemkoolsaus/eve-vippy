@@ -28,7 +28,8 @@ class Stats
             $limit = "LIMIT ".$limitRows;
 
         $scanners = array();
-        if ($results = \MySQL::getDB()->getRows("select u.*, sigs.amount as sigs, whs.amount as whs, kills.amount as kills
+        if ($results = \MySQL::getDB()->getRows("select u.*, sigs.amount as sigs, whs.amount as whs,
+                                                        kills.amount as kills, kills.requiredsigs
                                                 from    users u
                                                     left join ( select  s.userid, count(s.id) as amount
                                                                 from    stats_signatures s
@@ -45,7 +46,7 @@ class Stats
                                                                 group by s.userid
                                                                 order by count(s.id) desc
                                                         ) whs on whs.userid = u.id
-                                                    left join ( select  userid, nrkills as amount
+                                                    left join ( select  userid, nrkills as amount, requiredsigs
                                                                 from    stats_kills
                                                                 where   killdate between '".$fromdate."' and '".$tilldate."'
                                                         ) kills on kills.userid = u.id
@@ -64,7 +65,8 @@ class Stats
                     "rank"	=> count($scanners)+1,
                     "sigs"  => $result["sigs"],
                     "whs"   => $result["whs"],
-                    "kills" => $result["kills"]
+                    "kills" => $result["kills"],
+                    "reqsigs" => $result["requiredsigs"]
                 ];
             }
         }
