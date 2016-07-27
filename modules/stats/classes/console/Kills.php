@@ -38,33 +38,34 @@ class Kills
                             if (!$stats)
                                 $stats = new \stats\model\Kills();
 
-                            $totalKills = $dat->reduction;
+                            $totalKills = (isset($dat->reduction))?$dat->reduction:0;
                             $requiredSigs = 0;
                             $bonusPoints = 0;
 
-                            foreach ($dat->shipsFlown as $typeID => $nrKills)
-                            {
-                                $ship = new \eve\model\Ship($typeID);
+                            if (isset($dat->shipsFlown)) {
+                                foreach ($dat->shipsFlown as $typeID => $nrKills) {
+                                    $ship = new \eve\model\Ship($typeID);
 
-                                // Logi?
-                                $isLogistics = false;
-                                if (strtolower($ship->getShipType()) == "logistics")
-                                    $isLogistics = true;
-                                if (strtolower($ship->getShipType()) == "logistics frigate")
-                                    $isLogistics = true;
-                                if (strtolower($ship->name) == "nestor")
-                                    $isLogistics = true;
-                                if ($isLogistics)
-                                    $bonusPoints += ($nrKills*5);
+                                    // Logi?
+                                    $isLogistics = false;
+                                    if (strtolower($ship->getShipType()) == "logistics")
+                                        $isLogistics = true;
+                                    if (strtolower($ship->getShipType()) == "logistics frigate")
+                                        $isLogistics = true;
+                                    if (strtolower($ship->name) == "nestor")
+                                        $isLogistics = true;
+                                    if ($isLogistics)
+                                        $bonusPoints += ($nrKills * 5);
 
-                                // Recon
-                                $isRecon = false;
-                                if (strtolower($ship->getShipType()) == "force recon ship")
-                                    $isRecon = true;
-                                if (strtolower($ship->getShipType()) == "combat recon ship")
-                                    $isRecon = true;
-                                if ($isRecon)
-                                    $bonusPoints += ($nrKills*2);
+                                    // Recon
+                                    $isRecon = false;
+                                    if (strtolower($ship->getShipType()) == "force recon ship")
+                                        $isRecon = true;
+                                    if (strtolower($ship->getShipType()) == "combat recon ship")
+                                        $isRecon = true;
+                                    if ($isRecon)
+                                        $bonusPoints += ($nrKills * 2);
+                                }
                             }
 
                             $requiredSigs = ($totalKills*5)-$bonusPoints;
