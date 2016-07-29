@@ -29,8 +29,7 @@ class Map
 
     function getMap(\map\model\Map $map, $arguments=[])
     {
-        \AppRoot::debug("----- fetchSigmap(".$map->id." - ".$map->name.") -----");
-
+        \AppRoot::debug("----- getMap(".$map->id." - ".$map->name.") -----");
         $currentDate = date("Y-m-d H:i:s");
         $checkCache = (\Tools::REQUEST("nocache"))?false:true;
 
@@ -38,7 +37,7 @@ class Map
         if ($checkCache)
         {
             $cacheDate = (isset($_SESSION["vippy_cachedate_map"])) ? $_SESSION["vippy_cachedate_map"] : 0;
-            if ($results = \MySQL::getDB()->getRows("SELECT	lastmapupdatedate AS lastdate FROM mapwormholechains WHERE id = ?", [$map->id]))
+            if ($results = \MySQL::getDB()->getRows("select lastmapupdatedate as lastdate from mapwormholechains where id = ?", [$map->id]))
             {
                 foreach ($results as $result)
                 {
@@ -75,6 +74,76 @@ class Map
 
         // Geef de map terug
         return json_encode($map);
+    }
+
+    function getSignatures(\map\model\Map $map, $arguments=[])
+    {
+        \AppRoot::debug("----- getSignatures(".$map->id." - ".$map->name.") -----");
+        $currentDate = date("Y-m-d H:i:s");
+        $checkCache = (\Tools::REQUEST("nocache"))?false:true;
+
+        $solarSystem = (count($arguments) > 0) ? \map\model\System::getSolarsystemByName(array_shift($arguments)) : null;
+        if (!$solarSystem)
+            $solarSystem = $map->getHomeSystem();
+
+        // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
+        if ($checkCache)
+        {
+            // Bestaat er wel een cache?
+            iF (isset($_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id]))
+            {
+                $cacheDate = $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id];
+                if ($result = \MySQL::getDB()->getRow("	SELECT	MAX(s.updatedate) AS lastdate
+                                                        FROM	mapsignatures s
+                                                            INNER JOIN mapwormholechains c ON c.authgroupid = s.authgroupid
+                                                        WHERE	c.id = ?"
+                                            , array($map->id)))
+                {
+                    \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
+                    \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
+
+                    if (strtotime($cacheDate) > strtotime($result["lastdate"])) {
+                        if (strtotime($cacheDate) > mktime(date("H"), date("i") - 1, date("s"), date("m"), date("d"), date("Y"))) {
+                            \AppRoot::debug("do cache");
+                            return "cached";
+                        }
+                    }
+                }
+            }
+        }
+
+        $signatures = [];
+        foreach (\map\model\Signature::findAll([
+            "deleted" => 0,
+            "solarsystemid" => $solarSystem->id,
+            "authgroupid" => $map->authgroupID]) as $sig)
+        {
+            $sigData = [
+                "id" => $sig->id,
+                "sigid" => $sig->sigID,
+                "type" => $sig->sigType,
+                "info" => $sig->sigInfo,
+                "wormhole" => null,
+                "scanned" => [
+                    "date" => $sig->scanDate,
+                    "user" => $sig->getScannedByUser()->getFullName()
+                ],
+                "updated" => [
+                    "date" => $sig->updateDate,
+                    "user" => $sig->getUpdatedByUser()->getFullName()
+                ]
+            ];
+
+            if ($sig->isWormhole()) {
+                $sigData["wormhole"] = [
+                    "type" => $sig->getWormholeType()->name,
+                    "desto" => $sig->getWormholeType()->getDestinationclass()->tag
+                ];
+            }
+            $signatures[] = $sigData;
+        }
+
+        return json_encode($signatures);
     }
 
     function getMove(\map\model\Map $map, $arguments=[])

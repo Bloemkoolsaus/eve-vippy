@@ -4,6 +4,7 @@ namespace map\model;
 class SolarSystem extends \scanning\model\System
 {
 
+
     /**
      * Get current solar system
      * @return \map\model\SolarSystem
