@@ -21,11 +21,10 @@ namespace eve\model
 		private $apikey = null;
 		private $user = null;
 		
-		private $crest_state = null;
-		private $crest_accesstoken = null;
-		private $crest_refreshtoken = null;
-		private $crest_expires = null;
-		private $crest_ownerhash = null;
+		public $crest_state = null;
+		public $crest_accesstoken = null;
+		public $crest_refreshtoken = null;
+		public $crest_ownerhash = null;
 
 		function __construct($id=false)
 		{
@@ -119,8 +118,8 @@ namespace eve\model
 							"dob"			=> ($this->dateOfBirth!=null)?date("Y-m-d H:i:s",strtotime($this->dateOfBirth)):null,
 							"updatedate"	=> date("Y-m-d H:i:s"),
 							"crest_state"	=> $this->crest_state,
-							"crest_accesstoken" => $this->accesstoken,
-							"crest_refreshtoken" => $this->refreshtoken,
+							"crest_accesstoken" => $this->crest_accesstoken,
+							"crest_refreshtoken" => $this->crest_refreshtoken,
 							"crest_ownerhash" => $this->crest_ownerhash
 					);
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
@@ -269,5 +268,7 @@ namespace eve\model
 
 			return $this->user;
 		}
+		
+		
 	}
 }

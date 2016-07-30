@@ -1,6 +1,8 @@
 <?php
 namespace profile\controller
 {
+	use users\model\Oauth;
+
 	class Profile
 	{
 		function getApiOverview()
@@ -86,6 +88,12 @@ namespace profile\controller
 			if (\Tools::REQUEST("setmain")) {
 				\User::getUSER()->setMainCharacter(\Tools::REQUEST("setmain"));
 				\AppRoot::redirect("index.php?module=profile&section=chars");
+			}
+			
+			if (\Tools::POST("addCharacter")) {
+				$oauth = new \users\model\Oauth();
+				$oauth->requestAuthorization();
+				// is send to eve login.
 			}
 
 			$characters = array();

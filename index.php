@@ -66,6 +66,7 @@ if (Tools::POST("sso") == "true")
 if (Tools::GET("state") && Tools::GET("code")) {
 	$oath = new users\model\Oauth();
 	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));	
+
 } 
 
 if (!\User::getLoggedInUserId())

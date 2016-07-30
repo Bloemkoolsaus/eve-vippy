@@ -32,6 +32,8 @@
 				<strong>Source:</strong> 
 			{if $char->apiKeyID != 0}
 				API Fetched<br />
+			{elseif $char->hasState()}
+				<i>Crest</i><br />
 			{else}
 				<i>Location Tracker</i><br />
 			{/if}
@@ -40,31 +42,34 @@
 					<a href="index.php?module=profile&section=chars&setmain={$char->id}">Set {$char->name} as main</a>				
 				</div>
 			{/if}
-			
-			
-			<!--  if admin  -->
-			<i>Crest : 
-			{if $char->hasState() }
-			   state is present  </i><br />
-			   <i>Access Token :
-				{if $char->isTokenExpired() }
-					expired!
-				{else}
-			 		still current
-				{/if} 
-				</i></br>
-			{else}
-			   state is not set </i><br />
-			{/if}
-			
-			</i></br>
 
 			</div>
+			
+			
 		</div>
 	</div>
 {if $c%2!=0}
 	<div style="clear:both;"></div>
 {/if}
 {/foreach}
+<!--  -->
+    <div style="float: {if $c%2!=0}left{else}right{/if}; width: 450px; margin: 10px;">
+		<div style="padding: 10px;">
+			<div style="float: left; width: 160px;">
+				<img src="/images/plus.png" align="left" 
+					style="margin-right: 2px; width: 100px; height: 100px; 
+					border: solid 1px #888888; border-radius: 5px;
+					background-color: #999" />
+				<!-- 
+				<img src="http://image.eveonline.com/Corporation/{$char->getCorporation()->id}_64.png" style="width: 45px; margin: 2px;" /><br />
+			    -->
+			</div>
+			<div style="float: left; width: 260px;">
+				<h3>Add Character</h3>
+				<form method="post" action="">
+					<input type="hidden" name="addCharacter" value="true"/>
+					<input type="image" src="images/ccp/EVE_SSO_Login_Buttons_Small_Black.png" alt="Login With EVE Online"/></label>
+				</form> 
+			</div>
 	<div style="clear:both;"></div>
 </div>

@@ -1,15 +1,6 @@
 <?php
 namespace users\model
 {
-	/*
-	 * login by eve
-	 * 1 - create new random state and save it in the db. 
-	 * 2 - request authorization by eve.
-	 * 3 - catch callback, find the state in the database. 
-	 * 4 - request tokens.
-	 * 
-	 */
-
 	class Oauth
 	{
 		public $state;
@@ -19,7 +10,6 @@ namespace users\model
 		public $characterId; 
 		public $characterOwnerHash;
 		
-
 		public function requestAuthorization(){
 			$params = array('response_type' => 'code',
 					'redirect_uri' => CREST_CALLBACK_URL,
@@ -33,11 +23,18 @@ namespace users\model
 			exit();
 		}
 		
-		/*
+		/**
 		 * after requesting a new Authorization a code is returned. This
 		 * code can be used once to get an accessToken.
 		 */
 		public function getAccessToken($state, $code) {
+			// make sure we created the $state by chcking the cache for it.
+			$cacheFileName = "sso/" . $state;
+			if (\Cache::file()->get($cacheFileName) == null) {
+				\AppRoot::error("Reveiced state was not regonized.");
+				return null;
+			} 
+			
 			$url = CREST_LOGIN_URL . '/token';		
 			$postbody = array('grant_type' => 'authorization_code',
 					'code' =>  $code
@@ -59,13 +56,18 @@ namespace users\model
 			if ($curlresponse == false) {
 				echo 'Curl error: ' . curl_error($curl);
 			} else {
-				$this->processTokenResponse($curl, $curlresponse, $state);
+				$this->state = $state;
+				$this->processTokenResponse($curl, $curlresponse);
 				$this->verify();
 			}
 			curl_close($curl);
 		}
 		
-		public function load($state=false) {
+		public function getCrest($character, $url) {
+		
+		}
+		
+		/*public function load($state=false) {
 			if (!$state) {
 			   return;
 			}
@@ -94,9 +96,11 @@ namespace users\model
 			$result = \MySQL::getDB()->updateinsert("users_oauth", $oauth, array("state" => $this->state));
 				
 		}
+		*/
 		
 		// With verify we can request which character it used to login. 
 		public function verify() {
+			\AppRoot::debug("verifing...");
 			$url = CREST_LOGIN_URL . '/verify';
 			$header = array('Authorization: Bearer ' . $this->accesstoken,
 					'Content-Type: application/json');
@@ -108,48 +112,81 @@ namespace users\model
 			$response = curl_exec($curl);
 			if ($response == false) {
 				echo 'Curl error: ' . curl_error($curl);
+				\AppRoot::debug("verifing failed");
 			} else {
 				$data = json_decode($response);
 				if (isset($data->CharacterID)) {
-					// if we have a characterID we have a valid eve login.
-					// Now we need to find a vippy account for it.  
+					\AppRoot::debug("verify : Character was = " . $data->CharacterID . " - " . $data->CharacterName);
+					// if we have a vippy account logged in...
 					$user = User::getUserByToon($data->CharacterID);
-					if ($user == null) {
-						// don't have a vippy account related to this character. 
+					$loggedinUserId = \User::getLoggedInUserId(); 
+					if ($loggedinUserId == 0) {
+						\AppRoot::debug("verify : No user is logged in yet...");
+						// no, then we use the character to login the user.
+						if ($user == null || $user->id == 0) {
+							// unknown character and withoust a vippy account
+							// error
+							return null;
+						} else {
+							// stil need to update access and refresh tokens to character.
+							$user->setLoginStatus(true);
+							$this->characterId = $data->CharacterID;
+							$this->characterOwnerHash = $data->CharacterOwnerHash;
+						}
 					} else {
-						$user->setLoginStatus(true);
-						$this->characterId = $data->CharacterID;
-						$this->characterOwnerHash = $data->CharacterOwnerHash;
-						$this->store();
+						\AppRoot::debug('Verify : User ' . $loggedinUserId . ' is logged in.');
+						// yes, then this might be a character to add.
+						if ($user == null || $user->id == 0) {
+							\AppRoot::debug('verify : need to add character to the logged in user');
+							$this->createOrUpdateCharacter($loggedinUserId, $data);
+						} else {
+							// logged in user must be same as character user.
+							if($user->id != $loggedinUserId){
+								\AppRoot::debug('fishy. the user logged in '. $loggedinUserId . ' is not the same as ' . $user->id);
+								// fishy. the user logged in is not the same as the user from 
+								// the character.
+								return;
+							} else {
+								$this->createOrUpdateCharacter($loggedinUserId, $data);
+							}
+						}
 					}
 				}
-				// {"CharacterID":92457020,"CharacterName":"Xion Sharvas","ExpiresOn":"2016-07-24T18:58:21","Scopes":"characterLocationRead","TokenType":"Character","CharacterOwnerHash":"gV8Mhoj3ax7Q1OgRc16153kGSWY=","IntellectualProperty":"EVE"}
-				
 			}
 			curl_close($curl);
 		}
 		
+		private function createOrUpdateCharacter($loggedInUserID, $verifyData) {
+			\AppRoot::debug($verifyData);
+			$character = new \eve\model\Character($verifyData->CharacterID);
+				$character->id = $verifyData->CharacterID;
+				$character->name = $verifyData->CharacterName;
+				$character->userID = $loggedInUserID;
+				$character->crest_state = $this->state;
+				$character->crest_accesstoken = $this->accesstoken;
+				$character->crest_refreshtoken = $this->refreshtoken;
+				$character->crest_scopes = $verifyData->Scopes;
+				$character->crest_ownerhash = $verifyData->CharacterOwnerHash;
+				$character->store();
+				\AppRoot::redirect("?module=profile&section=chars", true);
+		}
 		
-		
-		private function processTokenResponse($curl, $curlresponse, $state) {
+		private function processTokenResponse($curl, $curlresponse) {
 			if ($curlresponse == false) {
 				// error
 			} else {
-				$this->load($state);
 				list($headers, $body) = explode("\r\n\r\n", $curlresponse, 2);
 				$data = json_decode($body);
 				//success
 				if (isset($data->access_token)) {
 					$this->accesstoken = $data->access_token;
 					$this->refreshtoken = $data->refresh_token;
-					$this->store();
+					// todo expire
 				} else if (isset($data->error_description) && $data->error_description == 'Authorization code not found') {
 					print("error -> request new");
 				}
 			}
 		}
-		
-		
 		
 		private function getBasicAuthorizationCode() {
 			$concat = CREST_CLIENT_ID . ":" . CREST_SECRET_KEY;
@@ -157,12 +194,13 @@ namespace users\model
 			return $base;
 		}
 
-		// Generate a strong random string and save it.
+		// Generate a strong random string and save it in the cache
+		// we don't know yet who it is.
 		private function generateAndSaveUniqueState() {
 			$bytes = openssl_random_pseudo_bytes(16, $cstrong);
 			$state = bin2hex($bytes);
-			$oauth["state"] = $state;
-			$result = \MySQL::getDB()->insert("users_oauth", $oauth);
+			$cacheFileName = "sso/" . $state;
+			\Cache::file()->set($cacheFileName, '{}');
 			return $state;
 		}
 		
@@ -217,6 +255,8 @@ namespace users\model
 			return implode(' ', $scopes);
 		}
 	}
+	
+	
 	
 	
 }
