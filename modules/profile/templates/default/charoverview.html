@@ -13,6 +13,10 @@
 			{/if}
 			</div>
 			
+			{if $added == $char->id}
+			 	<h1> Toegevoegd : </h1>
+			{/if}
+			
 			<div style="float: left; width: 260px;">
 				<h3>{$char->name}</h3>
 			{if $char->isCEO > 0}
@@ -42,6 +46,11 @@
 					<a href="index.php?module=profile&section=chars&setmain={$char->id}">Set {$char->name} as main</a>				
 				</div>
 			{/if}
+			{if $user->isAdmin()}
+			    <div style="text-align: right; margin-top: 12px;">
+					<a href="index.php?module=profile&section=chars&deleteChar={$char->id}">Delete charachter</a>				
+				</div>
+			{/if}
 
 			</div>
 			
@@ -68,8 +77,11 @@
 				<h3>Add Character</h3>
 				<form method="post" action="">
 					<input type="hidden" name="addCharacter" value="true"/>
-					<input type="image" src="images/ccp/EVE_SSO_Login_Buttons_Small_Black.png" alt="Login With EVE Online"/></label>
-				</form> 
+					<Br/>
+					<button class="evelogin" alt="Login With EVE Online"></button>
+				</form>
+				<br />
+				<i><b>Tip</b>: if you want to use a different account, press 'cancel' when eve asks you to authorize.</i>
 			</div>
 	<div style="clear:both;"></div>
 </div>

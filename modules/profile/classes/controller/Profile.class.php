@@ -90,6 +90,11 @@ namespace profile\controller
 				\AppRoot::redirect("index.php?module=profile&section=chars");
 			}
 			
+			if (\Tools::REQUEST("deleteChar")) {
+				\eve\model\Character::delete(\Tools::REQUEST("deleteChar"));
+				\AppRoot::redirect("index.php?module=profile&section=chars");
+			}
+			
 			if (\Tools::POST("addCharacter")) {
 				$oauth = new \users\model\Oauth();
 				$oauth->requestAuthorization();
@@ -117,6 +122,7 @@ namespace profile\controller
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("user", \User::getUSER());
 			$tpl->assign("characters", \User::getUSER()->getCharacters());
+			$tpl->assign("added", \Tools::REQUEST("addedtoon"));
 			return $tpl->fetch(\SmartyTools::getTemplateDir("profile")."charoverview.html");
 		}
 	}

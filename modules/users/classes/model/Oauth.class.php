@@ -67,37 +67,6 @@ namespace users\model
 		
 		}
 		
-		/*public function load($state=false) {
-			if (!$state) {
-			   return;
-			}
-			$resultset = \MySQL::getDB()->getRow("SELECT * FROM users_oauth WHERE state = ?", array($state));
-			if ($resultset)
-			{
-				$this->state = $resultset["state"];
-				$this->accesstoken = $resultset["accesstoken"];
-				$this->refreshtoken = $resultset["refreshtoken"];
-				$this->characterId = $resultset["CharacterId"];
-				$this->characterOwnerHash = $resultset["CharacterOwnerHash"];
-			}
-		}
-		
-		public function store() {
-			if ($this->state == null)
-				return false;
-				
-			$oauth = array();
-			$oauth["state"] = $this->state;
-			$oauth["accesstoken"] = $this->accesstoken;
-			$oauth["refreshtoken"] = $this->refreshtoken;
-			$oauth["CharacterID"] = $this->characterId;
-			$oauth["CharacterOwnerHash"] = $this->characterOwnerHash;
-				
-			$result = \MySQL::getDB()->updateinsert("users_oauth", $oauth, array("state" => $this->state));
-				
-		}
-		*/
-		
 		// With verify we can request which character it used to login. 
 		public function verify() {
 			\AppRoot::debug("verifing...");
@@ -111,64 +80,90 @@ namespace users\model
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($curl);
 			if ($response == false) {
-				echo 'Curl error: ' . curl_error($curl);
-				\AppRoot::debug("verifing failed");
+				\AppRoot::error( 'Curl error: ' . curl_error($curl));
 			} else {
-				$data = json_decode($response);
-				if (isset($data->CharacterID)) {
-					\AppRoot::debug("verify : Character was = " . $data->CharacterID . " - " . $data->CharacterName);
+				$verifydata = json_decode($response);
+				if (isset($verifydata->CharacterID)) {
+					\AppRoot::debug("verify : Character was = " . $verifydata->CharacterID . " - " . $verifydata->CharacterName);
 					// if we have a vippy account logged in...
-					$user = User::getUserByToon($data->CharacterID);
+					$user = User::getUserByToon($verifydata->CharacterID);
 					$loggedinUserId = \User::getLoggedInUserId(); 
 					if ($loggedinUserId == 0) {
-						\AppRoot::debug("verify : No user is logged in yet...");
-						// no, then we use the character to login the user.
-						if ($user == null || $user->id == 0) {
-							// unknown character and withoust a vippy account
-							// error
-							return null;
-						} else {
-							// stil need to update access and refresh tokens to character.
-							$user->setLoginStatus(true);
-							$this->characterId = $data->CharacterID;
-							$this->characterOwnerHash = $data->CharacterOwnerHash;
-						}
+						\AppRoot::debug('Verify: using the verify character for login.');
+						$this->doLogin($verifydata);
 					} else {
-						\AppRoot::debug('Verify : User ' . $loggedinUserId . ' is logged in.');
+						\AppRoot::debug('Verify : User ' . $loggedinUserId . ' is logged in. Using character for adding');
 						// yes, then this might be a character to add.
-						if ($user == null || $user->id == 0) {
-							\AppRoot::debug('verify : need to add character to the logged in user');
-							$this->createOrUpdateCharacter($loggedinUserId, $data);
-						} else {
-							// logged in user must be same as character user.
-							if($user->id != $loggedinUserId){
-								\AppRoot::debug('fishy. the user logged in '. $loggedinUserId . ' is not the same as ' . $user->id);
-								// fishy. the user logged in is not the same as the user from 
-								// the character.
-								return;
-							} else {
-								$this->createOrUpdateCharacter($loggedinUserId, $data);
-							}
-						}
+						$this->addCharacter($loggedinUserId, $verifydata);
 					}
 				}
 			}
 			curl_close($curl);
 		}
 		
+		private function doLogin($verifydata) {
+			// find the user which belongs to the character.
+			$user = User::getUserByToon($verifydata->CharacterID);
+			if ($user == null || $user->id == 0) {
+				//unknown character and without a vippy account
+				// error
+				return null;
+			} else {
+				// stil need to update access and refresh tokens to character.
+				$user->setLoginStatus(true);
+				\AppRoot::debug("user " . $user->username . " logged in successful. Now update the character ...");
+				$this->createOrUpdateCharacter($user->id, $verifydata);
+			}
+		}
+		
+		private function addCharacter($loggedinUserId, $verifydata) {
+			$user = User::getUserByToon($verifydata->CharacterID);
+			$knownCharacter = new \eve\model\Character($verifydata->CharacterID);
+			
+			// if we know the character, lets check if the owner hasn't changed.
+			if ($knownCharacter->crest_ownerhash != null &&$knownCharacter->crest_ownerhash != $verifydata->CharacterOwnerHash) {
+				// Owner changed!
+				\AppRoot::debug('The known ownerhash is differnt then the verifydata hash. Character has a different owner!'); 
+				return;
+			} 
+			if ($user == null || $user->id == 0) {
+				\AppRoot::debug('verify : need to add character to the logged in user');
+				$this->createOrUpdateCharacter($loggedinUserId, $verifydata);
+				// okay now go back to character overview.
+				\AppRoot::redirect("?module=profile&section=chars&addedtoon=".$verifydata->CharacterID, true);
+			} else {
+				// logged in user must be same as character user.
+				if($user->id != $loggedinUserId){
+					\AppRoot::debug('fishy. the user logged in '. $loggedinUserId . ' is not the same as ' . $user->id);
+					// fishy. the user logged in is not the same as the user from
+					// the character.
+					return;
+				} else {
+					// weird, we know the character and the user... still
+					// we need to save the access and refresh token.
+					$this->createOrUpdateCharacter($loggedinUserId, $verifydata);
+				}
+			}
+		}
+		
+		
 		private function createOrUpdateCharacter($loggedInUserID, $verifyData) {
+			
 			\AppRoot::debug($verifyData);
 			$character = new \eve\model\Character($verifyData->CharacterID);
-				$character->id = $verifyData->CharacterID;
-				$character->name = $verifyData->CharacterName;
-				$character->userID = $loggedInUserID;
-				$character->crest_state = $this->state;
-				$character->crest_accesstoken = $this->accesstoken;
-				$character->crest_refreshtoken = $this->refreshtoken;
-				$character->crest_scopes = $verifyData->Scopes;
-				$character->crest_ownerhash = $verifyData->CharacterOwnerHash;
-				$character->store();
-				\AppRoot::redirect("?module=profile&section=chars", true);
+			\AppRoot::debug("createOrUpdateCharacter loaded above character... resulting in below data");
+			\AppRoot::debug($character);
+			
+			$character->id = $verifyData->CharacterID;
+			$character->name = $verifyData->CharacterName;
+			$character->userID = $loggedInUserID;
+			$character->crest_state = $this->state;
+			$character->crest_accesstoken = $this->accesstoken;
+			$character->crest_refreshtoken = $this->refreshtoken;
+			$character->crest_scopes = $verifyData->Scopes;
+			$character->crest_ownerhash = $verifyData->CharacterOwnerHash;
+			$character->store();
+// 			\AppRoot::redirect("?module=profile&section=chars", true);
 		}
 		
 		private function processTokenResponse($curl, $curlresponse) {

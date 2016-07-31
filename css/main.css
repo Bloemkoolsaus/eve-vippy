@@ -505,3 +505,14 @@ button.combobox .ui-button-text {
     margin: 0;
     padding: 1px 0 2px;
 }
+
+.evelogin {
+	background: url(/images/ccp/EVE_SSO_Login_Buttons_Small_Black.png) no-repeat;
+	width : 195px;
+	height : 30px;
+}
+
+.evelogin:hover {
+	background: url(/images/ccp/EVE_SSO_Login_Buttons_Small_Black.png) no-repeat;
+	border-color: #DD8800;
+}

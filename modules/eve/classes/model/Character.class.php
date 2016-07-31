@@ -55,6 +55,8 @@ namespace eve\model
 				$this->crest_refreshtoken = $result["crest_refreshtoken"];
 				$this->crest_expires = $result["crest_expires"];
 				$this->crest_ownerhash = $result["crest_ownerhash"];
+				\AppRoot::debug("Loaded character:");
+				\AppRoot::debug($this);
 			}
 		}
 
@@ -115,18 +117,26 @@ namespace eve\model
 							"corpid"		=> $this->corporationID,
 							"isdirector"	=> ($this->isDirector())?1:0,
 							"isceo"			=> ($this->isCEO())?1:0,
-							"dob"			=> ($this->dateOfBirth!=null)?date("Y-m-d H:i:s",strtotime($this->dateOfBirth)):null,
+							"dob"			=> $this->getDateOfBirth(),
 							"updatedate"	=> date("Y-m-d H:i:s"),
 							"crest_state"	=> $this->crest_state,
 							"crest_accesstoken" => $this->crest_accesstoken,
 							"crest_refreshtoken" => $this->crest_refreshtoken,
 							"crest_ownerhash" => $this->crest_ownerhash
 					);
+			\AppRoot::debug("Storing character : " . $this->name);
+			\AppRoot::debug($data);
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
 
 
             if ($this->getUser() != null)
                 $this->getUser()->resetCache();
+		}
+		
+		private function getDateOfBirth() {
+			if ($this->dateOfBirth == null) return null;
+			if ($this->dateOfBirth == '0000-00-00 00:00:00') return null;
+			return date("Y-m-d H:i:s",strtotime($this->dateOfBirth));
 		}
 		
 		function hasState() {
@@ -269,6 +279,13 @@ namespace eve\model
 			return $this->user;
 		}
 		
-		
+		public static function delete($characterId) {
+			// load the character to check if the loggin user owns it.
+			$characterToDelete = new Character($characterId);
+			if ($characterToDelete->userID == \User::getLoggedInUserId() || \User::getUSER()->isAdmin) {
+				\AppRoot::debug("Deleting character : " . $characterToDelete->name);				
+				\MySQL::getDB()->delete("characters", array("id" => $characterId));
+			}
+		}
 	}
 }
