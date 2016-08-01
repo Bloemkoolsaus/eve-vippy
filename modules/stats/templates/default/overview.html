@@ -139,7 +139,8 @@
                 <th style="width: 30px; text-align: center;">Hours Online</th>
 				<th style="width: 30px; text-align: center;">Sigs p/hour</th>
 			{if $authGroup->getConfig('stats_kills')}
-				<th style="width: 30px; text-align: center;">SCORE</th>
+                <th style="width: 30px; text-align: center;">Ratio</th>
+                <th style="width: 30px; text-align: center;">SCORE</th>
 			{/if}
 			</tr>
 	{assign var=i value=0}
@@ -188,24 +189,42 @@
 					{/if}
 				</td>
 			{if $authGroup->getConfig('stats_kills')}
-				<td style="text-align: center; font-weight: bold;
-					{if isset($user.score)}
-						{if $user.score < 45}
-								background-color: #cc0000; color: #ffffff;
-						{elseif $user.score < 55}
-								background-color: #ff8800; color: #ffffff;
-						{elseif $user.score >= 85}
-								background-color: #00aa00; color: #ffffff;
-						{elseif $user.score >= 80}
-								background-color: #008800; color: #ffffff;
-						{else}
-								background-color: #558822; color: #ffffff;
-						{/if}
-					{/if}">
-				{if isset($user.score)}
-					{$user.score/10}
-				{/if}
-				</td>
+                <td style="text-align: center; font-weight: bold;
+                {if isset($user.ratio)}
+                    {if $user.ratio < 45}
+                            background-color: #cc0000; color: #ffffff;
+                    {elseif $user.ratio < 55}
+                            background-color: #ff8800; color: #ffffff;
+                    {elseif $user.ratio >= 85}
+                            background-color: #00aa00; color: #ffffff;
+                    {elseif $user.ratio >= 80}
+                            background-color: #008800; color: #ffffff;
+                    {else}
+                            background-color: #558822; color: #ffffff;
+                    {/if}
+                {/if}">
+                    {if isset($user.ratio)}
+                        {$user.ratio/10}
+                    {/if}
+                </td>
+                <td style="text-align: center; font-weight: bold;
+                {if isset($user.ratio)}
+                    {if $user.ratio < 45}
+                            background-color: #cc0000; color: #ffffff;
+                    {elseif $user.ratio < 55}
+                            background-color: #ff8800; color: #ffffff;
+                    {elseif $user.ratio >= 85}
+                            background-color: #00aa00; color: #ffffff;
+                    {elseif $user.ratio >= 80}
+                            background-color: #008800; color: #ffffff;
+                    {else}
+                            background-color: #558822; color: #ffffff;
+                    {/if}
+                {/if}">
+                    {if isset($user.score)}
+                        {$user.score/10}
+                    {/if}
+                </td>
 			{/if}
 			</tr>
 			{assign var=i value=$i+1}

@@ -60,13 +60,13 @@ class Stats
                 $user = new \users\model\User();
                 $user->load($result);
 
+                $ratio = 0;
                 $score = 0;
-                if ($result["requiredsigs"] > 0)
-                {
-                    $score = round((($result["sigs"] / $result["requiredsigs"]) * 100) / 2);
-                    if ($score > 100)
-                        $score = 100;
+                if ($result["requiredsigs"] > 0) {
+                    $ratio = round(($result["sigs"] / $result["requiredsigs"]) * 100);
+                    $score = round($ratio/2);
                 }
+
 
                 $scanners[] = [
                     "user"	=> $user,
@@ -76,6 +76,7 @@ class Stats
                     "kills" => $result["kills"],
                     "reqsigs" => $result["requiredsigs"],
                     "score" => $score,
+                    "ratio" => $ratio
                 ];
             }
         }
