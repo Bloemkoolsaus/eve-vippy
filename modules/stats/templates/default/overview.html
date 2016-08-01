@@ -92,9 +92,16 @@
 					Required Sigs:
 					<ul>
 						<li>Amount of signatures that should have been scanned, based on the amount of kills.</li>
-						<li>For each kill 5 signatures need to be scanned.</li>
-						<li>Kills made in a logistics ship are excluded.</li>
-						<li>Kills made in a recon only require 3 signatures.</li>
+						<li>For each kill, 5 signatures need to be scanned.</li>
+						<li>Kills made in logi, recons, hics or capitals are excluded.</li>
+						<li>For each kill in a logi, the required sigs is decreased with 1.</li>
+					</ul>
+				</li>
+				<li>
+					Score:
+					<ul>
+						<li>Is calculated based on the amount of sigs scanned and required sigs.</li>
+						<li>Is presented as a number from 0 to 10, with 10 being the highest possible score.</li>
 					</ul>
 				</li>
 			{/if}

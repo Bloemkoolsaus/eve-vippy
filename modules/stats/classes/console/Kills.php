@@ -54,17 +54,30 @@ class Kills
                                         $isLogistics = true;
                                     if (strtolower($ship->name) == "nestor")
                                         $isLogistics = true;
+
+                                    // Support
+                                    $isSupport = false;
                                     if ($isLogistics)
+                                        $isSupport = true;
+                                    if (strtolower($ship->getShipType()) == "force recon ship")
+                                        $isSupport = true;
+                                    if (strtolower($ship->getShipType()) == "combat recon ship")
+                                        $isSupport = true;
+                                    if (strtolower($ship->getShipType()) == "heavy interdiction cruiser")
+                                        $isSupport = true;
+                                    if (strtolower($ship->getShipType()) == "interdictor")
+                                        $isSupport = true;
+                                    if (strtolower($ship->isCapital()))
+                                        $isSupport = true;
+
+
+                                    // Support niet meetellen
+                                    if ($isSupport)
                                         $bonusPoints += ($nrKills * 5);
 
-                                    // Recon
-                                    $isRecon = false;
-                                    if (strtolower($ship->getShipType()) == "force recon ship")
-                                        $isRecon = true;
-                                    if (strtolower($ship->getShipType()) == "combat recon ship")
-                                        $isRecon = true;
-                                    if ($isRecon)
-                                        $bonusPoints += ($nrKills * 2);
+                                    // Logi een extra punt
+                                    if ($isLogistics)
+                                        $bonusPoints += 1;
                                 }
                             }
 

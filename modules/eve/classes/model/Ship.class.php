@@ -14,6 +14,12 @@ namespace eve\model
 			return $this->getGroup()->name;
 		}
 
+        function isCapital()
+        {
+
+            return false;
+        }
+
 		private function getSlotLayout()
 		{
 			if ($results = $this->db->getRows("SELECT t.attributename, COALESCE(d.valueInt, d.valueFloat) AS amount
@@ -81,11 +87,11 @@ namespace eve\model
 			return $this->nrSubSystems;
 		}
 
-		/**
-		 * Get max jump range
-		 * @param string $jumpDriveCalibration
-		 * @return number lightyears
-		 */
+        /**
+         * Get max jump range
+         * @param bool|string $jumpDriveCalibration
+         * @return number lightyears
+         */
 		function getMaxJumprange($jumpDriveCalibration=false)
 		{
 			if (!$jumpDriveCalibration)
