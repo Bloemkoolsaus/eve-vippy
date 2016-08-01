@@ -60,13 +60,22 @@ class Stats
                 $user = new \users\model\User();
                 $user->load($result);
 
+                $score = 0;
+                if ($result["requiredsigs"] > 0)
+                {
+                    $score = round((($result["sigs"] / $result["requiredsigs"]) * 100) / 2);
+                    if ($score > 100)
+                        $score = 100;
+                }
+
                 $scanners[] = [
                     "user"	=> $user,
                     "rank"	=> count($scanners)+1,
                     "sigs"  => $result["sigs"],
                     "whs"   => $result["whs"],
                     "kills" => $result["kills"],
-                    "reqsigs" => $result["requiredsigs"]
+                    "reqsigs" => $result["requiredsigs"],
+                    "score" => $score,
                 ];
             }
         }
