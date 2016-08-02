@@ -3,9 +3,10 @@ namespace stats\model;
 
 class Kills extends \Model
 {
-    public $id = 0;
+    protected $_keyfield = array("userid", "killdate", "shiptypeid");
+
     public $userID;
-    public $nrKills;
-    public $requiredSigs;
     public $killdate;
+    public $shipTypeID;
+    public $nrKills;
 }

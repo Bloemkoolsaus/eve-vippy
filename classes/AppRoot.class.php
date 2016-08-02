@@ -29,7 +29,7 @@ class AppRoot
 		if (!file_exists($directory))
 			return false;
 
-		\AppRoot::debug("== Check UPDATE SQL: ".$directory);
+        \AppRoot::doCliOutput("Check SQL Patches");
 		if ($handle = @opendir($directory))
 		{
 			$executedFiles = array();
@@ -54,6 +54,7 @@ class AppRoot
 							array(	"filename"	=> $file));
 
 					// Queries parsen & uitvoeren
+                    \AppRoot::doCliOutput(" * Run sql patch: ".$sqlFile);
 					preg_match_all($queryRegex, file_get_contents($sqlFile), $queries);
 					foreach ($queries[1] as $query) {
 						\MySQL::getDB()->doQuery($query);
@@ -65,7 +66,7 @@ class AppRoot
 		}
 		@closedir($handle);
 		unset($handle);
-		\AppRoot::debug("== Finished UPDATE SQL");
+        \AppRoot::doCliOutput("Finished SQL patches");
         return true;
 	}
 
@@ -79,7 +80,7 @@ class AppRoot
 		if (!file_exists($directory))
 			return false;
 
-		\AppRoot::debug("== Check UPDATE Scripts");
+        \AppRoot::doCliOutput("Check PHP Patches");
 		if ($handle = @opendir($directory))
 		{
 			$executedFiles = array();
@@ -97,12 +98,12 @@ class AppRoot
 				$phpFile = $directory.DIRECTORY_SEPARATOR.$patchFile;
 				if (is_file($phpFile) && !in_array($patchFile, $executedFiles))
 				{
-					\MySQL::getDB()->updateinsert("system_patches_php",
-							array(	"filename"	=> $patchFile,
-									"execdate"	=> date("Y-m-d H:i:s")),
-							array(	"filename"	=> $patchFile));
-
-					\AppRoot::debug("Executing: ".$phpFile);
+					\MySQL::getDB()->updateinsert(
+                        "system_patches_php",
+                        array(	"filename"	=> $patchFile, "execdate"	=> date("Y-m-d H:i:s")),
+                        array(	"filename"	=> $patchFile)
+                    );
+                    \AppRoot::doCliOutput(" * Run php patch: ".$phpFile);
 					include($phpFile);
 				}
 			}
@@ -110,7 +111,7 @@ class AppRoot
 		}
 		@closedir($handle);
 		unset($handle);
-		\AppRoot::debug("== Finished UPDATE Scripts");
+        \AppRoot::doCliOutput("Finished PHP patches");
         return true;
 	}
 
@@ -273,9 +274,9 @@ class AppRoot
 		$data["errordate"] = date("Y-m-d H:i:s");
 		$data["info"] = "DATE: ".date("Y-m-d H:i:s")."\n";
 		$data["info"] .= "WORKING DIR: ".str_replace(DIRECTORY_SEPARATOR,"/",getcwd())."\n";
-		$data["info"] .= "PHP_SELF: ".$_SERVER["PHP_SELF"]."\n";
-		$data["info"] .= "SERVER_ADDR: ".$_SERVER["SERVER_ADDR"]."\n";
-		$data["info"] .= "REQUEST_URI: ".$_SERVER["REQUEST_URI"]."\n";
+		$data["info"] .= "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n";
+		$data["info"] .= "SERVER_ADDR: ".((isset($_SERVER["SERVER_ADDR"]))?$_SERVER["SERVER_ADDR"]:"")."\n";
+		$data["info"] .= "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n";
 		$data["info"] .= "GET: ".json_encode($_GET)."\n";
 		$data["info"] .= "POST: ".json_encode($_POST)."\n";
 		$data["info"] .= "SESSION: ".json_encode($_SESSION)."\n";
@@ -613,7 +614,7 @@ class AppRoot
             echo $msg.PHP_EOL;
         }
         else
-            echo "<pre>".$var."</pre>";
+            \AppRoot::debug("<pre>".$var."</pre>");
     }
 }
 ?>

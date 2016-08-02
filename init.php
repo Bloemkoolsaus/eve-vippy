@@ -90,9 +90,3 @@ if ($handle = @opendir($directory)) {
 \AppRoot::$startTime = $startTime;
 \AppRoot::debug("Initializing");
 \AppRoot::parseRequestURL();
-
-
-// Patches
-if (!\Tools::REQUEST("ajax") && \Tools::REQUEST("action") != "keepalive")
-	\AppRoot::readSqlUpdates();
-?>

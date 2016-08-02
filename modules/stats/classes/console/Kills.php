@@ -34,62 +34,30 @@ class Kills
                         if ($character && $character->getUser() && $character->id == $character->getUser()->getMainCharacterID())
                         {
                             \AppRoot::doCliOutput("     ".$dat->reduction." kills for ".$character->getUser()->getFullName());
-                            $stats = \stats\model\Kills::findOne(["userid" => $character->getUser()->id, "killdate" => $date]);
-                            if (!$stats)
-                                $stats = new \stats\model\Kills();
-
                             $totalKills = (isset($dat->reduction))?$dat->reduction:0;
                             $requiredSigs = 0;
                             $bonusPoints = 0;
 
-                            if (isset($dat->shipsFlown)) {
-                                foreach ($dat->shipsFlown as $typeID => $nrKills) {
-                                    $ship = new \eve\model\Ship($typeID);
+                            if (isset($dat->shipsFlown))
+                            {
+                                foreach ($dat->shipsFlown as $typeID => $nrKills)
+                                {
+                                    $stats = \stats\model\Kills::findOne([
+                                        "userid" => $character->getUser()->id,
+                                        "shiptypeid" => $typeID,
+                                        "killdate" => $date
+                                    ]);
+                                    if (!$stats) {
+                                        $stats = new \stats\model\Kills();
+                                        $stats->userID = $character->getUser()->id;
+                                        $stats->shipTypeID = $typeID;
+                                        $stats->killdate = $date;
+                                    }
 
-                                    // Logi?
-                                    $isLogistics = false;
-                                    if (strtolower($ship->getShipType()) == "logistics")
-                                        $isLogistics = true;
-                                    if (strtolower($ship->getShipType()) == "logistics frigate")
-                                        $isLogistics = true;
-                                    if (strtolower($ship->name) == "nestor")
-                                        $isLogistics = true;
-
-                                    // Support
-                                    $isSupport = false;
-                                    if ($isLogistics)
-                                        $isSupport = true;
-                                    if (strtolower($ship->getShipType()) == "force recon ship")
-                                        $isSupport = true;
-                                    if (strtolower($ship->getShipType()) == "combat recon ship")
-                                        $isSupport = true;
-                                    if (strtolower($ship->getShipType()) == "heavy interdiction cruiser")
-                                        $isSupport = true;
-                                    if (strtolower($ship->getShipType()) == "interdictor")
-                                        $isSupport = true;
-                                    if (strtolower($ship->isCapital()))
-                                        $isSupport = true;
-
-
-                                    // Support niet meetellen
-                                    if ($isSupport)
-                                        $bonusPoints += ($nrKills * 5);
-
-                                    // Logi een extra punt
-                                    if ($isLogistics)
-                                        $bonusPoints += 1;
+                                    $stats->nrKills = $nrKills;
+                                    $stats->store();
                                 }
                             }
-
-                            $requiredSigs = ($totalKills*5)-$bonusPoints;
-                            if ($requiredSigs < 0)
-                                $requiredSigs = 0;
-
-                            $stats->userID = $character->getUser()->id;
-                            $stats->nrKills = $totalKills;
-                            $stats->requiredSigs = $requiredSigs;
-                            $stats->killdate = $date;
-                            $stats->store();
                         }
                     }
                 }

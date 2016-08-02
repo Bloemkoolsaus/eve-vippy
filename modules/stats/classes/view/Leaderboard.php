@@ -16,39 +16,37 @@ class Leaderboard
 
         $y = (count($arguments) > 0) ? array_shift($arguments) : date("Y");
         $m = (count($arguments) > 0) ? array_shift($arguments) : date("m");
-
         $sdate = date("Y-m-d", mktime(0, 0, 0, $m, 1, $y));
         $edate = date("Y-m-d", mktime(0, 0, 0, $m+1, 0, $y));
 
-        $allSignatures = $console->getTopScanners($sdate, $edate);
-        foreach ($allSignatures as $key => $sig)
-        {
-            if (count($topSignatures) < 10)
-                $topSignatures[] = $sig;
-            if ($sig["user"]->id == \User::getUSER()->id)
-                $userSignature = $sig;
-        }
+        $authGroups = \User::getUSER()->getAuthGroupsIDs();
+        $authGroup = new \admin\model\AuthGroup($authGroups[0]);
 
-        $totalSDate = date("Y-m-d", mktime(0,0,0, date("m")-10, 1, date("Y")));
-        $totalEDate = date("Y-m-d", mktime(0,0,0, date("m")+1, 0, date("Y")));
-        $totalSignatures = $console->getTotalSignatures($totalSDate, $totalEDate, null, null, 10);
-
-        $doRaffles = false;
-        foreach (\User::getUSER()->getAuthGroups() as $group)
+        /** @var \stats\model\User[] $stats */
+        $stats = array();
+        $user = null;
+        $sortStatsBy = ($authGroup->getConfig("rank_leaderboard")=="wormholes")?"nrwormholes":"nrsigs";
+        if ($results = \MySQL::getDB()->getRows("select *
+                                                from    stats_users
+                                                where   authgroupid = ?
+                                                and     year = ? and month = ?
+                                                order by score desc, ratio desc, ".$sortStatsBy." desc"
+                                        , [$authGroup->id, $y, $m]))
         {
-            if ($group->hasModule("stats"))
-                $doRaffles = true;
+            foreach ($results as $result)
+            {
+                $stat = new \stats\model\User();
+                $stat->load($result);
+                $stats[] = $stat;
+            }
         }
 
         $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("topsignatures", $topSignatures);
-        $tpl->assign("allsignatures", $allSignatures);
-        $tpl->assign("usersignature", $userSignature);
-        $tpl->assign("totalsignatures", $totalSignatures);
-        $tpl->assign("doraffles", $doRaffles);
+        $tpl->assign("stats", $stats);
         $tpl->assign("sdate", $sdate);
         $tpl->assign("edate", $edate);
         $tpl->assign("month", \Tools::getFullMonth(date("m",strtotime($sdate)))." ".date("Y",strtotime($sdate)));
+        $tpl->assign("authGroup", $authGroup);
         return $tpl->fetch("stats/leaderboard");
     }
 }

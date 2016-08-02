@@ -7,7 +7,7 @@
 				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
+			<button type="button" class="small" style="width: 135px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
 				Next Month
 				<img src="/images/default/right.png" align="right" />
 			</button>
@@ -15,60 +15,9 @@
 	</h1>
 	<div style="clear:both;"></div>
 
-	<div style="float: left; width: 43%;">
-		<div style="margin: 10px;">
-			<table class="sectionoverview" style="width: 100%;">
-				<tr>
-					<th class="large">Corporation</th>
-					<th style="width: 50px; text-align: center;">Active Members</th>
-					<th style="width: 60px; text-align: center;">Total Sigs Scanned</th>
-					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/User</th>
-					<th style="width: 50px; text-align: center;">Ratio<br />Sigs/Time</th>
-					<th style="width: 60px; text-align: center;">Total WHs Mapped</th>
-				</tr>
-	{assign var=i value=0}
-	{foreach from=$corporations item=corp}
-		{if $corp.users|@count > 0}
-			{assign var=totalHours value=0}
-			{assign var=totalSigs value=0}
-			{assign var=totalWhs value=0}
-			{assign var=totsigs value=0}
-			{foreach from=$corp.users key=s item=user}
-				{assign var=totalHours value=$totalHours+$user.user->getHoursOnline($sdate, $edate)}
-				{assign var=totalSigs value=$totalSigs+$user.sigs}
-				{assign var=totalWhs value=$totalWhs+$user.whs}
-			{/foreach}
-				<tr class="{if $i%2==0}even{else}odd{/if}">
-					<td>
-						<div style="width: 99%; overflow: hidden; white-space: nowrap;">
-							<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png"
-								style="height: 18px; margin: -1px; margin-right: 10px;" align="left">
-							{$corp.corp->name}
-						</div>
-					</td>
-					<td style="text-align: center;">
-						{$corp.users|@count}
-					</td>
-					<td style="text-align: center;">
-						{$totalSigs}
-					</td>
-					<td style="text-align: center; font-weight: bold;">
-						{($totalSigs/$corp.users|@count)|@round}
-					</td>
-					<td style="text-align: center;">
-						{($totalSigs/$totalHours)|round:1}
-					</td>
-					<td style="text-align: center;">
-						{$totalWhs}
-					</td>
-				</tr>
-			{assign var=i value=$i+1}
-		{/if}
-	{/foreach}
-			</table>
-		</div>
+	<div class="col5">
 	</div>
-	<div style="float: right; width: 54%;">
+	<div class="col7 right last">
 		<div class="message">
 			<ul>
 				<li>These statistics are only availible for Admins!</li>
@@ -111,24 +60,19 @@
 	<div style="clear:both;"></div>
 </div>
 
+
 <div class="content">
 	<h2>Corporation details</h2>
+
 {foreach from=$corporations item=corp}
-	{assign var=totalHours value=0}
-	{assign var=totalSigs value=0}
-	{assign var=totalWHs value=0}
-	{assign var=totalKills value=0}
-	{assign var=totalQuota value=0}
-	{if $corp.users|@count > 0}
-	<div style="float: left; margin: 10px;">
+{if $corp.stats|@count > 0}
+	<div style="float: left; padding: .5em;">
 		<table class="sectionoverview">
 			<tr>
-				<th class="large" colspan="2">
-					<div style="width: 145px; overflow: hidden; white-space: nowrap;">
-						<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png"
-							style="height: 24px; margin: -2px;" align="left">
-						&nbsp; {$corp.corp->name}
-					</div>
+				<th colspan="2" class="large">
+					<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" align="left"
+						 style="height: 24px; margin: -2px; margin-right: .4em;" />
+					{$corp.corp->name}
 				</th>
 				<th style="width: 30px; text-align: center;">Total WHs</th>
 				<th style="width: 30px; text-align: center;">Total Sigs</th>
@@ -136,132 +80,76 @@
 				<th style="width: 30px; text-align: center;">Total Kills</th>
 				<th style="width: 30px; text-align: center;">Req. Sigs</th>
 			{/if}
-                <th style="width: 30px; text-align: center;">Hours Online</th>
-				<th style="width: 30px; text-align: center;">Sigs p/hour</th>
+				<th style="width: 30px; text-align: center;">Hours Online</th>
+				<th style="width: 30px; text-align: center;">Sigs p/Hour</th>
 			{if $authGroup->getConfig('stats_kills')}
-                <th style="width: 30px; text-align: center;">Ratio</th>
-                <th style="width: 30px; text-align: center;">SCORE</th>
+				<th style="width: 30px; text-align: center;">Ratio</th>
+				<th style="text-align: center;" colspan="2">Score</th>
 			{/if}
 			</tr>
-	{assign var=i value=0}
-	{foreach from=$corp.users key=s item=user}
-		{assign nrhours $user.user->getHoursOnline($sdate, $edate)}
-		{assign var=totalHours value=$totalHours+$nrhours}
-		{assign var=totalSigs value=$totalSigs+$user.sigs}
-		{assign var=totalWHs value=$totalWHs+$user.whs}
-		{if isset($user.kills) && $user.kills > 0}
-			{assign var=totalKills value=$totalKills+$user.kills}
-		{/if}
-		{assign var=sigsQuote value=0}
-		{if isset($user.reqsigs) && $user.reqsigs > 0}
-			{assign var=sigsQuote value=$totalKills+$user.reqsigs}
-		{/if}
-		{assign var=totalQuota value=$totalQuota+$sigsQuote}
-			<tr class="{if $i%2==0}even{else}odd{/if}"
-				onclick="window.open('index.php?module=users&action=edit&id={$user.user->id}');">
-				<td style="padding: 0; width: 20px;">
-					<img src="http://image.eveonline.com/Character/{$user.user->getMainCharacter()->id}_32.jpg"
-						style="height: 20px; margin: 1px; margin-bottom: -2px;">
+		{assign var=i value=0}
+		{foreach from=$corp.stats item=stat}
+			<tr class="{if $i%2==0}even{else}odd{/if}">
+				<td style="width: 20px; height: 20px; text-align: center; padding: 1px;background-color: #{$stat->getScoreColor()};">
+					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
+						 style="height: 20px; margin: 0;" >
 				</td>
-				<td>
-					&nbsp;{$user.user->getMainCharacter()->name}&nbsp;
+				<td style="width: 120px;">
+					{$stat->getUser()->getMainCharacter()->name}
 				</td>
-				<td style="text-align: center; color: #ffffff;">
-					{if $user.whs > 0}{$user.whs}{/if}
+				<td style="text-align: center;">
+				{if $stat->nrWormholes > 0}
+					{$stat->nrWormholes}
+				{/if}
 				</td>
-				<td style="text-align: center; color: #ffffff;">
-					{if $user.sigs > 0}{$user.sigs}{/if}
+				<td style="text-align: center;">
+				{if $stat->nrSigs > 0}
+					{$stat->nrSigs}
+				{/if}
 				</td>
 			{if $authGroup->getConfig('stats_kills')}
-				<td style="text-align: center; color: #aaaaaa;">
-					{if isset($user.kills) && $user.kills > 0}{$user.kills}{/if}
+				<td style="text-align: center;">
+				{if $stat->nrKills > 0}
+					{$stat->nrKills}
+				{/if}
 				</td>
-				<td style="text-align: center; color: {if $user.reqsigs > $user.sigs}#ff0000{else}#ffffff{/if};">
-					{if isset($user.reqsigs) && $user.reqsigs > 0}{$user.reqsigs}{/if}
+				<td style="text-align: center; {if $stat->reqSigs > $stat->nrSigs}color: #ff1111;{/if}">
+				{if $stat->reqSigs > 0}
+					{$stat->reqSigs}
+				{/if}
 				</td>
 			{/if}
-				<td style="text-align: center; color: #aaaaaa;">
-					{$nrhours}
+				<td style="text-align: center;">
+				{if $stat->hoursOnline > 0}
+					{$stat->hoursOnline}
+				{/if}
 				</td>
-				<td style="text-align: center; color: #aaaaaa;">
-					{if $nrhours > 0 && $user.sigs > 0}
-						{($user.sigs/$nrhours)|round:1}
-					{/if}
+				<td style="text-align: center;">
+				{if $stat->hoursOnline > 0}
+					{($stat->nrSigs/$stat->hoursOnline)|round}
+				{/if}
 				</td>
 			{if $authGroup->getConfig('stats_kills')}
-                <td style="text-align: center; font-weight: bold;
-                {if isset($user.ratio)}
-                    {if $user.ratio < 45}
-                            background-color: #cc0000; color: #ffffff;
-                    {elseif $user.ratio < 55}
-                            background-color: #ff8800; color: #ffffff;
-                    {elseif $user.ratio >= 85}
-                            background-color: #00aa00; color: #ffffff;
-                    {elseif $user.ratio >= 80}
-                            background-color: #008800; color: #ffffff;
-                    {else}
-                            background-color: #558822; color: #ffffff;
-                    {/if}
-                {/if}">
-                    {if isset($user.ratio)}
-                        {$user.ratio/10}
-                    {/if}
-                </td>
-                <td style="text-align: center; font-weight: bold;
-                {if isset($user.ratio)}
-                    {if $user.ratio < 45}
-                            background-color: #cc0000; color: #ffffff;
-                    {elseif $user.ratio < 55}
-                            background-color: #ff8800; color: #ffffff;
-                    {elseif $user.ratio >= 85}
-                            background-color: #00aa00; color: #ffffff;
-                    {elseif $user.ratio >= 80}
-                            background-color: #008800; color: #ffffff;
-                    {else}
-                            background-color: #558822; color: #ffffff;
-                    {/if}
-                {/if}">
-                    {if isset($user.score)}
-                        {$user.score/10}
-                    {/if}
-                </td>
+				<td style="text-align: center;">
+				{if $stat->ratio}
+					{$stat->ratio}
+				{/if}
+				</td>
+				<td style="text-align: center; background-color: #{$stat->getScoreColor()}; color: #ffffff; width: 25px;">
+					{$stat->score}
+				</td>
+				<td style="text-align: left; background-color: #{$stat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+					&nbsp;{$stat->getScoreTitle()}&nbsp;
+				</td>
 			{/if}
 			</tr>
 			{assign var=i value=$i+1}
-	{/foreach}
-			<tr>
-				<td></td>
-				<td></td>
-				<th style="text-align: center;">
-					{$totalWHs}
-				</th>
-				<th style="text-align: center;">
-					{$totalSigs}
-				</th>
-			{if $authGroup->getConfig('stats_kills')}
-				<th style="text-align: center;">
-					{$totalKills}
-				</th>
-				<th style="text-align: center;">
-					{$totalQuota}
-				</th>
-			{/if}
-				<th style="text-align: center;">
-					{$totalHours}
-				</th>
-				<th style="text-align: center;">
-					{if $nrhours > 0}
-						{($totalSigs/$totalHours)|round:1}
-					{/if}
-				</th>
-			{if $authGroup->getConfig('stats_kills')}
-			{/if}
-			</tr>
+		{/foreach}
 		</table>
+		<div style="clear:both;"></div>
 	</div>
-	{/if}
-	{/foreach}
-
+{/if}
+{/foreach}
 	<div style="clear:both;"></div>
 </div>
 <div style="clear:both;"></div>
