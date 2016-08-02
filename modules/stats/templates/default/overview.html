@@ -28,15 +28,22 @@
 					</ul>
 				</li>
 			{if $authGroup->getConfig('stats_kills')}
-				<li>
-					Total kills:
-					<ul>
-						<li>Total amount of kills made in this month.</li>
-						<li>Kills from (known) alts are included.</li>
-						<li>Multiboxed kills are excluded. If you are on the same kill with 2 toons, only 1 counts.</li>
-						<li>Data from: <a href="http://stats.limited-power.co.uk/" target="_blank">http://stats.limited-power.co.uk/</a></li>
-					</ul>
-				</li>
+                <li>
+                    Total kills:
+                    <ul>
+                        <li>Total amount of kills made in this month.</li>
+                        <li>Kills from (known) alts are included.</li>
+                        <li>Multiboxed kills are excluded. If you are on the same kill with 2 toons, only 1 counts.</li>
+                        <li>Data from: <a href="http://stats.limited-power.co.uk/" target="_blank">http://stats.limited-power.co.uk/</a></li>
+                    </ul>
+                </li>
+                <li>
+                    Count kills:
+                    <ul>
+                        <li>Used to calculate score.</li>
+                        <li>All kills except those made in Logi, Recons, Interdicters, T3 dessies.</li>
+                    </ul>
+                </li>
 				<li>
 					Required Sigs:
 					<ul>
@@ -49,8 +56,7 @@
 				<li>
 					Score:
 					<ul>
-						<li>Is calculated based on the amount of sigs scanned and required sigs.</li>
-						<li>Is presented as a number from 0 to 10, with 10 being the highest possible score.</li>
+						<li>Base 30 LOG(total sigs / count kills)</li>
 					</ul>
 				</li>
 			{/if}
@@ -78,12 +84,11 @@
 				<th style="width: 30px; text-align: center;">Total Sigs</th>
 			{if $authGroup->getConfig('stats_kills')}
 				<th style="width: 30px; text-align: center;">Total Kills</th>
-				<th style="width: 30px; text-align: center;">Req. Sigs</th>
+				<th style="width: 30px; text-align: center;">Count Kills</th>
 			{/if}
 				<th style="width: 30px; text-align: center;">Hours Online</th>
 				<th style="width: 30px; text-align: center;">Sigs p/Hour</th>
 			{if $authGroup->getConfig('stats_kills')}
-				<th style="width: 30px; text-align: center;">Ratio</th>
 				<th style="text-align: center;" colspan="2">Score</th>
 			{/if}
 			</tr>
@@ -130,11 +135,6 @@
 				{/if}
 				</td>
 			{if $authGroup->getConfig('stats_kills')}
-				<td style="text-align: center;">
-				{if $stat->ratio}
-					{$stat->ratio}
-				{/if}
-				</td>
 				<td style="text-align: center; background-color: #{$stat->getScoreColor()}; color: #ffffff; width: 25px;">
 					{$stat->score}
 				</td>

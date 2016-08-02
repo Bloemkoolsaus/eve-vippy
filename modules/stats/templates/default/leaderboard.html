@@ -16,7 +16,7 @@
 	<div style="clear:both;"></div>
 	<br />
 
-	<div style="float: left; width: 45%;">
+    <div class="col6">
 		<table class="sectionoverview">
 			<tr>
 				<th class="large" colspan="3"></th>
@@ -27,13 +27,13 @@
 			{/if}
 			</tr>
 	{foreach from=$stats key=s item=stat}
-		{if $s<10}
+		{if $s<15}
 			<tr class="{if $s%2==0}even{else}odd{/if}">
-				<td style="padding: 0px; width: 20px; text-align: center;">
+				<td style="padding: 0; width: 20px; text-align: center;">
 					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
 						 style="height: 22px; margin: -1px;">
 				</td>
-				<td style="padding: 0px; width: 20px; text-align: center;">
+				<td style="padding: 0; width: 20px; text-align: center;">
 					<img src="http://image.eveonline.com/Corporation/{$stat->getUser()->getMainCharacter()->corporationID}_32.png"
 						 style="height: 22px; margin: -1px;">
 				</td>
@@ -70,11 +70,11 @@
 	{foreach from=$stats key=s item=stat}
 		{if $stat->userID == $App->user->id}
 			<tr class="even">
-				<td style="padding: 0px; width: 20px; text-align: center;">
+				<td style="padding: 0; width: 20px; text-align: center;">
 					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
 						style="height: 22px; margin: -1px;">
 				</td>
-				<td style="padding: 0px; width: 20px; text-align: center;">
+				<td style="padding: 0; width: 20px; text-align: center;">
 					<img src="http://image.eveonline.com/Corporation/{$stat->getUser()->getMainCharacter()->corporationID}_32.png"
 						style="height: 22px; margin: -1px;">
 				</td>
@@ -102,36 +102,33 @@
 	{/foreach}
 		</table>
 
-		<br />
-		<br />
-
+    </div>
+    <div class="col6 last right">
+        <div class="message">
+            <ul>
+                <li>Newly added signatures AND updated signatures are counted.</li>
+                <li>Updating a signature that was not changed will <u>not</u> count.</li>
+                <li>Please contact leadership for any questions.</li>
+            </ul>
+        </div>
+        <div style="clear: both;"></div>
+        <br />
 		<table class="sectionoverview">
 			<tr>
-				<th class="large">
-					Total Signatures scanned
-				</th>
+				<th class="large">Total Signatures scanned</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
 				<th style="width: 70px; text-align: center;">Wormholes</th>
 			</tr>
 		{assign var=i value=0}
-		{foreach from=$totalsignatures key=s item=signatures}
+		{foreach from=$totalSignatures key=s item=data}
 			<tr class="{if $i%2==0}even{else}odd{/if}">
-				<td>{$signatures.date}</td>
-				<td style="text-align: center;">{$signatures.sigs}</td>
-				<td style="text-align: center;">{$signatures.whs}</td>
+				<td>{$data.date}</td>
+				<td style="text-align: center;">{$data.sigs}</td>
+				<td style="text-align: center;">{$data.whs}</td>
 			</tr>
 		{assign var=i value=$i+1}
 		{/foreach}
 		</table>
-	</div>
-	<div style="float: right; width: 45%;">
-		<div class="message">
-			<ul>
-				<li>Newly added signatures AND updated signatures are counted.</li>
-				<li>Updating a signature that was not changed will <u>not</u> count.</li>
-				<li>Please contact leadership for any questions.</li>
-			</ul>
-		</div>
 	</div>
 	<div style="clear:both;"></div>
 </div>

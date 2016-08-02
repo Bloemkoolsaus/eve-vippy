@@ -173,9 +173,9 @@ class Stats
                     if ($isLogistics)
                         $stat->reqSigs += 0;
                     else if ($isSupport)
-                        $stat->reqSigs += ($nrKills);
+                        $stat->reqSigs += 0;
                     else
-                        $stat->reqSigs += ($nrKills*5);
+                        $stat->reqSigs += $nrKills;
                 }
                 \AppRoot::doCliOutput("  => Total of ".$stat->nrKills." kills");
                 if ($stat->reqSigs < 0)

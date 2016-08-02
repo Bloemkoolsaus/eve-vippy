@@ -41,12 +41,31 @@ class Leaderboard
             }
         }
 
+        $totalSignatures = array();
+        if ($results = \MySQL::getDB()->getRows("select year, month, sum(nrsigs) as sigs, sum(nrwormholes) as wormholes
+                                                from    stats_users
+                                                where   authgroupid = ?
+                                                group by year, month
+                                                order by year desc, month desc"
+            , [$authGroup->id]))
+        {
+            foreach ($results as $result)
+            {
+                $totalSignatures[] = [
+                    "date" => \Tools::getFullMonth($result["month"])." ".$result["year"],
+                    "sigs" => $result["sigs"],
+                    "whs" => $result["wormholes"]
+                ];
+            }
+        }
+
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("stats", $stats);
         $tpl->assign("sdate", $sdate);
         $tpl->assign("edate", $edate);
         $tpl->assign("month", \Tools::getFullMonth(date("m",strtotime($sdate)))." ".date("Y",strtotime($sdate)));
         $tpl->assign("authGroup", $authGroup);
+        $tpl->assign("totalSignatures", $totalSignatures);
         return $tpl->fetch("stats/leaderboard");
     }
 }

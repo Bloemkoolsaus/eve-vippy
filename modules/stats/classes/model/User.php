@@ -66,19 +66,7 @@ class User extends \Model
 
     function calcScore()
     {
-        $this->score = 5*sqrt($this->calcRatio());
-
-
-        $this->score = ((log($this->calcRatio())*100)/7)*.8;
-
-
-        /*
-
-        log(1000,10) = 3
-        sqrt(100) = 10
-
-         */
-
+        $this->score = log($this->calcRatio()/100,30)*100;
         return $this->score;
     }
 
@@ -90,13 +78,13 @@ class User extends \Model
             return "11bb00";
         if ($this->score > 70)
             return "33bb00";
-        if ($this->score > 60)
-            return "66aa00";
         if ($this->score > 50)
-            return "88aa00";
-        if ($this->score > 45)
-            return "dd7700";
+            return "66aa00";
         if ($this->score > 40)
+            return "88aa00";
+        if ($this->score > 30)
+            return "dd7700";
+        if ($this->score > 20)
             return "dd5500";
 
         return "cc0000";
@@ -104,19 +92,21 @@ class User extends \Model
 
     function getScoreTitle()
     {
-        if ($this->score > 112)     // meer dan 5x wat je zou moeten doen!!
+        if ($this->score >= 110)     // meer dan 5x wat je zou moeten doen!!
             return "First Class";
-        if ($this->score > 75)
+        if ($this->score > 80)
             return "Great";
-        if ($this->score > 60)
+        if ($this->score > 70)
             return "Good";
         if ($this->score > 50)
-            return "Mediocre";
+            return "Okay";
         if ($this->score > 40)
-            return "Slacker";
+            return "Mediocre";
         if ($this->score > 20)
-            return "Spy";
+            return "Slacker";
+        if ($this->score > 0)
+            return "Slacker";
 
-        return "POS Party";
+        return "no score";
     }
 }

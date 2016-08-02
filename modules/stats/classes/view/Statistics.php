@@ -46,7 +46,6 @@ class Statistics
             $corporations[] = $corporation;
         }
 
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("sdate", $sdate);
         $tpl->assign("edate", $edate);
