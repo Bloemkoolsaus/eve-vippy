@@ -88,8 +88,11 @@ class User extends \Model
             return "dd5500";
         if ($this->score > 0)
             return "ee2200";
+        if ($this->score < 0)
+            return "cc0000";
 
-        return "cc0000";
+        return "777777";
+
     }
 
     function getScoreTitle()
@@ -104,9 +107,7 @@ class User extends \Model
             return "Okay";
         if ($this->score > 40)
             return "Mediocre";
-        if ($this->score > 20)
-            return "Slacker";
-        if ($this->score > 0)
+        if ($this->score != 0)
             return "Slacker";
 
         return "no-score";
