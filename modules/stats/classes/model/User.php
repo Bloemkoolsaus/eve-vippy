@@ -65,7 +65,9 @@ class User extends \Model
 
     function calcScore()
     {
-        if ($this->ratio == 0)
+        if ($this->reqSigs == $this->nrSigs)
+            $this->score = 50;
+        else if ($this->ratio == 0)
             $this->score = 50+$this->nrSigs;
         else
             $this->score = log($this->calcRatio()/100,30)*100;
