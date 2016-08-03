@@ -131,7 +131,8 @@
 			{assign var=online value=$online+$stat->hoursOnline}
 			{assign var=tkills value=$tkills+$stat->nrKills}
 			{assign var=ckills value=$ckills+$stat->reqSigs}
-			<tr class="{if $i%2==0}even{else}odd{/if}">
+			<tr class="{if $i%2==0}even{else}odd{/if}"
+				onclick="window.open('/index.php?module=users&action=edit&id={$stat->userID}')">
 				<td style="width: 20px; height: 20px; text-align: center; padding: 1px; {if $authGroup->getConfig('stats_kills')}background-color: #{$stat->getScoreColor()};{/if}">
 					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
 						 style="height: 20px; margin: 0;" >

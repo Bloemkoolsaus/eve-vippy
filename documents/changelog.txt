@@ -4,6 +4,12 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+<h3>August 3, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Updates to statistics/leaderboard.
+
+
+
 <h3>April 28, 2016</h3>
 <b><u>STATISTICS</u></b>
  - Statistics/leaderboard for non directors/admins could show an empty page.
