@@ -68,8 +68,8 @@ class User extends \Model
         if ($this->nrSigs == 0 && $this->nrKills == 0)
             $this->score = 0;
         else {
-            if ($this->reqSigs == $this->nrSigs && $this->reqSigs == 0)
-                $this->score = 50;
+            if ($this->reqSigs == $this->nrSigs)
+                $this->score = ($this->reqSigs == 0) ? 50 : 10;
             else if ($this->ratio == 0) {
                 if ($this->reqSigs > 0)
                     $this->score = $this->reqSigs * -1;
