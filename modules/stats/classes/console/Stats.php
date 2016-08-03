@@ -10,8 +10,8 @@ class Stats
             $what = array_shift($arguments);
             if ($what == "yesterday")
                 $date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
-            if ($what == "date")
-                $date = date("Y-m-d", strtotime(array_shift($arguments)));
+            else
+                $date = date("Y-m-d", strtotime($what));
         }
         $sdate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($date)), 1, date("Y", strtotime($date))));
         $edate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($date))+1, 0, date("Y", strtotime($date))));
