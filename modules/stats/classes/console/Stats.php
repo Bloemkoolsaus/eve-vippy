@@ -17,6 +17,45 @@ class Stats
         $edate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($date))+1, 0, date("Y", strtotime($date))));
         \AppRoot::doCliOutput("Calculate statistics ".$sdate." - ".$edate);
 
+
+        /**
+         * Online / Active users
+         */
+        if ($results = \MySQL::getDB()->getRows("select * from users where deleted = 0 and isvalid = 1"))
+        {
+            foreach ($results as $result)
+            {
+                $user = new \users\model\User();
+                $user->load($result);
+
+                $online = $user->getHoursOnline($sdate, $edate);
+                \AppRoot::doCliOutput(" => ".$user->getFullName()." ".$online." hours online");
+                if ($online == 0)
+                    continue;
+
+                foreach ($user->getAuthGroups() as $group)
+                {
+                    $stat = \stats\model\User::findOne([
+                        "userid" => $user->id,
+                        "authgroupid" => $group->id,
+                        "year" => date("Y", strtotime($date)),
+                        "month" => date("m", strtotime($date))
+                    ]);
+                    if (!$stat)
+                        $stat = new \stats\model\User();
+
+                    $stat->year = date("Y", strtotime($date));
+                    $stat->month = date("m", strtotime($date));
+                    $stat->userID = $user->id;
+                    $stat->corporationID = $user->getMainCharacter()->corporationID;
+                    $stat->authgroupID = $group->id;
+                    $stat->hoursOnline = $online;
+                    $stat->store();
+                }
+            }
+        }
+
+
         /**
          * Signatures
          */

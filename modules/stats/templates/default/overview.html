@@ -119,44 +119,54 @@
 				<th style="text-align: center;" colspan="2">Score</th>
 			{/if}
 			</tr>
-		{assign var=i value=0}
+			{assign var=i value=0}
+			{assign var=sigs value=0}
+			{assign var=whs value=0}
+			{assign var=online value=0}
+			{assign var=tkills value=0}
+			{assign var=ckills value=0}
 		{foreach from=$corp.stats item=stat}
+			{assign var=sigs value=$sigs+$stat->nrSigs}
+			{assign var=whs value=$whs+$stat->nrWormholes}
+			{assign var=online value=$online+$stat->hoursOnline}
+			{assign var=tkills value=$tkills+$stat->nrKills}
+			{assign var=ckills value=$ckills+$stat->reqSigs}
 			<tr class="{if $i%2==0}even{else}odd{/if}">
-				<td style="width: 20px; height: 20px; text-align: center; padding: 1px;background-color: #{$stat->getScoreColor()};">
+				<td style="width: 20px; height: 20px; text-align: center; padding: 1px; {if $authGroup->getConfig('stats_kills')}background-color: #{$stat->getScoreColor()};{/if}">
 					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
 						 style="height: 20px; margin: 0;" >
 				</td>
 				<td style="width: 120px;">
 					{$stat->getUser()->getMainCharacter()->name}
 				</td>
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #ffffff;">
 				{if $stat->nrWormholes > 0}
 					{$stat->nrWormholes}
 				{/if}
 				</td>
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #ffffff;">
 				{if $stat->nrSigs > 0}
 					{$stat->nrSigs}
 				{/if}
 				</td>
 			{if $authGroup->getConfig('stats_kills')}
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #aaaaaa;">
 				{if $stat->nrKills > 0}
 					{$stat->nrKills}
 				{/if}
 				</td>
-				<td style="text-align: center; {if $stat->reqSigs > $stat->nrSigs}color: #ff1111;{/if}">
+				<td style="text-align: center; color: #ffffff;">
 				{if $stat->reqSigs > 0}
 					{$stat->reqSigs}
 				{/if}
 				</td>
 			{/if}
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #aaaaaa;">
 				{if $stat->hoursOnline > 0}
 					{$stat->hoursOnline}
 				{/if}
 				</td>
-				<td style="text-align: center;">
+				<td style="text-align: center; color: #aaaaaa;">
 				{if $stat->hoursOnline > 0}
 					{($stat->nrSigs/$stat->hoursOnline)|round}
 				{/if}
@@ -172,6 +182,18 @@
 			</tr>
 			{assign var=i value=$i+1}
 		{/foreach}
+			<tr>
+				<td></td>
+				<td></td>
+				<th style="text-align: center;">{$whs}</th>
+				<th style="text-align: center;">{$sigs}</th>
+			{if $authGroup->getConfig('stats_kills')}
+				<th style="text-align: center;">{$tkills}</th>
+				<th style="text-align: center;">{$ckills}</th>
+			{/if}
+				<th style="text-align: center;">{$online}</th>
+				<th style="text-align: center;">{if $online}{($sigs/$online)|round}{/if}</th>
+			</tr>
 		</table>
 		<div style="clear:both;"></div>
 	</div>

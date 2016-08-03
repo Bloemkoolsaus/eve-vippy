@@ -7,7 +7,13 @@ class Kills
     {
         $date = date("Y-m")."-01";
         if (count($arguments) > 0)
-            $date = date("Y-m", strtotime(array_shift($arguments)))."-01";
+        {
+            $calcDate = array_shift($arguments);
+            if ($calcDate == "yesterday")
+                $calcDate = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
+
+            $date = date("Y-m", strtotime($calcDate)) . "-01";
+        }
 
         foreach (\admin\model\AuthGroup::getAuthGroups() as $authgroup)
         {
