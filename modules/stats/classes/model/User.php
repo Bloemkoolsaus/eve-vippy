@@ -65,7 +65,7 @@ class User extends \Model
 
     function calcScore()
     {
-        if ($this->reqSigs == 0 && $this->nrKills == 0)
+        if ($this->nrSigs == 0 && $this->nrKills == 0)
             $this->score = 0;
         else {
             if ($this->reqSigs == $this->nrSigs)
@@ -91,7 +91,7 @@ class User extends \Model
             return "00aa00";
         if ($this->score > 80)
             return "11bb00";
-        if ($this->score > 70)
+        if ($this->score > 65)
             return "33bb00";
         if ($this->score > 50)
             return "66aa00";
