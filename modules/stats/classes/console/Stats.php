@@ -144,35 +144,9 @@ class Stats
 
                     \AppRoot::doCliOutput("    => ".$nrKills." kills in ".$ships[$shipTypeID]->name." (".$ships[$shipTypeID]->getShipType().")");
 
-                    // Logi?
-                    $isLogistics = false;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "logistics")
-                        $isLogistics = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "logistics frigate")
-                        $isLogistics = true;
-                    if (strtolower($ships[$shipTypeID]->name) == "nestor")
-                        $isLogistics = true;
-
-                    // Support
-                    $isSupport = false;
-                    if ($isLogistics)
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "force recon ship")
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "combat recon ship")
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "heavy interdiction cruiser")
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "interdictor")
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->getShipType()) == "command destroyer")
-                        $isSupport = true;
-                    if (strtolower($ships[$shipTypeID]->isCapital()))
-                        $isSupport = true;
-
-                    if ($isLogistics)
+                    if ($ships[$shipTypeID]->getShipRole() == "logi")
                         $stat->reqSigs += 0;
-                    else if ($isSupport)
+                    else if ($ships[$shipTypeID]->getShipRole() == "support")
                         $stat->reqSigs += 0;
                     else
                         $stat->reqSigs += $nrKills;

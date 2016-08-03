@@ -15,9 +15,45 @@
 	</h1>
 	<div style="clear:both;"></div>
 
-	<div class="col5">
+	<div class="col6">
+		<table class="sectionoverview">
+			<tr>
+				<th class="large">Corporation</th>
+				<th style="width: 55px; text-align: center;">Active Members</th>
+				<th style="width: 55px; text-align: center;">Total Sigs Scanned</th>
+				<th style="width: 55px; text-align: center;">Ratio Sigs/User</th>
+				<th style="width: 55px; text-align: center;">Ratio Sigs/Time</th>
+				<th style="width: 55px; text-align: center;">Total WHs Mapped</th>
+			</tr>
+	{foreach from=$corporations item=corp}
+		{if $corp.stats|@count > 0}
+			{assign var=members value=0}
+			{assign var=sigs value=0}
+			{assign var=whs value=0}
+			{assign var=online value=0}
+			{foreach from=$corp.stats item=stat}
+				{assign var=members value=$members+1}
+				{assign var=sigs value=$sigs+$stat->nrSigs}
+				{assign var=whs value=$whs+$stat->nrWormholes}
+				{assign var=online value=$online+$stat->hoursOnline}
+			{/foreach}
+			<tr class="even">
+				<td>
+					<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" align="left"
+						 style="height: 20px; margin: -2px; margin-right: .4em;" />
+					{$corp.corp->name}
+				</td>
+				<td style="text-align: center;">{$members}</td>
+				<td style="text-align: center;">{$sigs}</td>
+				<td style="text-align: center;">{if $members}{($sigs/$members)|round}{/if}</td>
+				<td style="text-align: center;">{if $online}{($sigs/$online)|round}{/if}</td>
+				<td style="text-align: center;">{$whs}</td>
+			</tr>
+		{/if}
+	{/foreach}
+		</table>
 	</div>
-	<div class="col7 right last">
+	<div class="col6 right last">
 		<div class="message">
 			<ul>
 				<li>These statistics are only availible for Admins!</li>
@@ -44,15 +80,6 @@
                         <li>All kills except those made in Logi, Recons, Interdicters, T3 dessies.</li>
                     </ul>
                 </li>
-				<li>
-					Required Sigs:
-					<ul>
-						<li>Amount of signatures that should have been scanned, based on the amount of kills.</li>
-						<li>For each kill, 5 signatures need to be scanned.</li>
-						<li>Kills made in logi, recons, hics or capitals are excluded.</li>
-						<li>For each kill in a logi, the required sigs is decreased with 1.</li>
-					</ul>
-				</li>
 				<li>
 					Score:
 					<ul>

@@ -13,24 +13,40 @@ class Leaderboard
             "rank"	=> 0,
             "amount"=> 0
         ];
+        $authGroups = \User::getUSER()->getAuthGroupsIDs();
+        $authGroup = new \admin\model\AuthGroup($authGroups[0]);
 
         $y = (count($arguments) > 0) ? array_shift($arguments) : date("Y");
         $m = (count($arguments) > 0) ? array_shift($arguments) : date("m");
+        $sort = (count($arguments) > 0) ? array_shift($arguments) : null;
+        if (!$sort) {
+            if ($authGroup->getConfig("stats_kills"))
+                $sort = "score";
+            elseif ($authGroup->getConfig("rank_leaderboard")=="wormholes")
+                $sort = "whs";
+            else
+                $sort = "sigs";
+        }
+
         $sdate = date("Y-m-d", mktime(0, 0, 0, $m, 1, $y));
         $edate = date("Y-m-d", mktime(0, 0, 0, $m+1, 0, $y));
-
-        $authGroups = \User::getUSER()->getAuthGroupsIDs();
-        $authGroup = new \admin\model\AuthGroup($authGroups[0]);
 
         /** @var \stats\model\User[] $stats */
         $stats = array();
         $user = null;
-        $sortStatsBy = ($authGroup->getConfig("rank_leaderboard")=="wormholes")?"nrwormholes":"nrsigs";
+
+        if ($sort == "score")
+            $sortStatsBy = "score desc, ratio desc, nrsigs desc, hoursonline desc";
+        else if ($sort == "whs")
+            $sortStatsBy = "nrwormholes desc, nrsigs desc, hoursonline desc";
+        else
+            $sortStatsBy = "nrsigs desc, nrwormholes desc, hoursonline desc";
+
         if ($results = \MySQL::getDB()->getRows("select *
                                                 from    stats_users
                                                 where   authgroupid = ?
                                                 and     year = ? and month = ?
-                                                order by score desc, ratio desc, ".$sortStatsBy." desc"
+                                                order by ".$sortStatsBy
                                         , [$authGroup->id, $y, $m]))
         {
             foreach ($results as $result)
@@ -59,13 +75,16 @@ class Leaderboard
             }
         }
 
+
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("stats", $stats);
         $tpl->assign("sdate", $sdate);
         $tpl->assign("edate", $edate);
+        $tpl->assign("sort", $sort);
         $tpl->assign("month", \Tools::getFullMonth(date("m",strtotime($sdate)))." ".date("Y",strtotime($sdate)));
         $tpl->assign("authGroup", $authGroup);
         $tpl->assign("totalSignatures", $totalSignatures);
+        $tpl->assign("personalStats", \stats\model\User::findOne(["userid" => \User::getUSER()->id, "year" => $y, "month" => $m]));
         return $tpl->fetch("stats/leaderboard");
     }
 }

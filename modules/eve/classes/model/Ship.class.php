@@ -14,6 +14,35 @@ namespace eve\model
 			return $this->getGroup()->name;
 		}
 
+        /**
+         * Attempt to determine the ships role in fleets
+         * @return string|boolean logi|support|false
+         */
+        function getShipRole()
+        {
+            if (strtolower($this->getShipType()) == "logistics")
+                return "logi";
+            if (strtolower($this->getShipType()) == "logistics frigate")
+                return "logi";
+            if (strtolower($this->name) == "nestor")
+                return "logi";
+
+            if (strtolower($this->getShipType()) == "force recon ship")
+                return "support";
+            if (strtolower($this->getShipType()) == "combat recon ship")
+                return "support";
+            if (strtolower($this->getShipType()) == "heavy interdiction cruiser")
+                return "support";
+            if (strtolower($this->getShipType()) == "interdictor")
+                return "support";
+            if (strtolower($this->getShipType()) == "command destroyer")
+                return "support";
+            if (strtolower($this->isCapital()))
+                return "support";
+
+            return false;
+        }
+
         function isCapital()
         {
 
@@ -22,7 +51,7 @@ namespace eve\model
 
 		private function getSlotLayout()
 		{
-			if ($results = $this->db->getRows("SELECT t.attributename, COALESCE(d.valueInt, d.valueFloat) AS amount
+			if ($results = \MySQL::getDB()->getRows("SELECT t.attributename, COALESCE(d.valueInt, d.valueFloat) AS amount
 											FROM	".\eve\Module::eveDB().".dgmtypeattributes d
 												INNER JOIN ".\eve\Module::eveDB().".dgmattributetypes t ON d.attributeid = t.attributeid
 											WHERE	d.typeID = ?

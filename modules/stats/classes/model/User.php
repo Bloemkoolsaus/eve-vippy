@@ -86,13 +86,15 @@ class User extends \Model
             return "dd7700";
         if ($this->score > 20)
             return "dd5500";
+        if ($this->score > 0)
+            return "ee2200";
 
         return "cc0000";
     }
 
     function getScoreTitle()
     {
-        if ($this->score >= 110)     // meer dan 5x wat je zou moeten doen!!
+        if ($this->score >= 110)
             return "First Class";
         if ($this->score > 80)
             return "Great";
@@ -107,6 +109,6 @@ class User extends \Model
         if ($this->score > 0)
             return "Slacker";
 
-        return "no score";
+        return "no-score";
     }
 }

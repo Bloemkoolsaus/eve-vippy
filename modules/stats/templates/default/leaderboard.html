@@ -3,11 +3,11 @@
 		<img src="/images/default/stats.png" style="width: 32px;" align="left">
 		&nbsp;Leaderboard {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -6px;">
-			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")-1}'">
+			<button type="button" class="small" style="width: 160px;" onclick="reloadLeaderboard('{$sdate|date_format:"Y"}','{($sdate|date_format:"m")-1}')">
 				<img src="/images/default/left.png" align="left" />
 				Previous Month
 			</button>
-			<button type="button" class="small" style="width: 140px;" onclick="document.location='/stats/leaderboard/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
+			<button type="button" class="small" style="width: 140px;" onclick="reloadLeaderboard('{$sdate|date_format:"Y"}','{($sdate|date_format:"m")+1}')">
 				Next Month
 				<img src="/images/default/right.png" align="right" />
 			</button>
@@ -17,6 +17,18 @@
 	<br />
 
     <div class="col6">
+		<div style="text-align: right;">
+			Sort leaderboard by: &nbsp;
+			<select name="sort" onchange="reloadLeaderboard('{$sdate|date_format:"Y"}','{$sdate|date_format:"m"}')">
+				<option value="sigs" {if $sort == "sigs"}selected{/if}>Signatures</option>
+				<option value="whs" {if $sort == "whs"}selected{/if}>Wormholes</option>
+			{if $authGroup->getConfig('stats_kills')}
+				<option value="score" {if $sort == "score"}selected{/if}>Score</option>
+			{/if}
+			</select>
+		</div>
+		<div style="clear:both;"></div>
+		<br />
 		<table class="sectionoverview">
 			<tr>
 				<th class="large" colspan="3"></th>
@@ -101,14 +113,36 @@
 		{/if}
 	{/foreach}
 		</table>
+		<br />
 
     </div>
     <div class="col6 last right">
         <div class="message">
             <ul>
-                <li>Newly added signatures AND updated signatures are counted.</li>
-                <li>Updating a signature that was not changed will <u>not</u> count.</li>
-                <li>Please contact leadership for any questions.</li>
+				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
+				<li>Signatures:</li>
+				<ul>
+					<li>Newly added signatures AND updated signatures are counted.</li>
+					<li>Updating a signature that was not changed will <u>not</u> count.</li>
+				</ul>
+				<li>Wormholes:</li>
+				<ul>
+					<li>New systems that are added / mapped.</li>
+				</ul>
+			{if $authGroup->getConfig('stats_kills')}
+				<li>Score:</li>
+				<ul>
+					<li>As you know we expect everyone to contribute to the alliance in some way.</li>
+					<li>Score is an attempt to measure this based on a few metrics, some of wich are:</li>
+					<ul>
+						<li>How much game time do you have?</li>
+						<li>How much you scan?</li>
+						<li>Do you fly logi or other support ships in fleets?</li>
+					</ul>
+					<li><b>Score is <u>not</u> meant to be a hard limit but more of an <u>indication</u> to help leadership provide insight in whats going on, as there are other ways to contribute that are hard to measure.</b></li>
+				</ul>
+				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
+			{/if}
             </ul>
         </div>
         <div style="clear: both;"></div>
@@ -132,3 +166,10 @@
 	</div>
 	<div style="clear:both;"></div>
 </div>
+
+
+<script type="text/javascript">
+function reloadLeaderboard(y,m) {
+	document.location='/stats/leaderboard/'+y+'/'+m+'/'+$("select[name=sort]").val()
+}
+</script>
