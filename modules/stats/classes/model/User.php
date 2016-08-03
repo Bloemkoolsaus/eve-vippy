@@ -56,17 +56,20 @@ class User extends \Model
 
     function calcRatio()
     {
+        $this->ratio = 0;
         if ($this->reqSigs > 0)
             $this->ratio = round(($this->nrSigs / $this->reqSigs) * 100);
-        else
-            $this->ratio = 100;
 
         return $this->ratio;
     }
 
     function calcScore()
     {
-        $this->score = log($this->calcRatio()/100,30)*100;
+        if ($this->ratio == 0)
+            $this->score = 50+$this->nrSigs;
+        else
+            $this->score = log($this->calcRatio()/100,30)*100;
+
         return $this->score;
     }
 
@@ -99,13 +102,13 @@ class User extends \Model
     {
         if ($this->score >= 110)
             return "First Class";
-        if ($this->score > 80)
+        if ($this->score >= 80)
             return "Great";
-        if ($this->score > 70)
+        if ($this->score >= 70)
             return "Good";
-        if ($this->score > 50)
+        if ($this->score >= 50)
             return "Okay";
-        if ($this->score > 40)
+        if ($this->score >= 40)
             return "Mediocre";
         if ($this->score != 0)
             return "Slacker";
