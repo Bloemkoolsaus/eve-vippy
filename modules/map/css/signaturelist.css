@@ -24,9 +24,11 @@ div#systemDetailsContainer {
 
 table#signatureTable .sigID {
 	width: 50px;
+    text-transform: uppercase;
 }
 table#signatureTable .sigType {
 	width: 70px;
+    text-transform: uppercase;
 }
 table#signatureTable .sigInfo {
 

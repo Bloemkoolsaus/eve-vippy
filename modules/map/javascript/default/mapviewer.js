@@ -6,16 +6,16 @@ var allowMapLoadingFinish = true;
 
 $(window).load(function() {
 	if ($("#signatureMap").length > 0) {
-		reloadSignatureMap();
+		reloadSignatureMap(true);
 		$(document).bind("contextmenu", function() { return false; });
 	}
 });
 
-function reloadSignatureMap()
+function reloadSignatureMap(noCache)
 {
 	if (!mapIsMassDeleteMode()) {
 		loadSignatureMap();
-		loadSignatureList();
+		loadSignatureList(noCache);
 	}
     setTimeout(reloadSignatureMap, 3000);
 }

@@ -184,11 +184,7 @@
 
 <div class="content">
 	<div id="signatureListContainer">
-		<div id="signatureToggle" style="padding-top: 25px;{if !isset($hidesignatures)}display: none;{/if}">
-			<button type="button" onclick="showSignatureList()">
-				Show Signatures List
-			</button>
-		</div>
+
 		<a name="signatures"></a>
 		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
 			<h2 style="margin-bottom: 0;">
@@ -262,7 +258,24 @@
 			<div style="clear:both;"></div>
 		</div>
 
-		<div id="signatureList" style="margin-top: 4px;{if isset($hidesignatures)}display: none;{/if}"></div>
+		<div id="signatureList" style="margin-top: 1em;">
+			<h2 style="margin-bottom: 1px;">
+				<div style="float: left; padding-top: 10px;">
+					<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+					{$system->name} - {$wormhole->name} | <span id="signaturesCount"></span> signatures
+				</div>
+				<div style="clear:both;"></div>
+			</h2>
+			<table id="signatureTable" class="sectionoverview">
+				<tr>
+					<th>ID</th>
+					<th>Type</th>
+					<th>Info</th>
+					<th>Last Update</th>
+					<th>&nbsp;</th>
+				</tr>
+			</table>
+		</div>
 	</div>
 
 	<div id="systemDetailsContainer">
@@ -401,5 +414,16 @@
 {literal}
     <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}" data-sigid="{{sigID}}"
            placeholder="K162" style="width: 60px; margin-top: 2px;" autocomplete="off">
+{/literal}
+</script>
+<script id="signatureTPL" type="text/template">
+{literal}
+	<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}">
+		<td class="sigID">{{sigid}}</td>
+		<td class="sigType">{{type}}</td>
+		<td class="sigInfo">{{info}}</td>
+		<td class="sigUpdate">{{scanage}}</td>
+		<td class="sigControls"></td>
+	</tr>
 {/literal}
 </script>

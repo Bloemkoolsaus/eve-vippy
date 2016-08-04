@@ -97,7 +97,7 @@ class Map
                                                         FROM	mapsignatures s
                                                             INNER JOIN mapwormholechains c ON c.authgroupid = s.authgroupid
                                                         WHERE	c.id = ?"
-                                            , array($map->id)))
+                                                , [$map->id]))
                 {
                     \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
                     \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
@@ -113,10 +113,7 @@ class Map
         }
 
         $signatures = [];
-        foreach (\map\model\Signature::findAll([
-            "deleted" => 0,
-            "solarsystemid" => $solarSystem->id,
-            "authgroupid" => $map->authgroupID]) as $sig)
+        foreach (\map\model\Signature::findAll(["deleted" => 0, "solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]) as $sig)
         {
             $sigData = [
                 "id" => $sig->id,
@@ -124,14 +121,10 @@ class Map
                 "type" => $sig->sigType,
                 "info" => $sig->sigInfo,
                 "wormhole" => null,
-                "scanned" => [
-                    "date" => $sig->scanDate,
-                    "user" => $sig->getScannedByUser()->getFullName()
-                ],
-                "updated" => [
-                    "date" => $sig->updateDate,
-                    "user" => $sig->getUpdatedByUser()->getFullName()
-                ]
+                "scanage" => \Tools::getAge($sig->scanDate),
+                "scanuser" => $sig->getScannedByUser()->getFullName(),
+                "updateage" => \Tools::getAge($sig->updateDate),
+                "updateuser" => $sig->getUpdatedByUser()->getFullName()
             ];
 
             if ($sig->isWormhole()) {
@@ -143,6 +136,7 @@ class Map
             $signatures[] = $sigData;
         }
 
+        $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id] = date("Y-m-d H:i:s");
         return json_encode($signatures);
     }
 
