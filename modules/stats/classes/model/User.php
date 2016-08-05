@@ -60,23 +60,19 @@ class User extends \Model
 
         // logi/recon kills erbij optellen
         if ($this->reqSigs > 0)
-            $points += ($this->nrKills-$this->reqSigs);
+            $points += (($this->nrKills-$this->reqSigs)*1.5);
 
         return round($points);
     }
 
     function calcRatio()
     {
-        if ($this->calcPoints() > 0)
-        {
+        if ($this->calcPoints() > 0) {
             $this->ratio = 100;
             if ($this->nrKills > 0)
                 $this->ratio = round(($this->calcPoints()/$this->nrKills)*100);
-        }
-        else
-        {
+        } else
             $this->ratio = $this->nrKills*-1;
-        }
 
         return $this->ratio;
     }
