@@ -54,52 +54,67 @@ class User extends \Model
         return $this->_corporation;
     }
 
+    function calcPoints()
+    {
+        $points = ($this->nrSigs/5);
+
+        // logi/recon kills erbij optellen
+        if ($this->reqSigs > 0)
+            $points += ($this->nrKills-$this->reqSigs);
+
+        return round($points);
+    }
+
     function calcRatio()
     {
-        $this->ratio = 0;
-        if ($this->reqSigs > 0)
-            $this->ratio = round(($this->nrSigs / $this->reqSigs) * 100);
+        if ($this->calcPoints() > 0)
+        {
+            $this->ratio = 100;
+            if ($this->nrKills > 0)
+                $this->ratio = round(($this->calcPoints()/$this->nrKills)*100);
+        }
+        else
+        {
+            $this->ratio = $this->nrKills*-1;
+        }
 
         return $this->ratio;
     }
 
     function calcScore()
     {
-        if ($this->nrSigs == 0 && $this->nrKills == 0)
-            $this->score = 0;
-        else {
-            if ($this->reqSigs == $this->nrSigs)
-                $this->score = ($this->reqSigs == 0) ? 50 : 10;
-            else if ($this->ratio == 0) {
-                if ($this->reqSigs > 0)
-                    $this->score = $this->reqSigs * -1;
-                else {
-                    $this->score = 50 + $this->nrSigs;
-                    if ($this->score >= 100)
-                        $this->score = 99;
-                }
-            } else
-                $this->score = log($this->calcRatio() / 100, 30) * 100;
-        }
+        $this->score = 0;
+        if ($this->nrKills > 0)
+            $this->score = round($this->calcRatio()/2);
+
+        if ($this->score == 0)
+            $this->score = 50 + $this->calcPoints();
 
         return $this->score;
     }
 
     function getScoreColor()
     {
-        if ($this->score > 100)
+        if ($this->score >= 500)
             return "00aa00";
-        if ($this->score > 80)
+
+        if ($this->score >= 200)
             return "11bb00";
-        if ($this->score > 65)
+
+        if ($this->score >= 80)
             return "33bb00";
-        if ($this->score > 50)
+
+        if ($this->score >= 60)
             return "66aa00";
-        if ($this->score > 40)
+
+        if ($this->score >= 50)
             return "88aa00";
-        if ($this->score > 30)
+        if ($this->score >= 40)
+            return "ccaa00";
+
+        if ($this->score >= 30)
             return "dd7700";
-        if ($this->score > 20)
+        if ($this->score >= 20)
             return "dd5500";
         if ($this->score > 0)
             return "ee2200";
@@ -112,16 +127,18 @@ class User extends \Model
 
     function getScoreTitle()
     {
-        if ($this->score >= 110)
+        if ($this->score >= 500)
             return "First Class";
-        if ($this->score >= 80)
+        if ($this->score >= 200)
             return "Great";
-        if ($this->score >= 65)
+        if ($this->score >= 80)
             return "Good";
-        if ($this->score >= 50)
+        if ($this->score >= 60)
             return "Okay";
         if ($this->score >= 40)
             return "Mediocre";
+        if ($this->score >= 30)
+            return "Almost";
         if ($this->score != 0)
             return "Slacker";
 
