@@ -266,6 +266,7 @@
 				</div>
 				<div style="clear:both;"></div>
 			</h2>
+			<form method="post" name="formEditSignature" action="Javascript: storeSignature()">
 			<table id="signatureTable" class="sectionoverview">
 				<tr>
 					<th>ID</th>
@@ -275,6 +276,10 @@
 					<th>&nbsp;</th>
 				</tr>
 			</table>
+			<div style="display:none;">
+				<button type="submit">Save</button>
+			</div>
+			</form>
 		</div>
 	</div>
 
@@ -417,13 +422,49 @@
 {/literal}
 </script>
 <script id="signatureTPL" type="text/template">
-{literal}
-	<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}">
-		<td class="sigID">{{sigid}}</td>
-		<td class="sigType">{{type}}</td>
-		<td class="sigInfo">{{info}}</td>
-		<td class="sigUpdate">{{scanage}}</td>
-		<td class="sigControls"></td>
-	</tr>
-{/literal}
+	{literal}
+		<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}"
+				onclick="editSignature('{{id}}')">
+			<td class="sigID">{{sigid}}</td>
+			<td class="sigType">{{type}} <div class="whtype">{{whtype}}</div></td>
+			<td class="sigInfo">{{info}}</td>
+			<td class="sigUpdate">{{scanage}}</td>
+			<td class="sigControls">
+				<img src="/images/default/information.png">
+				<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
+				<img src="/images/default/cross.png">
+			</td>
+		</tr>
+	{/literal}
+</script>
+<script id="signatureEditTPL" type="text/template">
+	{literal}
+		<tr class="{{type}} sigedit" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+			<td class="sigID">
+				<input type="text" id="sigId{{id}}" value="{{sigid}}">
+			</td>
+			<td class="sigType">
+				<select id="sigType{{id}}">
+					<option value=""></option>
+					<option value="wh">WH</option>
+					<option value="data">Data</option>
+					<option value="gas">Gas</option>
+					<option value="ore">Ore</option>
+					<option value="relic">Relic</option>
+					<option value="combat">Combat</option>
+					<option value="pos">POS</option>
+				</select>
+			</td>
+			<td class="sigInfo">
+				<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}">
+				<input type="text" class="signame" id="sigName{{id}}" value="{{info}}">
+			</td>
+			<td class="sigUpdate">{{scanage}}</td>
+			<td class="sigControls">
+				<img src="/images/default/save.png" onclick="document.formEditSignature.submit()">
+				&nbsp;
+				<img src="/images/default/cancel.png" onclick="editSignatureCancel('{{id}}')">
+			</td>
+		</tr>
+	{/literal}
 </script>

@@ -22,13 +22,22 @@ div#systemDetailsContainer {
 	}
 }
 
+table#signatureTable tr[rel="signature"] {
+    cursor: pointer;
+}
 table#signatureTable .sigID {
 	width: 50px;
     text-transform: uppercase;
 }
 table#signatureTable .sigType {
-	width: 70px;
+    width: 70px;
     text-transform: uppercase;
+}
+table#signatureTable .sigType div.whtype {
+    float: right;
+    font-style: italic;
+    color: #aaaaaa;
+    margin-right: 1em;
 }
 table#signatureTable .sigInfo {
 
@@ -42,6 +51,38 @@ table#signatureTable .sigUpdate {
 }
 table#signatureTable .sigControls {
 	width: 50px;
+    text-align: center;
+}
+table#signatureTable .sigControls img {
+    height: 12px;
+}
+
+table#signatureTable input,
+table#signatureTable select {
+    margin: 0;
+    padding-top: 1px;
+    padding-bottom: 0;
+    padding-left: .5em;
+    padding-right: .5em;
+    width: 90%;
+}
+table#signatureTable select {
+    padding-left: .2em;
+    padding-right: .2em;
+
+}
+table#signatureTable .sigID input {
+    width: 35px;
+    text-transform: uppercase;
+}
+table#signatureTable .sigType select {
+    width: 65px;
+}
+table#signatureTable input.whtype {
+    width: 35px;
+}
+table#signatureTable input.signame {
+    width: 100px;
 }
 
 @media (max-width: 500px) {

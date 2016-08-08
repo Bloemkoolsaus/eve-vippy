@@ -195,11 +195,12 @@ namespace scanning\controller
 			return null;
 		}
 
-		/**
-		 * Check open signatures. Markeer volledig gescand indien geen openstaande sigs.
-		 * @param \eve\model\SolarSystem $solarSystem
-		 */
-		function checkOpenSignatures($solarSystem)
+        /**
+         * Check open signatures. Markeer volledig gescand indien geen openstaande sigs.
+         * @param \eve\model\SolarSystem $solarSystem
+         * @param \map\model\Map|null $map
+         */
+		function checkOpenSignatures($solarSystem, $map=null)
 		{
 			\AppRoot::debug("checkOpenSignatures($solarSystem->name)");
 			$openSignatures = array();
@@ -212,7 +213,7 @@ namespace scanning\controller
 			if (count($openSignatures) == 0)
 			{
 				// Geen open sigs. Markeer volledig gescand.
-				$wormhole = \scanning\model\Wormhole::getWormholeBySystemID($solarSystem->id, \User::getSelectedChain());
+				$wormhole = \scanning\model\Wormhole::getWormholeBySystemID($solarSystem->id, ($map)?$map->id:\User::getSelectedChain());
 				if ($wormhole != null)
 					$wormhole->markFullyScanned();
 			}

@@ -25,6 +25,89 @@ class Signature extends \Model
     private $_updatedUser;
 
 
+    function store(\map\model\Map $map=null)
+    {
+        if ($map)
+            $this->authGroupID = $map->authgroupID;
+
+        if ($this->scannedBy == 0) {
+            $this->scannedBy = \User::getUSER()->id;
+            $this->scanDate = date("Y-m-d H:i:s");
+        }
+
+        $this->updateBy = \User::getUSER()->id;
+        $this->updateDate = date("Y-m-d H:i:s");
+
+        // Tellen in statistieken?
+        $countInStats = false;
+        if ($this->id) {
+            // Gewijzigd?
+            $old = new \map\model\Signature($this->id);
+            if (trim(strtoupper($this->sigType)) != trim(strtoupper($old->sigType))) {
+                if (strlen(trim($this->sigType)) > 0)
+                    $countInStats = true;
+            }
+        } else {
+            // Nieuwe signature
+            if (strlen(trim($this->sigType)) > 0)
+                $countInStats = true;
+        }
+
+        parent::store();
+
+
+        // Toevoegen in statistsieken
+        if ($countInStats) {
+            $stat = new \stats\model\Signature();
+            $stat->userID = \User::getUSER()->id;
+            $stat->corporationID = \User::getUSER()->getMainCharacter()->getCorporation()->id;
+            $stat->signatureID = $this->id;
+            if ($map)
+                $stat->chainID = $map->id;
+            $stat->scandate = date("Y-m-d H:i:s");
+            $stat->store();
+        }
+
+        // Systeem toevoegen?
+        if ($map && $map->getSetting("create-unmapped")) {
+            if (strtolower(trim($this->sigType)) == "wh" && !$this->deleted) {
+                $controller = new \map\controller\Map();
+                $controller->addWormholeToMap($map, $this);
+            }
+        }
+
+        // Check wh-nummber. Connection bijwerken.
+        if ($this->typeID > 0 && $this->typeID != 9999) {
+            // Parse signature name om de de juiste connectie te zoeken.
+            $parts = explode(" ", $this->sigInfo);
+            $parts = explode("-", $parts[0]);
+            $wormholename = (count($parts) > 1) ? $parts[1] : $parts[0];
+            \AppRoot::debug("UPDATE Connection Type: ".$wormholename);
+
+            // Zoek dit wormhole
+            foreach (\map\model\Wormhole::getWormholesByAuthgroup($this->authGroupID) as $wormhole) {
+                if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename))) {
+                    $fromWormhole = \map\model\Wormhole::getWormholeBySystemID($this->solarSystemID, $map->id);
+                    $connection = \map\model\Connection::getConnectionByWormhole($fromWormhole->id, $wormhole->id, $map->id);
+                    if ($connection != null) {
+                        if ($connection->fromWormholeID == $wormhole->id) {
+                            $connection->fromWHTypeID = 9999;
+                            $connection->toWHTypeID = $this->typeID;
+                        } else {
+                            $connection->toWHTypeID = 9999;
+                            $connection->fromWHTypeID = $this->typeID;
+                        }
+                        $connection->store(false);
+                    }
+                }
+            }
+        }
+
+        // Check open sigs.
+        $controller = new \scanning\controller\Signature();
+        $controller->checkOpenSignatures($this->getSolarSystem(), $map);
+    }
+
     /**
      * Get solar system
      * @return SolarSystem

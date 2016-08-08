@@ -78,6 +78,11 @@ class Map
 
     function getSignatures(\map\model\Map $map, $arguments=[])
     {
+        if (count($arguments) > 0 && $arguments[0] == "store") {
+            echo $this->storeSignature($map);
+            exit;
+        }
+
         \AppRoot::debug("----- getSignatures(".$map->id." - ".$map->name.") -----");
         $currentDate = date("Y-m-d H:i:s");
         $checkCache = (\Tools::REQUEST("nocache"))?false:true;
@@ -145,5 +150,22 @@ class Map
         $wormhole = new \map\model\Wormhole(\Tools::REQUEST("system"));
         $wormhole->move(\Tools::REQUEST("x"), \Tools::REQUEST("y"));
         return $this->getMap($map);
+    }
+
+    private function storeSignature(\map\model\Map $map)
+    {
+        $signature = new \map\model\Signature(\Tools::REQUEST("id"));
+        $signature->solarSystemID = \Tools::REQUEST("systemid");
+        $signature->sigID = \Tools::REQUEST("sigid");
+        $signature->sigType = \Tools::REQUEST("type");
+        $signature->sigInfo = \Tools::REQUEST("info");
+
+        $signature->typeID = 0;
+        $whtype = \map\model\WormholeType::findByName(\Tools::REQUEST("whtype"));
+        if ($whtype)
+            $signature->typeID = $whtype->id;
+
+        $signature->store($map);
+        return "stored";
     }
 }
