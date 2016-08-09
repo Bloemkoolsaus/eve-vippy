@@ -421,16 +421,15 @@
 </script>
 <script id="signatureTPL" type="text/template">
 	{literal}
-		<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}"
-				onclick="editSignature('{{id}}')">
-			<td class="sigID">{{sigid}}</td>
-			<td class="sigType">{{type}} <div class="whtype">{{whtype}}</div></td>
-			<td class="sigInfo">{{info}}</td>
-			<td class="sigUpdate">{{scanage}}</td>
+		<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+			<td class="sigID" onclick="editSignature('{{id}}')">{{sigid}}</td>
+			<td class="sigType" onclick="editSignature('{{id}}')">{{type}} <div class="whtype">{{whtype}}</div></td>
+			<td class="sigInfo" onclick="editSignature('{{id}}')">{{info}}</td>
+			<td class="sigUpdate" onclick="editSignature('{{id}}')">{{scanage}}</td>
 			<td class="sigControls">
 				<img src="/images/default/information.png">
 				<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
-				<img src="/images/default/cross.png">
+				<img src="/images/default/cross.png" onclick="deleteSignature('{{id}}');">
 			</td>
 		</tr>
 	{/literal}

@@ -78,8 +78,15 @@ class Map
 
     function getSignatures(\map\model\Map $map, $arguments=[])
     {
-        if (count($arguments) > 0 && $arguments[0] == "store") {
-            return $this->storeSignature($map);
+        if (count($arguments)) {
+            if ($arguments[0] == "store") {
+                return $this->storeSignature($map);
+            }
+            if ($arguments[0] == "delete") {
+                $signature = \map\model\Signature::findById($arguments[1]);
+                if ($signature)
+                    return $this->deleteSignature($signature);
+            }
         }
 
         \AppRoot::debug("----- getSignatures(".$map->id." - ".$map->name.") -----");
@@ -186,5 +193,11 @@ class Map
         $controller = new \map\controller\Signature();
         $controller->storeSignature($map, $signature);
         return "stored";
+    }
+
+    private function deleteSignature(\map\model\Signature $signature)
+    {
+        $signature->delete();
+        return "deleted";
     }
 }

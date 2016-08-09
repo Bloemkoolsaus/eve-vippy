@@ -79,6 +79,19 @@ function editSignature(id)
     }
 }
 
+function deleteSignature(id)
+{
+    $("tr[rel=signature][data-id="+id+"]").fadeOut("fast", function() {
+        $.ajax({
+            url: "/map/"+$("#mapName").val()+"/signatures/delete/"+id,
+            data: { ajax: 1 },
+            complete: function() {
+                loadSignatureList(true);
+            }
+        });
+    });
+}
+
 function editSignatureCancel(id)
 {
     editingSigList = false;

@@ -38,6 +38,12 @@ class Signature extends \Model
         parent::store();
     }
 
+    function delete()
+    {
+        $this->deleted = true;
+        $this->store();
+    }
+
     /**
      * Get solar system
      * @return SolarSystem
