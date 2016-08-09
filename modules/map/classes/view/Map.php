@@ -79,8 +79,7 @@ class Map
     function getSignatures(\map\model\Map $map, $arguments=[])
     {
         if (count($arguments) > 0 && $arguments[0] == "store") {
-            echo $this->storeSignature($map);
-            exit;
+            return $this->storeSignature($map);
         }
 
         \AppRoot::debug("----- getSignatures(".$map->id." - ".$map->name.") -----");
@@ -154,18 +153,38 @@ class Map
 
     private function storeSignature(\map\model\Map $map)
     {
-        $signature = new \map\model\Signature(\Tools::REQUEST("id"));
-        $signature->solarSystemID = \Tools::REQUEST("systemid");
+        \AppRoot::debug("storeSignature(".\Tools::REQUEST("systemid").")");
+
+        $signature = null;
+        $solarsystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("systemid"));
+        if (!$solarsystem)
+            return false;
+
+        if (\Tools::REQUEST("id"))
+            $signature = \map\model\Signature::findById(\Tools::REQUEST("id"));
+        if (!$signature) {
+            $signature = \map\model\Signature::findOne([
+                "sigid" => \Tools::REQUEST("sigid"),
+                "solarsystemid" => $solarsystem->id,
+                "authgroupid" => $map->authgroupID
+            ]);
+        }
+        if (!$signature)
+            $signature = new \map\model\Signature();
+
         $signature->sigID = \Tools::REQUEST("sigid");
         $signature->sigType = \Tools::REQUEST("type");
         $signature->sigInfo = \Tools::REQUEST("info");
+        $signature->solarSystemID = $solarsystem->id;
+        $signature->authGroupID = $map->authgroupID;
 
         $signature->typeID = 0;
         $whtype = \map\model\WormholeType::findByName(\Tools::REQUEST("whtype"));
         if ($whtype)
             $signature->typeID = $whtype->id;
 
-        $signature->store($map);
+        $controller = new \map\controller\Signature();
+        $controller->storeSignature($map, $signature);
         return "stored";
     }
 }

@@ -200,11 +200,11 @@
 				<tr>
 					<td style="width: 70px;">
 						<b>Signature:</b><br />
-						<input type="text" id="sigid" style="width: 60px; text-transform: uppercase;" />
+						<input type="text" id="sigId" style="width: 60px; text-transform: uppercase;" />
 					</td>
 					<td style="width: 65px;">
 						<b>Type:</b><br />
-						<select name="sigtype" id="sigtype" style="width: 60px;" onchange="selectSignatureType()">
+						<select name="sigtype" id="sigType" style="width: 60px;" onchange="selectSignatureType()">
 							<option value="" selected></option>
 							<option value="wh">WH</option>
 							<option value="data">Data</option>
@@ -217,13 +217,11 @@
 					</td>
 					<td rel="addsig_wormhole" data-whtype-input="{$App->user->getSetting('whtypefield')}" style="display: none; width: 60px;">
 						<b>WH Type:</b><br />
-					    <div id="whTypeInputContainer">
-
-                        </div>
+						<input type="text" id="whType" style="width: 60px;" placeholder="K162">
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />
-						<input type="text" id="siginfo" style="width: 95%;" />
+						<input type="text" id="sigName" style="width: 95%;" />
 					</td>
 					<td style="width: 60px;">
 						<br />
@@ -456,7 +454,7 @@
 				</select>
 			</td>
 			<td class="sigInfo">
-				<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}">
+				<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}" placeholder="K162">
 				<input type="text" class="signame" id="sigName{{id}}" value="{{info}}">
 			</td>
 			<td class="sigUpdate">{{scanage}}</td>

@@ -123,31 +123,6 @@ function switchSystem(system)
 	document.formChangeCurrentSystem.submit();
 }
 
-function selectSignatureType(sigID)
-{
-	var sigType =  $("#sigtype").val();
-
-	if (sigType == "wh")
-    {
-        var data = { sigtype: sigType, sigID: sigID };
-        var html = "";
-        if ($("td[rel=addsig_wormhole]").attr("data-whtype-input") == "select")
-            html = Mustache.to_html($("#whTypeSelectTPL").html(), data);
-        else
-            html = Mustache.to_html($("#whTypeInputTPL").html(), data);
-
-        $("#whTypeInputContainer").html(html);
-
-		$("td[rel=addsig_wormhole]").show();
-		$("#whtype").focus();
-	}
-    else
-    {
-		$("td[rel=addsig_wormhole]").hide();
-		$("#siginfo").focus();
-	}
-}
-
 function selectSignatureWhType(select)
 {
     if (select.val() == "other")
