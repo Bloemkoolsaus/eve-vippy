@@ -8,23 +8,17 @@ $(document).ready(function() {
 	hideRegisterFormAntiBot();
 	setMouseCoordinates();
 	setMenuNotifications();
-
-	if (document.location.hash.length > 0)
-	{
-		setTimeout(function() {
-			document.location.href = document.location.href;
-		}, 1000);
-	}
 });
 $(window).resize(function() {
 	setMenuNotifications();
 });
+/*
 $(document).scroll(function() {
 	// Alleen map horizontaal scrollen
     $("#header").css("left", "+"+$(window).scrollLeft()+"px");
     $(".content").css("left", "+"+$(window).scrollLeft()+"px");
 });
-
+*/
 function setMenuNotifications()
 {
 	if ($("#menuNotifications").length > 0)

@@ -14,8 +14,8 @@ namespace eve
 
 		public static function eveDB()
 		{
-			if (self::$eveDB === null)
-				self::$eveDB = \AppRoot::getDBConfig("mysql_eve_db");
+			if (!self::$eveDB)
+                self::$eveDB = (defined("EVE_DTBS")) ? EVE_DTBS : \AppRoot::getDBConfig("mysql_eve_db");
 
 			return self::$eveDB;
 		}

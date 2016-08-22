@@ -18,7 +18,7 @@ namespace map\view
             $tpl->assign("updatedate", \Tools::getAge($connection->updateDate));
             $tpl->assign("fromtype", \scanning\Connection::getWHTypeNameById($connection->fromWHTypeID));
             $tpl->assign("totype", \scanning\Connection::getWHTypeNameById($connection->toWHTypeID));
-            return $tpl->fetch("map/connection/details");
+            return $tpl->fetch("map/connection/connection");
         }
 
         function getEdit($arguments=[])

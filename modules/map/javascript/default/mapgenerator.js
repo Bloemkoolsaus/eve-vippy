@@ -173,6 +173,12 @@ function generateSystems(data)
             }
         }
 
+        if (data[i].fullyscanned != undefined) {
+            wormhole.scanned.scanned = true;
+            if (data[i].fullyscanned <= 0)
+                wormhole.scanned.finished = true;
+        }
+
         if (wormhole.isKspace()) {
             wormhole.addTitle(data[i].solarsystem.region);
             if (data[i].tradehub != null && data[i].tradehub.jumps != null)
