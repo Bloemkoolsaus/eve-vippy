@@ -25,49 +25,6 @@ namespace map\view
         {
             $connection = new \map\model\Connection(array_shift($arguments));
 
-            if (\Tools::POST("addmass"))
-            {
-                foreach ($_POST["ship"] as $key => $val)
-                {
-                    $shipTypeID = null;
-                    if (substr($val, 0, 5) == "group")
-                    {
-                        $id = str_replace("group","",$val);
-                        $group = new \eve\model\ShipType($id);
-                        $shipTypeID = $group->getShipBasedOnAvarageMass()->id;
-                    }
-                    else
-                        $shipTypeID = str_replace("ship","",$val);
-
-                    if (is_numeric($shipTypeID) && $shipTypeID > 0)
-                    {
-                        for ($i = 0; $i < $_POST["amount"][$key]; $i++) {
-                            $connection->addJump($shipTypeID);
-                        }
-                    }
-                }
-
-                if (isset($_POST["manual"]))
-                {
-                    if (strlen(trim($_POST["manual"]["mass"])) > 0 && $_POST["manual"]["mass"] > 0)
-                    {
-                        for ($i=0; $i<$_POST["manual"]["amount"]; $i++) {
-                            $connection->addMass($_POST["manual"]["mass"]*1000000);
-                        }
-                    }
-                }
-
-                \AppRoot::redirect("map/".$connection->getChain()->name);
-            }
-
-            if (\Tools::POST("delete"))
-            {
-                if ($connection != null)
-                    $connection->delete();
-
-                \AppRoot::redirect("map/".$connection->getChain()->name);
-            }
-
             if (\Tools::POST("connectionid"))
             {
                 $connection->eol = (\Tools::REQUEST("eol"))?1:0;
@@ -173,15 +130,36 @@ namespace map\view
         {
             $connection = new \map\model\Connection(array_shift($arguments));
 
-            if (\Tools::POST("addmass"))
+            if (isset($_POST["ship"]))
             {
-                for ($i=0; $i<\Tools::POST("jumps"); $i++) {
-                    $connection->addMass(\Tools::POST("amount"));
+                foreach ($_POST["ship"] as $key => $val)
+                {
+                    $shipTypeID = null;
+                    if (substr($val, 0, 5) == "group") {
+                        $id = str_replace("group","",$val);
+                        $group = new \eve\model\ShipType($id);
+                        $shipTypeID = $group->getShipBasedOnAvarageMass()->id;
+                    } else
+                        $shipTypeID = str_replace("ship","",$val);
+
+                    if (is_numeric($shipTypeID) && $shipTypeID > 0) {
+                        for ($i = 0; $i < $_POST["amount"][$key]; $i++) {
+                            $connection->addJump($shipTypeID);
+                        }
+                    }
                 }
-                \AppRoot::redirect("/map/".$connection->getChain()->name."/");
             }
 
-            return "connection-mass";
+            if (isset($_POST["manual"]))
+            {
+                if (strlen(trim($_POST["manual"]["mass"])) > 0 && $_POST["manual"]["mass"] > 0) {
+                    for ($i=0; $i<$_POST["manual"]["amount"]; $i++) {
+                        $connection->addMass($_POST["manual"]["mass"]*1000000);
+                    }
+                }
+            }
+
+            \AppRoot::redirect("map/".$connection->getChain()->name);
         }
 
         function getDelete($arguments=[])
