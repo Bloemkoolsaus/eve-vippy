@@ -87,10 +87,8 @@ class Map
                 $data["position"]["y"] = $result["y"];
                 $data["persistant"] = ($result["permanent"] > 0) ? true : false;
 
-                if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0)
-                {
-                    if (strtotime($result["fullyscanned"]) > 0)
-                    {
+                if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0) {
+                    if (strtotime($result["fullyscanned"]) > 0) {
                         $age = strtotime("now")-strtotime($result["fullyscanned"]);
                         $data["fullyscanned"] = floor($age/3600);
                     }
@@ -109,17 +107,12 @@ class Map
                     $data["solarsystem"]["class"]["name"] = ($system->isWSpace())?"WH":$system->getClass(true);
                     $data["solarsystem"]["class"]["color"] = $system->getClassColor();
 
-                    if ($system->isShattered() !== false)
-                    {
+                    if ($system->isShattered() !== false) {
                         if ($system->isShattered() == "frigate")
                             $data["whsystem"]["titles"][] = array("name" => "Small Ship Shattered", "color" => "#442266");
                         else
                             $data["whsystem"]["titles"][] = array("name" => "Shattered", "color" => "#442266");
                     }
-
-                    // Kspace. Region toevoegen als title
-                    if (!$system->isWSpace())
-                        $data["whsystem"]["titles"][] = array("name" => $data["solarsystem"]["region"]);
                 }
                 else
                 {

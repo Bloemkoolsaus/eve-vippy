@@ -185,6 +185,12 @@ function generateSystems(data)
                 wormhole.addSubTitle(data[i].tradehub.jumps + " jumps to " + data[i].tradehub.name);
         }
 
+        if (data[i].whsystem.titles != undefined) {
+            for (var t=0; t<data[i].whsystem.titles.length; t++) {
+                wormhole.addTitle(data[i].whsystem.titles[t].name, data[i].whsystem.titles[t].color)
+            }
+        }
+
         if (data[i].attributes != null)
         {
             if (data[i].attributes.persistant != null)
@@ -235,7 +241,8 @@ function openContextMenu(whName, mouseX, mouseY)
 	$("#maincontent").append(contextContainer);
 
 	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=contextmenu&ajax=1&id=" + whName,
+		url: "/map/system/context/"+whName,
+        data: { ajax: 1 },
 		success: function(data) {
 			$("#wormholeContextMenu").html(data);
 		}
@@ -321,6 +328,9 @@ function fetchSystemTradeHubs(system)
     if (isContextOpen())
         return false;
 
+    if ($("#whinfotradehubs").length == 0)
+        return false;
+
     $.ajax({
         url: "/map/system/tradehubs/"+system,
         data: {
@@ -336,6 +346,9 @@ function fetchWormholeDetailsActivity(system)
 {
 	if (isContextOpen())
 		return false;
+
+    if ($("#whInfoActivity").length == 0)
+        return false;
 
 	$.ajax({
 		url: "/map/system/activity/"+system,
@@ -386,23 +399,20 @@ function openConnectionDetails(connectionID, x, y)
 
     $.ajax({
         url: "/map/connection/details/"+connectionID,
-        data: {
-            ajax: 1
-        },
+        data: { ajax: 1 },
         success: function(data) {
             $("#conndetailsinfo").html(data);
-            $("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
-            // Jumplog halen
-            $.ajax({
-                url: "/map/connection/jumplog/"+connectionID,
-                data: {
-                    ajax: 1
-                },
-                //url: "/index.php?module=scanning&section=getconndetails&action=jumplog&ajax=1&connection="+who,
-                success: function(data) {
-                    $("#jumplogsummary").html(data);
-                }
-            });
+            if ($("#jumplogsummary").length > 0) {
+                // Jumplog halen
+                $("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
+                $.ajax({
+                    url: "/map/connection/jumplog/" + connectionID,
+                    data: {ajax: 1},
+                    success: function (data) {
+                        $("#jumplogsummary").html(data);
+                    }
+                });
+            }
         }
     });
 }

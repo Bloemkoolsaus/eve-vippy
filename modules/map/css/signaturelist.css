@@ -84,7 +84,42 @@ table#signatureTable input.whtype {
 table#signatureTable input.signame {
     width: 100px;
 }
-
+table#signatureTable tr {
+    background-color: #666666;
+    color: #EEEEEE;
+}
+table#signatureTable tr.relic {
+    background-color: #55556F;
+    color: #EEEEEE;
+}
+table#signatureTable tr.data {
+    background-color: #556F55;
+    color: #EEEEEE;
+}
+table#signatureTable tr.gas {
+    background-color: #7F7F55;
+    color: #EEEEEE;
+}
+table#signatureTable tr.ore {
+    background-color: #556A6A;
+    color: #EEEEEE;
+}
+table#signatureTable tr.wh {
+    background-color: #774444;
+    color: #EEEEEE;
+}
+table#signatureTable tr.combat {
+    background-color: #776666;
+    color: #EEEEEE;
+}
+table#signatureTable tr.pos {
+    background-color: #BBBBBB;
+    color: #111111;
+}
+table#signatureTable tr.unknown {
+    background-color: #774444;
+    color: #EEEEEE;
+}
 @media (max-width: 500px) {
     table#signatureTable .sigID {
 		width: 30px;

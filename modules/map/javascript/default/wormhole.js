@@ -348,11 +348,10 @@ Wormhole.prototype.render = function(canvas)
             document.body.style.cursor = "default";
             closeWormholeDetails(this.getName());
         });
-        wormhole.on("click", function (evt) {
+        wormhole.on("click", function (e) {
             closeContextMenu();
             closeWormholeDetails(this.getName());
-            var rightClick = evt.which ? evt.which == 3 : evt.button == 2;
-            if (rightClick) {
+            if (e.evt.which == 3) {
                 openContextMenu(this.getName(), mousePosX, mousePosY);
                 return false;
             } else {

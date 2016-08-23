@@ -366,11 +366,12 @@ namespace eve\model
 			return $this->jumps[$systemID];
 		}
 
-		/**
-		 * Get solarsystems that are in cyno-jump range
-		 * @param double $maxJumpRange
-		 * return multitype:\eve\model\solarsystem
-		 */
+        /**
+         * Get solarsystems that are in cyno-jump range
+         * @param double $maxJumpRange
+         * return multitype:\eve\model\solarsystem
+         * @return array
+         */
 		function getSystemsInJumpRange($maxJumpRange)
 		{
 			$cacheFileName = "solarsystem/".$this->id."/cynorange.json";

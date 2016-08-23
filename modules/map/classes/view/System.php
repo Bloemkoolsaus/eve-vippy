@@ -60,6 +60,23 @@ class System
         return $tpl->fetch("map/system/tradehub");
     }
 
+    function getContext($arguments=[])
+    {
+        $wormhole = new \map\model\Wormhole(array_shift($arguments));
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("wormhole", $wormhole);
+
+        if ($wormhole->getSolarsystem()->isKSpace()) {
+            $closeSysConsole = new \map\console\ClosestSystems();
+            $closestSystems = $closeSysConsole->getClosestSystems($wormhole->getSolarsystem(), true);
+            if (count($closestSystems) > 0)
+                $tpl->assign("closestsystem", $closestSystems[0]);
+        }
+
+        return $tpl->fetch("map/system/contextmenu");
+    }
+
     /**
      * Get wormhole effects data
      * @param \map\model\System $system
