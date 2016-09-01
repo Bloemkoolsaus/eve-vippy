@@ -33,11 +33,11 @@
 	</div>
 {/if}
 {if $App->user->isAllowedChainAction($wormhole->getChain(), 'delete')}
-	<div onclick="deleteWormhole('{$wormhole->id}'); closeContextMenu();">
+	<div onclick="deleteWormhole('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
 		Remove {$wormhole->getSolarsystem()->name}
 	</div>
-	<div onclick="deleteWormhole('{$wormhole->id}',true); closeContextMenu();">
+	<div onclick="deleteWormhole('{$wormhole->getSolarsystem()->name}', true); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
 		Remove Connected Systems
 	</div>

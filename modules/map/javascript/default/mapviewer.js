@@ -40,7 +40,7 @@ function allowMapRefresh()
     return true;
 }
 
-function loadSignatureMap(action, params)
+function loadSignatureMap(action, params, force)
 {
     if (!allowMapRefresh())
         return false;
@@ -50,9 +50,14 @@ function loadSignatureMap(action, params)
 
     if (!params)
         params = { };
-    if (!mapRendered())
-        params.nocache = 1;
     params.ajax = 1;
+
+    if (force) {
+        params.nocache = 1;
+    } else {
+        if (!mapRendered())
+            params.nocache = 1;
+    }
 
     allowMapLoadingStart = false;
     $.ajax({
@@ -106,15 +111,15 @@ function addWormhole(from,to)
 	});
 }
 
-function deleteWormhole(wormholeID, removeConnected)
+function deleteWormhole(systemName, removeConnected)
 {
-	var url = "&delete="+wormholeID+"&nocache=1";
-	if (removeConnected)
-		url += "&removeConnected=1";
-
-	loadSignatureMap(url);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/remove/"+systemName+"/"+((removeConnected)?"connected":""),
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
 function setSystemPermanent(wormholeID)

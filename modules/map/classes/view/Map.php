@@ -158,6 +158,25 @@ class Map
         return $this->getMap($map);
     }
 
+    function getRemove(\map\model\Map $map, $arguments=[])
+    {
+        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
+        $removeConnected = false;
+        if (count($arguments) > 0) {
+            if ($arguments[0] == "connected")
+                $removeConnected = true;
+        }
+        if ($system) {
+            $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
+            if ($wormhole) {
+                if ($removeConnected)
+                    $map->removeConnectedWormholes($wormhole->id);
+                else
+                    $wormhole->delete();
+            }
+        }
+    }
+
     private function storeSignature(\map\model\Map $map)
     {
         \AppRoot::debug("storeSignature(".\Tools::REQUEST("systemid").")");
