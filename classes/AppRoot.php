@@ -118,7 +118,7 @@ class AppRoot
 		if (!file_exists($directory))
 			return false;
 
-		\AppRoot::debug("== Check UPDATE SQL: ".$directory);
+        \AppRoot::doCliOutput("Check SQL Patches");
 		if ($handle = @opendir($directory))
 		{
 			$executedFiles = array();
@@ -143,6 +143,7 @@ class AppRoot
 							array(	"filename"	=> $file));
 
 					// Queries parsen & uitvoeren
+                    \AppRoot::doCliOutput(" * Run sql patch: ".$sqlFile);
 					preg_match_all($queryRegex, file_get_contents($sqlFile), $queries);
 					foreach ($queries[1] as $query) {
 						\MySQL::getDB()->doQuery($query);
@@ -154,7 +155,7 @@ class AppRoot
 		}
 		@closedir($handle);
 		unset($handle);
-		\AppRoot::debug("== Finished UPDATE SQL");
+        \AppRoot::doCliOutput("Finished SQL patches");
         return true;
 	}
 
@@ -168,7 +169,7 @@ class AppRoot
 		if (!file_exists($directory))
 			return false;
 
-		\AppRoot::debug("== Check UPDATE Scripts");
+        \AppRoot::doCliOutput("Check PHP Patches");
 		if ($handle = @opendir($directory))
 		{
 			$executedFiles = array();
@@ -186,12 +187,12 @@ class AppRoot
 				$phpFile = $directory.DIRECTORY_SEPARATOR.$patchFile;
 				if (is_file($phpFile) && !in_array($patchFile, $executedFiles))
 				{
-					\MySQL::getDB()->updateinsert("system_patches_php",
-							array(	"filename"	=> $patchFile,
-									"execdate"	=> date("Y-m-d H:i:s")),
-							array(	"filename"	=> $patchFile));
-
-					\AppRoot::debug("Executing: ".$phpFile);
+					\MySQL::getDB()->updateinsert(
+                        "system_patches_php",
+                        array(	"filename"	=> $patchFile, "execdate"	=> date("Y-m-d H:i:s")),
+                        array(	"filename"	=> $patchFile)
+                    );
+                    \AppRoot::doCliOutput(" * Run php patch: ".$phpFile);
 					include($phpFile);
 				}
 			}
@@ -199,7 +200,7 @@ class AppRoot
 		}
 		@closedir($handle);
 		unset($handle);
-		\AppRoot::debug("== Finished UPDATE Scripts");
+        \AppRoot::doCliOutput("Finished PHP patches");
         return true;
 	}
 
@@ -335,14 +336,19 @@ class AppRoot
 
     public static function error($message)
     {
-        $error = $message."\n\n".self::getStackTrace();
+        if (\AppRoot::isCommandline()) {
+            echo "[\033[31mERROR\033[0m] ".$message.PHP_EOL;
+        } else {
+            $message .= "\n\n" . self::getStackTrace();
 
-        if (\AppRoot::doDebug())
-            echo "<pre>".print_r($error,true)."</pre>";
+            if (\AppRoot::doDebug())
+                echo "<pre>" . print_r($message, true) . "</pre>";
 
-        self::$errors[] = $error;
-        self::storeError($error);
-        self::debug("<span style='color:red;'>" . $error . "</span>");
+            self::$errors[] = $message;
+            self::debug("<span style='color:red;'>" . $message . "</span>");
+        }
+
+        self::storeError($message);
     }
 
     public static function depricated($what, $message="")
@@ -357,9 +363,9 @@ class AppRoot
 		$data["errordate"] = date("Y-m-d H:i:s");
 		$data["info"] = "DATE: ".date("Y-m-d H:i:s")."\n";
 		$data["info"] .= "WORKING DIR: ".str_replace(DIRECTORY_SEPARATOR,"/",getcwd())."\n";
-		$data["info"] .= "PHP_SELF: ".$_SERVER["PHP_SELF"]."\n";
-		$data["info"] .= "SERVER_ADDR: ".$_SERVER["SERVER_ADDR"]."\n";
-		$data["info"] .= "REQUEST_URI: ".$_SERVER["REQUEST_URI"]."\n";
+		$data["info"] .= "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n";
+		$data["info"] .= "SERVER_ADDR: ".((isset($_SERVER["SERVER_ADDR"]))?$_SERVER["SERVER_ADDR"]:"")."\n";
+		$data["info"] .= "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n";
 		$data["info"] .= "GET: ".json_encode($_GET)."\n";
 		$data["info"] .= "POST: ".json_encode($_POST)."\n";
 		$data["info"] .= "SESSION: ".json_encode($_SESSION)."\n";
@@ -670,5 +676,40 @@ class AppRoot
 	{
 		\MySQL::getDB()->updateinsert("config", array("var" => $var, "val" => $val, "updatedate" => date("Y-m-d H:i:s")), array("var" => $var));
 	}
+
+    public static function getClientIP()
+    {
+        $ip = $_SERVER["REMOTE_ADDR"];
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+            $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        if (isset($_SERVER["HTTP_X_REAL_IP"]))
+            $ip = $_SERVER["HTTP_X_REAL_IP"];
+
+        return $ip;
+    }
+
+    /**
+     * Executed via php command line?
+     * @return bool
+     */
+    public static function isCommandline()
+    {
+        global $argv;
+        return (isset($argv)) ? true : false;
+    }
+
+    public static function doCliOutput($var, $color=null)
+    {
+        if (\AppRoot::isCommandline())
+        {
+            $msg = $var;
+            if ($color == "red")
+                $msg = "\e[31m".$var."\e[0m";
+
+            echo $msg.PHP_EOL;
+        }
+        else
+            \AppRoot::debug("<pre>".$var."</pre>");
+    }
 }
 ?>

@@ -4,6 +4,11 @@ use users\model\Oauth;
 require_once("init.php");
 \AppRoot::debug("finished init");
 
+if (\AppRoot::doDebug()) {
+    \AppRoot::readSqlUpdates();
+    \AppRoot::readPhpUpdates();
+}
+
 $mainContent = null;
 $mainMenu = null;
 
@@ -197,4 +202,3 @@ if (!\Tools::REQUEST("ajax"))
 $mainTPL->assign("maincontent", $mainContent);
 $mainTPL->assign("debug", \AppRoot::printDebug());
 $mainTPL->display((Tools::REQUEST("ajax"))?"ajax":"index");
-?>

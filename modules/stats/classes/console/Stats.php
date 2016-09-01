@@ -3,178 +3,199 @@ namespace stats\console;
 
 class Stats
 {
-    function getTopScanners($fromdate, $tilldate, $authGroupID=null, $chainID=null, $limitRows=null)
+    function doCalc($arguments=[])
     {
-        $fromdate = date("Y-m-d", strtotime($fromdate))." 00:00:00";
-        $tilldate = date("Y-m-d", strtotime($tilldate))." 23:59:59";
-
-        if ($authGroupID == null || !is_numeric($authGroupID)) {
-            $authGroups = \User::getUSER()->getAuthGroupsIDs();
-            $authGroupID = $authGroups[0];
+        $date = date("Y-m-d");
+        while (count($arguments) > 0) {
+            $what = array_shift($arguments);
+            if ($what == "yesterday")
+                $date = date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
+            else
+                $date = date("Y-m-d", strtotime($what));
         }
-        $authGroup = new \admin\model\AuthGroup($authGroupID);
+        $sdate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($date)), 1, date("Y", strtotime($date))));
+        $edate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($date))+1, 0, date("Y", strtotime($date))));
+        \AppRoot::doCliOutput("Calculate statistics ".$sdate." - ".$edate);
 
-        $queries = ["c.authgroupid = ".$authGroup->id];
 
-        if ($chainID !== null && is_numeric($chainID))
-            $queries[] = "c.id = ".$chainID;
-        else
-            $queries[] = "c.id IN (SELECT chainid FROM map_chain_settings WHERE var = 'count-statistics')";
-
-        $orderBy = ($authGroup->getConfig("rank_leaderboard")=="wormholes") ? "whs.amount desc, sigs.amount desc" : "sigs.amount desc, whs.amount desc";
-
-        $limit = "";
-        if ($limitRows !== null && is_numeric($limitRows))
-            $limit = "LIMIT ".$limitRows;
-
-        $scanners = array();
-        if ($results = \MySQL::getDB()->getRows("select u.*, sigs.amount as sigs, whs.amount as whs
-                                                from    users u
-                                                    left join ( select  s.userid, count(s.id) as amount
-                                                                from    stats_signatures s
-                                                                    inner join mapwormholechains c on c.id = s.chainid
-                                                                where   s.scandate between '".$fromdate."' and '".$tilldate."'
-                                                                and     ".implode(" and ", $queries)."
-                                                                group by s.userid
-                                                        ) as sigs on sigs.userid = u.id
-                                                    left join ( select  s.userid, count(s.id) as amount
-                                                                from    stats_whmap s
-                                                                    inner join mapwormholechains c on c.id = s.chainid
-                                                                where   s.mapdate between '".$fromdate."' and '".$tilldate."'
-                                                                and     ".implode(" and ", $queries)."
-                                                                group by s.userid
-                                                                order by count(s.id) desc
-                                                        ) whs on whs.userid = u.id
-
-                                                where   sigs.userid is not null
-                                                    or  whs.userid is not null
-                                                order by ".$orderBy." ".$limit))
+        /**
+         * Online / Active users
+         */
+        if ($results = \MySQL::getDB()->getRows("select * from users where deleted = 0 and isvalid = 1"))
         {
             foreach ($results as $result)
             {
                 $user = new \users\model\User();
                 $user->load($result);
 
-                $scanners[] = [
-                    "user"	=> $user,
-                    "rank"	=> count($scanners)+1,
-                    "sigs"  => $result["sigs"],
-                    "whs"   => $result["whs"]
-                ];
-            }
-        }
+                $online = $user->getHoursOnline($sdate, $edate);
+                \AppRoot::doCliOutput(" => ".$user->getFullName()." ".$online." hours online");
+                if ($online == 0)
+                    continue;
 
-        return $scanners;
-    }
-
-    function getScannersByCorporationID($corporationID, $fromdate, $tilldate)
-    {
-        $users = array();
-        $scannerIDs = array();
-        foreach ($this->getTopScanners($fromdate, $tilldate, null, null, null) as $user)
-        {
-            if ($user["user"]->getMainCharacter()->corporationID == $corporationID) {
-                $scannerIDs[] = $user["user"]->id;
-                $users[] = $user;
-            }
-        }
-        foreach (\users\model\User::getUsersByCorporation($corporationID) as $user)
-        {
-            if ($user->getIsActive($fromdate, $tilldate))
-            {
-                if ($user->getMainCharacter()->corporationID == $corporationID && !in_array($user->id, $scannerIDs))
+                foreach ($user->getAuthGroups() as $group)
                 {
-                    $users[] = [
-                        "user"	=> $user,
-                        "rank"	=> 0,
-                        "sigs"  => 0,
-                        "whs"   => 0
-                    ];
+                    $stat = \stats\model\User::findOne([
+                        "userid" => $user->id,
+                        "authgroupid" => $group->id,
+                        "year" => date("Y", strtotime($date)),
+                        "month" => date("m", strtotime($date))
+                    ]);
+                    if (!$stat)
+                        $stat = new \stats\model\User();
+
+                    $stat->year = date("Y", strtotime($date));
+                    $stat->month = date("m", strtotime($date));
+                    $stat->userID = $user->id;
+                    $stat->corporationID = $user->getMainCharacter()->corporationID;
+                    $stat->authgroupID = $group->id;
+                    $stat->hoursOnline = $online;
+                    $stat->store();
                 }
             }
         }
 
-        return $users;
-    }
 
-    function getTotalSignatures($fromdate, $tilldate, $authGroupID=null, $chainID=null, $limit=10)
-    {
-        $fromdate = date("Y-m-d", strtotime($fromdate))." 00:00:00";
-        $tilldate = date("Y-m-d", strtotime($tilldate))." 23:59:59";
-        if ($authGroupID == null || !is_numeric($authGroupID))
-        {
-            $authGroups = \User::getUSER()->getAuthGroupsIDs();
-            $authGroupID = $authGroups[0];
-        }
-        $authGroup = new \admin\model\AuthGroup($authGroupID);
-
-
-        $queries = array();
-        $queries[] = "c.authgroupid = ".$authGroup->id;
-
-        if ($chainID !== null && is_numeric($chainID))
-            $queries[] = "c.id = ".$chainID;
-        else
-            $queries[] = "c.id IN (SELECT chainid FROM map_chain_settings WHERE var = 'count-statistics')";
-
-        $totals = array();
-        if ($results = \MySQL::getDB()->getRows("SELECT	MONTH(s.scandate) AS `month`,  year(s.scandate) AS `year`,
-                                                        COUNT(s.id) AS amount
-                                                FROM 	stats_signatures s
-                                                    INNER JOIN mapwormholechains c ON c.id = s.chainid
-                                                WHERE	s.scandate BETWEEN '".$fromdate."' AND '".$tilldate."'
-                                                AND     ".implode(" AND ", $queries)."
-                                                GROUP BY month(s.scandate), year(s.scandate)
-                                                ORDER BY year(s.scandate) DESC, month(s.scandate) DESC"))
+        /**
+         * Signatures
+         */
+        \AppRoot::doCliOutput("Calc signatures");
+        if ($results = \MySQL::getDB()->getRows("select s.userid, s.corpid, c.authgroupid, count(s.id) as amount
+                                                from    stats_signatures s
+                                                    inner join mapwormholechains c on c.id = s.chainid
+                                                    inner join map_chain_settings cs on cs.chainid = c.id
+                                                where   s.scandate between ? and ?
+                                                and     cs.var = 'count-statistics'
+                                                group by s.userid, c.authgroupid"
+                                , [$sdate." 00:00:00", $edate." 23:59:59"]))
         {
             foreach ($results as $result)
             {
-                $year = $result["year"];
-                $month = $result["month"];
-                while (strlen($month) < 2) {
-                    $month = "0" . $month;
-                }
+                $stat = \stats\model\User::findOne([
+                    "userid" => $result["userid"],
+                    "authgroupid" => $result["authgroupid"],
+                    "year" => date("Y", strtotime($date)),
+                    "month" => date("m", strtotime($date))
+                ]);
+                if (!$stat)
+                    $stat = new \stats\model\User();
 
-                if (!isset($totals[$year.$month])) {
-                    $totals[$year.$month] = [
-                        "date" => \Tools::getFullMonth($result["month"])." ".$result["year"],
-                        "sigs" => 0, "whs" => 0
-                    ];
-                }
+                $stat->year = date("Y", strtotime($date));
+                $stat->month = date("m", strtotime($date));
+                $stat->userID = $result["userid"];
+                $stat->corporationID = $result["corpid"];
+                $stat->authgroupID = $result["authgroupid"];
+                $stat->nrSigs = $result["amount"];
+                $stat->store();
 
-                $totals[$year.$month]["sigs"] = $result["amount"];
+                \AppRoot::doCliOutput(" => ".$stat->getUser()->getFullName()." ".$result["amount"]." signatures");
             }
         }
 
-        if ($results = \MySQL::getDB()->getRows("SELECT	MONTH(s.mapdate) AS `month`,  year(s.mapdate) AS `year`,
-                                                        COUNT(s.id) AS amount
-                                                FROM 	stats_whmap s
-                                                    INNER JOIN mapwormholechains c ON c.id = s.chainid
-                                                WHERE	s.mapdate BETWEEN '".$fromdate."' AND '".$tilldate."'
-                                                AND     ".implode(" AND ", $queries)."
-                                                GROUP BY month(s.mapdate), year(s.mapdate)
-                                                ORDER BY year(s.mapdate) DESC, month(s.mapdate) DESC"))
+        /**
+         * Mapped wormholes
+         */
+        \AppRoot::doCliOutput("Calc wormholes");
+        if ($results = \MySQL::getDB()->getRows("select s.userid, s.corpid, c.authgroupid, count(s.id) as amount
+                                                from    stats_whmap s
+                                                    inner join mapwormholechains c on c.id = s.chainid
+                                                    inner join map_chain_settings cs on cs.chainid = c.id
+                                                where   s.mapdate between ? and ?
+                                                and     cs.var = 'count-statistics'
+                                                group by s.userid, c.authgroupid"
+                                , [$sdate." 00:00:00", $edate." 23:59:59"]))
         {
             foreach ($results as $result)
             {
-                $year = $result["year"];
-                $month = $result["month"];
-                while (strlen($month) < 2) {
-                    $month = "0" . $month;
-                }
+                $stat = \stats\model\User::findOne([
+                    "userid" => $result["userid"],
+                    "authgroupid" => $result["authgroupid"],
+                    "year" => date("Y", strtotime($date)),
+                    "month" => date("m", strtotime($date))
+                ]);
+                if (!$stat)
+                    $stat = new \stats\model\User();
 
-                if (!isset($totals[$year.$month])) {
-                    $totals[$year.$month] = [
-                        "date" => \Tools::getFullMonth($result["month"])." ".$result["year"],
-                        "sigs" => 0, "whs" => 0
-                    ];
-                }
+                $stat->year = date("Y", strtotime($date));
+                $stat->month = date("m", strtotime($date));
+                $stat->userID = $result["userid"];
+                $stat->corporationID = $result["corpid"];
+                $stat->authgroupID = $result["authgroupid"];
+                $stat->nrWormholes = $result["amount"];
+                $stat->store();
 
-                $totals[$year.$month]["whs"] = $result["amount"];
+                \AppRoot::doCliOutput(" => ".$stat->getUser()->getFullName()." ".$result["amount"]." wormholes mapped");
             }
         }
 
-        krsort($totals);
-        return $totals;
+        /**
+         * Kills
+         */
+        \AppRoot::doCliOutput("Calc kills");
+        $kills = [];
+        if ($results = \MySQL::getDB()->getRows("select *
+                                                from    stats_kills
+                                                where   killdate between ? and ?
+                                                group by userid, shiptypeid"
+                                , [$sdate." 00:00:00", $edate." 23:59:59"]))
+        {
+            foreach ($results as $result) {
+                $kills[$result["userid"]][$result["shiptypeid"]] = $result["nrkills"];
+            }
+        }
+
+        /** @var \eve\model\Ship[] $ships */
+        $ships = [];
+        foreach ($kills as $userID => $data)
+        {
+            /** @var \stats\model\User[] $stats */
+            $stats = \stats\model\User::findAll([
+                "userid" => $userID,
+                "year" => date("Y", strtotime($date)),
+                "month" => date("m", strtotime($date))
+            ]);
+
+            if (count($stats) == 0) {
+                $user = new \users\model\User($userID);
+                foreach ($user->getAuthGroups() as $group) {
+                    $stat = new \stats\model\User();
+                    $stat->userID = $user->id;
+                    $stat->corporationID = $user->getMainCharacter()->corporationID;
+                    $stat->authgroupID = $group->id;
+                    $stat->year = date("Y", strtotime($date));
+                    $stat->month = date("m", strtotime($date));
+                    $stat->store();
+                    $stats[] = $stat;
+                }
+            }
+
+            foreach ($stats as $stat)
+            {
+                $stat->reqSigs = 0;
+                $stat->nrKills = 0;
+                \AppRoot::doCliOutput($stat->getUser()->getFullName());
+                foreach ($data as $shipTypeID => $nrKills)
+                {
+                    $stat->nrKills += $nrKills;
+
+                    if (!isset($ships[$shipTypeID]))
+                        $ships[$shipTypeID] = new \eve\model\Ship($shipTypeID);
+
+                    \AppRoot::doCliOutput("    => ".$nrKills." kills in ".$ships[$shipTypeID]->name." (".$ships[$shipTypeID]->getShipType().")");
+
+                    if ($ships[$shipTypeID]->getShipRole() == "logi")
+                        $stat->reqSigs += 0;
+                    else if ($ships[$shipTypeID]->getShipRole() == "support")
+                        $stat->reqSigs += 0;
+                    else
+                        $stat->reqSigs += $nrKills;
+                }
+                \AppRoot::doCliOutput("  => Total of ".$stat->nrKills." kills");
+                if ($stat->reqSigs < 0)
+                    $stat->reqSigs = $stat->nrKills;
+
+                $stat->store();
+            }
+        }
     }
 }
