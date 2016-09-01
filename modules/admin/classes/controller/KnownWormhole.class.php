@@ -7,14 +7,14 @@ namespace admin\controller
 		{
 			$systems = array();
 			if ($results = \MySQL::getDB()->getRows("SELECT	k.*, s.solarsystemname
-													FROM	mapknownwormholes k
+													FROM	map_knownwormhole k
 														INNER JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = k.solarsystemid
 													WHERE	k.authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
 													ORDER BY s.solarsystemname"))
 			{
 				foreach ($results as $result)
 				{
-					$wormhole = new \admin\model\KnownWormhole();
+					$wormhole = new \map\model\KnownWormhole();
 					$wormhole->load($result);
 					$systems[] = $wormhole;
 				}
@@ -28,8 +28,8 @@ namespace admin\controller
 		function getEditForm($systemID, $redirectURL=null)
 		{
 			$errors = array();
-			$wormhole = new \admin\model\KnownWormhole($systemID);
-			$system = new \eve\model\SolarSystem($systemID);
+			$wormhole = \map\model\KnownWormhole::findBySolarSystemID($systemID);
+			$system = new \map\model\SolarSystem($systemID);
 
 			if ($redirectURL == null)
 				$redirectURL = "index.php?module=admin&section=knownwormholes";

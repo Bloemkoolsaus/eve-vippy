@@ -106,84 +106,6 @@ function addWormhole(from,to)
 	});
 }
 
-function cancelAddWormhole()
-{
-	$("#addWormholeForm").fadeOut(250,function() {
-		$("#mapButtons").show();
-		$("#addWormholeForm").html("");
-	});
-}
-
-function switchSystem(system)
-{
-	showLoadingPopup();
-	$("#currentSystem").attr("value",system);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
-	document.formChangeCurrentSystem.submit();
-}
-
-function selectSignatureWhType(select)
-{
-    if (select.val() == "other")
-    {
-        var data = { whType: select.attr("data-whtype"), sigID: select.attr("data-sigid") };
-        var html = Mustache.to_html($("#whTypeInputTPL").html(), data);
-        if (select.attr("data-sigid")) {
-            $("#signWhTypeInput"+select.attr("data-sigid")).html(html);
-        } else {
-            $("#whTypeInputContainer").html(html);
-        }
-    }
-}
-
-function addSignature()
-{
-	var reqURL = "index.php?module=scanning&section=map&action=addsignature&ajax=1";
-	reqURL += "&sig=" + $("#sigid").val();
-	reqURL += "&type=" + $("#sigtype").val();
-
-	if ($("#sigtype").val() == "wh")
-		reqURL += "&typeid=" + $("#whTypeInputContainer>[name=whtype]").val();
-
-	reqURL += "&info=" + $("#siginfo").val();
-
-	$("#sigid").attr("value","");
-	$("#sigtype").attr("value","");
-	$("#siginfo").attr("value","");
-	$("#whtype").attr("value","");
-	$("#sigid").focus();
-
-	$.ajax({
-		url: reqURL,
-		success: function(data) {
-			loadSignatureList();
-		}
-	});
-}
-
-function removeSig(id)
-{
-	var reqURL = "index.php?module=scanning&section=map&action=deletesignature&id="+id+"&ajax=1";
-	$("#signatureList"+id).fadeOut();
-	$.ajax({
-		url: reqURL,
-		success: function(data) {
-			// Doe niets. Lijst-update gaat vanzelf!
-		}
-	});
-}
-
-function saveWormhole()
-{
-	var url = "&rename="+$("#renameid").val();
-	url += "&name="+$("#renamename").val();
-	url += "&status="+$("#whstatus").val();
-	url += "&notes="+document.getElementById("notes").value;
-	url += "&nocache=1";
-	loadSignatureMap(url);
-}
-
 function deleteWormhole(wormholeID, removeConnected)
 {
 	var url = "&delete="+wormholeID+"&nocache=1";
@@ -274,41 +196,24 @@ function showActivePilots()
 	});
 }
 
-function showTrackingOnlyModeHelp()
+
+function addToKnownSystems(systemName)
+{
+    $.ajax({
+        url: "/map/knownwormhole/add/"+systemName+"/",
+        data: { ajax: 1 },
+        success: function(data) {
+            showPopup(data, 500, 200);
+        }
+    });
+}
+function removeFromKnownSystems(systemName)
 {
 	$.ajax({
-		url: "/index.php?module=scanning&section=trackingonly&action=showhelp&ajax=1",
+        url: "/map/knownwormhole/remove/"+systemName+"/",
+        data: { ajax: 1 },
 		success: function(data) {
-			showPopup(data,500,400);
-		}
-	});
-}
-
-function enableTrackingOnly()
-{
-	document.location = "index.php?module=scanning&section=trackingonly&action=enabletrackingonly";
-}
-
-function disableTrackingOnly()
-{
-	document.location = "index.php?module=scanning&section=trackingonly&action=disabletrackingonly";
-}
-
-function addToKnownSystems(system)
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=1&system="+system,
-		success: function(data) {
-			showPopup(data, 400, 250);
-		}
-	});
-}
-function removeFromKnownSystems(system)
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=remove&system="+system,
-		success: function(data) {
-			showPopup(data,500,200);
+			showPopup(data, 500, 200);
 		}
 	});
 }

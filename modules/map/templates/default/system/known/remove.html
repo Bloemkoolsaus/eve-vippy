@@ -1,0 +1,20 @@
+<div style="padding: 1em;">
+	<h2>Remove {$system->name} from known systems</h2>
+{if $system->getKnownSystem()}
+<form method="post" action="/map/knownwormhole/remove/{$system->name}">
+	<input type="hidden" name="confirmed" value="{$App->user->id}">
+	<div style="margin: 2em;">
+		<img src="/images/default/alert.png" style="margin-right: .5em;">
+		Do you want to forget `<strong>{$system->name}</strong>` as
+		`<span style='font-weight: bold; color: {$system->getKnownSystem()->getColor()}'>{$system->getKnownSystem()->name}</span>`
+	</div>
+	<div>
+		<button type="submit">Confirm</button>
+	</div>
+</form>
+{else}
+	<div class="error">
+		<div>{$system->name} is not a known system</div>
+	</div>
+{/if}
+</div>
