@@ -184,11 +184,7 @@
 
 <div class="content">
 	<div id="signatureListContainer">
-		<div id="signatureToggle" style="padding-top: 25px;{if !isset($hidesignatures)}display: none;{/if}">
-			<button type="button" onclick="showSignatureList()">
-				Show Signatures List
-			</button>
-		</div>
+
 		<a name="signatures"></a>
 		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
 			<h2 style="margin-bottom: 0;">
@@ -204,11 +200,11 @@
 				<tr>
 					<td style="width: 70px;">
 						<b>Signature:</b><br />
-						<input type="text" id="sigid" style="width: 60px; text-transform: uppercase;" />
+						<input type="text" id="sigId" style="width: 60px; text-transform: uppercase;" />
 					</td>
 					<td style="width: 65px;">
 						<b>Type:</b><br />
-						<select name="sigtype" id="sigtype" style="width: 60px;" onchange="selectSignatureType()">
+						<select name="sigtype" id="sigType" style="width: 60px;" onchange="selectSignatureType()">
 							<option value="" selected></option>
 							<option value="wh">WH</option>
 							<option value="data">Data</option>
@@ -221,13 +217,11 @@
 					</td>
 					<td rel="addsig_wormhole" data-whtype-input="{$App->user->getSetting('whtypefield')}" style="display: none; width: 60px;">
 						<b>WH Type:</b><br />
-					    <div id="whTypeInputContainer">
-
-                        </div>
+						<input type="text" id="whType" style="width: 60px;" placeholder="K162">
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />
-						<input type="text" id="siginfo" style="width: 95%;" />
+						<input type="text" id="sigName" style="width: 95%;" />
 					</td>
 					<td style="width: 60px;">
 						<br />
@@ -262,7 +256,29 @@
 			<div style="clear:both;"></div>
 		</div>
 
-		<div id="signatureList" style="margin-top: 4px;{if isset($hidesignatures)}display: none;{/if}"></div>
+		<div id="signatureList" style="margin-top: 1em;">
+			<h2 style="margin-bottom: 1px;">
+				<div style="float: left; padding-top: 10px;">
+					<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+					{$system->name} - {$wormhole->name} | <span id="signaturesCount"></span> signatures
+				</div>
+				<div style="clear:both;"></div>
+			</h2>
+			<form method="post" name="formEditSignature" action="Javascript: storeSignature()">
+			<table id="signatureTable" class="sectionoverview">
+				<tr>
+					<th>ID</th>
+					<th>Type</th>
+					<th>Info</th>
+					<th>Last Update</th>
+					<th>&nbsp;</th>
+				</tr>
+			</table>
+			<div style="display:none;">
+				<button type="submit">Save</button>
+			</div>
+			</form>
+		</div>
 	</div>
 
 	<div id="systemDetailsContainer">
@@ -402,4 +418,50 @@
     <input type="text" id="siginput{{sigID}}whtype" name="whtype" value="{{whType}}" data-sigid="{{sigID}}"
            placeholder="K162" style="width: 60px; margin-top: 2px;" autocomplete="off">
 {/literal}
+</script>
+<script id="signatureTPL" type="text/template">
+	{literal}
+		<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+			<td class="sigID" onclick="editSignature('{{id}}')">{{sigid}}</td>
+			<td class="sigType" onclick="editSignature('{{id}}')">{{type}} <div class="whtype">{{whtype}}</div></td>
+			<td class="sigInfo" onclick="editSignature('{{id}}')">{{info}}</td>
+			<td class="sigUpdate" onclick="editSignature('{{id}}')">{{scanage}}</td>
+			<td class="sigControls">
+				<img src="/images/default/information.png">
+				<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
+				<img src="/images/default/cross.png" onclick="deleteSignature('{{id}}');">
+			</td>
+		</tr>
+	{/literal}
+</script>
+<script id="signatureEditTPL" type="text/template">
+	{literal}
+		<tr class="{{type}} sigedit" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+			<td class="sigID">
+				<input type="text" id="sigId{{id}}" value="{{sigid}}">
+			</td>
+			<td class="sigType">
+				<select id="sigType{{id}}">
+					<option value=""></option>
+					<option value="wh">WH</option>
+					<option value="data">Data</option>
+					<option value="gas">Gas</option>
+					<option value="ore">Ore</option>
+					<option value="relic">Relic</option>
+					<option value="combat">Combat</option>
+					<option value="pos">POS</option>
+				</select>
+			</td>
+			<td class="sigInfo">
+				<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}" placeholder="K162">
+				<input type="text" class="signame" id="sigName{{id}}" value="{{info}}">
+			</td>
+			<td class="sigUpdate">{{scanage}}</td>
+			<td class="sigControls">
+				<img src="/images/default/save.png" onclick="document.formEditSignature.submit()">
+				&nbsp;
+				<img src="/images/default/cancel.png" onclick="editSignatureCancel('{{id}}')">
+			</td>
+		</tr>
+	{/literal}
 </script>

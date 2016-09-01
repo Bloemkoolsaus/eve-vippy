@@ -1,36 +1,3 @@
-table#signatureTable tr.relic {
-	background-color: #55556F;
-	color: #EEEEEE;
-}
-table#signatureTable tr.data {
-	background-color: #556F55;
-	color: #EEEEEE;
-}
-table#signatureTable tr.gas {
-	background-color: #7F7F55;
-	color: #EEEEEE;
-}
-table#signatureTable tr.ore {
-	background-color: #556A6A;
-	color: #EEEEEE;
-}
-table#signatureTable tr.wh {
-	background-color: #774444;
-	color: #EEEEEE;
-}
-table#signatureTable tr.combat {
-	background-color: #776666;
-	color: #EEEEEE;
-}
-table#signatureTable tr.pos {
-	background-color: #BBBBBB;
-	color: #111111;
-}
-table#signatureTable tr.unknown {
-	background-color: #774444;
-	color: #EEEEEE;
-}
-
 div#signatureMapContainer {
 	position: absolute;
 	top: 130px;
@@ -50,9 +17,9 @@ div#signatureMap {
 }
 
 div.sigInfo {
-	position: absolute; 
+	position: absolute;
 	left: 0;
-	top: 0; 
+	top: 0;
 	width: 400px;
 	display: none;
 	z-index: 10;
@@ -77,10 +44,10 @@ div.sigInfo div.footerright {
 }
 div.sigInfo div.content {
 	background: none;
-	background-image: url("../../../images/default/popup.content.png");	
+	background-image: url("../../../images/default/popup.content.png");
 }
 div.sigInfo div.contentleft {
-	background-image: url("../../../images/default/popup.content.arrowleft.png");	
+	background-image: url("../../../images/default/popup.content.arrowleft.png");
 }
 div.sigInfo div.contentright {
 	background-image: url("../../../images/default/popup.content.arrowright.png");
@@ -101,12 +68,12 @@ div.sigInfo table tr th {
 
 div.whdetailspopup {
 	margin-left: 10px;
-	margin-right: 10px;	
+	margin-right: 10px;
 	z-index: 10;
 }
 div.whdetailspopup .form {
 	margin: 0px;
-	padding: 0px;	
+	padding: 0px;
 }
 div.whdetailspopup .form .field {
 	width: 50px;
@@ -138,7 +105,7 @@ h2.systeminfotitle img:hover {
 
 div.systemPopupTitle {
 	color: #FFFFFF;
-	font-size: 13px;	
+	font-size: 13px;
 	font-weight: bold;
 	text-decoration: underline;
 	z-index: 10;
@@ -185,7 +152,7 @@ div#wormholeContext {
 	z-index: 10;
 }
 div#disabledPageTransparent {
-	z-index: 9;	
+	z-index: 9;
 }
 
 div#mapHeader {
@@ -195,22 +162,22 @@ div#mapHeader div#mapHeaderTitle {
 	border-bottom: solid 1px #CCCCCC;
 }
 div#mapHeader div#divSystemTitle {
-	float: left; 
+	float: left;
 	width: 55%;
-	margin: 0px; 
+	margin: 0px;
 	padding: 0px;
 	overflow: hidden;
 	white-space: nowrap;
 }
 div#mapHeader div#divSystemTitle h1 {
-	margin: 0px; 
-	padding: 0px; 
-	border: 0px; 
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
 	font-size: 22px;
 }
 div#mapHeader div#divRefreshTimer {
-	float: right; 
-	text-align: right; 
+	float: right;
+	text-align: right;
 	width: 40%;
 }
 div#mapHeader div#divRefreshTimer div {

@@ -44,7 +44,7 @@ namespace admin
 				}
 				else if ($action == "delete")
 				{
-					$wormhole = new \admin\model\KnownWormhole(\Tools::REQUEST("id"));
+					$wormhole = new \map\model\KnownWormhole(\Tools::REQUEST("id"));
 					$wormhole->delete();
 					\AppRoot::redirect("index.php?module=admin&section=knownwormholes");
 				}

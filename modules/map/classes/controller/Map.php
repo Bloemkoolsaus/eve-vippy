@@ -39,6 +39,7 @@ class Map
 
         return $notices;
     }
+
     function getWormholes(\map\model\Map $map)
     {
         \AppRoot::debug("getWormholes(".$map->id.")");
@@ -62,7 +63,7 @@ class Map
                                                     INNER JOIN mapwormholechains c1 ON c1.id = wh.chainid
                                                     LEFT JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = wh.solarsystemid
                                                     LEFT JOIN ".\eve\Module::eveDB().".mapregions r ON r.regionid = s.regionid
-                                                    LEFT JOIN mapknownwormholes k 	ON k.solarsystemid = s.solarsystemid
+                                                    LEFT JOIN map_knownwormhole k 	ON k.solarsystemid = s.solarsystemid
                                                                                     AND	k.authgroupid = c1.authgroupid
                                                     LEFT JOIN mapwormholechains c2 	ON c2.deleted = 0
                                                                                     AND c2.authgroupid = c1.authgroupid
@@ -86,10 +87,8 @@ class Map
                 $data["position"]["y"] = $result["y"];
                 $data["persistant"] = ($result["permanent"] > 0) ? true : false;
 
-                if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0)
-                {
-                    if (strtotime($result["fullyscanned"]) > 0)
-                    {
+                if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0) {
+                    if (strtotime($result["fullyscanned"]) > 0) {
                         $age = strtotime("now")-strtotime($result["fullyscanned"]);
                         $data["fullyscanned"] = floor($age/3600);
                     }
@@ -108,17 +107,12 @@ class Map
                     $data["solarsystem"]["class"]["name"] = ($system->isWSpace())?"WH":$system->getClass(true);
                     $data["solarsystem"]["class"]["color"] = $system->getClassColor();
 
-                    if ($system->isShattered() !== false)
-                    {
+                    if ($system->isShattered() !== false) {
                         if ($system->isShattered() == "frigate")
                             $data["whsystem"]["titles"][] = array("name" => "Small Ship Shattered", "color" => "#442266");
                         else
                             $data["whsystem"]["titles"][] = array("name" => "Shattered", "color" => "#442266");
                     }
-
-                    // Kspace. Region toevoegen als title
-                    if (!$system->isWSpace())
-                        $data["whsystem"]["titles"][] = array("name" => $data["solarsystem"]["region"]);
                 }
                 else
                 {
@@ -285,5 +279,95 @@ class Map
         }
 
         return $characters;
+    }
+
+    function addWormholeToMap(\map\model\Map $map, \map\model\Signature $signature)
+    {
+        \AppRoot::debug("addWormholeToMap($map->name, $signature->sigID)");
+
+        // Geen naam opgegeven
+        if (strlen(trim($signature->sigInfo)) == 0) {
+            \AppRoot::debug("cancel: no-name");
+            return false;
+        }
+        // Copy paste van probe scanner
+        if (strtolower(trim($signature->sigInfo)) == "unstable wormhole") {
+            \AppRoot::debug("cancel: copy-paste from scanner");
+            return false;
+        }
+        // wh back. Negeren.
+        if (strtolower(trim($signature->sigInfo)) == "back") {
+            \AppRoot::debug("cancel: back");
+            return false;
+        }
+
+        // Check if this signature already has a (unmapped) wormhole
+        \AppRoot::debug("Check if this signature already has a (unmapped) wormhole");
+        $newWormhole = \scanning\model\Wormhole::getWormholeBySignatureID($map->id, $signature->id);
+        if ($newWormhole) {
+            if ($newWormhole->getSolarsystem() !== null)
+                $newWormhole = null;
+        }
+        \AppRoot::debug("found wormhole: <pre>".print_r($newWormhole,true)."</pre>");
+
+        // Nieuwe naam
+        $originWormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
+        $newWormholeName = $signature->sigInfo;
+        \AppRoot::debug("new wormhole name: ".$newWormholeName);
+        $parsedWormholeName = explode(" ", $newWormholeName);
+        $parts = explode("-", $parsedWormholeName[0]);
+        if (count($parts) > 1) {
+            if ($originWormhole !== null) {
+                if (strtolower($parts[0]) == strtolower($originWormhole->name) || (trim($parts[0]) == "0" && $originWormhole->isHomeSystem())) {
+                    $originName = array_shift($parts);
+                    $newWormholeName = implode("-", $parts);
+                }
+            }
+        }
+
+        // Terug naar home. Home staat er meestal al wel op!
+        if (trim($newWormholeName) == "0" || strtolower(trim($newWormholeName)) == "home")
+            return true;
+
+        // Check of de naam van deze wormhole al op de map staat.
+        foreach ($map->getWormholes() as $wormhole) {
+            if (trim(strtolower($wormhole->name)) == trim(strtolower($newWormholeName))) {
+                \AppRoot::debug("already exists: ".$signature->sigInfo);
+                return true;
+            }
+        }
+
+        // Staat nog niet op de kaart! Toevoegen!
+        $wormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
+        if ($newWormhole !== null) {
+            $newWormhole->name = $newWormholeName;
+            $newWormhole->store();
+        } else {
+            $position = $map->getNewWormholePosition($wormhole);
+            $newWormhole = $map->addSolarSystem(0, $position["x"], $position["y"], $newWormholeName, $signature->id);
+        }
+
+        $newConnection = $map->addWormholeConnectionByWormhole($wormhole->id, $newWormhole->id);
+        if (count($parsedWormholeName) > 1) {
+            for ($i=1; $i<count($parsedWormholeName); $i++) {
+                switch (strtolower($parsedWormholeName[$i])) {
+                    case "frig":
+                        $newConnection->frigateHole = true;
+                        break;
+                    case "eol":
+                        $newConnection->eol = true;
+                        break;
+                    case "reduced":
+                        $newConnection->mass = 1;
+                        break;
+                    case "crit":
+                        $newConnection->mass = 2;
+                        break;
+                }
+            }
+        }
+
+        $newConnection->store();
+        return true;
     }
 }

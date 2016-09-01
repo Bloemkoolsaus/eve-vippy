@@ -22,11 +22,22 @@ div#systemDetailsContainer {
 	}
 }
 
+table#signatureTable tr[rel="signature"] {
+    cursor: pointer;
+}
 table#signatureTable .sigID {
 	width: 50px;
+    text-transform: uppercase;
 }
 table#signatureTable .sigType {
-	width: 70px;
+    width: 70px;
+    text-transform: uppercase;
+}
+table#signatureTable .sigType div.whtype {
+    float: right;
+    font-style: italic;
+    color: #aaaaaa;
+    margin-right: 1em;
 }
 table#signatureTable .sigInfo {
 
@@ -40,8 +51,75 @@ table#signatureTable .sigUpdate {
 }
 table#signatureTable .sigControls {
 	width: 50px;
+    text-align: center;
+}
+table#signatureTable .sigControls img {
+    height: 12px;
 }
 
+table#signatureTable input,
+table#signatureTable select {
+    margin: 0;
+    padding-top: 1px;
+    padding-bottom: 0;
+    padding-left: .5em;
+    padding-right: .5em;
+    width: 90%;
+}
+table#signatureTable select {
+    padding-left: .2em;
+    padding-right: .2em;
+
+}
+table#signatureTable .sigID input {
+    width: 35px;
+    text-transform: uppercase;
+}
+table#signatureTable .sigType select {
+    width: 65px;
+}
+table#signatureTable input.whtype {
+    width: 35px;
+}
+table#signatureTable input.signame {
+    width: 100px;
+}
+table#signatureTable tr {
+    background-color: #666666;
+    color: #EEEEEE;
+}
+table#signatureTable tr.relic {
+    background-color: #55556F;
+    color: #EEEEEE;
+}
+table#signatureTable tr.data {
+    background-color: #556F55;
+    color: #EEEEEE;
+}
+table#signatureTable tr.gas {
+    background-color: #7F7F55;
+    color: #EEEEEE;
+}
+table#signatureTable tr.ore {
+    background-color: #556A6A;
+    color: #EEEEEE;
+}
+table#signatureTable tr.wh {
+    background-color: #774444;
+    color: #EEEEEE;
+}
+table#signatureTable tr.combat {
+    background-color: #776666;
+    color: #EEEEEE;
+}
+table#signatureTable tr.pos {
+    background-color: #BBBBBB;
+    color: #111111;
+}
+table#signatureTable tr.unknown {
+    background-color: #774444;
+    color: #EEEEEE;
+}
 @media (max-width: 500px) {
     table#signatureTable .sigID {
 		width: 30px;

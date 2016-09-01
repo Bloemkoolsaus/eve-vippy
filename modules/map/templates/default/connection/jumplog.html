@@ -1,4 +1,4 @@
-<h2>JUMP LOG</h2>
+
 {assign var=totalmass value=0}
 {foreach from=$jumplog.beforemass item=ship}
 	{assign var=totalmass value=$totalmass+$ship.mass}
@@ -6,21 +6,21 @@
 {foreach from=$jumplog.aftermass item=ship}
 	{assign var=totalmass value=$totalmass+$ship.mass}
 {/foreach}
+<h3 style="border-bottom: solid 1px #eeeeee;">
+	JUMP LOG
 {if $totalmass > 0}
-	<div style="margin-bottom: 1em; color: #ffffff;">
-		<div class="col8" style="text-align: right; padding-top: .2em;">
-			Estimated total mass:
-		</div>
-		<div class="col4 last" style="text-align: right; font-size: 1.1em;">
-			<b>{$totalmass|number} kg</b>
-		</div>
-		<div style="clear:both;"></div>
+	<div style="float: right; font-size: .8em; color: #cccccc; padding-top: 4px;">
+		Total Mass: &nbsp;
+		<span style="color: #ffffff;"><b>{$totalmass|number} kg</b></span>
 	</div>
 {/if}
-<div style="margin-top: 1em;">
+</h3>
+<div style="clear:both;"></div>
+
+<div style="margin-top: 1em; color: #ffffff;">
     <div class="col6"><b>Shiptype</b></div>
-    <div class="col3"><b>Manual Add</b></div>
-    <div class="col3 last"><b>Est. Mass</b></div>
+    <div class="col2"><b>Manually</b></div>
+    <div class="col4 last" style="text-align: right;"><b>Estimated Mass</b></div>
     <div style="clear:both;"></div>
 </div>
 <div style="margin-top: 1em;">
@@ -35,10 +35,10 @@
         &nbsp; {$ship.class}
     {/if}
     </div>
-    <div class="col3" style="text-align: right;">
+    <div class="col2" style="text-align: center;">
         {if $ship.manual > 0}{$ship.manual}{else}&nbsp;{/if}
     </div>
-    <div class="col3 last" style="text-align: right;">
+    <div class="col4 last" style="text-align: right;">
         {$ship.mass|number} kg
     </div>
     {assign var=subtotalmass value=$subtotalmass+$ship.mass}
@@ -46,8 +46,8 @@
 {if $subtotalmass > 0}
     <div style="padding-top: 10px;">
         <div class="col6">&nbsp;</div>
-        <div class="col3" style="text-align: right;">&nbsp;</div>
-        <div class="col3 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
+        <div class="col2" style="text-align: center;">&nbsp;</div>
+        <div class="col4 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
             <b>{$subtotalmass|number} kg</b>
         </div>
         <div style="clear:both;"></div>
@@ -70,10 +70,10 @@
         &nbsp; {if $ship.amount|strlen == 1}&nbsp;{/if}{$ship.amount}
         &nbsp; {$ship.class}
     </div>
-    <div class="col3" style="text-align: right;">
+    <div class="col2" style="text-align: center;">
         {if $ship.manual > 0}{$ship.manual}{else}&nbsp;{/if}
     </div>
-    <div class="col3 last" style="text-align: right;">
+    <div class="col4 last" style="text-align: right;">
         {$ship.mass|number} kg
     </div>
     {assign var=subtotalmass value=$subtotalmass+$ship.mass}
@@ -82,9 +82,9 @@
 {if $subtotalmass > 0}
 <div style="padding-top: 10px;">
     <div class="col6" style="text-align: right;">&nbsp;</div>
-    <div class="col3" style="text-align: right;">&nbsp;</div>
-    <div class="col3 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
-        <b>{$subtotalmass|number} kg</b>
+    <div class="col2" style="text-align: center;">&nbsp;</div>
+    <div class="col4 last" style="text-align: right; border-top: solid 1px #aaaaaa; padding-top: .5em; margin-top: .5em;">
+        <span style="color: #ffffff; font-weight: bold;">{$subtotalmass|number} kg</span>
     </div>
     <div style="clear:both;"></div>
 </div>

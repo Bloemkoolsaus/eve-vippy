@@ -152,26 +152,24 @@ if (\AppRoot::loginRequired() && !\User::getLoggedInUserId())
 		$mainContent = $content->fetch("login");
 	}
 }
-// We zijn ingelogd en mogen door.
 else
 {
-	if (!\Tools::REQUEST("ajax"))
-	{
-		if (\User::getUSER()->loggedIn())
-		{
+    // We zijn ingelogd en mogen door.
+	if (!\Tools::REQUEST("ajax")) {
+		if (\User::getUSER()->loggedIn()) {
 			\User::getUSER()->addLog("login");
 			\Modules::getModules();
 		}
 	}
 
-	// Auto Complete ajax verzoek
 	if (\Tools::GET("ajax") && \Tools::GET("autocomplete"))
 	{
+        // Auto Complete ajax verzoek
 		$mainContent = \AutoCompleteElement\Element::getValues();
 	}
-	// Load selected module
 	else if (\Tools::GET("module"))
 	{
+        // Load selected module
 		$selectedModule = new Modules(Tools::GET("module"));
 		$module = $selectedModule->loadModule();
 
@@ -179,7 +177,6 @@ else
 		$mainContent = $module->getContent();
 		AppRoot::debug("=== " . $module->moduleName . ": Has Content");
 	}
-
 
 	if ($mainContent == null)
 		$mainContent = \Modules::getHomepage();

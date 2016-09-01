@@ -1,0 +1,31 @@
+<div style="padding: 1em;">
+	<h2>Set {$system->name} as a known system</h2>
+	<form method="post" action="/map/knownwormhole/add/{$system->name}">
+		<div class="form">
+			<div class="field">Displayname:</div>
+			<div class="value"><input type="text" name="name" value="" /></div>
+		</div>
+		<div class="form">
+			<div class="field">Status:</div>
+			<div class="value">
+				<select name="status">
+					<option value="2">[+] Alliance System</option>
+					<option value="1">[+] Friendly System</option>
+					<option value="0" selected>[=] Neutral System</option>
+					<option value="-1">[-] Hostile System</option>
+					<option value="-2">[-] Dangerous System</option>
+				</select>
+			</div>
+		</div>
+		<div style="clear: both;"></div>
+		<div class="form buttons">
+			<div style="text-align: right; margin-top: 1.5em;">
+				<button type="submit">
+					<img src="/images/default/save.png" align="left">
+					&nbsp; Save
+				</button>
+			</div>
+		</div>
+	</form>
+	<div style="clear:both;"></div>
+</div>

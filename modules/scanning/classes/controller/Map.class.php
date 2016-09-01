@@ -163,30 +163,7 @@ namespace scanning\controller
 
 		function removeFromKnownWormholeForm()
 		{
-			$system = new \scanning\model\System(\Tools::REQUEST("system"));
-			$editForm = "";
-
-			if (\Tools::REQUEST("confirm"))
-			{
-				if ($system->getKnownSystem() != null)
-					$system->getKnownSystem()->delete();
-
-				\AppRoot::redirect("index.php?module=scanning");
-			}
-
-			if ($system->getKnownSystem() !== null)
-			{
-				$link = "index.php?module=scanning&section=map&action=addtoknownsystems&ajax=remove&system=".$system->id."&confirm=1";
-				$editForm = "<div style='margin: 15px;'><img src='images/default/alert.png'> Do you want to forget `".$system->name."` as `<span style='color:".$system->getKnownSystem()->getColor()."'>".$system->getKnownSystem()->name."</span>`?</div>";
-				$editForm .= "<div><button type='button' onclick='document.location=\"".$link."\"'>Confirm</button></div>";
-			}
-			else
-			{
-				$editForm = $system->name." is not a known system.";
-			}
-
-
-			return "<div style='padding:10px;'><h2>Remove ".$system->name." from known systems</h2><div>".$editForm."</div></div>";
+            return "null";
 		}
 
 		function getActivePilots()

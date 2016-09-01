@@ -84,7 +84,7 @@ Wormhole.prototype.setAsHomesystem = function() {
     this.map.colors.border = "#0066ff";
     this.map.colors.title = "#0066ff";
     this.map.colors.style = "bold";
-    this.solarsystem.persistant = true;
+    this.status.persistant = true;
 };
 
 
@@ -135,7 +135,7 @@ Wormhole.prototype.render = function(canvas)
             draggable: false
         }));
         wormholeFade.add(new Kinetic.Text({
-            x: 20,
+            x: 22,
             y: 4,
             text: this.getFullname(),
             fontSize: 12,
@@ -174,13 +174,14 @@ Wormhole.prototype.render = function(canvas)
         }));
     }
 
-    if (this.scanned.scanned) {
+    if (!this.scanned.finished) {
+        var offset = (this.scanned.scanned) ? 36 : 17+((this.isKspace())?5:0);
         wormhole.add(new Kinetic.Rect({
             x: 2,
-            y: 2,
+            y: offset,
             width: 17,
-            height: (this.scanned.finished) ? this.map.height-(Math.round(this.map.height/3)*2)-2 : this.map.height,
-            fill: "#aaaaaa",
+            height: this.map.height-offset-2,
+            fill: "#bbbbbb",
             draggable: false
         }));
     }
@@ -196,7 +197,7 @@ Wormhole.prototype.render = function(canvas)
         draggable: false
     }));
     wormhole.add(new Kinetic.Text({
-        x: 20,
+        x: 22,
         y: 4,
         text: this.getFullname(),
         fontSize: 12,
@@ -211,7 +212,7 @@ Wormhole.prototype.render = function(canvas)
     // titles
     for (var t=0; t<this.titles.length; t++) {
         wormhole.add(new Kinetic.Text({
-            x: 20,
+            x: 22,
             y: extraTxtHeight+1,
             text: this.titles[t].title,
             fontSize: 11,
@@ -224,7 +225,7 @@ Wormhole.prototype.render = function(canvas)
     }
     for (var t=0; t<this.subtitles.length; t++) {
         wormhole.add(new Kinetic.Text({
-            x: 20,
+            x: 22,
             y: extraTxtHeight,
             text: this.subtitles[t].title,
             fontSize: 11,
@@ -257,7 +258,7 @@ Wormhole.prototype.render = function(canvas)
         if (this.characters[c].isme)
             myCurrentLocation = true;
         wormhole.add(new Kinetic.Text({
-            x: 20,
+            x: 22,
             y: extraTxtHeight,
             text: this.characters[c].name,
             fontSize: 11,
@@ -290,7 +291,7 @@ Wormhole.prototype.render = function(canvas)
             draggable: false
         }));
     }
-    if (this.solarsystem.persistant) {
+    if (this.status.persistant) {
         wormhole.add(new Kinetic.Image({
             x: this.map.width-15,
             y: 2,
@@ -302,7 +303,7 @@ Wormhole.prototype.render = function(canvas)
     }
 
     var iconPosition = {
-        x: 20,
+        x: 22,
         y: this.map.height - 15
     };
     for (var j=0; j<this.icons.length; j++) {
@@ -347,11 +348,10 @@ Wormhole.prototype.render = function(canvas)
             document.body.style.cursor = "default";
             closeWormholeDetails(this.getName());
         });
-        wormhole.on("click", function (evt) {
+        wormhole.on("click", function (e) {
             closeContextMenu();
             closeWormholeDetails(this.getName());
-            var rightClick = evt.which ? evt.which == 3 : evt.button == 2;
-            if (rightClick) {
+            if (e.evt.which == 3) {
                 openContextMenu(this.getName(), mousePosX, mousePosY);
                 return false;
             } else {

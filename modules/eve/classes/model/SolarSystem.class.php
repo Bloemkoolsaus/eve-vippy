@@ -222,23 +222,14 @@ namespace eve\model
 
 		/**
 		 * Get known system
-		 * @return \admin\model\KnownWormhole|null
+		 * @return \map\model\KnownWormhole|null
 		 */
 		function getKnownSystem()
 		{
 			if ($this->knownSystem === null)
-			{
-				$known = new \admin\model\KnownWormhole($this->id);
-				if ($known->id == 0)
-					$this->knownSystem = false;
-				else
-					$this->knownSystem = $known;
-			}
+                $this->knownSystem = \map\model\KnownWormhole::findBySolarSystemID($this->id);
 
-			if ($this->knownSystem)
-				return $this->knownSystem;
-			else
-				return null;
+            return $this->knownSystem;
 		}
 
 		function isKnownSystem()
@@ -366,11 +357,12 @@ namespace eve\model
 			return $this->jumps[$systemID];
 		}
 
-		/**
-		 * Get solarsystems that are in cyno-jump range
-		 * @param double $maxJumpRange
-		 * return multitype:\eve\model\solarsystem
-		 */
+        /**
+         * Get solarsystems that are in cyno-jump range
+         * @param double $maxJumpRange
+         * return multitype:\eve\model\solarsystem
+         * @return array
+         */
 		function getSystemsInJumpRange($maxJumpRange)
 		{
 			$cacheFileName = "solarsystem/".$this->id."/cynorange.json";

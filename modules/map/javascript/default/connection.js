@@ -83,7 +83,6 @@ Connection.prototype.render = function(canvas) {
         strokeWidth: 10
     }));
     if (this.map.fill == "blocked") {
-        console.log("hoi");
         connection.add(new Kinetic.Line({
             points: this.getPoints(),
             draggable: false,

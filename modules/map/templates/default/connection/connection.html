@@ -9,13 +9,22 @@
 				{$connection->getToSystem()->name}
 			</th>
 		</tr>
+	{if $connection->normalgates}
+		<tr>
+			<td colspan="3" style="text-align: center; color: #0088ff;">
+				{$connection->getFromSystem()->getNrJumpsTo($connection->getToSystem()->id)} gate jumps
+			</td>
+		</tr>
+	{else}
 		<tr>
 			<td style="text-align: center;">{$fromtype}</td>
 			<td style="text-align: center;"></td>
 			<td style="text-align: center;">{$totype}</td>
 		</tr>
+	{/if}
 	</table>
 </div>
+{if !$connection->normalgates}
 <div style="float: right; width: 170px;">
 	<table>
 		<tr>
@@ -36,6 +45,7 @@
 		</tr>
 	</table>
 </div>
+{/if}
 <div style="clear:both;"></div>
 
 <div style="float: right; width: 100px; text-align: right; margin-right: 20px;">
@@ -83,6 +93,7 @@
 {/if}
 <div style="clear:both;"></div>
 
+{if !$connection->normalgates}
 {if $connection->allowCapitals}
 <div style="margin-top: 15px; color: #FFFFFF; font-weight: bold;">
 	<img src="/images/eve/cyno.large.png" align="left" style="margin-right: 15px; width: 24px;">
@@ -97,7 +108,7 @@
 	<div style="clear:both;"></div>
 </div>
 {/if}
-
+{/if}
 
 <div style="margin-top: 15px;">
 	<div>
@@ -126,7 +137,10 @@
 	</div>
 	<div style="clear:both;"></div>
 {/if}
+</div>
 
+{if !$connection->normalgates}
+<div style="margin-top: 15px;">
 {if $connection->massUpdateDate !== null && $connection->mass > 0}
 	<div style="margin-top: 10px;">
 		<div style="font-weight: bold; text-decoration: underline;">
@@ -166,4 +180,5 @@
 <div>
 	<div id="jumplogsummary"></div>
 </div>
+{/if}
 <div style="clear:both;"></div>

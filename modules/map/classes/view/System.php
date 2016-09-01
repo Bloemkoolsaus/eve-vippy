@@ -11,15 +11,14 @@ class System
         $cacheFile = "documents/statistics/systeminfo/".$system->id.".html";
         if (!file_exists($cacheFile) || \AppRoot::doDebug())
         {
-            $title = $system->getTitleOnChain(\User::getSelectedChain());
-
             $tpl = \SmartyTools::getSmarty();
-            if ($title)
-                $tpl->assign("systemtitle", $title);
             $tpl->assign("system", $system);
+            $tpl->assign("wormhole", $wormhole);
+
             if ($system->isWSpace())
                 $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
-            $cache = $tpl->fetch("map/system/details");
+
+            $cache = $tpl->fetch("map/system/solarsystem");
 
             // Goede map aanmaken
             if (!file_exists("documents"))
@@ -59,6 +58,23 @@ class System
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("systems", $closestSystems);
         return $tpl->fetch("map/system/tradehub");
+    }
+
+    function getContext($arguments=[])
+    {
+        $wormhole = new \map\model\Wormhole(array_shift($arguments));
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("wormhole", $wormhole);
+
+        if ($wormhole->getSolarsystem()->isKSpace()) {
+            $closeSysConsole = new \map\console\ClosestSystems();
+            $closestSystems = $closeSysConsole->getClosestSystems($wormhole->getSolarsystem(), true);
+            if (count($closestSystems) > 0)
+                $tpl->assign("closestsystem", $closestSystems[0]);
+        }
+
+        return $tpl->fetch("map/system/contextmenu");
     }
 
     /**

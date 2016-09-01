@@ -1,18 +1,14 @@
 {assign var=system value=$wormhole->getSolarsystem()}
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
-	<div style="font-size: 13px; margin-bottom: 10px;">
-		<span style="color:{$system->getClassColor()}">{$system->getClass()}</span>
-		{$system->name}
-		{if isset($systemtitle)}
-			&nbsp;|&nbsp;
-			{$systemtitle}
-		{/if}
-		{if $system->getKnownSystem() !== null && $system->getKnownSystem()->name != ''}
-			&nbsp;|&nbsp;
-			<span style="color:{$system->getKnownSystem()->getColor()};">{$system->getKnownSystem()->name}</span>
-		{/if}
-	</div>
 	<div style="float: left; width: 160px; padding: 5px;">
+		<h3 style="margin-bottom: 10px;">
+			<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+			{$system->name}
+			{if $wormhole->name|strlen > 0}
+				-
+				{$wormhole->name}
+			{/if}
+		</h3>
 		{literal}
 			{if $system->getNotes()}
 			{assign var=notes value=$system->getNotes()}

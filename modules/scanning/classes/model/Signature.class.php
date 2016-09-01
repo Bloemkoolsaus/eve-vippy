@@ -170,8 +170,8 @@ namespace scanning\model
 
 		function delete()
 		{
-			$this->deleted = true;
-			return $this->store();
+            $this->deleted = true;
+            return $this->store();
 		}
 
 		/**

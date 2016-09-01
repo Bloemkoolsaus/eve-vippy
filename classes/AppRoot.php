@@ -579,6 +579,12 @@ class AppRoot
 		}
 	}
 
+    public static function redidrectToReferer()
+    {
+        header("Location: ".$_SERVER["HTTP_REFERER"]);
+        exit;
+    }
+
 	public static function refresh()
 	{
 		self::redirect(\Tools::getCurrentURL());

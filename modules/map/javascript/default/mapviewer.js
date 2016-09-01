@@ -6,16 +6,16 @@ var allowMapLoadingFinish = true;
 
 $(window).load(function() {
 	if ($("#signatureMap").length > 0) {
-		reloadSignatureMap();
+		reloadSignatureMap(true);
 		$(document).bind("contextmenu", function() { return false; });
 	}
 });
 
-function reloadSignatureMap()
+function reloadSignatureMap(noCache)
 {
 	if (!mapIsMassDeleteMode()) {
 		loadSignatureMap();
-		loadSignatureList();
+		loadSignatureList(noCache);
 	}
     setTimeout(reloadSignatureMap, 3000);
 }
@@ -40,7 +40,7 @@ function allowMapRefresh()
     return true;
 }
 
-function loadSignatureMap(action, params)
+function loadSignatureMap(action, params, force)
 {
     if (!allowMapRefresh())
         return false;
@@ -50,9 +50,14 @@ function loadSignatureMap(action, params)
 
     if (!params)
         params = { };
-    if (!mapRendered())
-        params.nocache = 1;
     params.ajax = 1;
+
+    if (force) {
+        params.nocache = 1;
+    } else {
+        if (!mapRendered())
+            params.nocache = 1;
+    }
 
     allowMapLoadingStart = false;
     $.ajax({
@@ -106,132 +111,37 @@ function addWormhole(from,to)
 	});
 }
 
-function cancelAddWormhole()
+function deleteWormhole(systemName, removeConnected)
 {
-	$("#addWormholeForm").fadeOut(250,function() {
-		$("#mapButtons").show();
-		$("#addWormholeForm").html("");
-	});
-}
-
-function switchSystem(system)
-{
-	showLoadingPopup();
-	$("#currentSystem").attr("value",system);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
-	document.formChangeCurrentSystem.submit();
-}
-
-function selectSignatureType(sigID)
-{
-	var sigType =  $("#sigtype").val();
-
-	if (sigType == "wh")
-    {
-        var data = { sigtype: sigType, sigID: sigID };
-        var html = "";
-        if ($("td[rel=addsig_wormhole]").attr("data-whtype-input") == "select")
-            html = Mustache.to_html($("#whTypeSelectTPL").html(), data);
-        else
-            html = Mustache.to_html($("#whTypeInputTPL").html(), data);
-
-        $("#whTypeInputContainer").html(html);
-
-		$("td[rel=addsig_wormhole]").show();
-		$("#whtype").focus();
-	}
-    else
-    {
-		$("td[rel=addsig_wormhole]").hide();
-		$("#siginfo").focus();
-	}
-}
-
-function selectSignatureWhType(select)
-{
-    if (select.val() == "other")
-    {
-        var data = { whType: select.attr("data-whtype"), sigID: select.attr("data-sigid") };
-        var html = Mustache.to_html($("#whTypeInputTPL").html(), data);
-        if (select.attr("data-sigid")) {
-            $("#signWhTypeInput"+select.attr("data-sigid")).html(html);
-        } else {
-            $("#whTypeInputContainer").html(html);
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/remove/"+systemName+"/"+((removeConnected)?"connected":""),
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
         }
-    }
+    });
 }
 
-function addSignature()
+function setSystemPermanent(systemName)
 {
-	var reqURL = "index.php?module=scanning&section=map&action=addsignature&ajax=1";
-	reqURL += "&sig=" + $("#sigid").val();
-	reqURL += "&type=" + $("#sigtype").val();
-
-	if ($("#sigtype").val() == "wh")
-		reqURL += "&typeid=" + $("#whTypeInputContainer>[name=whtype]").val();
-
-	reqURL += "&info=" + $("#siginfo").val();
-
-	$("#sigid").attr("value","");
-	$("#sigtype").attr("value","");
-	$("#siginfo").attr("value","");
-	$("#whtype").attr("value","");
-	$("#sigid").focus();
-
-	$.ajax({
-		url: reqURL,
-		success: function(data) {
-			loadSignatureList();
-		}
-	});
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/permanent/"+systemName,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
-function removeSig(id)
+function unsetSystemPermanent(systemName)
 {
-	var reqURL = "index.php?module=scanning&section=map&action=deletesignature&id="+id+"&ajax=1";
-	$("#signatureList"+id).fadeOut();
-	$.ajax({
-		url: reqURL,
-		success: function(data) {
-			// Doe niets. Lijst-update gaat vanzelf!
-		}
-	});
-}
-
-function saveWormhole()
-{
-	var url = "&rename="+$("#renameid").val();
-	url += "&name="+$("#renamename").val();
-	url += "&status="+$("#whstatus").val();
-	url += "&notes="+document.getElementById("notes").value;
-	url += "&nocache=1";
-	loadSignatureMap(url);
-}
-
-function deleteWormhole(wormholeID, removeConnected)
-{
-	var url = "&delete="+wormholeID+"&nocache=1";
-	if (removeConnected)
-		url += "&removeConnected=1";
-
-	loadSignatureMap(url);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
-}
-
-function setSystemPermanent(wormholeID)
-{
-	loadSignatureMap("&setpermanent="+wormholeID);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
-}
-
-function unsetSystemPermanent(wormholeID)
-{
-	loadSignatureMap("&unsetpermanent="+wormholeID);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/permanent/"+systemName,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
 function massDeleteWormholes()
@@ -299,41 +209,24 @@ function showActivePilots()
 	});
 }
 
-function showTrackingOnlyModeHelp()
+
+function addToKnownSystems(systemName)
+{
+    $.ajax({
+        url: "/map/knownwormhole/add/"+systemName+"/",
+        data: { ajax: 1 },
+        success: function(data) {
+            showPopup(data, 500, 200);
+        }
+    });
+}
+function removeFromKnownSystems(systemName)
 {
 	$.ajax({
-		url: "/index.php?module=scanning&section=trackingonly&action=showhelp&ajax=1",
+        url: "/map/knownwormhole/remove/"+systemName+"/",
+        data: { ajax: 1 },
 		success: function(data) {
-			showPopup(data,500,400);
-		}
-	});
-}
-
-function enableTrackingOnly()
-{
-	document.location = "index.php?module=scanning&section=trackingonly&action=enabletrackingonly";
-}
-
-function disableTrackingOnly()
-{
-	document.location = "index.php?module=scanning&section=trackingonly&action=disabletrackingonly";
-}
-
-function addToKnownSystems(system)
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=1&system="+system,
-		success: function(data) {
-			showPopup(data, 400, 250);
-		}
-	});
-}
-function removeFromKnownSystems(system)
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=addtoknownsystems&ajax=remove&system="+system,
-		success: function(data) {
-			showPopup(data,500,200);
+			showPopup(data, 500, 200);
 		}
 	});
 }

@@ -100,6 +100,7 @@ class SmartyTools
 	public static function getSmarty()
 	{
 		$smarty = new \Smarty();
+        $smarty->use_sub_dirs = true;
 		$smarty->setPluginsDir("classes/smarty/plugins");
 		$smarty->setCompileDir(self::getCompiledDir());
 		$smarty->default_template_handler_func = "SmartyTools::getSmartyTemplate";
