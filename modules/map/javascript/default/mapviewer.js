@@ -122,18 +122,26 @@ function deleteWormhole(systemName, removeConnected)
     });
 }
 
-function setSystemPermanent(wormholeID)
+function setSystemPermanent(systemName)
 {
-	loadSignatureMap("&setpermanent="+wormholeID);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/permanent/"+systemName,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
-function unsetSystemPermanent(wormholeID)
+function unsetSystemPermanent(systemName)
 {
-	loadSignatureMap("&unsetpermanent="+wormholeID);
-	if ($("#wormholeContext").length > 0)
-		$("#wormholeContext").remove();
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/permanent/"+systemName,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
 function massDeleteWormholes()

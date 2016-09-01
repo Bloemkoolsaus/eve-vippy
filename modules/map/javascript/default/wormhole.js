@@ -84,7 +84,7 @@ Wormhole.prototype.setAsHomesystem = function() {
     this.map.colors.border = "#0066ff";
     this.map.colors.title = "#0066ff";
     this.map.colors.style = "bold";
-    this.solarsystem.persistant = true;
+    this.status.persistant = true;
 };
 
 
@@ -291,7 +291,7 @@ Wormhole.prototype.render = function(canvas)
             draggable: false
         }));
     }
-    if (this.solarsystem.persistant) {
+    if (this.status.persistant) {
         wormhole.add(new Kinetic.Image({
             x: this.map.width-15,
             y: 2,

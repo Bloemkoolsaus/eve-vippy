@@ -175,6 +175,20 @@ class Map
                     $wormhole->delete();
             }
         }
+        return "done";
+    }
+
+    function getPermanent(\map\model\Map $map, $arguments=[])
+    {
+        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
+        if ($system) {
+            $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
+            if ($wormhole) {
+                $wormhole->permanent = !$wormhole->isPermenant();
+                $wormhole->store();
+            }
+        }
+        return "done";
     }
 
     private function storeSignature(\map\model\Map $map)

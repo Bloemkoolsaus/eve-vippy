@@ -64,12 +64,12 @@
     {/if}
     {if $App->user->isAllowedChainAction($wormhole->getChain(), 'move')}
         {if $wormhole->permanent == 0}
-            <div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
+            <div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->name}'); closeContextMenu();" style="border: 0px;">
                 <img src="/images/eve/pin.png" align="left" />
                 Mark system as persistant
             </div>
         {else}
-            <div onclick="unsetSystemPermanent('{$wormhole->getSolarsystem()->id}'); closeContextMenu();" style="border: 0px;">
+            <div onclick="unsetSystemPermanent('{$wormhole->getSolarsystem()->name}'); closeContextMenu();" style="border: 0px;">
                 <img src="/images/eve/pin.png" align="left" />
                 Unmark system as persistant
             </div>

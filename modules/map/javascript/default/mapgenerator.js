@@ -191,10 +191,13 @@ function generateSystems(data)
             }
         }
 
+        if (data[i].persistant != null) {
+            if (data[i].persistant)
+                wormhole.status.persistant = true;
+        }
+
         if (data[i].attributes != null)
         {
-            if (data[i].attributes.persistant != null)
-                wormhole.status.persistant = data[i].persistant;
             if (data[i].attributes.factionid != null)
                 wormhole.solarsystem.faction = data[i].attributes.factionid;
 
