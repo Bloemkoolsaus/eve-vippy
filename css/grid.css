@@ -1,11 +1,25 @@
+<<<<<<< HEAD
 /* *********************************************************************************************************************
  * Common columns definitions
  */
+=======
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+
+/* Common columns definitions */
+>>>>>>> production
 .col1, .col2, .col3, .col4, .col5, .col6, .col7, .col8, .col9, .col10, .col11, .col12 {
     float: left;
     margin: 0 3% 0 0;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> production
 .col1.last, .col2.last, .col3.last, .col4.last, .col5.last, .col6.last, .col7.last, .col8.last, .col9.last, .col10.last, .col11.last, .col12 {
     margin: 0;
 }
@@ -24,6 +38,7 @@
 .col12 { width: 99%; margin: 0; }
 
 
+<<<<<<< HEAD
 /* *********************************************************************************************************************
  * Small devices
  */
@@ -31,6 +46,10 @@
     .onerow {
     }
 
+=======
+/* Small devices */
+@media all and (max-width: 768px) {
+>>>>>>> production
     .col1, .col2, .col3, .col4, .col5, .col6, .col7, .col8, .col9, .col10, .col11 {
         float: none;
         width: 99%;

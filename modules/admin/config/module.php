@@ -64,12 +64,22 @@ if (\User::getUSER()->getIsSysAdmin())
 								"section" => "clearcache");
 }
 
+if (\User::getUSER()->isAdmin())
+{
+    $config["submenu"][] = array(
+        "type" => "link",
+        "name" => "API Management",
+        "url" => "api/admin");
+}
 
-$config["rights"]["sysadmin"] = array("title" => "System Administrator", "name" => "sysadmin",
-									"description" => "<p><b>!ATTENTION! This user has all rights and can view all scanning-chains!!</b></p>");
+$config["rights"]["sysadmin"] = array(
+    "title" => "System Administrator",
+    "name" => "sysadmin",
+    "description" => "<p><b>!ATTENTION! This user has all rights and can view all scanning-chains!!</b></p>"
+);
+
 
 // SET CONFIG
 foreach ($config as $var => $val) {
 	\AppRoot::config("admin".$var, $val);
 }
-?>

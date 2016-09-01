@@ -5,7 +5,17 @@ namespace api\api
 	{
 		function doRequest($arguments)
 		{
-			return \api\HTTP::getHTTP()->sendUnknownRequest();
+			$this->authenticateClient();
+
+			$method = "get".ucfirst(trim(strtolower(array_shift($arguments))));
+			if (method_exists($this, $method))
+				return $this->$method($arguments);
+
+			// Probeer default
+			if (method_exists($this, "getDefault"))
+				return $this->getDefault($arguments);
+
+			return $this->getHTTP()->sendUnknownRequest();
 		}
 	}
 }
