@@ -1,0 +1,39 @@
+<div class="content">
+	<h1>Add Characters</h1>
+	<div class="col4">
+		<h3>Login to CREST to add a Character</h3>
+		<div style="padding: 1em;">
+			<form method="post" action="/profile/characters/addnew">
+				<input type="hidden" name="addCharacter" value="true"/>
+				<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
+			</form>
+		</div>
+	</div>
+	<div class="col8 right last">
+		<div class="message">
+			<div style="padding: .5em;">
+				<div><h3>Logging in with multiple eve accounts</h3></div>
+				<div>
+					If the CREST SSO logs you into the wrong account.
+					Press 'cancel' and you will be able to login to the correct account.
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="content">
+	<h1>Character Overview</h1>
+{assign var=i value=0}
+{foreach from=$characters key=c item=character}
+	<div class="col6 {if $i%2==1}right last{/if}">
+		<h3>{$character->name}</h3>
+		<pre>{$character|print_r}</pre>
+	</div>
+	{assign var=i value=$i+1}
+{/foreach}
+	<div style="clear:both;"></div>
+</div>
+<div style="clear:both;"></div>

@@ -5,6 +5,8 @@ namespace profile\console
 	{
 		function checkApiKeys()
 		{
+            return true;
+
 			\AppRoot::setMaxExecTime(600);
 			\AppRoot::debug("check api keys");
 

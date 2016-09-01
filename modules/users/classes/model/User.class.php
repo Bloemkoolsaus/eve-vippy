@@ -1071,7 +1071,6 @@ namespace users\model
 													FROM    characters ch
 														INNER JOIN corporations corp ON corp.id = ch.corpid
 													WHERE	ch.userid = ?
-													AND		ch.api_keyid > 0
 													GROUP BY corp.id"
 										, array($this->id)))
 			{
@@ -1352,7 +1351,7 @@ namespace users\model
 					$this->authGroupIDs = array();
 					if ($results = \MySQL::getDB()->getRows("SELECT	if (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid) AS authgroupid
 															FROM	users u
-																INNER JOIN characters c ON c.userid = u.id AND c.api_keyid > 0
+																INNER JOIN characters c ON c.userid = u.id
 															    INNER JOIN corporations corp ON corp.id = c.corpid
 															    LEFT JOIN user_auth_groups_corporations uc ON uc.corporationid = corp.id
 															    LEFT JOIN user_auth_groups_alliances ua ON ua.allianceid = corp.allianceid
@@ -1599,10 +1598,7 @@ namespace users\model
 			if ($results = \MySQL::getDB()->getRows("SELECT	u.*
 													FROM	users u
 														INNER JOIN characters c ON c.userid = u.id
-													    INNER JOIN api_keys a ON a.keyid = c.api_keyid
-													WHERE	u.isvalid is not null AND u.isvalid = 1
-													AND		a.valid > 0 AND a.deleted = 0
-													AND		c.corpid = ?
+													WHERE	c.corpid = ?
 													GROUP BY u.id
 													ORDER BY u.displayname ASC"
 										, array($corporationID)))
@@ -1633,15 +1629,16 @@ namespace users\model
 
 			return null;
 		}
-		
-		public static function getUserByToon($characterid) {
+
+		public static function getUserByToon($characterid)
+        {
 			if ($result = \MySQL::getDB()->getRow("SELECT userid FROM characters WHERE id = ?", array($characterid)))
 			{
 				$user = new \users\model\User($result["userid"]);
 				return $user;
 			}
 			return null;
-			
+
 		}
 	}
 }

@@ -709,7 +709,7 @@ class AppRoot
             echo $msg.PHP_EOL;
         }
         else
-            \AppRoot::debug("<pre>".$var."</pre>");
+            \AppRoot::debug("<div style='background-color: #111133; color: #eeeeee; padding: 1px;'>".$var."</div>");
     }
 }
 ?>

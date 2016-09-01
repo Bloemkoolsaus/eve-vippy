@@ -24,7 +24,7 @@ class User extends \users\model\User
 	 */
 	public static function getUSER()
 	{
-		if (self::$currentUser == null || self::$currentUser->id == 0)
+		if (self::$currentUser == null)
 		{
 			if ($userID = self::getLoggedInUserId())
 				self::setUSER($userID);
@@ -37,8 +37,8 @@ class User extends \users\model\User
 
 	public static function setUSER($userID=false)
 	{
-		\AppRoot::debug("setUSER(".$userID.")");
-		self::$currentUser = new \users\model\User($userID);
+        \AppRoot::debug("setUSER(".$userID.")");
+        self::$currentUser = new \users\model\User($userID);
 	}
 
 	public static function generatePassword($password, $check=false)

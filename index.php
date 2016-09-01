@@ -1,6 +1,4 @@
 <?php
-use users\model\Oauth;
-
 require_once("init.php");
 \AppRoot::debug("finished init");
 
@@ -13,6 +11,28 @@ $mainContent = null;
 $mainMenu = null;
 
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
+
+
+
+if (Tools::POST("sso") == "true")
+{
+    Print " tring SSO login";
+
+    $oath = new \api\model\Oauth();
+    $oath->requestAuthorization();
+    $oath->getCharacterID();
+}
+
+/**
+ * CREST callback
+ */
+if (\Tools::GET("state") && \Tools::GET("code"))
+{
+    $oath = new \api\model\Oauth();
+    $oath->getAccessToken(\Tools::GET("state"), \Tools::GET("code"));
+}
+
+
 
 // KONINGSDAG
 if (date("Y-m-d") == date("Y")."-04-27") {
@@ -58,21 +78,6 @@ if (Tools::POST("doLogin") == "true")
 			$loginMsg = "Incorrect username or password";
 	}
 }
-
-if (Tools::POST("sso") == "true") 
-{
-	Print " tring SSO login";	
-	
-	$oath = new users\model\Oauth();
-	$oath->requestAuthorization();
-	$oath->getCharacterID();
-}
-
-if (Tools::GET("state") && Tools::GET("code")) {
-	$oath = new users\model\Oauth();
-	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));	
-
-} 
 
 if (!\User::getLoggedInUserId())
 {

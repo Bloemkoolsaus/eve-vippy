@@ -115,26 +115,6 @@ namespace eve\controller
 			return false;
 		}
 
-		/**
-		 * Get characters bij api-key
-		 * @param integer $apiKeyID
-		 * @return \eve\model\Character[]
-		 */
-		function getCharactersByApiKey($apiKeyID)
-		{
-			$characters = array();
-			if ($results = $this->db->getRows("SELECT * FROM characters WHERE api_keyid = ? ORDER BY name", array($apiKeyID)))
-			{
-				foreach ($results as $result)
-				{
-					$char = new \eve\model\Character();
-					$char->load($result);
-					$characters[] = $char;
-				}
-			}
-			return $characters;
-		}
-
 		function getCharactersByUserID($userID)
 		{
 			$characters = array();
@@ -151,4 +131,3 @@ namespace eve\controller
 		}
 	}
 }
-?>

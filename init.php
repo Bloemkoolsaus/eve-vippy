@@ -41,7 +41,7 @@ foreach ($directories as $directory) {
             if (is_file($filename))
                 require_once($filename);
         }
-    } 
+    }
 }
 
 // Load Classes
@@ -58,3 +58,4 @@ if ($handle = @opendir($directory)) {
 
 \AppRoot::$startTime = $startTime;
 \AppRoot::debug("Initializing");
+\AppRoot::parseRequestURL();

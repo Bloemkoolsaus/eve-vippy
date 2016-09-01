@@ -1,9 +1,7 @@
 <?php
 namespace profile\controller
 {
-	use users\model\Oauth;
-
-	class Profile
+    class Profile
 	{
 		function getApiOverview()
 		{
@@ -89,18 +87,19 @@ namespace profile\controller
 				\User::getUSER()->setMainCharacter(\Tools::REQUEST("setmain"));
 				\AppRoot::redirect("index.php?module=profile&section=chars");
 			}
-			
+
 			if (\Tools::REQUEST("deleteChar")) {
 				\eve\model\Character::delete(\Tools::REQUEST("deleteChar"));
 				\AppRoot::redirect("index.php?module=profile&section=chars");
 			}
-			
+
 			if (\Tools::POST("addCharacter")) {
-				$oauth = new \users\model\Oauth();
+				$oauth = new \api\model\Oauth();
 				$oauth->requestAuthorization();
 				// is send to eve login.
 			}
 
+            /** @var \eve\model\Character[] $characters */
 			$characters = array();
 			foreach ($characters as $char)
 			{
@@ -112,7 +111,7 @@ namespace profile\controller
 									"alliance"		=> $char->getCorporation()->getAlliance()->name,
 									"ceo"		=> $char->isCEO,
 									"director"	=> $char->isDirector,
-									"hasState"  => $char->hasState);
+									"hasState"  => $char->hasState());
 				if (\User::getUSER()->getMainCharacter()->id == $char->id)
 					$character["main"] = 1;
 

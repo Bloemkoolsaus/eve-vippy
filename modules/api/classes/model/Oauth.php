@@ -1,5 +1,5 @@
 <?php
-namespace users\model
+namespace api\model
 {
 	class Oauth
 	{
@@ -7,41 +7,49 @@ namespace users\model
 		public $accesstoken;
 		public $refreshtoken;
 		public $expires;
-		public $characterId; 
+		public $characterId;
 		public $characterOwnerHash;
-		
-		public function requestAuthorization(){
-			$params = array('response_type' => 'code',
-					'redirect_uri' => CREST_CALLBACK_URL,
-					'client_id' => CREST_CLIENT_ID,
-					'scope' => $this->getScopes(),
-					'state' => $this->generateAndSaveUniqueState()
-			);
-			
-			$url = CREST_LOGIN_URL . "/authorize/?" . http_build_query($params , '', '&', PHP_QUERY_RFC3986);
+
+		public function requestAuthorization()
+        {
+			$params = [
+                'response_type' => 'code',
+                'redirect_uri' => \Config::getCONFIG()->get("crest_callback_url"),
+                'client_id' => \Config::getCONFIG()->get("crest_clientid"),
+                'scope' => $this->getScopes(),
+                'state' => $this->generateAndSaveUniqueState()
+            ];
+
+			$url = \Config::getCONFIG()->get("crest_login_url")."/authorize/?".http_build_query($params, '', '&', PHP_QUERY_RFC3986);
 			header('Location:'.$url);
 			exit();
 		}
-		
-		/**
-		 * after requesting a new Authorization a code is returned. This
-		 * code can be used once to get an accessToken.
-		 */
-		public function getAccessToken($state, $code) {
-			// make sure we created the $state by chcking the cache for it.
+
+        /**
+         * After requesting a new Authorization a code is returned.
+         * This code can be used once to get an accessToken.
+         * @param $state
+         * @param $code
+         * @return null
+         */
+		public function getAccessToken($state, $code)
+        {
+			// Make sure we created the $state by checking the cache for it.
 			$cacheFileName = "sso/" . $state;
 			if (\Cache::file()->get($cacheFileName) == null) {
 				\AppRoot::error("Reveiced state was not regonized.");
 				return null;
-			} 
-			
-			$url = CREST_LOGIN_URL . '/token';		
-			$postbody = array('grant_type' => 'authorization_code',
-					'code' =>  $code
-				);
-			$header = array("Authorization: Basic " . $this->getBasicAuthorizationCode(),
-					"Content-Type: application/json" 
-				);
+			}
+
+			$url = \Config::getCONFIG()->get("crest_login_url").'/token';
+			$postbody = [
+                'grant_type' => 'authorization_code',
+                'code' =>  $code
+			];
+			$header = [
+                "Authorization: Basic " . $this->getBasicAuthorizationCode(),
+                "Content-Type: application/json"
+            ];
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_POST, true);
@@ -52,7 +60,7 @@ namespace users\model
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
 			$curlresponse = curl_exec($curl);
-		
+
 			if ($curlresponse == false) {
 				echo 'Curl error: ' . curl_error($curl);
 			} else {
@@ -62,111 +70,109 @@ namespace users\model
 			}
 			curl_close($curl);
 		}
-		
-		public function getCrest($character, $url) {
-		
+
+		public function getCrest($character, $url)
+        {
+
 		}
-		
-		// With verify we can request which character it used to login. 
-		public function verify() {
-			\AppRoot::debug("verifing...");
-			$url = CREST_LOGIN_URL . '/verify';
-			$header = array('Authorization: Bearer ' . $this->accesstoken,
-					'Content-Type: application/json');
+
+        /**
+         * With verify we can request which character it used to login
+         */
+		public function verify()
+        {
+			\AppRoot::doCliOutput("CREST Verifing...");
+			$url = \Config::getCONFIG()->get("crest_login_url").'/verify';
+			$header = array('Authorization: Bearer ' . $this->accesstoken, 'Content-Type: application/json');
 			$curl = curl_init();
 			curl_setopt($curl, CURLOPT_URL, $url);
 			curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
 			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($curl);
-			if ($response == false) {
+			if ($response == false)
+            {
 				\AppRoot::error( 'Curl error: ' . curl_error($curl));
-			} else {
+			}
+            else
+            {
 				$verifydata = json_decode($response);
-				if (isset($verifydata->CharacterID)) {
-					\AppRoot::debug("verify : Character was = " . $verifydata->CharacterID . " - " . $verifydata->CharacterName);
-					// if we have a vippy account logged in...
-					$user = User::getUserByToon($verifydata->CharacterID);
-					$loggedinUserId = \User::getLoggedInUserId(); 
-					if ($loggedinUserId == 0) {
-						\AppRoot::debug('Verify: using the verify character for login.');
-						$this->doLogin($verifydata);
-					} else {
-						\AppRoot::debug('Verify : User ' . $loggedinUserId . ' is logged in. Using character for adding');
-						// yes, then this might be a character to add.
-						$this->addCharacter($loggedinUserId, $verifydata);
-					}
+				if (isset($verifydata->CharacterID))
+                {
+                    \AppRoot::doCliOutput("CREST Verify : Character was = " . $verifydata->CharacterID . " - " . $verifydata->CharacterName);
+
+                    $url = "profile/characters";
+                    $user = \User::getUSER();
+                    if (!$user->loggedIn()) {
+                        // No vippy session, login user.
+                        \AppRoot::doCliOutput("No vippy session detected. Login user.");
+                        $url = "map";
+                        $user = $this->doLogin($verifydata);
+                    }
+
+                    if ($user)
+                        $this->addCharacter($user, $verifydata);
+                    else
+                        $url = "/";
+
+                    \AppRoot::redirect($url);
 				}
 			}
 			curl_close($curl);
 		}
-		
-		private function doLogin($verifydata) {
+
+        /**
+         * Login by CREST
+         * @param $data
+         * @return \users\model\User|null
+         */
+		private function doLogin($data)
+        {
 			// find the user which belongs to the character.
-			$user = User::getUserByToon($verifydata->CharacterID);
-			if ($user == null || $user->id == 0) {
-				//unknown character and without a vippy account
-				// error
-				return null;
-			} else {
-				// stil need to update access and refresh tokens to character.
-				$user->setLoginStatus(true);
-				\AppRoot::debug("user " . $user->username . " logged in successful. Now update the character ...");
-				$this->createOrUpdateCharacter($user->id, $verifydata);
-			}
+			$character = new \eve\model\Character($data->CharacterID);
+			if ($character->getUser())
+                $character->getUser()->setLoginStatus(true);
+
+            return $character->getUser();
 		}
-		
-		private function addCharacter($loggedinUserId, $verifydata) {
-			$user = User::getUserByToon($verifydata->CharacterID);
-			$knownCharacter = new \eve\model\Character($verifydata->CharacterID);
-			
-			// if we know the character, lets check if the owner hasn't changed.
-			if ($knownCharacter->crest_ownerhash != null &&$knownCharacter->crest_ownerhash != $verifydata->CharacterOwnerHash) {
+
+		private function addCharacter(\users\model\User $user, $data)
+        {
+			$character = new \eve\model\Character($data->CharacterID);
+
+			// Detect owner change
+			if ($character->crest_ownerhash != null && $character->crest_ownerhash != $data->CharacterOwnerHash)
+            {
 				// Owner changed!
-				\AppRoot::debug('The known ownerhash is differnt then the verifydata hash. Character has a different owner!'); 
+				\AppRoot::debug('The known ownerhash is differnt then the verifydata hash. Character has a different owner!');
 				return;
-			} 
-			if ($user == null || $user->id == 0) {
-				\AppRoot::debug('verify : need to add character to the logged in user');
-				$this->createOrUpdateCharacter($loggedinUserId, $verifydata);
-				// okay now go back to character overview.
-				\AppRoot::redirect("?module=profile&section=chars&addedtoon=".$verifydata->CharacterID, true);
-			} else {
-				// logged in user must be same as character user.
-				if($user->id != $loggedinUserId){
-					\AppRoot::debug('fishy. the user logged in '. $loggedinUserId . ' is not the same as ' . $user->id);
-					// fishy. the user logged in is not the same as the user from
-					// the character.
-					return;
-				} else {
-					// weird, we know the character and the user... still
-					// we need to save the access and refresh token.
-					$this->createOrUpdateCharacter($loggedinUserId, $verifydata);
-				}
 			}
+
+            // Check user
+            if ($character->getUser()) {
+                \AppRoot::doCliOutput("Character user: ".$character->getUser()->displayname);
+                \AppRoot::doCliOutput("Selected user: ".$user->displayname);
+                if ($character->getUser()->id != $user->id) {
+                    \AppRoot::doCliOutput("USER MISMATCH!");
+                    return;
+                }
+            }
+
+            $character->id = $data->CharacterID;
+            $character->name = $data->CharacterName;
+            $character->userID = $user->id;
+            $character->crest_state = $this->state;
+            $character->crest_accesstoken = $this->accesstoken;
+            $character->crest_refreshtoken = $this->refreshtoken;
+            $character->crest_scopes = $data->Scopes;
+            $character->crest_ownerhash = $data->CharacterOwnerHash;
+            $character->store();
+            \AppRoot::redirect("profile/characters");
 		}
-		
-		
-		private function createOrUpdateCharacter($loggedInUserID, $verifyData) {
-			
-			\AppRoot::debug($verifyData);
-			$character = new \eve\model\Character($verifyData->CharacterID);
-			\AppRoot::debug("createOrUpdateCharacter loaded above character... resulting in below data");
-			\AppRoot::debug($character);
-			
-			$character->id = $verifyData->CharacterID;
-			$character->name = $verifyData->CharacterName;
-			$character->userID = $loggedInUserID;
-			$character->crest_state = $this->state;
-			$character->crest_accesstoken = $this->accesstoken;
-			$character->crest_refreshtoken = $this->refreshtoken;
-			$character->crest_scopes = $verifyData->Scopes;
-			$character->crest_ownerhash = $verifyData->CharacterOwnerHash;
-			$character->store();
-// 			\AppRoot::redirect("?module=profile&section=chars", true);
-		}
-		
-		private function processTokenResponse($curl, $curlresponse) {
+
+
+		private function processTokenResponse($curl, $curlresponse)
+        {
 			if ($curlresponse == false) {
 				// error
 			} else {
@@ -182,24 +188,27 @@ namespace users\model
 				}
 			}
 		}
-		
-		private function getBasicAuthorizationCode() {
-			$concat = CREST_CLIENT_ID . ":" . CREST_SECRET_KEY;
+
+		private function getBasicAuthorizationCode()
+        {
+			$concat = \Config::getCONFIG()->get("crest_clientid").":".\Config::getCONFIG()->get("crest_secret_key");
 			$base = base64_encode($concat);
 			return $base;
 		}
 
 		// Generate a strong random string and save it in the cache
 		// we don't know yet who it is.
-		private function generateAndSaveUniqueState() {
+		private function generateAndSaveUniqueState()
+        {
 			$bytes = openssl_random_pseudo_bytes(16, $cstrong);
 			$state = bin2hex($bytes);
 			$cacheFileName = "sso/" . $state;
 			\Cache::file()->set($cacheFileName, '{}');
 			return $state;
 		}
-		
-		private function getScopes() {
+
+		private function getScopes()
+        {
 			// All possible scopes, for now just the location
 			$scopes = array(
 			// 				'characterAccountRead',   // Read your account subscription status.
@@ -216,7 +225,7 @@ namespace users\model
 			// 				'characterFittingsWrite',	// Allows an application to create and delete the saved fits for your character.
 			// 				'characterIndustryJobsRead', //: List your industry jobs.
 			// 				'characterKillsRead', 		//: Read your kill mails.
-			'characterLocationRead' 	//: Allows an application to read your characters real time location in EVE.
+			                'characterLocationRead', 	//: Allows an application to read your characters real time location in EVE.
 			// 				'characterLoyaltyPointsRead', //: List loyalty points your character has for the different corporations.
 			// 				'characterMailRead', 		//: Read your EVE Mail.
 			// 				'characterMarketOrdersRead', //: Read your market orders.
@@ -240,9 +249,9 @@ namespace users\model
 			// 				'corporationShareholdersRead', 		//: List your corporation's shareholders and their shares.
 			// 				'corporationStructuresRead', 		//: List your corporation's structures, outposts, and starbases.
 			// 				'corporationWalletRead', 		//: Read your corporation's wallet status, transaction, and journal history.
-			// 				'fleetRead', 		//: Allows real time reading of your fleet information (members, ship types, etc.) if you're the boss of the fleet.
+			 				'fleetRead', 		//: Allows real time reading of your fleet information (members, ship types, etc.) if you're the boss of the fleet.
 			// 				'fleetWrite', 		//: Allows the ability to invite, kick, and update fleet information if you're the boss of the fleet.
-			// 				'publicData', 		//: Allows access to public data.
+			 				'publicData', 		//: Allows access to public data.
 			// 				'remoteClientUI',   //Allows applications to control the UI of your EVE Online client
 			// 				'structureVulnUpdate' 		//: Allows updating your structures' vulnerability timers.
 			);
@@ -250,9 +259,9 @@ namespace users\model
 			return implode(' ', $scopes);
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 }
 ?>

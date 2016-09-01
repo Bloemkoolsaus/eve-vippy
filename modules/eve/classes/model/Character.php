@@ -4,27 +4,24 @@ namespace eve\model
 	class Character
 	{
 		public $id = 0;
-		public $apiKeyID = 0;
 		public $userID = 0;
 		public $name;
 		public $corporationID = 0;
 		public $isDirector = false;
 		public $isCEO = false;
 		public $titles = array();
-		public $skills = array();
-		public $dateOfBirth = null;
 		public $updatedate;
 
 		private $isAuthorized = null;
 		private $corporation = null;
 		private $roles = null;
-		private $apikey = null;
 		private $user = null;
-		
+
 		public $crest_state = null;
 		public $crest_accesstoken = null;
 		public $crest_refreshtoken = null;
-		public $crest_ownerhash = null;
+        public $crest_expires = null;
+        public $crest_ownerhash = null;
 
 		function __construct($id=false)
 		{
@@ -42,108 +39,49 @@ namespace eve\model
 			if ($result)
 			{
 				$this->id = $result["id"];
-				$this->apiKeyID = $result["api_keyid"];
 				$this->userID = $result["userid"];
 				$this->name = $result["name"];
 				$this->corporationID = $result["corpid"];
 				$this->isDirector = ($result["isdirector"]>0)?true:false;
 				$this->isCEO = ($result["isceo"]>0)?true:false;
-				$this->dateOfBirth = $result["dob"];
 				$this->updatedate = $result["updatedate"];
 				$this->crest_state = $result["crest_state"];
 				$this->crest_accesstoken = $result["crest_accesstoken"];
 				$this->crest_refreshtoken = $result["crest_refreshtoken"];
 				$this->crest_expires = $result["crest_expires"];
 				$this->crest_ownerhash = $result["crest_ownerhash"];
-				\AppRoot::debug("Loaded character:");
-				\AppRoot::debug($this);
 			}
 		}
 
 		function store()
 		{
-			// Get old data. Check for differences!
-			if ($this->id > 0)
-			{
-				$old = new \eve\model\Character($this->id);
-
-				// Check user
-				if ($old->userID != 0 && $old->userID != $this->userID)
-				{
-					$user = new \users\model\User($this->userID);
-					$user->addLog("character-owner-changed", $this->id,
-							array(	"character" => $this->id,
-									"fromuser"	=> $old->userID,
-									"touser"	=> $this->userID));
-
-					// Add notification for both users
-					$content = [];
-					$content[] = "API check has found multiple api keys for character `".$this->name."`.";
-					$content[] = $this->name." is owned by more then one VIPPY account.";
-					$content[] = "";
-					$content[] = "You will get problems authenticating for VIPPY because of ambiguous API keys.";
-					$content[] = "Please remove API keys from your secondary VIPPY accounts and use only one VIPPY account per person!";
-
-                    $openApiNotifications = false;
-                    foreach (\users\model\Notification::findAll(["userid" => $this->userID]) as $note) {
-                        if (!$note->readDate)
-                            $openApiNotifications = true;
-                    }
-                    if (!$openApiNotifications) {
-                        $note = new \users\model\Notification();
-                        $note->userID = $this->userID;
-                        $note->type = "error";
-                        $note->title = "Duplicate API keys found!!";
-                        $note->content = implode("\n", $content);
-                        $note->store();
-                    }
-				}
-
-				// Check API Key
-				if ($old->apiKeyID != 0 && $old->apiKeyID != $this->apiKeyID)
-				{
-					$user = new \users\model\User($this->userID);
-					$user->addLog("character-apikey-changed", $this->id,
-							array(	"character" => $this->id,
-									"fromapi"	=> $old->apiKeyID,
-									"toapi"		=> $this->apiKeyID));
-				}
-			}
-
-			$data = array(	"id"			=> $this->id,
-							"name"			=> $this->name,
-							"api_keyid"		=> $this->apiKeyID,
-							"userid"		=> $this->userID,
-							"corpid"		=> $this->corporationID,
-							"isdirector"	=> ($this->isDirector())?1:0,
-							"isceo"			=> ($this->isCEO())?1:0,
-							"dob"			=> $this->getDateOfBirth(),
-							"updatedate"	=> date("Y-m-d H:i:s"),
-							"crest_state"	=> $this->crest_state,
-							"crest_accesstoken" => $this->crest_accesstoken,
-							"crest_refreshtoken" => $this->crest_refreshtoken,
-							"crest_ownerhash" => $this->crest_ownerhash
-					);
-			\AppRoot::debug("Storing character : " . $this->name);
-			\AppRoot::debug($data);
+			$data = [
+                "id"			=> $this->id,
+                "name"			=> $this->name,
+                "userid"		=> $this->userID,
+                "corpid"		=> $this->corporationID,
+                "isdirector"	=> ($this->isDirector())?1:0,
+                "isceo"			=> ($this->isCEO())?1:0,
+                "updatedate"	=> date("Y-m-d H:i:s"),
+                "crest_state"	=> $this->crest_state,
+                "crest_accesstoken" => $this->crest_accesstoken,
+                "crest_refreshtoken" => $this->crest_refreshtoken,
+                "crest_expires" => $this->crest_expires,
+                "crest_ownerhash" => $this->crest_ownerhash
+            ];
 			\MySQL::getDB()->updateinsert("characters", $data, array("id" => $this->id));
-
 
             if ($this->getUser() != null)
                 $this->getUser()->resetCache();
 		}
-		
-		private function getDateOfBirth() {
-			if ($this->dateOfBirth == null) return null;
-			if ($this->dateOfBirth == '0000-00-00 00:00:00') return null;
-			return date("Y-m-d H:i:s",strtotime($this->dateOfBirth));
-		}
-		
-		function hasState() {
+
+		function hasState()
+        {
 			return $this->crest_state != null;
 		}
-		
-		function isTokenExpired() {
+
+		function isTokenExpired()
+        {
 			// still to do
 			return true;
 		}
@@ -261,10 +199,7 @@ namespace eve\model
 		 */
 		function getApiKey()
 		{
-			if ($this->apikey == null && $this->apiKeyID > 0)
-				$this->apikey = new \eve\model\API($this->apiKeyID);
-
-			return $this->apikey;
+            return null;
 		}
 
 		/**
@@ -278,12 +213,12 @@ namespace eve\model
 
 			return $this->user;
 		}
-		
+
 		public static function delete($characterId) {
 			// load the character to check if the loggin user owns it.
 			$characterToDelete = new Character($characterId);
 			if ($characterToDelete->userID == \User::getLoggedInUserId() || \User::getUSER()->isAdmin) {
-				\AppRoot::debug("Deleting character : " . $characterToDelete->name);				
+				\AppRoot::debug("Deleting character : " . $characterToDelete->name);
 				\MySQL::getDB()->delete("characters", array("id" => $characterId));
 			}
 		}
