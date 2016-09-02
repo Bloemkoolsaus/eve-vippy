@@ -14,7 +14,7 @@ class Characters
 
     function getAddnew($arguments=[])
     {
-        $oauth = new \api\model\Oauth();
+        $oauth = new \crest\controller\Oauth();
         $oauth->requestAuthorization();
     }
 }

@@ -18,7 +18,7 @@ if (Tools::POST("sso") == "true")
 {
     Print " tring SSO login";
 
-    $oath = new \api\model\Oauth();
+    $oath = new \crest\controller\Oauth();
     $oath->requestAuthorization();
     $oath->getCharacterID();
 }
@@ -28,7 +28,7 @@ if (Tools::POST("sso") == "true")
  */
 if (\Tools::GET("state") && \Tools::GET("code"))
 {
-    $oath = new \api\model\Oauth();
+    $oath = new \crest\controller\Oauth();
     $oath->getAccessToken(\Tools::GET("state"), \Tools::GET("code"));
 }
 

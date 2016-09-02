@@ -17,6 +17,11 @@ namespace eve\controller
 			return $corporation;
 		}
 
+        /**
+         * Import Corporation
+         * @param $corporationID
+         * @return \eve\model\Corporation|null
+         */
 		function importCorporation($corporationID)
 		{
 			$api = new \eve\controller\API();
@@ -24,25 +29,22 @@ namespace eve\controller
 			$result = $api->call("/corp/CorporationSheet.xml.aspx");
 
 			if ($errors = $api->getErrors())
-			{
-				// Foutje bedankt!
-				return false;
-			}
-			else
-			{
-				$corporation = new \eve\model\Corporation($corporationID);
-				$corporation->id = (string)$result->result->corporationID;
-				$corporation->name = (string)$result->result->corporationName;
-				$corporation->ticker = (string)$result->result->ticker;
-				$corporation->allianceID = (string)$result->result->allianceID;
-				$corporation->ceoID = (string)$result->result->ceoID;
-				$corporation->store();
+				return null;
 
-				$alliance = new \eve\model\Alliance($corporation->allianceID);
-				$alliance->id = (string)$result->result->allianceID;
-				$alliance->name = (string)$result->result->allianceName;
-				$alliance->store();
-			}
+            $corporation = new \eve\model\Corporation($corporationID);
+            $corporation->id = (string)$result->result->corporationID;
+            $corporation->name = (string)$result->result->corporationName;
+            $corporation->ticker = (string)$result->result->ticker;
+            $corporation->allianceID = (string)$result->result->allianceID;
+            $corporation->ceoID = (string)$result->result->ceoID;
+            $corporation->store();
+
+            $alliance = new \eve\model\Alliance($corporation->allianceID);
+            $alliance->id = (string)$result->result->allianceID;
+            $alliance->name = (string)$result->result->allianceName;
+            $alliance->store();
+
+            return $corporation;
 		}
 
 		function corporationExists($corporationID)

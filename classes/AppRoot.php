@@ -334,10 +334,10 @@ class AppRoot
 		return self::$timeMeasures[$var]["exec"];
 	}
 
-    public static function error($message)
+    public static function error($message, $log="error")
     {
         if (\AppRoot::isCommandline()) {
-            echo "[\033[31mERROR\033[0m] ".$message.PHP_EOL;
+            echo "[\033[31m".strtoupper($log)."\033[0m] ".$message.PHP_EOL;
         } else {
             $message .= "\n\n" . self::getStackTrace();
 
@@ -348,15 +348,16 @@ class AppRoot
             self::debug("<span style='color:red;'>" . $message . "</span>");
         }
 
-        self::storeError($message);
+        if ($log)
+            self::storeError($message, $log);
     }
 
     public static function depricated($what, $message="")
     {
-        self::error("Depricated call: ".$what."\n".$message);
+        self::error("Depricated call: ".$what."\n".$message, "depricated");
     }
 
-	public static function storeError($message)
+	public static function storeError($message, $log="error")
 	{
 		$data = array();
 		$data["error"] = $message;
@@ -371,23 +372,17 @@ class AppRoot
 		$data["info"] .= "SESSION: ".json_encode($_SESSION)."\n";
 		$data["info"] .= "USER: ".(is_object(\User::getUSER()) ? \User::getUSER()->getFullName() : "");
 
-		self::errorToLog($message);
+		self::errorToLog($message, $log);
 	}
 
-	public static function errorToLog($message)
+	public static function errorToLog($message, $log="error")
 	{
-		$errorLog = "logs/error/".date("Y-m-d").".log";
-		if (!file_exists("logs"))
-			mkdir("logs",0777);
-		if (!file_exists("logs/error"))
-			mkdir("logs/error",0777);
-
-		$handle = fopen($errorLog, "a");
-		fwrite($handle, "\n--[ ".date("Y-m-d H:i:s")." ]----------------------------------------------------------\n");
-		fwrite($handle, $message."\n");
+		$handle = fopen(\Tools::checkDirectory("logs/error/".date("Y-m-d")).$log.".log", "a");
+		fwrite($handle, "\n-=[ ".date("Y-m-d H:i:s")." ]=- --------------------------------------------------------\n");
+		fwrite($handle, $message."\n\n");
 		fwrite($handle, "CWD: ".getcwd()."\n");
 		fwrite($handle, "PHP_SELF: ".$_SERVER["PHP_SELF"]."\n");
-		fwrite($handle, "REQUEST_URI: ".$_SERVER["REQUEST_URI"]."\n");
+        fwrite($handle, "REQUEST_URI: ".$_SERVER["REQUEST_URI"]."\n");
 		fclose($handle);
 	}
 

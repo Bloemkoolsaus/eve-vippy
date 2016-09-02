@@ -85,18 +85,18 @@ namespace profile\controller
 		{
 			if (\Tools::REQUEST("setmain")) {
 				\User::getUSER()->setMainCharacter(\Tools::REQUEST("setmain"));
-				\AppRoot::redirect("index.php?module=profile&section=chars");
+				\AppRoot::redirect("profile/characters");
 			}
 
 			if (\Tools::REQUEST("deleteChar")) {
 				\eve\model\Character::delete(\Tools::REQUEST("deleteChar"));
-				\AppRoot::redirect("index.php?module=profile&section=chars");
+				\AppRoot::redirect("profile/characters");
 			}
 
 			if (\Tools::POST("addCharacter")) {
-				$oauth = new \api\model\Oauth();
+				$oauth = new \crest\controller\Oauth();
 				$oauth->requestAuthorization();
-				// is send to eve login.
+				// Sent to eve login.
 			}
 
             /** @var \eve\model\Character[] $characters */

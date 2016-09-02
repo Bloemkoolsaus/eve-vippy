@@ -40,21 +40,22 @@ namespace eve\model
 		{
 			if ($this->id == 0)
 				return false;
+            if (!$this->name)
+                return false;
 
-			$this->updateDate = date("Y-m-d H:i:s");
-
-			$data = array(	"id" => $this->id,
-							"ticker" => $this->ticker,
-							"name" => $this->name,
-							"ceo" => $this->ceoID,
-							"allianceid" => $this->allianceID,
-							"updatedate" => $this->updateDate);
+			$data = [
+                "id" => $this->id,
+                "ticker" => $this->ticker,
+                "name" => $this->name,
+                "ceo" => $this->ceoID,
+                "allianceid" => $this->allianceID,
+                "updatedate" => date("Y-m-d H:i:s")
+            ];
 			\MySQL::getDB()->updateinsert("corporations", $data, array("id" => $this->id));
 
 			// Update CEO
-			\MySQL::getDB()->doQuery("UPDATE characters SET isceo = 0 WHERE corpid = ?", array($this->id));
-			\MySQL::getDB()->doQuery("UPDATE characters SET isceo = 1 WHERE id = ?", array($this->ceoID));
-
+			\MySQL::getDB()->doQuery("update characters set isceo = 0 where corpid = ?", [$this->id]);
+			\MySQL::getDB()->doQuery("update characters set isceo = 1 where id = ?", [$this->ceoID]);
             return true;
 		}
 

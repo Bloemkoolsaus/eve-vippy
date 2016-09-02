@@ -4,7 +4,7 @@ namespace api
 	class Client
 	{
 		public $format = "json";
-		public $userAgent = APP_TITLE;
+		public $userAgent = "";
 		public $baseURL = "";
 		public $username = "";
 		public $password = "";
@@ -15,7 +15,7 @@ namespace api
 		public $httpStatus = 0;
 		public $curlStatus = 0;
 		public $sendError = true;
-		public $asArray = true;
+		public $asArray = false;
 
 		private $connectionTimeout = 30;
 		private $executionTimeout = 60;
@@ -24,6 +24,7 @@ namespace api
 		function __construct($baseURL="")
 		{
 			$this->baseURL = $baseURL;
+            $this->userAgent = \Config::getCONFIG()->get("system_title");
 		}
 
 		function setConnectionTimeout($seconds)
@@ -221,7 +222,7 @@ namespace api
 
 		function getResult()
 		{
-			return $this->result;
+			return json_decode($this->result, $this->asArray);
 		}
 	}
 }

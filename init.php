@@ -5,7 +5,7 @@ error_reporting(E_ALL);				// Caught by exception handler
 header('Content-Type: text/html; charset=utf-8');
 ini_set("mysql.connect_timeout", 5);
 ini_set("default_charset", "utf-8");
-date_default_timezone_set("UTC");
+date_default_timezone_set("UTC");   // EVE server-time
 
 session_start();
 $startTime = microtime(true);

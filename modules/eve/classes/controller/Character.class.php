@@ -32,87 +32,29 @@ namespace eve\controller
 			return $characters;
 		}
 
+        /**
+         * Import Character
+         * @param $characterID
+         * @return \eve\model\Character|null
+         */
 		function importCharacter($characterID)
 		{
 			$character = new \eve\model\Character($characterID);
-			if ($character->apiKeyID)
-			{
-				$apikey = new \eve\model\API($character->apiKeyID);
-				if ($apikey->valid)
-				{
-					$api = new \eve\controller\API();
-					$api->setKeyID($apikey->keyID);
-					$api->setvCode($apikey->vCode);
-					$api->setCharacterID($character->id);
-					$result = $api->call("/char/CharacterSheet.xml.aspx");
 
-					if ($errors = $api->getErrors())
-					{
-						// Foutje bedankt!
-						return false;
-					}
-					else
-					{
-						// Updaten
-						$character->id = (string)$result->result->characterID;
-						$character->name = (string)$result->result->name;
-						$character->apiKeyID = $apikey->keyID;
-						$character->userID = $apikey->userID;
-						$character->corporationID = (string)$result->result->corporationID;
-						$character->dateOfBirth = (string)$result->result->DoB;
+            // Public info
+            $api = new \eve\controller\API();
+            $api->setCharacterID($character->id);
+            $result = $api->call("/eve/CharacterInfo.xml.aspx");
 
-						// Titels / Director check / Skills
-						$character->isDirector = false;
+            if ($errors = $api->getErrors())
+                return null;
 
-						\AppRoot::debug("character check director: ".$character->name);
-						if ($character->isAuthorized())
-						{
-							if (isset($result->result->rowset))
-							{
-								foreach ($result->result->rowset as $rowset)
-								{
-									// Director check
-									if ((string)$rowset["name"] == "corporationRoles") {
-										foreach ($rowset->row as $row) {
-											if ($row["roleName"] == "roleDirector")
-												$character->isDirector = true;
-										}
-									}
-								}
-							}
-							\AppRoot::debug("is director: ".($character->isDirector)?"yes":"no");
-						}
-						else
-							\AppRoot::debug("not authorized");
+            $character->id = (string)$result->result->characterID;
+            $character->name = (string)$result->result->characterName;
+            $character->corporationID = (string)$result->result->corporationID;
+            $character->store();
 
-						// Opslaan
-						$character->store();
-
-						return true;
-					}
-				}
-				else
-				{
-					// Public info
-					$api = new \eve\controller\API();
-					$api->setCharacterID($character->id);
-					$result = $api->call("/eve/CharacterSheet.xml.aspx");
-
-					if ($errors = $api->getErrors())
-					{
-						// Foutje bedankt!
-						return false;
-					}
-					else
-					{
-						$character->id = (string)$result->result->characterID;
-						$character->name = (string)$result->result->characterName;
-						$character->corporationID = (string)$result->result->corporationID;
-						$character->store();
-					}
-				}
-			}
-			return false;
+			return $character;
 		}
 
 		function getCharactersByUserID($userID)

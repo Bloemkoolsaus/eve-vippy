@@ -43,6 +43,7 @@ class API
             $i++;
         }
 
+        echo $this->url;
         \AppRoot::debug("== CALL API: ".$this->url);
 
         // Check cache.
