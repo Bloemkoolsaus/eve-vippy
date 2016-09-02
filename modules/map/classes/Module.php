@@ -24,7 +24,7 @@ class Module extends \Module
                     $map = new \map\model\Map($chain->id);
                     $view = new \map\view\Map();
                     $action = (count($arguments)>0)?array_shift($arguments):null;
-                    $method = ($action) ? "get".ucfirst($action) : "defualt";
+                    $method = ($action) ? "get".ucfirst($action) : "Overview";
                     if (!method_exists($view, $method)) {
                         $method = "getOverview";
                         if ($action)

@@ -43,28 +43,25 @@ class API
             $i++;
         }
 
-        echo $this->url;
-        \AppRoot::debug("== CALL API: ".$this->url);
-
         // Check cache.
+        \AppRoot::doCliOutput("Call eve-api: ".$this->url);
         if ($cache = \MySQL::getDB()->getRow("SELECT id FROM api_log WHERE url = ? AND cachedate > ?", array($this->url, date("Y-m-d H:i:s"))))
         {
-            \AppRoot::debug("It's cached!");
-
+            \AppRoot::debug("   * Cached on ".$cache["cachedate"]);
             // Haal uit cache.
-            if ($this->cancelOnCache)
-                return false;
-            else
-            {
-                if (file_exists($this->cacheDir.$cache["id"].".xml"))
-                {
-                    $cachedXML = file_get_contents($this->cacheDir.$cache["id"].".xml");
+            if (!$this->cancelOnCache) {
+                $cacheFile = $this->cacheDir.$cache["id"].".xml";
+                if (file_exists($cacheFile)) {
+                    \AppRoot::doCliOutput("   * Return cache: ".$cacheFile);
+                    $cachedXML = file_get_contents($cacheFile);
                     return new \SimpleXMLElement($cachedXML);
                 }
+                else
+                    \AppRoot::doCliOutput("   * Cache file not found");
             }
+            else
+                return false;
         }
-
-        \AppRoot::debug("Call it!");
 
         // Niet gecached. Ophalen!
         $ch = curl_init();
@@ -77,6 +74,7 @@ class API
         curl_close($ch);
 
         $httpCode = $info["http_code"];
+        \AppRoot::doCliOutput("  * HTTP: ".$httpCode);
         if ($httpCode == 200)
         {
             $xml = new \SimpleXMLElement($result);
@@ -88,13 +86,15 @@ class API
                 $this->addError((int)$xml->error["code"], (string)$xml->error);
 
             // Toevoegen in cache..
-            $cacheID = \MySQL::getDB()->insert("api_log",
-                                        array("url"		=> $this->url,
-                                            "execdate"	=> date("Y-m-d H:i:s"),
-                                            "cachedate"	=> $this->cachedUntil));
+            $cacheID = \MySQL::getDB()->insert("api_log", [
+                "url"		=> $this->url,
+                "execdate"	=> date("Y-m-d H:i:s"),
+                "cachedate"	=> $this->cachedUntil
+            ]);
+
             // Schrijf cachefile.
             $cacheFileName = \Tools::checkDirectory($this->cacheDir).$cacheID.".xml";
-            \AppRoot::debug("write cache to ".$cacheFileName);
+            \AppRoot::doCliOutput("Write to cache: ".$cacheFileName);
             $cacheFile = fopen($cacheFileName, "w");
             fwrite($cacheFile, $result);
             fclose($cacheFile);
@@ -135,8 +135,8 @@ class API
 
     private function addError($code, $message)
     {
-        \AppRoot::debug("<span style='color:red;'>API ERROR [".$code."]:</span> ".$message."");
         $this->errors[$code] = $message;
+        \AppRoot::error("API ERROR [".$code."] ".$message);
     }
 
     function getErrors()
@@ -150,10 +150,8 @@ class API
     function getKeysByUserID($userID)
     {
         $keys = array();
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM api_keys WHERE userid = ? AND banned = 0", array($userID)))
-        {
-            foreach ($results as $result)
-            {
+        if ($results = \MySQL::getDB()->getRows("SELECT * FROM api_keys WHERE userid = ? AND banned = 0", [$userID])) {
+            foreach ($results as $result) {
                 $api = new \eve\model\API();
                 $api->load($result);
                 $keys[] = $api;
