@@ -71,15 +71,14 @@ namespace admin\model
             \AppRoot::debug("Subscription->isActive($this->fromdate,$this->tilldate)");
 
 			if ($this->fromdate != null) {
-				if (strtotime($this->fromdate) > strtotime("now")) {
+				if (strtotime($this->fromdate) > 0 && strtotime($this->fromdate) > strtotime("now")) {
                     \AppRoot::debug("subscription not yet started");
                     return false;
                 }
 			}
 
 			if ($this->tilldate != null) {
-				if (strtotime($this->tilldate) < strtotime("now"))
-                {
+				if (strtotime($this->tilldate) > 0 && strtotime($this->tilldate) < strtotime("now")) {
                     \AppRoot::debug("subscription expired");
                     return false;
                 }

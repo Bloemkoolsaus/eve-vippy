@@ -282,6 +282,7 @@ namespace users\model
 			}
 			return $logs;
 		}
+
 		/**
 		 * Get logs by user
 		 * @param integer $userID

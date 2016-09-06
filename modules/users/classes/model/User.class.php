@@ -1518,12 +1518,18 @@ namespace users\model
             $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y")));
             $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m"), date("d"),date("Y")));
 
-			foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
-			{
-				// Search for a login through the IGB. So, look for pilot-id
-				if ($log->what == "login" && $log->getPilot() != null)
-					return true;
-			}
+            // Laatste login log
+            if ($result = \MySQL::getDB()->getRow("select *
+                                                   from   user_log
+                                                   where  userid = ? and what = 'login'
+                                                   and    logdate between ? and ?
+                                                   order by logdate desc limit 1"
+                                    , [$this->id, $sdate, $edate]))
+            {
+                $log = new \users\model\Log();
+                $log->load($result);
+                return true;
+            }
 
 			return false;
 		}
