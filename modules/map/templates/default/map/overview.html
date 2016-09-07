@@ -120,27 +120,12 @@
 		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');" style="width: 140px;">Add Wormhole</button>
     {/if}
     {if $App->user->isAllowedChainAction($map, 'delete')}
-		<button id="massDeleteButton" onclick="massDeleteWormholes();" style="width: 120px;">Mass Delete</button>
-    {/if}
-    {if $App->user->isAllowedChainAction($map, 'delete')}
 		<button id="clearChainButton" onclick="clearChain();" style="width: 120px;">Delete ALL</button>
     {/if}
 		<button id="showActivePeople" onclick="showActivePilots();" style="float: right; width: 150px;">Show Online Pilots</button>
 		<button id="exitFinderButton" onclick="showExitFinder({if isset($igb)}'{$igb->getSolarsystemName()}'{/if});" style="float: right; width: 120px;">Exit Finder</button>
 	</div>
 	<div id="addWormholeForm" style="display:none;"></div>
-
-	<!-- MASS DELETE -->
-	<div id="massDeleteInstruction" style="display:none;">
-		<div class="message">
-			<h3>Mass Delete</h3>
-			<span style="color:#CC0000;font-weight:bold;">WARNING: Deleting wormholes cannot be undone!!!</span><br />
-			<br />
-			Click on the systems you want to delete.<br />
-			<br />
-			<button class="small" onclick="cancelMassDeleteWormholes();">Done</button>
-		</div>
-	</div>
 
 	<!-- DELETE ALL -->
 	<div id="clearChainConfirmation" style="display:none;">
@@ -189,11 +174,6 @@
 		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
 			<h2 style="margin-bottom: 0;">
 				Add signature
-			{if isset($igb) && $igb->isTrusted()}
-				<div style="float: right; width: 300px; text-align: right; font-size: 12px;">
-					<a onclick="refreshToCurrentSystem(); return false;" href="#">Switch active system to current location</a>
-				</div>
-			{/if}
 			</h2>
 			<form method="post" action="Javascript: addSignature()">
 			<table id="addSignatureTable" style="width: 99%;">
@@ -238,17 +218,15 @@
 				</h3>
 				<div id="copyPasteHelp" class="message" style="text-align: left; display: none;">
 					<div style="padding: 3px;">
-						Select all signatures in your scanner window, press ctrl+c.
-						Then paste them below and press the add button.<br />
-						&nbsp;&nbsp;&nbsp;<i><u>Note:</u>&nbsp;&nbsp;&nbsp;
-						Cosmic Anomalies will be added to the systems anomaly list.</i>
+						<div>Select all signatures in your scanner window (CTRL+A) and copy them (CTRL+C).</div>
+						<div>Then paste (CTRL+V) them below and press 'Add Signatures'.</div>
 					</div>
 				</div>
-				<form method="post" action="/index.php?module=scanning&section=sigs&action=copypaste">
-				<div class="form">
-					<textarea name="copypastesignatures" style="width: 98%; height: 40px;"></textarea>
+				<form method="post" action="Javascript: signaturesCopyPaste();">
+				<div>
+					<textarea name="copypastesignatures" style="width: 98%; height: 3em;"></textarea>
 				</div>
-				<div class="form" style="text-align: right;">
+				<div style="text-align: right; margin-top: 2px;">
 					<button type="submit" class="small">Add Signatures</button>
 				</div>
 				</form>
@@ -257,27 +235,30 @@
 		</div>
 
 		<div id="signatureList" style="margin-top: 1em;">
-			<h2 style="margin-bottom: 1px;">
-				<div style="float: left; padding-top: 10px;">
-					<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
-					{$system->name} - {$wormhole->name} | <span id="signaturesCount"></span> signatures
-				</div>
-				<div style="clear:both;"></div>
+			<h2>
+				<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+				{$system->name} - {$wormhole->name} - <span id="signaturesCount"></span> signatures
 			</h2>
-			<form method="post" name="formEditSignature" action="Javascript: storeSignature()">
-			<table id="signatureTable" class="sectionoverview">
-				<tr>
-					<th>ID</th>
-					<th>Type</th>
-					<th>Info</th>
-					<th>Last Update</th>
-					<th>&nbsp;</th>
-				</tr>
-			</table>
-			<div style="display:none;">
-				<button type="submit">Save</button>
+			<div style="margin-top: -2.5em; text-align: right;">
+				<a href="#" onclick="clearSignatures(); return false;">Clear all signatures</a>
 			</div>
-			</form>
+			<div style="clear:both;"></div>
+			<div style="margin-top: .5em;">
+				<form method="post" name="formEditSignature" action="Javascript: storeSignature()">
+					<table id="signatureTable" class="sectionoverview">
+						<tr>
+							<th>ID</th>
+							<th>Type</th>
+							<th>Info</th>
+							<th>Last Update</th>
+							<th>&nbsp;</th>
+						</tr>
+					</table>
+					<div style="display:none;">
+						<button type="submit">Save</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 

@@ -119,32 +119,31 @@ class AppRoot
 			return false;
 
         \AppRoot::doCliOutput("Check SQL Patches");
-		if ($handle = @opendir($directory))
+        $files = \Tools::getFilesFromDirectory($directory);
+		if (count($files) > 0)
 		{
-			$executedFiles = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM system_patches_sql")) {
-				foreach ($results as $result) {
-					$executedFiles[] = $result["filename"];
-				}
-			}
+            $executedFiles = array();
+            if ($results = \MySQL::getDB()->getRows("SELECT * FROM system_patches_sql")) {
+                foreach ($results as $result) {
+                    $executedFiles[] = $result["filename"];
+                }
+            }
 
 			$queryRegex = '%\s*((?:\'[^\'\\\\]*(?:\\\\.[^\'\\\\]*)*\' | "[^"\\\\]*(?:\\\\.[^"\\\\]*)*" | /*[^*]*\*+([^*/][^*]*\*+)*/ | \#.* | --.* | [^"\';#])+(?:;|$))%x';
-			while (false !== ($file = readdir($handle)))
+			foreach ($files as $file)
 			{
-				if ($file == "." || $file == "..")
-					continue;
-
-				$sqlFile = $directory.DIRECTORY_SEPARATOR.$file;
-				if (is_file($sqlFile) && !in_array($file, $executedFiles))
+                $sqlFile = explode("/", $file);
+                $sqlFile = array_pop($sqlFile);
+				if (is_file($file) && !in_array($sqlFile, $executedFiles))
 				{
-					\MySQL::getDB()->updateinsert("system_patches_sql",
-							array(	"filename"	=> $file,
-									"execdate"	=> date("Y-m-d H:i:s")),
-							array(	"filename"	=> $file));
+                    \MySQL::getDB()->updateinsert("system_patches_sql",
+                        ["filename"	=> $sqlFile, "execdate"	=> date("Y-m-d H:i:s")],
+                        ["filename"	=> $sqlFile]
+                    );
 
 					// Queries parsen & uitvoeren
                     \AppRoot::doCliOutput(" * Run sql patch: ".$sqlFile);
-					preg_match_all($queryRegex, file_get_contents($sqlFile), $queries);
+					preg_match_all($queryRegex, file_get_contents($file), $queries);
 					foreach ($queries[1] as $query) {
 						\MySQL::getDB()->doQuery($query);
 					}
@@ -153,8 +152,7 @@ class AppRoot
 			}
 			unset($executedFiles);
 		}
-		@closedir($handle);
-		unset($handle);
+
         \AppRoot::doCliOutput("Finished SQL patches");
         return true;
 	}
@@ -170,7 +168,8 @@ class AppRoot
 			return false;
 
         \AppRoot::doCliOutput("Check PHP Patches");
-		if ($handle = @opendir($directory))
+        $files = \Tools::getFilesFromDirectory($directory);
+		if (count($files) > 0)
 		{
 			$executedFiles = array();
 			if ($results = \MySQL::getDB()->getRows("SELECT * FROM system_patches_php")) {
@@ -179,46 +178,25 @@ class AppRoot
 				}
 			}
 
-			while (false !== ($patchFile = readdir($handle)))
+			foreach ($files as $file)
 			{
-				if ($patchFile == "." || $patchFile == "..")
-					continue;
-
-				$phpFile = $directory.DIRECTORY_SEPARATOR.$patchFile;
-				if (is_file($phpFile) && !in_array($patchFile, $executedFiles))
+                $phpFile = explode("/", $file);
+                $phpFile = array_pop($phpFile);
+				if (is_file($file) && !in_array($phpFile, $executedFiles))
 				{
-					\MySQL::getDB()->updateinsert(
-                        "system_patches_php",
-                        array(	"filename"	=> $patchFile, "execdate"	=> date("Y-m-d H:i:s")),
-                        array(	"filename"	=> $patchFile)
+					\MySQL::getDB()->updateinsert("system_patches_php",
+                        ["filename"	=> $phpFile, "execdate"	=> date("Y-m-d H:i:s")],
+                        ["filename"	=> $phpFile]
                     );
                     \AppRoot::doCliOutput(" * Run php patch: ".$phpFile);
-					include($phpFile);
+					include($file);
 				}
 			}
 			unset($executedFiles);
 		}
-		@closedir($handle);
-		unset($handle);
+
         \AppRoot::doCliOutput("Finished PHP patches");
         return true;
-	}
-
-
-	public static function logRequest()
-	{
-		$browser = Tools::getBrowser();
-		$data = array(	"request"	=> $_SERVER["REQUEST_URI"],
-						"requestdate" => date("Y-m-d H:i:s"),
-						"referer"	=> (isset($_SERVER["HTTP_REFERER"]))?$_SERVER["HTTP_REFERER"]:"",
-						"sessionid"	=> session_id(),
-						"visitor_userid" => (\User::getUSER())?\User::getUSER()->id:0,
-						"visitor_shopid" => (\Shop::getSHOP())?\Shop::getSHOP()->id:0,
-						"visitor_browser" => $browser["name"],
-						"visitor_browser_version" => $browser["version"],
-						"visitor_platform" => $browser["platform"],
-						"visitor_ip" => $_SERVER["REMOTE_ADDR"]);
-		\MySQL::getDB()->insert("log_visiter", $data);
 	}
 
 	public static function loginRequired()

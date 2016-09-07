@@ -25,6 +25,10 @@ class Signature extends \Model
     private $_updatedUser;
 
 
+    /**
+     * -- DO NOT CALL DIRECTLY --
+     * Use \map\controller\Signature()->storeSignature() instead!!!
+     */
     function store()
     {
         if ($this->scannedBy == 0) {
@@ -34,6 +38,7 @@ class Signature extends \Model
 
         $this->updateBy = \User::getUSER()->id;
         $this->updateDate = date("Y-m-d H:i:s");
+        $this->sigType = strtolower($this->sigType);
 
         parent::store();
     }

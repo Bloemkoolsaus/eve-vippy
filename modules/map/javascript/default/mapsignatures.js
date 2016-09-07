@@ -6,14 +6,14 @@ function loadSignatureList(noCache)
 
 	if (!loadingSigList && $("#disabledPage").length == 0 && $("#signatureList").is(":visible"))
 	{
-        var params = { ajax: 1 };
-		if (noCache)
-			params.nocache = 1;
-
 		loadingSigList = true;
 		$.ajax({
-			url: "/map/"+$("#mapName").val()+"/signatures/"+$("#mapSystem").val(),
-            data: params,
+            url: "/map/signatures/"+((noCache)?"nocache":""),
+            data: {
+                map: $("#mapName").val(),
+                system: $("#mapSystem").val(),
+                ajax: 1
+            },
 			success: function(data) {
 				if (data != "cached" && !editingSigList) {
                     // Oude sigs
@@ -45,6 +45,64 @@ function loadSignatureList(noCache)
 			}
 		});
 	}
+}
+
+function deleteSignature(id)
+{
+    $("tr[rel=signature][data-id="+id+"]").fadeOut("fast", function() {
+        $.ajax({
+            url: "/map/signatures/delete/"+id,
+            data: {
+                map: $("#mapName").val(),
+                system: $("#mapSystem").val(),
+                ajax: 1
+            },
+            complete: function() {
+                loadSignatureList(true);
+            }
+        });
+    });
+}
+
+function clearSignatures()
+{
+    $.ajax({
+        url: "/map/signatures/delete/all",
+        data: {
+            map: $("#mapName").val(),
+            system: $("#mapSystem").val(),
+            ajax: 1
+        },
+        complete: function() {
+            loadSignatureList(true);
+        }
+    });
+}
+
+function addSignature()
+{
+    $.ajax({
+        type: "POST",
+        url: "/map/signatures/store",
+        data:  {
+            map: $("#mapName").val(),
+            system: $("#mapSystem").val(),
+            id: 0,
+            sigid: $("#sigId").val(),
+            type: $("#sigType").val(),
+            whtype: $("#whType").val(),
+            info: $("#sigName").val(),
+            ajax: 1
+        },
+        complete: function() {
+            $("#sigId").val("");
+            $("#sigType").val("");
+            $("#whType").val("");
+            $("#sigName").val("");
+            $("#sigId").focus();
+            loadSignatureList(true);
+        }
+    });
 }
 
 function editSignature(id)
@@ -79,19 +137,6 @@ function editSignature(id)
     }
 }
 
-function deleteSignature(id)
-{
-    $("tr[rel=signature][data-id="+id+"]").fadeOut("fast", function() {
-        $.ajax({
-            url: "/map/"+$("#mapName").val()+"/signatures/delete/"+id,
-            data: { ajax: 1 },
-            complete: function() {
-                loadSignatureList(true);
-            }
-        });
-    });
-}
-
 function editSignatureCancel(id)
 {
     editingSigList = false;
@@ -106,48 +151,21 @@ function editSignatureCancel(id)
     $("tr[data-id="+id+"]").replaceWith(html);
 }
 
-function addSignature()
-{
-    var params = {
-        id: 0,
-        systemid: $("#mapSystem").val(),
-        sigid: $("#sigId").val(),
-        type: $("#sigType").val(),
-        whtype: $("#whType").val(),
-        info: $("#sigName").val(),
-        ajax: 1
-    };
-
-    $.ajax({
-        url: "/map/"+$("#mapName").val()+"/signatures/store",
-        data: params,
-        complete: function() {
-            loadSignatureList(true);
-            $("#sigId").val("");
-            $("#sigType").val("");
-            $("#whType").val("");
-            $("#sigName").val("");
-            $("#sigId").focus();
-        }
-    });
-}
-
 function storeSignature()
 {
     var id = $("tr.sigedit").attr("data-id");
-    var params = {
-        id: id,
-        systemid: $("#mapSystem").val(),
-        sigid: $("#sigId"+id).val(),
-        type: $("#sigType"+id).val(),
-        whtype: $("#whType"+id).val(),
-        info: $("#sigName"+id).val(),
-        ajax: 1
-    };
-
     $.ajax({
-        url: "/map/"+$("#mapName").val()+"/signatures/store",
-        data: params,
+        url: "/map/signatures/store",
+        data: {
+            map: $("#mapName").val(),
+            system: $("#mapSystem").val(),
+            id: id,
+            sigid: $("#sigId"+id).val(),
+            type: $("#sigType"+id).val(),
+            whtype: $("#whType"+id).val(),
+            info: $("#sigName"+id).val(),
+            ajax: 1
+        },
         complete: function() {
             editingSigList = false;
             loadSignatureList(true);
@@ -201,8 +219,8 @@ function selectSignatureType(sigID)
         else
             html = Mustache.to_html($("#whTypeInputTPL").html(), data);
 
-        $("#whTypeInputContainer").html(html);
         $("td[rel=addsig_wormhole]").show();
+        $("#whTypeInputContainer").html(html);
         $("#whType").focus();
     }
     else
@@ -210,4 +228,23 @@ function selectSignatureType(sigID)
         $("td[rel=addsig_wormhole]").hide();
         $("#sigName").focus();
     }
+}
+
+function signaturesCopyPaste()
+{
+    $.ajax({
+        url: "/map/signatures/copypaste",
+        type: "POST",
+        data: {
+            map: $("#mapName").val(),
+            system: $("#mapSystem").val(),
+            signatures: $("textarea[name=copypastesignatures]").val(),
+            ajax: 1,
+            debug: 1
+        },
+        complete: function() {
+            $("textarea[name=copypastesignatures]").val("");
+            loadSignatureList(true);
+        }
+    })
 }

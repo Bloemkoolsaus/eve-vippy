@@ -178,8 +178,6 @@ class Oauth
         $token->expires = $expireDate->format("Y-m-d H:i:s");
 
         $token->store();
-
-        \AppRoot::redirect("profile/characters");
     }
 
 
