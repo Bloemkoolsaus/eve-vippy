@@ -852,12 +852,41 @@ namespace scanning\model
 
 		function setMapUpdateDate($datetime=false)
 		{
-			if (!$datetime)
-				$datetime = date("Y-m-d H:i:s");
+            /**
+             * Check minimale positie.
+             */
+            if ($result = \MySQL::getDB()->getRow("select min(x) as x, min(y) as y from mapwormholes where chainid = ?", [$this->id]))
+            {
+                $minX = \Config::getCONFIG()->get("map_wormhole_offset_y");
+                $minY = \Config::getCONFIG()->get("map_wormhole_offset_y");
 
-			\MySQL::getDB()->update("mapwormholechains",
-									array("lastmapupdatedate" => date("Y-m-d H:i:s", strtotime($datetime))),
-									array("id" => $this->id));
+                /** Check voor negatieve posities (die vallen van de map) **/
+                if ($result["x"] < $minX) {
+                    $x = $result["x"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_x"));
+                    \MySQL::getDB()->doQuery("update mapwormholes set x = x + $x where chainid = ?", [$this->id]);
+                }
+                if ($result["y"] < $minY) {
+                    $y = $result["y"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_y"));
+                    \MySQL::getDB()->doQuery("update mapwormholes set y = y + $y where chainid = ?", [$this->id]);
+                }
+
+                /** Te ver van de kant? **/
+                if ($result["x"] > $minX) {
+                    $x = $result["x"]-$minX;
+                    \MySQL::getDB()->doQuery("update mapwormholes set x = x - $x where chainid = ?", [$this->id]);
+                }
+                if ($result["y"] > $minY) {
+                    $y = $result["y"]-$minY;
+                    \MySQL::getDB()->doQuery("update mapwormholes set y = y - $y where chainid = ?", [$this->id]);
+                }
+            }
+
+            if (!$datetime)
+                $datetime = date("Y-m-d H:i:s");
+
+            \MySQL::getDB()->update("mapwormholechains",
+                array("lastmapupdatedate" => date("Y-m-d H:i:s", strtotime($datetime))),
+                array("id" => $this->id));
 		}
 
 		function setSignaturesUpdateDate($datetime=false)

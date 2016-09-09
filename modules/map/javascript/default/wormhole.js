@@ -240,8 +240,8 @@ Wormhole.prototype.render = function(canvas)
     // statics
     for (var s=0; s<this.solarsystem.statics.length; s++) {
         wormhole.add(new Kinetic.Text({
-            x: 65,
-            y: this.map.height-whDefaultLineHeight-3,
+            x: 70,
+            y: this.map.height-(whDefaultLineHeight*(s+1))-3,
             text: this.solarsystem.statics[s],
             fontSize: 11,
             fontFamily: "Calibri",

@@ -63,6 +63,10 @@ class Map
         // Maak de map
         $controller = new \map\controller\Map();
         $map = [
+            "settings"      => [
+                "defaultwidth"  => (int)\Config::getCONFIG()->get("map_wormhole_width"),
+                "defaultheight"  => (int)\Config::getCONFIG()->get("map_wormhole_height")
+            ],
             "wormholes" 	=> $controller->getWormholes($map),
             "connections" 	=> $controller->getConnections($map),
             "homesystem" 	=> $map->homesystemID,

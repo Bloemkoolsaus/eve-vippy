@@ -22,10 +22,10 @@ body {
 	padding: 0;
 }
 
-h1 {
+h1, h2 {
 	font-family: EveSans, OpenSans, MetaBlack, sans-serif;
 	font-size: 2.5em;
-	color: #eeeeee;
+	color: #ffffff;
     margin: 1em 0 1em;
     padding: 0;
 	border-bottom: solid 1px #cccccc;
@@ -35,15 +35,8 @@ h1 {
 }
 
 h2 {
-	font-family: EveSans, OpenSans, MetaBlack, sans-serif;
 	font-size: 2em;
-	color: #eeeeee;
     margin: .5em 0 .5em;
-    padding: 0;
-	border-bottom: solid 1px #cccccc;
-    text-transform: uppercase;
-    letter-spacing: -1px;
-    line-height: 90%;
 }
 
 h3 {
