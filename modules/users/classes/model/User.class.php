@@ -1634,6 +1634,7 @@ namespace users\model
         {
 			if ($result = \MySQL::getDB()->getRow("SELECT userid FROM characters WHERE id = ?", array($characterid)))
 			{
+				\AppRoot::debug("An userid is found for this character");
 				$user = new \users\model\User($result["userid"]);
 				return $user;
 			}

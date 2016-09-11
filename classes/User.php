@@ -13,7 +13,7 @@ class User extends \users\model\User
 		}
 		else
 		{
-			\AppRoot::debug("not logged in");
+			\AppRoot::debug("not logged in!");
 			return 0;
 		}
 	}

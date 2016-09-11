@@ -79,6 +79,20 @@ if (Tools::POST("doLogin") == "true")
 	}
 }
 
+if (Tools::POST("sso") == "true") 
+{
+	Print " tring SSO login";	
+	
+	$oath = new users\model\Oauth();
+	$oath->requestAuthorization();
+}
+
+if (Tools::GET("state") && Tools::GET("code")) {
+	$oath = new users\model\Oauth();
+	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));	
+
+} 
+
 if (!\User::getLoggedInUserId())
 {
 	// Login by cookie
