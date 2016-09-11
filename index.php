@@ -16,11 +16,9 @@ $mainMenu = null;
 
 if (Tools::POST("sso") == "true")
 {
-    Print " tring SSO login";
-
+    \AppRoot::doCliOutput("SSO Login");
     $oath = new \crest\controller\Oauth();
     $oath->requestAuthorization();
-    $oath->getCharacterID();
 }
 
 /**

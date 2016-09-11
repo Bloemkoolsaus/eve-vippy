@@ -4,6 +4,15 @@
 		{assign var=numeric_naming value=1}
 	{/if}
 {/foreach}
+
+
+<b><u>MAP</u></b>
+ - Getting rid of the IGB means we can use new technologies. So, some background changes/improvements were done to the map.
+ - Removed 'Mass Delete' mode. It has since been replaced by the two remove options in a systems context menu.
+ 	- 'Remove [systemname]': Removes that system.
+ 	- 'Remove connected systems': Removes all systems connected to this system. Remove a connection and then use this to remove that part of the chain!
+
+
 <h3>August 3, 2016</h3>
 <b><u>STATISTICS</u></b>
  - Updates to statistics/leaderboard.

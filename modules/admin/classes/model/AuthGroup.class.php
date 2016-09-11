@@ -19,6 +19,7 @@ namespace admin\model
 		private $payments = null;
         private $usergroups = null;
         private $contactUser = null;
+        private $_allowedUsers;
 
 		function __construct($id=false)
 		{
@@ -504,21 +505,23 @@ namespace admin\model
 		 */
 		function getAllowedUsers()
 		{
-			$corporations = $this->getCorporations();
-			foreach ($this->getAlliances() as $alliance) {
-				$corporations = array_merge($corporations, $alliance->getCorporations());
-			}
+            if ($this->_allowedUsers === null)
+            {
+                $corporations = $this->getCorporations();
+                foreach ($this->getAlliances() as $alliance) {
+                    $corporations = array_merge($corporations, $alliance->getCorporations());
+                }
 
-			$users = array();
-			foreach ($corporations as $corp)
-			{
-				foreach (\users\model\User::getUsersByCorporation($corp->id) as $user)
-				{
-					if ($user->isAuthorized())
-						$users[$user->id] = $user;
-				}
-			}
-			return $users;
+                $this->_allowedUsers = [];
+                foreach ($corporations as $corp) {
+                    foreach (\users\model\User::getUsersByCorporation($corp->id) as $user) {
+                        if ($user->isAuthorized())
+                            $this->_allowedUsers[$user->id] = $user;
+                    }
+                }
+            }
+
+            return $this->_allowedUsers;
 		}
 
         /**
@@ -527,10 +530,30 @@ namespace admin\model
          */
         function getActiveUsers()
         {
-            $users = [];
+            $ids = [];
             foreach ($this->getAllowedUsers() as $user) {
-                if ($user->getIsActive())
-                    $users[] = $user;
+                $ids[] = $user->id;
+            }
+
+            $users = [];
+            if (count($ids) > 0) {
+                if ($results = \MySQL::getDB()->getRows("select u.*
+                                                    from    users u
+                                                      inner join user_log l on l.userid = u.id
+                                                    where   l.what = 'login'
+                                                    and     l.logdate between ? and ?
+                                                    and     u.id in (".implode(",", $ids).")
+                                                    group by u.id"
+                                    , [date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y"))),
+                                       date("Y-m-d", mktime(0,0,0,date("m"), date("d"), date("Y")))]))
+                {
+                    foreach ($results as $result)
+                    {
+                        $user = new \users\model\User();
+                        $user->load($result);
+                        $users[] = $user;
+                    }
+                }
             }
             return $users;
         }

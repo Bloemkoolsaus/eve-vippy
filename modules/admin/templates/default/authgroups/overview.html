@@ -29,13 +29,13 @@
 				</td>
 				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
-					{if $group->getSubscription() != null}
-						{if $group->getSubscription()->getAmount() == 0}
-							<div style='text-align: center;'><i>free license</i></div>
-						{else}
-							<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
-						{/if}
-					{/if}
+			{if $group->getSubscription() != null}
+				{if $group->getSubscription()->getAmount() == 0}
+					<div style='text-align: center;'><i>free license</i></div>
+				{else}
+					<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
+				{/if}
+			{/if}
 				</td>
 				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->getActiveUsers()|@count}

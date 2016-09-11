@@ -25,60 +25,31 @@
 <div style="clear:both;"></div>
 
 <div class="content">
-	<h1>Character Overview</h1>
-{assign var=i value=0}
-{foreach from=$characters key=c item=character}
-	<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
-		<div style="float: left; width: 20%;">
-			<img src="https://image.eveonline.com/Character/{$character->id}_200.jpg" style="width: 99%; margin: 1px; border-radius: 5px;">
-		</div>
-		<div style="float: left; width: 10%;">
-			<div>
-				<img src="https://image.eveonline.com/Corporation/{$character->getCorporation()->id}_128.png" style="width: 99%; margin: 1px; border-radius: 5px;">
+	<h1>Authorized Characters</h1>
+	{assign var=i value=0}
+	{foreach from=$characters key=c item=character}
+		{if $character->isAuthorized()}
+			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+				{include file="profile/characters/character" character=$character}
 			</div>
-		{if $character->getCorporation()->getAlliance()}
-			<div>
-				<img src="https://image.eveonline.com/Alliance/{$character->getCorporation()->getAlliance()->id}_128.png" style="width: 99%; margin: 1px; border-radius: 5px;">
-			</div>
+			{assign var=i value=$i+1}
 		{/if}
-		</div>
-		<div style="float: right; width: 68%;">
-			<h2 style="border: 0px; margin: 0;">{$character->name}</h2>
-			<div style="font-size: .8em;">
-			{if $character->isCEO()}
-				CEO
-			{elseif ($character->isDirector())}
-				Director
-			{/if}&nbsp;
+	{/foreach}
+	<div style="clear:both;"></div>
+</div>
+<div style="clear:both;"></div>
+
+<div class="content">
+	<h1>Un-Authorized Characters</h1>
+	{assign var=i value=0}
+	{foreach from=$characters key=c item=character}
+		{if !$character->isAuthorized()}
+			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+				{include file="profile/characters/character" character=$character}
 			</div>
-			<div style="margin-top: .9em;">
-				<strong>Corporation:</strong> &nbsp;
-				<i>{$character->getCorporation()->name}</i>
-			</div>
-			<div>
-				<strong>Alliance:</strong> &nbsp;
-			{if $character->getCorporation()->getAlliance()}
-				<i>{$character->getCorporation()->getAlliance()->name}</i>
-			{else}
-				<i>None</i>
-			{/if}
-			</div>
-			<div style="margin-top: .9em;">
-				<strong>Access:</strong> &nbsp;
-			{if $character->isAuthorized()}
-				<span style="color: #55ff55;">Authorized</span>
-			{else}
-				<span style="color: #ff5555;">Denied</span>
-			{/if}
-			</div>
-			<div>
-				<strong>Last Updated:</strong> &nbsp;
-				<i>{$character->updatedate|date_time}, {$character->updatedate|date_full}</i>
-			</div>
-		</div>
-	</div>
-	{assign var=i value=$i+1}
-{/foreach}
+			{assign var=i value=$i+1}
+		{/if}
+	{/foreach}
 	<div style="clear:both;"></div>
 </div>
 <div style="clear:both;"></div>

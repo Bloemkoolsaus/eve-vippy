@@ -70,6 +70,8 @@ function loadSignatureMap(action, params, force)
                 generateMap(data);
             }
             allowMapLoadingStart = true;
+            var currentTime = new Date();
+            $("#lastupdatetime").html(currentTime.toLocaleTimeString());
         }
     });
 }

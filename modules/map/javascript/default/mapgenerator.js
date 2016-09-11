@@ -24,40 +24,43 @@ function mapRendered()
 	return (stage != null);
 }
 
-function generateMap(data)
-{
+function generateMap(data) {
     if (!allowMapLoadingFinish)
         return false;
 
-    totalWidth = $("#mapHeader").innerWidth()-90;
+    if (data.settings != undefined) {
+        whDefaultWidth = data.settings.defaultwidth;
+        whDefaultHeight = data.settings.defaultheight;
+    }
+
+    totalWidth = $("#mapHeader").innerWidth() - 90;
     totalHeight = 200;
 
     if (totalWidth > $(window).width())
         totalWidth = $(window).width();
 
-    var currentTime = new Date();
-    $("#lastupdatetime").html(currentTime.toLocaleTimeString());
     generateConnections(data.connections);
     generateSystems(data.wormholes);
 
-	if (!mapRendered())
-	{
-	    stage = new Kinetic.Stage({
-	        container: "signatureMap",
-	        width: totalWidth,
-	        height: totalHeight,
-	        id: "sigmap"
-		});
-        $(window).resize(function() {
-            resizeMap();
+    if (stage != null) {
+        console.log("clear stage");
+        layer.removeChildren();
+        stage.remove(layer);
+        stage.removeChildren();
+        stage.clear();
+    }
+    else
+    {
+        stage = new Kinetic.Stage({
+            container: "signatureMap",
+            width: totalWidth,
+            height: totalHeight,
+            id: "sigmap"
         });
-	}
-	else
-	{
-		layer.removeChildren();
-		stage.remove(layer);
-		stage.clear();
-	}
+    }
+    $(window).resize(function() {
+        resizeMap();
+    });
     resizeMap();
 
 	layer = new Kinetic.Layer();
@@ -70,18 +73,16 @@ function generateMap(data)
 
     // add the layer to the stage
     stage.add(layer);
-
-    /**
-     * @todo notices
-     */
 }
 
 function resizeMap()
 {
 	var stageWidth = totalWidth + 100;
-	var stageHeight = totalHeight + 20;
+	var stageHeight = totalHeight + 30;
 
-	stage.setSize(stageWidth, stageHeight);
+    stage.setHeight(stageHeight);
+    stage.setWidth(stageWidth);
+
 	$("#signatureMap").width(stageWidth);
 	$("#signatureMapContainer").width(stageWidth);
 

@@ -70,11 +70,8 @@ namespace scanning\model
 			}
 		}
 
-		function store($positionModifier=25, $copyToOtherChains=true)
+		function store($positionModifier=null, $copyToOtherChains=true)
 		{
-			// Kopie's even uit. Dit gaat niet helemaal goed...
-			$copyToOtherChains = false;
-
 			if ($this->addDate == null)
 				$this->addDate = date("Y-m-d H:i:s");
 
@@ -87,8 +84,10 @@ namespace scanning\model
 					$this->mappedByCharacterID = \eve\model\IGB::getIGB()->getPilotID();
 			}
 
-			$this->x = round($this->x/$positionModifier)*$positionModifier;
-			$this->y = round($this->y/$positionModifier)*$positionModifier;
+            if (!$positionModifier)
+                $positionModifier = 20;
+            $this->x = round($this->x/$positionModifier)*$positionModifier;
+            $this->y = round($this->y/$positionModifier)*$positionModifier;
 
 			$data = array(	"chainid"		=> $this->chainID,
 							"signatureid"	=> $this->signatureID,
@@ -145,6 +144,7 @@ namespace scanning\model
 			// Check of dit wormhole ook op andere chains staat. Zo ja, wijzigingen kopieeren!
 			if ($copyToOtherChains)
 			{
+                /*
 				foreach (\scanning\model\Wormhole::getWormholesByAuthgroup($this->getChain()->authgroupID, $this->solarSystemID) as $wormhole)
 				{
 					if ($wormhole->id != $this->id)
@@ -158,22 +158,7 @@ namespace scanning\model
 						$wormhole->getChain()->setMapUpdateDate();
 					}
 				}
-			}
-
-
-			// Check voor negatieve posities (die vallen van de map)
-			if ($this->x < 0)
-			{
-				$x = $this->x*-1;
-				\MySQL::getDB()->doQuery("UPDATE mapwormholes SET x = x + $x WHERE chainid = ".$this->chainID);
-				$this->load();
-			}
-			if ($this->y < 0)
-			{
-				// Verplaats hele map opzij.
-				$y = $this->y*-1;
-				\MySQL::getDB()->doQuery("UPDATE mapwormholes SET y = y + $y WHERE chainid = ".$this->chainID);
-				$this->load();
+                */
 			}
 
             $this->getChain()->setMapUpdateDate();
@@ -185,7 +170,7 @@ namespace scanning\model
 			    $this->getChain()->removeWormhole($this);
 		}
 
-		function move($newX, $newY, $modifier=25)
+		function move($newX, $newY, $modifier=null)
 		{
             if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
             {
@@ -193,11 +178,12 @@ namespace scanning\model
                 $this->y += $newY;
                 $this->store($modifier);
 
-                $extrainfo = array("delete-all" => false,
-                                   "wormhole"   => array("id" => $this->id, "name" => $this->name),
-                                   "system"     => array("id" => $this->getSolarsystem()->id, "name" => $this->getSolarsystem()->name." - ".$this->name),
-                                   "chain"      => array("id" => $this->getChain()->id, "name" => $this->getChain()->name));
-                \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, $extrainfo);
+                \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, [
+                    "delete-all" => false,
+                    "wormhole"   => ["id" => $this->id, "name" => $this->name],
+                    "system"     => ["id" => $this->getSolarsystem()->id, "name" => $this->getSolarsystem()->name." - ".$this->name],
+                    "chain"      => ["id" => $this->getChain()->id, "name" => $this->getChain()->name]
+                ]);
             }
 		}
 

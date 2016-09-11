@@ -6,7 +6,6 @@
     font-family: EveAlpha;
     src: url(fonts/evealpha.ttf);
 }
-
 @font-face {
     font-family: OpenSans;
     src: url(fonts/opensans/opensans-regular.ttf);
@@ -15,56 +14,53 @@
 
 body {
     background: url(../images/default/background.jpg) fixed;
-	font-family: "Trebuchet MS",MetaBlack,sans-serif;
+	font-family: OpenSans, "Trebuchet MS", MetaBlack, sans-serif;
 	font-size: 11px;
-	color: #CCCCCC;
+	color: #cccccc;
 	text-align: center;
 	margin: 0;
 	padding: 0;
 }
 
-h1 {
-	font-family: "Trebuchet MS",MetaBlack,sans-serif;
-	font-size: 26px;
-	color: #EEEEEE;
-    margin: 15px 0 20px;
+h1, h2 {
+	font-family: EveSans, OpenSans, MetaBlack, sans-serif;
+	font-size: 2.5em;
+	color: #ffffff;
+    margin: 1em 0 1em;
     padding: 0;
-	border-bottom: solid 1px #CCCCCC;
+	border-bottom: solid 1px #cccccc;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    line-height: 90%;
 }
 
 h2 {
-	font-family: "Trebuchet MS",MetaBlack,sans-serif;
-	font-size: 18px;
-	color: #EEEEEE;
-    margin: 5px 0 10px;
-    padding: 0;
-	border-bottom: solid 1px #CCCCCC;
+	font-size: 2em;
+    margin: .5em 0 .5em;
 }
 
 h3 {
-	font-size: 14px;
-	color: #EEEEEE;
+	font-size: 1.2em;
+	color: #eeeeee;
 	margin: 0;
 	padding: 0;
 }
 
 h4 {
-	font-size: 12px;
-	color: #EEEEEE;
-	margin: 0;
-	padding: 0;
+	font-size: 1em;
+    color: #eeeeee;
+    margin: 0;
+    padding: 0;
 }
 
 a {
-	color: #FFAA00;
+	color: #ffaa00;
 }
-
 a:hover {
-	color: #FFCC11;
+	color: #ffcc11;
 }
-
 a:visited {
-	color: #FFAA00;
+	color: #ffcc11;
 }
 
 #header {

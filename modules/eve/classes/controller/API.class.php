@@ -45,7 +45,7 @@ class API
 
         // Check cache.
         \AppRoot::doCliOutput("Call eve-api: ".$this->url);
-        if ($cache = \MySQL::getDB()->getRow("SELECT id FROM api_log WHERE url = ? AND cachedate > ?", array($this->url, date("Y-m-d H:i:s"))))
+        if ($cache = \MySQL::getDB()->getRow("SELECT * FROM api_log WHERE url = ? AND cachedate > ?", array($this->url, date("Y-m-d H:i:s"))))
         {
             \AppRoot::debug("   * Cached on ".$cache["cachedate"]);
             // Haal uit cache.
