@@ -45,6 +45,11 @@ namespace api
 			$this->headers[] = $header;
 		}
 
+        function resetheader()
+        {
+            $this->headers = [];
+        }
+
 		private function doRequest($requestType="get", $url, $params)
 		{
             if ($this->executionTimeout == 0)

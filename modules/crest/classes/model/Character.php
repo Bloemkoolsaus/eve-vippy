@@ -15,8 +15,9 @@ class Character extends \eve\model\Character
         $charController = new \eve\controller\Character();
         $character = $charController->importCharacter($this->id);
 
+        // Check corp
         $corpController = new \eve\controller\Corporation();
-        $corporation = $corpController->importCorporation($character->corporationID);
+        $corpController->importCorporation($character->corporationID);
     }
 
     /**

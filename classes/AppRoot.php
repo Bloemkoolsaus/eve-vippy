@@ -120,6 +120,7 @@ class AppRoot
 
         \AppRoot::doCliOutput("Check SQL Patches");
         $files = \Tools::getFilesFromDirectory($directory);
+        asort($files);
 		if (count($files) > 0)
 		{
             $executedFiles = array();
