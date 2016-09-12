@@ -22,7 +22,22 @@ class Fleet
                 $crest->setToken($character->getToken());
                 $crest->get($url);
 
-                echo "<pre>".print_r($crest->getResult(),true)."</pre>";
+                if ($crest->success())
+                {
+                    foreach ($crest->getResult()->items as $fleetMember)
+                    {
+                        echo "<pre>".print_r($fleetMember, true)."</pre>";
+
+                        \MySQL::getDB()->updateinsert("mapwormholecharacterlocations", [
+                            "characterid" => $fleetMember->character->id,
+                            "solarsystemid" => $fleetMember->solarSystem->id,
+                            "shiptypeid" => $fleetMember->ship->id,
+                            "lastdate" => date("Y-m-d H:i:s")
+                        ],[
+                            "characterid" => $fleetMember->character->id
+                        ]);
+                    }
+                }
             }
 
         }
