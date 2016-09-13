@@ -1,3 +1,8 @@
+drop table character_roles;
+drop table corptitles;
+drop table chrtitles;
+drop table mapsolarsystemjumps;
+
 alter table characters drop column api_keyid;
 alter table characters drop column race;
 alter table characters drop column bloodline;

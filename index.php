@@ -77,19 +77,15 @@ if (Tools::POST("doLogin") == "true")
 	}
 }
 
-if (Tools::POST("sso") == "true") 
-{
-	Print " tring SSO login";	
-	
-	$oath = new users\model\Oauth();
+if (Tools::POST("sso") == "true") {
+	$oath = new \crest\controller\Oauth();
 	$oath->requestAuthorization();
 }
 
 if (Tools::GET("state") && Tools::GET("code")) {
-	$oath = new users\model\Oauth();
-	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));	
-
-} 
+	$oath = new \crest\controller\Oauth();
+	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));
+}
 
 if (!\User::getLoggedInUserId())
 {
@@ -164,14 +160,8 @@ if (\AppRoot::loginRequired() && !\User::getLoggedInUserId())
 	}
 	else
 	{
-		$content = \SmartyTools::getSmarty();
-		if (isset($loginMsg))
-			$content->assign("loginmsg", $loginMsg);
-		if (isset($forgotPwError))
-			$content->assign("forgotpwerror", $forgotPwError);
-		if (isset($forgotPwMsg))
-			$content->assign("forgotpwmsg", $forgotPwMsg);
-		$mainContent = $content->fetch("login");
+        $view = new \users\view\Login();
+        $mainContent = $view->getLogin();
 	}
 }
 else

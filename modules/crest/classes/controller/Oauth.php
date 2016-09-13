@@ -90,10 +90,11 @@ class Oauth
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($curl);
         if ($response == false)
-        {
             $this->error(curl_error($curl));
-        }
-        else
+
+        curl_close($curl);
+
+        if ($response)
         {
             $verifydata = json_decode($response);
             if (isset($verifydata->CharacterID))
@@ -109,15 +110,15 @@ class Oauth
                     $user = $this->doLogin($verifydata);
                 }
 
-                if ($user)
+                if ($user) {
                     $this->addCharacter($user, $verifydata);
-                else
-                    $url = "/";
-
-                \AppRoot::redirect($url);
+                    \AppRoot::redirect("profile/characters");
+                } else {
+                    \AppRoot::redirect("nooooooo");
+                }
             }
         }
-        curl_close($curl);
+        \AppRoot::redirect("/");
     }
 
     /**
@@ -129,10 +130,12 @@ class Oauth
     {
         // find the user which belongs to the character.
         $character = new \eve\model\Character($data->CharacterID);
-        if ($character->getUser())
+        if ($character->getUser()) {
             $character->getUser()->setLoginStatus(true);
+            return $character->getUser();
+        }
 
-        return $character->getUser();
+        return null;
     }
 
     private function addCharacter(\users\model\User $user, $data)

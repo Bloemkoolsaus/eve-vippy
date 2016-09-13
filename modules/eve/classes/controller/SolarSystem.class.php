@@ -336,9 +336,9 @@ namespace eve\controller
                         }
                         else
                         {
-                            if ($results = \MySQL::getDB()->getRows("SELECT tosolarsystemid
-																	FROM mapsolarsystemjumps
-																	WHERE fromsolarsystemid = ?"
+                            if ($results = \MySQL::getDB()->getRows("select tosolarsystemid
+																	from ".\eve\Module::eveDB().".mapsolarsystemjumps
+																	where fromsolarsystemid = ?"
                                                             , array($sid)))
                             {
                                 foreach ($results as $data)

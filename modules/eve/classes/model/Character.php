@@ -103,28 +103,7 @@ namespace eve\model
 			if ($this->isDirector())
 				return true;
 
-			foreach ($this->getRoles() as $role)
-			{
-				if (strtolower($role) == "rolefittingmanager")
-					return true;
-			}
 			return false;
-		}
-
-		function getRoles()
-		{
-			if ($this->roles === null)
-			{
-				$this->roles = array();
-				if ($results = \MySQL::getDB()->getRows("SELECT * FROM character_roles WHERE characterid = ?", array($this->id)))
-				{
-					foreach ($results as $result) {
-						$this->roles[] = $result["role"];
-					}
-				}
-			}
-
-			return $this->roles;
 		}
 
 		function isAuthorized($reset=false)

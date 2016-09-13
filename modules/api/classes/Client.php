@@ -71,7 +71,7 @@ namespace api
 				$requestURL = $requestURL.$queryString;
 			}
 
-			\AppRoot::debug("*** Start api call: ".strtoupper($requestType)." ".$requestURL);
+			\AppRoot::doCliCommand("*** Start api call: ".strtoupper($requestType)." ".$requestURL);
 
 			$curl = curl_init($requestURL);
 			curl_setopt($curl, CURLOPT_USERAGENT, $this->userAgent);
@@ -142,11 +142,11 @@ namespace api
 
 
 			// Loggen
-			\AppRoot::debug("Result: ".$this->httpStatus);
+			\AppRoot::doCliCommand("*** HTTP: ".$this->httpStatus);
 			if (isset($result["error"]))
 				\AppRoot::error($this->result);
 
-			\AppRoot::debug("*** Finish api call: ".strtoupper($requestType)." ".$requestURL);
+			\AppRoot::doCliCommand("*** Finish api call: ".strtoupper($requestType)." ".$requestURL);
 
 			$sendErrorLog = false;
 			if ($this->sendError && isset($result["error"]))

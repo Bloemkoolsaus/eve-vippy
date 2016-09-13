@@ -1,0 +1,51 @@
+<div id="loginform" class="content">
+	<div class="loginSubForm">
+		<form method="post" action="/users/login">
+			<input type="hidden" name="doLogin" value="true"/>
+			<h1>
+				<img src="/images/eve/undock.png" style="height: 32px;" align="left">
+				&nbsp; Login
+			</h1>
+		{if isset($loginmsg)}
+			<div class="form" style="color: red;">{$loginmsg}</div>
+		{/if}
+			<div class="form">
+				<div class="field">Username:</div>
+				<div class="value">
+					<input type="text" name="username" value="" />
+				</div>
+			</div>
+			<div class="form">
+				<divel class="field">Password:</divel>
+				<div class="value">
+					<input type="password" name="password" value="" />
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">&nbsp;</div>
+				<div class="value">
+					<input type="checkbox" name="remember" style="width: 20px;" /> Always stay logged in
+				</div>
+			</div>
+			<div class="form" style="margin-top: 1em;">
+				<div style="width: 195px; float: right;">
+					<button type="button" onclick="document.location='/users/register'; return false;" style="float: left; width: 52%;">
+						Register
+					</button>
+					<button type="submit" style="float: right; width: 45%;">
+						Login
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- EVE SSO -->
+	<div class="loginSubForm" style="text-align: right;">
+		<form method="post" action="">
+			<input type="hidden" name="sso" value="true"/>
+			<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
+		</form>
+	</div>
+
+</div>
