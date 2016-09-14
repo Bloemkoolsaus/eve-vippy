@@ -202,21 +202,26 @@ class AppRoot
 
 	public static function loginRequired()
 	{
-		// API
+		// Api
 		if (\Tools::GET("module") == "api")
 			return false;
 
-        // cron
+        // Cron
         if (\Tools::GET("module") == "system")
             return false;
 
-        // screenies
+        // Screenies
         if (\Tools::GET("module") == "screenshots")
             return false;
 
         // Register
-        if (\Tools::GET("module") == "users" && \Tools::GET("section") == "register")
-            return false;
+        if (\Tools::GET("module") == "users")
+        {
+            if (\Tools::GET("section") == "login")
+                return false;
+            if (\Tools::GET("section") == "register")
+                return false;
+        }
 
 		return true;
 	}

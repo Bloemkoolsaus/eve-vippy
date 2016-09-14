@@ -1,0 +1,10 @@
+div#loginform {
+    width: 600px;
+	margin: 0 auto;
+    margin-top: 10em;
+    margin-bottom: 10em;
+}
+
+div#email {
+    display: none;
+}

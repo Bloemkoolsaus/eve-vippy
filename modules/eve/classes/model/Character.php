@@ -112,14 +112,11 @@ namespace eve\model
                 $this->isAuthorized = null;
 
 			\AppRoot::debug("isAuthorized(".$this->name.",".$reset.")");
-			if ($this->isAuthorized === null)
-			{
+			if ($this->isAuthorized === null) {
                 $this->isAuthorized = false;
-
                 // In een geldige auth-groep?
                 foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
                     if ($group->isAllowed()) {
-                        \AppRoot::debug("<span style='color:green;'>allowed in group: ".$group->name."</span>");
                         $this->isAuthorized = true;
                         break;
                     }

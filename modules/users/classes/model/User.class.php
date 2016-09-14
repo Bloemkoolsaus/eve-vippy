@@ -679,34 +679,6 @@ namespace users\model
 			return false;
 		}
 
-		public function deleteApiKeys()
-		{
-			\MySQL::getDB()->update("api_keys", array("deleted" => 1), array("userid" => $this->id));
-		}
-
-		/**
-		 * Get api keys
-		 * @return \eve\model\API[]
-		 */
-		public function getApiKeys()
-		{
-			return \eve\model\API::getApiKeysByUser($this->id);
-		}
-
-		/**
-		 * Get api keys
-		 * @return \eve\model\API[]
-		 */
-		public function getValidApiKeys()
-		{
-			$apiKeys = array();
-			foreach ($this->getApiKeys() as $key) {
-				if ($key->isValid())
-					$apiKeys[] = $key;
-			}
-			return $apiKeys;
-		}
-
 		/**
 		 * Get characters
 		 * @return \eve\model\Character[]
@@ -1000,17 +972,15 @@ namespace users\model
          * @param bool $fromCache
          * @return \eve\model\Character[]
          */
-		private function getAuthorizedCharacters($fromCache=true)
+		public function getAuthorizedCharacters($fromCache=true)
 		{
 			\AppRoot::debug("User()->getAuthorizedCharacters($fromCache)");
 
 			// Check cache
             $characters = array();
             $cacheFilename = $this->getCacheDirectory() . "authchars.json";
-            if ($fromCache)
-            {
-                if ($cache = \Cache::file()->get($cacheFilename))
-                {
+            if ($fromCache) {
+                if ($cache = \Cache::file()->get($cacheFilename)) {
                     \AppRoot::debug("Load from cache");
                     $characters = json_decode($cache);
                 }
@@ -1020,8 +990,7 @@ namespace users\model
 			{
                 \AppRoot::debug("No authorized characters found. Check again!");
 				$characters = array();
-				foreach ($this->getCharacters() as $character)
-				{
+				foreach ($this->getCharacters() as $character) {
 					if ($character->isAuthorized(true))
 						$characters[] = $character;
 				}
@@ -1207,11 +1176,7 @@ namespace users\model
 
 			if ($this->deleted)
 				$this->isValid = false;
-			else if (count($this->getValidApiKeys()) == 0)
-				$this->isValid = false;
-			else if (count($this->getAuthorizedAlliances()) > 0)
-				$this->isValid = true;
-			else if (count($this->getAuthorizedCorporations()) > 0)
+			else if (count($this->getAuthorizedCharacters()) > 0)
 				$this->isValid = true;
 		}
 

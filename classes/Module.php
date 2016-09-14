@@ -48,11 +48,12 @@ class Module
         if (!class_exists($viewClass))
             $viewClass = '\\'.$this->moduleName.'\\common\\view\\'.ucfirst($classname);
 
-        \AppRoot::debug("view: ".$viewClass);
+        \AppRoot::doCliCommand("View: ".$viewClass);
         if (class_exists($viewClass))
         {
             $view = new $viewClass();
             $method = "get" . ucfirst($action);
+            \AppRoot::doCliCommand("Method: ".$method);
             if (!method_exists($view, $method)) {
                 array_unshift($arguments, $action);
                 $method = "getOverview";

@@ -114,7 +114,7 @@ class Oauth
                     $this->addCharacter($user, $verifydata);
                     \AppRoot::redirect("profile/characters");
                 } else {
-                    \AppRoot::redirect("nooooooo");
+                    \AppRoot::redirect("users/login/no-account/".$verifydata->CharacterName);
                 }
             }
         }

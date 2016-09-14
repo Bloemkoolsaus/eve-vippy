@@ -227,15 +227,9 @@ class Modules
 
 	public static function getHomepage()
 	{
-		if (!\User::getUSER()->getValidApiKeys()) {
-			$authView = new \users\view\Authorization();
-			return $authView->getNoApiKeysView();
-		}
-
-		if (!\User::getUSER()->isAuthorized()) {
-			$authView = new \users\view\Authorization();
-			return $authView->getNotAuthorizedView();
-		}
+        // Check characters
+        if (count(\User::getUSER()->getAuthorizedCharacters()) == 0)
+            \AppRoot::redirect("profile/characters");
 
 		\AppRoot::redirect("map");
         return true;

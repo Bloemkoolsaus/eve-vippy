@@ -34,6 +34,11 @@ h1, h2 {
     line-height: 90%;
 }
 
+h1 img {
+    height: 24px;
+    margin-right: .5em;
+}
+
 h2 {
 	font-size: 2em;
     margin: .5em 0 .5em;
@@ -41,14 +46,14 @@ h2 {
 
 h3 {
 	font-size: 1.2em;
-	color: #eeeeee;
+	color: #ffffff;
 	margin: 0;
 	padding: 0;
 }
 
 h4 {
 	font-size: 1em;
-    color: #eeeeee;
+    color: #ffffff;
     margin: 0;
     padding: 0;
 }
@@ -128,66 +133,13 @@ div#infoheader-info {
 
 div.content {
     position: relative;
-	background: none repeat scroll 0 0 rgba(10, 10, 10, 0.6);
-	padding: 10px;
-	margin: 0;
+    background: none repeat scroll 0 0 rgba(10, 10, 10, 0.6);
+    padding: 1em;
+    margin: 0;
 }
 
 div.clear {
 	clear: both;
-}
-
-div#loginform {
-    width: 600px;
-    margin: 100px auto 0;
-    padding-top: 50px;
-	padding-bottom: 50px;
-}
-div#loginform div.loginSubForm {
-	margin: 0 auto;
-	width: 400px;
-    margin-top: 2em;
-}
-
-div#registerPage {
-    width: 700px;
-    margin: 100px auto 0;
-    padding-top: 50px;
-	padding-bottom: 50px;
-}
-div#registerPage div.registerSubForm {
-	margin: 0 auto;
-	width: 600px;
-}
-div#registerPage div.registerSubForm label.field {
-	width: 100px !important;
-}
-div#registerPage div.registerSubForm label.value {
-	width: 230px !important;
-}
-div#registerPage div.registerSubForm label.value input {
-	width: 99% !important;
-}
-
-div#registerform {
-	float: left;
-	width: 60%;
-}
-div#registertext {
-	float: right;
-	width: 38%;
-}
-
-div#loginform div.form label.value,
-div#loginform div.form label.value input,
-div#registerform div.form label.value,
-div#registerform div.form label.value input {
-	width: 250px;
-}
-
-div#loginform div.form label.field,
-div#registerform div.form label.field {
-	width: 140px;
 }
 
 table.sectionoverview {
@@ -462,27 +414,34 @@ button {
     background: #111111 linear-gradient(#555555, #111111);
     border: 1px solid #555555;
     border-radius: 5px;
-    padding: 5px 10px;
+    padding-top: .2em;
+    padding-bottom: .3em;
+    padding-left: 1em;
+    padding-right: 1em;
     cursor: pointer;
     color: #FFFFFF;
     text-align: center;
     text-decoration: none;
-    font-family: "Trebuchet MS","Lucida Grande",Helvetica,Arial,sans-serif;
-    font-size: 13px;
+    font-family: Calibri,Helvetica,Arial,sans-serif;
+    font-size: 1.3em;
     font-weight: bold;
+    margin: 1px;
 }
-
 button:hover {
     border-color: #DD8800;
     background-color: #DD8800;
     background: #DD8800 linear-gradient(#FFAA00, #DD8800);
 }
-
 button.small {
     width: 100px;
     padding: 2px 5px;
     font-size: 12px;
     font-weight: normal;
+}
+button img {
+    height: 14px;
+    margin-right: 1em;
+    margin-top: .2em;
 }
 
 button.combobox {

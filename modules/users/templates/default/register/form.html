@@ -1,41 +1,33 @@
-
-<div id="registerPage" class="content">
-	<div class="registerSubForm">
-		<h1>
-			<img src="/images/eve/undock2.png" style="height: 32px;" align="left">
-			&nbsp; Register
-		</h1>
-	</div>
-	<div class="registerSubForm">
-	{if $errors|@count > 0}
-		<div class="error" style="margin-bottom: 2em;">
-		{foreach from=$errors item=error}
-			<div>{$error}</div>
-		{/foreach}
-		</div>
-	{/if}
-		<div id="registerform">
+<div id="registerform">
+	<div class="content">
+		<div style="padding-left: 8em; padding-right: 8em;">
+			<h1>
+				<img src="/images/default/register.png" align="left">
+				Register
+			</h1>
+		{if $errors|@count > 0}
+			<div class="error" style="margin-bottom: 1em;">
+				{foreach from=$errors item=error}
+					<div>{$error}</div>
+				{/foreach}
+			</div>
+		{/if}
 			<form method="post" action="">
-				<input type="hidden" name="doRegister" value="true"/>
 				<div id="username" class="form">
-					<label class="field">Username:</label>
-					<label class="value"><input type="text" name="username" value="{if isset($smarty.post.username)}{$smarty.post.username}{/if}" /></label>
+					<div class="field">Username:</div>
+					<div class="value"><input type="text" name="username" value="{if isset($smarty.post.username)}{$smarty.post.username}{/if}" /></div>
 				</div>
 				<div id="email" class="form">
-					<label class="field">E-mail:</label>
-					<label class="value"><input type="text" name="email" value="{if isset($smarty.post.email)}{$smarty.post.email}{/if}" /></label>
+					<div class="field">E-mail:</div>
+					<div class="value"><input type="text" name="email" value="{if isset($smarty.post.email)}{$smarty.post.email}{/if}" /></div>
 				</div>
 				<div id="password1" class="form">
-					<label class="field">Password:</label>
-					<label class="value"><input type="password" name="password1" value="" /></label>
+					<div class="field">Password:</div>
+					<div class="value"><input type="password" name="password1" value="" /></div>
 				</div>
 				<div id="password2" class="form">
-					<label class="field">Password: (<i>Again</i>)</label>
-					<label class="value"><input type="password" name="password2" value="" /></label>
-				</div>
-				<div id="street" class="form">
-					<label class="field">Street:</label>
-					<label class="value"><input type="text" name="street" value="" /></label>
+					<div class="field">Password: (<i>again</i>)</div>
+					<div class="value"><input type="password" name="password2" value="" /></div>
 				</div>
 				<div style="clear:both;"></div>
 				<div style="text-align: right; padding: 20px;">
@@ -43,32 +35,12 @@
 				</div>
 			</form>
 		</div>
-		<div id="registertext">
-			<p>If you do not yet have an account on VIPPY, register here to create one.</p>
-			<p>After registration, add your characters to your profile by using the EVE API keys to gain access to your corporation or alliance intell.</p>
-			<p>Please note that this API key must be a new one. Because of how the API system works, previously used keys often fail.</p>
-		</div>
-		<div style="clear:both;"></div>
 	</div>
-	<br />
-	<div class="registerSubForm">
+	<div class="content">
 		<div class="message">
-			<div style="color: #CC0000;">
-				<b>Please note that you only need one VIPPY account.</b>
-			</div>
-			<div>
-				<b>You can use multiple characters on one VIPPY account!</b>
-			</div>
-			<br />
-			<div>
-				You need atleast one valid API key for a valid character to grant you access to VIPPY.
-				Once you have an authorized VIPPY account, you can use any pilot you want, including <b>out-of-corp</b> alts.
-			</div>
-			<br />
-			<div>
-				To use an alt, simply open VIPPY via the ingame browser of the alt pilot, and login in to VIPPY with your VIPPY login.
-				You can have multiple VIPPY sessions open for multiple pilots using the same VIPPY account.
-			</div>
+			<img src="/images/eve/warning.large.png" style="height: 32px; margin-right: 1em;" align="left">
+			<div style="color: #CC0000;"><b>Please note that you only need <u>one</u> Vippy-account</b></div>
+			<div>Using CREST, you can use multiple characters on one Vippy-account!</div>
 		</div>
 	</div>
 </div>

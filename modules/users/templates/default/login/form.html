@@ -1,51 +1,87 @@
-<div id="loginform" class="content">
-	<div class="loginSubForm">
-		<form method="post" action="/users/login">
-			<input type="hidden" name="doLogin" value="true"/>
+<div id="loginform">
+	<div class="content" style="padding-top: 2em; padding-bottom: 5em;">
+	{if $noAccount}
+		<div class="warning">
+			<div>
+				<div><b>No Vippy account found for `{$noAccount}`</b></div>
+				<div>
+					<ul style="text-align: left; margin: 0;">
+						<li>If you do not yet have a Vippy Account, please register.</li>
+						<li>If you already have an account, please login and add a character via `Profile`.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	{/if}
+
+		<div style="padding-left: 8em; padding-right: 8em;">
 			<h1>
-				<img src="/images/eve/undock.png" style="height: 32px;" align="left">
-				&nbsp; Login
+				<img src="/images/default/login.png" align="left">
+				Login
 			</h1>
-		{if isset($loginmsg)}
-			<div class="form" style="color: red;">{$loginmsg}</div>
-		{/if}
-			<div class="form">
-				<div class="field">Username:</div>
-				<div class="value">
-					<input type="text" name="username" value="" />
+			<div>
+				<div style="margin-bottom: 1em;">
+					<h3>Login using CREST</h3>
+					If you already have a vippy-account, you can login with CREST!
+				</div>
+				<div style="text-align: right;">
+					<form method="post" action="">
+						<input type="hidden" name="sso" value="true"/>
+						<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
+					</form>
 				</div>
 			</div>
-			<div class="form">
-				<divel class="field">Password:</divel>
-				<div class="value">
-					<input type="password" name="password" value="" />
-				</div>
-			</div>
-			<div class="form">
-				<div class="field">&nbsp;</div>
-				<div class="value">
-					<input type="checkbox" name="remember" style="width: 20px;" /> Always stay logged in
-				</div>
-			</div>
-			<div class="form" style="margin-top: 1em;">
-				<div style="width: 195px; float: right;">
-					<button type="button" onclick="document.location='/users/register'; return false;" style="float: left; width: 52%;">
-						Register
-					</button>
-					<button type="submit" style="float: right; width: 45%;">
-						Login
-					</button>
-				</div>
-			</div>
-		</form>
-	</div>
+			<div style="clear:both;"></div>
 
-	<!-- EVE SSO -->
-	<div class="loginSubForm" style="text-align: right;">
-		<form method="post" action="">
-			<input type="hidden" name="sso" value="true"/>
-			<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
-		</form>
+			<div style="margin-top: 3em;">
+				<h3>Login using your vippy-account</h3>
+			{if $errors|@count > 0}
+				<div class="error">
+					{foreach from=$errors item=error}
+						<div>{$error}</div>
+					{/foreach}
+				</div>
+			{/if}
+			{if $warnings|@count > 0}
+				<div class="warning">
+					{foreach from=$warnings item=warning}
+						<div>{$warning}</div>
+					{/foreach}
+				</div>
+			{/if}
+				<form method="post" action="/users/login">
+					<div class="form" style="margin-top: 1em;">
+						<div class="field">Username:</div>
+						<div class="value">
+							<input type="text" name="username" value="" />
+						</div>
+					</div>
+					<div class="form">
+						<divel class="field">Password:</divel>
+						<div class="value">
+							<input type="password" name="password" value="" />
+						</div>
+					</div>
+					<div class="form">
+						<div class="field">&nbsp;</div>
+						<div class="value">
+							<input type="checkbox" id="remember" name="remember" style="width: 20px;" />
+							<label for="remember">Remember me</label>
+						</div>
+					</div>
+					<div class="form" style="margin-top: 1em; text-align: right;">
+						<button type="button" onclick="document.location='/users/register'; return false;">
+							<img src="/images/default/register.png" align="left">
+							Register
+						</button>
+						<button type="submit">
+							<img src="/images/default/login.png" align="left">
+							Login
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
 	</div>
-
 </div>

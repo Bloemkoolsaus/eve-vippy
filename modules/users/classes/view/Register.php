@@ -7,7 +7,7 @@ class Register
     {
         $errors = [];
 
-        if (\Tools::POST("doRegister"))
+        if (\Tools::POST("username"))
         {
             // Check if passwords match
             if (!\Tools::POST("password1") || (\Tools::POST("password1") != \Tools::POST("password2"))) {
@@ -18,27 +18,16 @@ class Register
             // Check username
             if (\Tools::POST("username")) {
                 if ($result = \MySQL::getDB()->getRow("SELECT * FROM users WHERE username = ?", [\Tools::POST("username")])) {
-                    $errors[] = "Your chosen username is already taken.";
-                    $errors[] = "<br />If you already have a vippy account, you can add other characters, including out-of-corp, to your original account. See below!";
+                    $errors[] = "<b>Your chosen username is already taken</b>";
+                    $errors[] = "If you already have a vippy account, you can add other characters via CREST. See the profile page when logged in to Vippy!";
                 }
             } else
                 $errors[] = "You did not choose a username";
 
-            // Check email adres
-            if (\Tools::POST("email")) {
-                if ($result = \MySQL::getDB()->getRow("SELECT * FROM users WHERE email = ?", [\Tools::POST("email")])) {
-                    $errors[] = "<b>An account with that email adress already exists!</b>";
-                    $errors[] = "<br />If you already have a vippy account, you can add other characters, including out-of-corp, to your original account. See below!";
-                }
-            } else
-                $errors[] = "You did not provide a (valid) email adres.";
+            // Check email adres (spammers)
+            if (\Tools::POST("email"))
+                $errors[] = "Vippy does not need your email adress!";
 
-
-            // Anti spam check
-            if (\Tools::POST("street")) {
-                $check = false;
-                $errors[] = "Registration failed. Are you a bot?";
-            }
 
             if (count($errors) == 0)
             {

@@ -51,32 +51,6 @@ if (Tools::GET("action") == "logout")
 	\AppRoot::redirect("");
 }
 
-// Forgot password
-if (Tools::POST("forgotPW") == "true")
-{
-	if ($resetpw = User::generateNewPassword(\Tools::POST("email")))
-	{
-		if ($resetpw < 0)
-			$forgotPwError = "Could not send password.<br />Ask administrator or your CEO to reset your password for you.";
-		else
-			$forgotPwMsg = "Password sent to: ".Tools::POST("email");
-	}
-	else
-		$forgotPwError = "Email not fount. Could not send password.";
-}
-
-// Login
-if (Tools::POST("doLogin") == "true")
-{
-	if (Tools::POST("username") || Tools::POST("password"))
-	{
-		if (\User::getUSER()->login(Tools::POST("username"), Tools::POST("password"), false, \Tools::POST("remember")))
-			\AppRoot::refresh();
-		else
-			$loginMsg = "Incorrect username or password";
-	}
-}
-
 if (Tools::POST("sso") == "true") {
 	$oath = new \crest\controller\Oauth();
 	$oath->requestAuthorization();

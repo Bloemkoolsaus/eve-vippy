@@ -1,16 +1,16 @@
 input, textarea, select {
-	font-family: Arial;	
-	font-size: 12px;
+    font-family: Calibri, sans-serif;
+	font-size: 1em;
 	font-weight: normal;
 	color: #DDDDDD;
 	border-radius: 3px;
 	border-style: solid;
 	border-width: 1px;
-	border-color: #444444;	
+	border-color: #444444;
 	background-color: rgba(10, 10, 10, 0.5);
 	padding: 3px;
 	padding-left: 5px;
-	padding-right: 5px;	
+	padding-right: 5px;
 }
 input {
 	height: 14px;
@@ -25,7 +25,7 @@ input:focus, textarea:focus, select:focus {
 div.form {
 	float: left;
 	width: 100%;
-	margin-bottom: 4px;	
+	margin-bottom: 4px;
 }
 
 div.form label {
@@ -63,24 +63,15 @@ div.form .buttons {
 	margin-top: 15px;
 }
 
-div.form input, 
-div.form select, 
-div.form textarea {
-	font-family: Calibri;
-	font-size: 12px;
-}
-
 div.form label.value input {
 	width: 290px;
 }
 div.form label.value select {
 	width: 260px;
 }
-
 div.form label.value input.checkbox {
 	width: 20px;
 }
-
 div.form label.value input.small {
 	width: 150px;
 }

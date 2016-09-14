@@ -42,7 +42,8 @@ div.form .buttons {
 	margin-top: 15px;
 }
 
-div.form .value input,
+div.form .value input[type=text],
+div.form .value input[type=password],
 div.form .value select {
     width: 95%;
 }
@@ -51,9 +52,6 @@ div.form label.value textarea {
     height: 100px;
 }
 
-div.form .value input[type=checkbox] {
-	width: 20px;
-}
 div.form .value input.small {
 	width: 150px;
 }

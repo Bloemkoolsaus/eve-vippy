@@ -1,5 +1,16 @@
+{if $characters|@count == 0}
 <div class="content">
-	<h1>Add Characters</h1>
+	<div class="warning">
+		<div><b>You have not registered any characters yet. Login to CREST below to add characters.</b></div>
+		<div>Atleast one character that is in a corporation or alliance allowed to use Vippy is required!</div>
+	</div>
+</div>
+{/if}
+<div class="content">
+	<h1>
+		<img src="/images/eve/aura.png" align="left">
+		Add Characters
+	</h1>
 	<div class="col4">
 		<h3>Login to CREST to add a Character</h3>
 		<div style="padding: 1em;">
@@ -12,44 +23,31 @@
 	<div class="col8 right last">
 		<div class="message">
 			<div style="padding: .5em;">
-				<div><h3>Logging in with multiple eve accounts</h3></div>
-				<div>
-					If the CREST SSO logs you into the wrong account.
-					Press 'cancel' and you will be able to login to the correct account.
-				</div>
+				<div><strong>Logging in with multiple eve accounts</strong></div>
+				<div>If the CREST SSO logs you into the wrong account, press 'cancel' and you will be able to login to the correct account.</div>
 			</div>
 		</div>
 	</div>
 	<div style="clear:both;"></div>
+	<br />
 </div>
 <div style="clear:both;"></div>
 
+{if $characters|@count > 0}
 <div class="content">
-	<h1>Authorized Characters</h1>
+	<h1>
+		<img src="/images/eve/aura.png" align="left">
+		My Characters
+	</h1>
 	{assign var=i value=0}
 	{foreach from=$characters key=c item=character}
-		{if $character->isAuthorized()}
-			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
-				{include file="profile/characters/character" character=$character}
-			</div>
-			{assign var=i value=$i+1}
-		{/if}
+		<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+			{include file="profile/characters/character" character=$character}
+		</div>
+		{assign var=i value=$i+1}
 	{/foreach}
 	<div style="clear:both;"></div>
+	<br />
 </div>
 <div style="clear:both;"></div>
-
-<div class="content">
-	<h1>Un-Authorized Characters</h1>
-	{assign var=i value=0}
-	{foreach from=$characters key=c item=character}
-		{if !$character->isAuthorized()}
-			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
-				{include file="profile/characters/character" character=$character}
-			</div>
-			{assign var=i value=$i+1}
-		{/if}
-	{/foreach}
-	<div style="clear:both;"></div>
-</div>
-<div style="clear:both;"></div>
+{/if}
