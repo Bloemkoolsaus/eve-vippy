@@ -13,6 +13,7 @@ namespace eve\model
 		public $updatedate;
 
 		private $isAuthorized = null;
+        private $authMessage = null;
 		private $corporation = null;
 		private $roles = null;
 		private $user = null;
@@ -92,39 +93,47 @@ namespace eve\model
 			if ($this->isDirector())
 				return "Director";
 
-			if ($this->isFittingManager())
-				return "Fitting Manager";
-
 			return "";
 		}
 
-		function isFittingManager()
-		{
-			if ($this->isDirector())
-				return true;
+        function getAuthStatus($reset=false)
+        {
+            if ($reset) {
+                $this->isAuthorized = null;
+                $this->authMessage = null;
+            }
 
-			return false;
-		}
+            \AppRoot::debug("getAuthStatus(".$this->name.",".$reset.")");
+            if ($this->isAuthorized === null)
+            {
+                $this->isAuthorized = false;
+
+                // Heeft een geldige CREST token
+                $token = \crest\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
+                if ($token)
+                {
+                    // In een geldige auth-groep?
+                    foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
+                        if ($group->isAllowed()) {
+                            $this->isAuthorized = true;
+                            break;
+                        }
+                    }
+                    if (!$this->isAuthorized)
+                        $this->authMessage = "Not a member of an allowed Corporation or Alliance";
+                }
+                else
+                    $this->authMessage = "No valid CREST authentication token";
+            }
+
+            return $this->authMessage;
+        }
 
 		function isAuthorized($reset=false)
 		{
-            if ($reset)
-                $this->isAuthorized = null;
-
-			\AppRoot::debug("isAuthorized(".$this->name.",".$reset.")");
-			if ($this->isAuthorized === null) {
-                $this->isAuthorized = false;
-                // In een geldige auth-groep?
-                foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
-                    if ($group->isAllowed()) {
-                        $this->isAuthorized = true;
-                        break;
-                    }
-                }
-			}
-
-			\AppRoot::debug("valid: ".(($this->isAuthorized)?"yes":"no"));
-			return $this->isAuthorized;
+            \AppRoot::debug("isAuthorized(".$this->name.",".$reset.")");
+            $this->getAuthStatus($reset);
+            return $this->isAuthorized;
 		}
 
 		/**

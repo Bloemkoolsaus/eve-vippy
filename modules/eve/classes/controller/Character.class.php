@@ -40,6 +40,7 @@ namespace eve\controller
 		function importCharacter($characterID)
 		{
 			$character = new \eve\model\Character($characterID);
+            \AppRoot::doCliCommand("Import Character ".$character->name);
 
             // Public info
             $api = new \eve\controller\API();

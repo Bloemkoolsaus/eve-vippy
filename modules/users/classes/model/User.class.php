@@ -904,37 +904,16 @@ namespace users\model
 			if ($this->getIsSysAdmin())
 				return true;
 
-			foreach ($this->getAuthorizedCharacters() as $char)
-			{
-				if ($corpid)
-				{
+			foreach ($this->getAuthorizedCharacters() as $char) {
+				if ($corpid) {
 					if ($char->corporationID != $corpid)
 						continue;
 				}
-
 				if ($char->isCEO)
 					return true;
 			}
 
 			return false;
-		}
-
-		public function getIsFittingManager()
-		{
-			if ($this->isFittingManager == null)
-			{
-				$this->isFittingManager = false;
-				foreach ($this->getAuthorizedCharacters() as $char)
-				{
-					if ($char->isFittingManager())
-					{
-						$this->isFittingManager = true;
-						break;
-					}
-				}
-			}
-
-			return $this->isFittingManager;
 		}
 
         public function isAllowedChainAction(\scanning\model\Chain $chain, $action)

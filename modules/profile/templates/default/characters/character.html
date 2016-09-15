@@ -35,15 +35,14 @@
 		</div>
 		<div style="margin-top: .9em;">
 			<strong>Access:</strong> &nbsp;
-		{if $character->isAuthorized()}
-			<span style="color: #55ff55;">Authorized</span>
-		{else}
-			<span style="color: #ff5555;">Denied</span>
-		{/if}
+			<span style="color: {if $character->isAuthorized()}#55ff55{else}#ff5555{/if};">
+				<img src="/images/default/{if $character->isAuthorized()}apply.small.png{else}cross.small.png{/if}">
+				{$character->getAuthStatus()}
+			</span>
 		</div>
 		<div>
 			<strong>Last Updated:</strong> &nbsp;
-			<i>{$character->updatedate|date_time}, {$character->updatedate|date_full}</i>
+			<i>{$character->updatedate|date_full} &nbsp;-&nbsp; {$character->updatedate|date_time}</i>
 		</div>
 	</div>
 	<div style="clear:both;"></div>
