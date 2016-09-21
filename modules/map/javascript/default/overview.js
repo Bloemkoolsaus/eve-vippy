@@ -215,7 +215,7 @@ function showActivePilots()
 function addToKnownSystems(systemName)
 {
     $.ajax({
-        url: "/map/knownwormhole/add/"+systemName+"/",
+        url: "/map/knownwormhole/add/"+systemName,
         data: { ajax: 1 },
         success: function(data) {
             showPopup(data, 500, 200);
@@ -225,7 +225,7 @@ function addToKnownSystems(systemName)
 function removeFromKnownSystems(systemName)
 {
 	$.ajax({
-        url: "/map/knownwormhole/remove/"+systemName+"/",
+        url: "/map/knownwormhole/remove/"+systemName,
         data: { ajax: 1 },
 		success: function(data) {
 			showPopup(data, 500, 200);
@@ -256,12 +256,26 @@ function exitFinder()
 	$("#exitFinderResults").html("<img src='/images/loading.gif'> Calculating..");
 
 	$.ajax({
-		url: "/index.php?module=scanning&section=exitfinder&ajax=1",
+		url: "/index.php?module=scanning&section=exitfinder",
 		data: {
 			system: $("#exitFinderSystem").val(),
+            ajax: 1
 		},
 		success: function(data) {
 			$("#exitFinderResults").html(data);
 		}
 	});
+}
+
+function addFleet()
+{
+    $.ajax({
+        url: "/crest/fleet/add",
+        data: {
+            ajax: 1
+        },
+        success: function(data) {
+            showPopup(data, 450, 200);
+        }
+    })
 }

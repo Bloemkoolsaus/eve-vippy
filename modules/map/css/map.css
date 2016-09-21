@@ -1,0 +1,10 @@
+#mapButtons button {
+    float: left;
+    margin: 0;
+    margin-right: .5em;
+}
+#mapButtons button.right {
+    float: right;
+    margin: 0;
+    margin-left: .5em;
+}

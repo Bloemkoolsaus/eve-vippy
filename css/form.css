@@ -36,10 +36,10 @@ div.form .value {
     text-align: left;
 }
 
-div.form .buttons {
+div.form.buttons {
 	width: 450px;
 	text-align: right;
-	margin-top: 15px;
+	padding-top: 1em;
 }
 
 div.form .value input[type=text],

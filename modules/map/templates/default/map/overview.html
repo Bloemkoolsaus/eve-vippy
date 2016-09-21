@@ -117,13 +117,24 @@
 	<!-- CONTROLS -->
 	<div id="mapButtons">
     {if $App->user->isAllowedChainAction($map, 'add')}
-		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');" style="width: 140px;">Add Wormhole</button>
+		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');">
+			Add Wormhole
+		</button>
     {/if}
     {if $App->user->isAllowedChainAction($map, 'delete')}
-		<button id="clearChainButton" onclick="clearChain();" style="width: 120px;">Delete ALL</button>
+		<button id="clearChainButton" onclick="clearChain();">
+			Delete ALL
+		</button>
     {/if}
+		<!--
 		<button id="showActivePeople" onclick="showActivePilots();" style="float: right; width: 150px;">Show Online Pilots</button>
-		<button id="exitFinderButton" onclick="showExitFinder({if isset($igb)}'{$igb->getSolarsystemName()}'{/if});" style="float: right; width: 120px;">Exit Finder</button>
+		-->
+		<button id="addFleet" class="right" onclick="addFleet()">
+			Add Fleet
+		</button>
+		<button id="exitFinderButton" class="right" onclick="showExitFinder();">
+			Exit Finder
+		</button>
 	</div>
 	<div id="addWormholeForm" style="display:none;"></div>
 
