@@ -1,12 +1,24 @@
 <div style="padding: 1em;">
 	<form method="post" action="/crest/fleet/add">
 		<h2>Add Fleet</h2>
-		<div class="form">
-			<div class="field">CREST Link:</div>
-			<div class="value">
-				<input type="text" name="fleet">
-			</div>
-		</div>
+        <div class="form">
+            <div class="field">Boss Character:</div>
+            <div class="value">
+                <select name="boss">
+                {foreach from=$App->user->getCharacters() item=character}
+                    <option value="{$character->id}">
+                        {$character->name}
+                    </option>
+                {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="form">
+            <div class="field">CREST Link:</div>
+            <div class="value">
+                <input type="text" name="fleet">
+            </div>
+        </div>
 		<div class="form buttons">
 			<button type="submit">
 				<img src="/images/default/save.png" align="left">
