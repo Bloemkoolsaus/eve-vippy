@@ -34,20 +34,20 @@
 					<label class="field">Static:</label>
 					{if $system->getStatics()|@count > 0}
 						{foreach from= $system->getStatics() item=static}
-							{$static}<br />
+							<br />
 						{/foreach}
 					{/if}
 				</div>
 			{/if}
 			<div class="form">
 				<label class="field">Status:</label>
-				{if $system->getStatus() == 1}
+				{if $wormhole->status == 1}
 					Unknown
-				{elseif $system->getStatus() == 2}
+				{elseif $wormhole->status == 2}
 					<span style="color:#00CC00;">Uninhabited</span>
-				{elseif $system->getStatus() == 3}
+				{elseif $wormhole->status == 3}
 					<span style="color:#FFAA00;">Inhabited</span>
-				{elseif $system->getStatus() == 4}
+				{elseif $wormhole->status == 4}
 					<span style="color:#CC0000;">Active</span>
 				{/if}
 			</div>
@@ -157,7 +157,7 @@
 	{/literal}
 
 	{literal}
-		{if $system->getActivePilots()|@count > 0}
+		{if $system->getActivePilots($wormhole->chainID)|@count > 0}
 		<div class="systemPopupTitle">
 			<div style="float: left; width: 200px; overflow: hidden;">
 				<u>Active Pilots</u>
@@ -167,7 +167,7 @@
 			</div>
 		</div>
 		<div style="padding: 5px;">
-			{foreach from=$system->getActivePilots() item=pilot}
+			{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
 			<div style="float: left; width: 200px; overflow: hidden; white-space: nowrap;">
 				* {$pilot.name} ({$pilot.ship})
 			</div>

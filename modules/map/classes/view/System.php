@@ -35,7 +35,7 @@ class System
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
-        $tpl->assign("wormhole", \scanning\model\Wormhole::getWormholeBySystemID($system->id, \User::getSelectedChain()));
+        $tpl->assign("wormhole", \scanning\model\Wormhole::getWormholeBySystemID($system->id, $wormhole->chainID));
         return $tpl->fetch($cacheFile);
     }
 

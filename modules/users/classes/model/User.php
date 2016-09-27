@@ -32,11 +32,9 @@ namespace users\model
 		private $alliances = array();
 		private $authorizedCorporations = null;
 		private $authorizedAlliances = null;
-		private $isFittingManager = null;
 		private $capitalShips = null;
         private $logs = null;
 		private $notifications = null;
-        private $chainActions = null;
 
         /** @var \eve\model\Character */
         private $character = null;
@@ -174,14 +172,12 @@ namespace users\model
 		public function setLoginStatus($loggedin=true)
 		{
 			\AppRoot::debug("setLoginStatus(".$loggedin."): ".$this->id);
-			if ($loggedin)
-			{
-				$_SESSION["vippy_userid"] = $this->id;
+            \User::unsetUser();
+			if ($loggedin) {
 				$this->resetCache();
 				$this->fetchIsAuthorized();
+                \User::setUSER($this);
 			}
-			else
-				$_SESSION["vippy_userid"] = 0;
 		}
 
 		public function logout()
@@ -337,10 +333,11 @@ namespace users\model
 		 */
 		public function loggedIn()
 		{
-			if ($this->id != 0 && \User::getLoggedInUserId() == $this->id)
-				return true;
-			else
-				return false;
+            if (\User::getUSER()) {
+                if (\User::getUSER()->id == $this->id)
+                    return true;
+            }
+            return false;
 		}
 
 		/**
@@ -1269,12 +1266,12 @@ namespace users\model
          */
         public function getCurrentAuthGroup()
         {
-            if ($this->currentAuthGroup === null)
-            {
-                $chain = new \scanning\model\Chain(\User::getSelectedChain());
-                $this->currentAuthGroup = new \admin\model\AuthGroup($chain->authgroupID);
+            if ($this->currentAuthGroup === null) {
+                foreach ($this->getAuthGroups() as $group) {
+                    $this->currentAuthGroup = $group;
+                    break;
+                }
             }
-
             return $this->currentAuthGroup;
         }
 

@@ -72,10 +72,10 @@ namespace scanning\model
 			return false;
 		}
 
-		function getActivePilots()
+		function getActivePilots($mapID)
 		{
 			$pilots = array();
-			$chain = new \scanning\model\Chain(\User::getSelectedChain());
+			$map = new \map\model\Map($mapID);
 			$lastdate = date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")));
 
 			if ($results = \MySQL::getDB()->getRows("SELECT	l.solarsystemid, l.lastdate,
@@ -88,7 +88,7 @@ namespace scanning\model
 													AND		l.lastdate > ?
 													AND		l.authgroupid = ?
 													ORDER BY c.name, i.typeName"
-									, array($this->id, $lastdate, $chain->authgroupID)))
+									, [$this->id, $lastdate, $map->authgroupID]))
 			{
 				foreach ($results as $result) {
 					$pilots[] = $result;

@@ -159,15 +159,5 @@ namespace eve\model
 
 			return $this->user;
 		}
-
-		public static function delete($characterId)
-        {
-			// load the character to check if the loggin user owns it.
-			$characterToDelete = new Character($characterId);
-			if ($characterToDelete->userID == \User::getLoggedInUserId() || \User::getUSER()->isAdmin) {
-				\AppRoot::debug("Deleting character : " . $characterToDelete->name);
-				\MySQL::getDB()->delete("characters", array("id" => $characterId));
-			}
-		}
 	}
 }

@@ -213,10 +213,10 @@ class Map
                                                         IF(f.x > t.x, t.x, f.x) as tx,
                                                         IF(f.x > t.x, t.y, f.y) as ty
                                                 FROM    mapwormholeconnections c
-                                                    INNER JOIN mapwormholes f on f.id = c.fromwormholeid AND f.chainid = ".\User::getSelectedChain()."
-                                                    INNER JOIN mapwormholes t on t.id = c.towormholeid AND t.chainid = ".\User::getSelectedChain()."
+                                                    INNER JOIN mapwormholes f on f.id = c.fromwormholeid AND f.chainid = ?
+                                                    INNER JOIN mapwormholes t on t.id = c.towormholeid AND t.chainid = ?
                                                 WHERE	c.chainid = ?"
-                                     , array($map->id)))
+                                     , [$map->id,$map->id,$map->id]))
         {
             foreach ($results as $result)
             {

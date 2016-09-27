@@ -98,20 +98,6 @@ namespace eve\controller
                 return false;
         }
 
-        public function getWormholeStatus($systemID)
-        {
-            \AppRoot::debug("getWormholeStatus($systemID)");
-
-            $status = 1;
-            if ($result = \MySQL::getDB()->getRow("SELECT status FROM mapwormholes WHERE solarsystemid = ? AND chainid = ?"
-                , array($systemID, \User::getSelectedChain())))
-            {
-                $status = $result["status"];
-            }
-
-            return $status;
-        }
-
         public function getWormholeStatics($systemID)
         {
             \AppRoot::debug("getWormholeStatics()");
@@ -139,9 +125,9 @@ namespace eve\controller
             return $statics;
         }
 
-        public function getWormholeAnomalies($systemID)
+        public function getWormholeAnomalies($systemID, $mapID)
         {
-            return \scanning\Anomaly::getSystemAnomalies($systemID);
+            return \scanning\Anomaly::getSystemAnomalies($systemID, $mapID);
         }
 
         public function getStations($systemID)

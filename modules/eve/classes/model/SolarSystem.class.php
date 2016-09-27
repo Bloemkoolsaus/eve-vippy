@@ -14,6 +14,7 @@ namespace eve\model
 		private $faction = null;
 		private $knownSystem = null;
 		private $jumps = null;
+        private $_status = array();
 
 		function __construct($id=false)
 		{
@@ -212,12 +213,6 @@ namespace eve\model
 				$this->fetchSystemInfo();
 
 			return $this->info["class"]["color"];
-		}
-
-		function getStatus()
-		{
-			$controller = new \eve\controller\SolarSystem();
-			return $controller->getWormholeStatus($this->id);
 		}
 
 		/**
@@ -521,10 +516,10 @@ namespace eve\model
 			return $midpoint;
 		}
 
-		function getAnomalies()
+		function getAnomalies($mapID)
 		{
 			$controller = new \eve\controller\SolarSystem();
-			return $controller->getWormholeAnomalies($this->id);
+			return $controller->getWormholeAnomalies($this->id, $mapID);
 		}
 
 		function isHSIsland()

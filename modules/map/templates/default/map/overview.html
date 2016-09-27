@@ -316,20 +316,23 @@
 			<tr class="even">
 				<td><b>Static:</b></td>
 				<td>
-					{if $system->getStatics()|@count>0}
-						{foreach from=$system->getStatics() key=s item=static}
-							{$static}<br />
-						{/foreach}
-					{/if}
+			{if $system->getStatics()|@count>0}
+				{foreach from=$system->getStatics() key=s item=static}
+					<div>{$static}</div>
+				{/foreach}
+			{/if}
 				</td>
 			</tr>
 			<tr class="even">
-				<td><b>Status:</b></td>
-				<td><select name="whstatus" id="whstatus" style="width: 99%;">
-						<option value="1" {if $system->getStatus()==1}selected{/if}>Unknown</option>
-						<option value="2" {if $system->getStatus()==2}selected{/if}>Uninhabited</option>
-						<option value="3" {if $system->getStatus()==3}selected{/if}>Inhabited</option>
-						<option value="4" {if $system->getStatus()==4}selected{/if}>Active</option>
+				<td>
+					<b>Status:</b>
+				</td>
+				<td>
+					<select name="whstatus" id="whstatus" style="width: 99%;">
+						<option value="1" {if $wormhole->status==1}selected{/if}>Unknown</option>
+						<option value="2" {if $wormhole->status==2}selected{/if}>Uninhabited</option>
+						<option value="3" {if $wormhole->status==3}selected{/if}>Inhabited</option>
+						<option value="4" {if $wormhole->status==4}selected{/if}>Active</option>
 					</select>
 				</td>
 			</tr>
@@ -352,8 +355,8 @@
 				<td style="vertical-align:top;"><b>Anoms:</b></td>
 				<td>
 					<div>
-				{if $system->getAnomalies()|@count>0}
-					{foreach from=$system->getAnomalies() key=s item=anom}
+				{if $system->getAnomalies($map->id)|@count>0}
+					{foreach from=$system->getAnomalies($map->id) key=s item=anom}
 						<div>
 							{$anom.sig}
 							-

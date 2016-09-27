@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace scanning
 {
 	class Anomaly
@@ -37,9 +37,9 @@ namespace scanning
 
 		function store()
 		{
-			$data = array(	"chainid" 		=> $this->chainID, 
-							"solarsystemid" => $this->solarSystemID, 
-							"anomalyid" 	=> $this->anomalyID, 
+			$data = array(	"chainid" 		=> $this->chainID,
+							"solarsystemid" => $this->solarSystemID,
+							"anomalyid" 	=> $this->anomalyID,
 							"signatureid" 	=> $this->signatureID);
 			if ($this->id != 0)
 				$data["id"] = $this->id;
@@ -60,7 +60,7 @@ namespace scanning
 		public static function checkSignatureID($signature)
 		{
 			$db = \MySQL::getDB();
-			
+
 			if ($result = $db->getRow("	SELECT 	id
 										FROM 	mapanomalies
 										WHERE	signatureid = ?
@@ -72,25 +72,22 @@ namespace scanning
 				return false;
 		}
 
-		public static function getSystemAnomalies($systemID,$chainID=false)
+		public static function getSystemAnomalies($systemID, $chainID=false)
 		{
-			$db = \MySQL::getDB();
 			$anomalies = array();
-
-			if (!$chainID)
-				$chainID = \User::getSelectedChain();
-
-			if ($results = $db->getRows("SELECT	a.id, a.signatureid, t.name
-										FROM    mapanomalies a
-										    INNER JOIN mapanomalies_types t ON t.id = a.anomalyid
-										WHERE 	a.chainid = ? AND a.solarsystemid = ?
-										ORDER BY t.name, a.signatureid"
-								, array($chainID, $systemID)))
+			if ($results = \MySQL::getDB()->getRows("SELECT	a.id, a.signatureid, t.name
+                                                    FROM    mapanomalies a
+                                                        INNER JOIN mapanomalies_types t ON t.id = a.anomalyid
+                                                    WHERE 	a.chainid = ? AND a.solarsystemid = ?
+                                                    ORDER BY t.name, a.signatureid"
+                                            , array($chainID, $systemID)))
 			{
 				foreach ($results as $result) {
-					$anomalies[] = array("id" => $result["id"],
-										"sig" => $result["signatureid"], 
-										"name" => $result["name"]);
+					$anomalies[] = [
+                        "id" => $result["id"],
+                        "sig" => $result["signatureid"],
+                        "name" => $result["name"]
+                    ];
 				}
 			}
 
@@ -104,4 +101,3 @@ namespace scanning
 		}
 	}
 }
-?>

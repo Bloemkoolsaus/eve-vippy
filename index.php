@@ -31,25 +31,20 @@ if (date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-24" |
 }
 
 // Logout
-if (Tools::GET("action") == "logout")
-{
+if (Tools::GET("action") == "logout") {
 	if (\User::getUSER())
 		\User::getUSER()->logout();
-	\AppRoot::redirect("");
+	\AppRoot::redirect("/");
 }
 
-if (!\User::getLoggedInUserId())
-{
+if (!\User::getUSER()) {
 	// Login by cookie
-	if (\Tools::COOKIE("vippy"))
-	{
+	if (\Tools::COOKIE("vippy")) {
 		if (\User::getUSER()->loginByKey(Tools::COOKIE("vippy")))
-			\AppRoot::redirect("index.php");
+			\AppRoot::redirect("/");
 	}
-
 	// Login by ATLAS
-	if (\Tools::REQUEST("loginbyatlas"))
-	{
+	if (\Tools::REQUEST("loginbyatlas")) {
 		$atlas = new \atlas\console\Atlas();
 		$atlas->loginByAtlas();
 	}
@@ -98,7 +93,7 @@ if (!\Tools::REQUEST("ajax"))
 }
 
 // Niet ingelogd terwijl we dat wel moeten zijn
-if (\AppRoot::loginRequired() && !\User::getLoggedInUserId())
+if (\AppRoot::loginRequired() && !\User::getUSER())
 {
 	if (\Tools::REQUEST("register"))
 	{
@@ -119,7 +114,7 @@ else
 {
     // We zijn ingelogd en mogen door.
 	if (!\Tools::REQUEST("ajax")) {
-		if (\User::getUSER()->loggedIn()) {
+		if (\User::getUSER()) {
 			\User::getUSER()->addLog("login");
 			\Modules::getModules();
 		}
