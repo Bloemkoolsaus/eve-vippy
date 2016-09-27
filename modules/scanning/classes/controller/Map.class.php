@@ -186,7 +186,7 @@ namespace scanning\controller
 			if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
 			{
 				if ($results = \MySQL::getDB()->getRows("SELECT	cl.characterid, cl.solarsystemid, s.solarsystemname, c.name, corp.ticker
-														FROM	mapwormholecharacterlocations cl
+														FROM	map_character_locations cl
 															INNER JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = cl.solarsystemid
 															INNER JOIN characters c ON c.id = cl.characterid
 															LEFT JOIN corporations corp ON corp.id = c.corpid

@@ -22,19 +22,21 @@ namespace map\view
             $characters = array();
             if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
             {
-                if ($results = \MySQL::getDB()->getRows("SELECT	c.id, c.name, c.userid, l.solarsystemid
-														FROM	mapwormholecharacterlocations l
-														    INNER JOIN characters c ON c.id = l.characterid
-														WHERE   l.authgroupid = ?
-														AND		l.lastdate >= DATE_ADD(NOW(), INTERVAL -5 MINUTE)
-														ORDER BY c.name"
-                                            , array($map->getAuthGroup()->id)))
+                if ($results = \MySQL::getDB()->getRows("select	c.id, c.name, c.userid, l.solarsystemid
+														from	map_character_locations l
+														    inner join characters c on c.id = l.characterid
+														where   l.authgroupid = ?
+														and		l.lastdate >= date_add(now(), interval -5 minute)
+														order by c.name"
+                                            , [$map->getAuthGroup()->id]))
                 {
                     foreach ($results as $result)
                     {
-                        $characters[$result["solarsystemid"]][] = ["id" 	=> $result["id"],
-                                                                   "name" 	=> $result["name"],
-                                                                   "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0];
+                        $characters[$result["solarsystemid"]][] = [
+                            "id" 	=> $result["id"],
+                            "name" 	=> $result["name"],
+                            "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0
+                        ];
                     }
                 }
             }

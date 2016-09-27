@@ -23,8 +23,12 @@ class Api extends \api\Client
     {
         $this->resetheader();
         $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
-        if ($this->token)
+
+        if ($this->token) {
+            if ($this->token->isExpired())
+                $this->token->refresh();
             $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
+        }
 
         return parent::get($url, $params);
     }

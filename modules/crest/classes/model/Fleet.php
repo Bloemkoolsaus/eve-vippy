@@ -7,6 +7,7 @@ class Fleet extends \Model
     public $bossID;
     public $authGroupID;
     public $active = false;
+    public $statusMessage;
     public $lastUpdate;
 
     private $_boss;

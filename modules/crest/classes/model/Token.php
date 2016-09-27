@@ -52,14 +52,12 @@ class Token extends \Model
 
     function refresh()
     {
-        $oauth = new \crest\controller\Oauth();
+        $oauth = new \crest\Login();
         if ($oauth->refresh($this)) {
-            // Herladen
             $this->load();
             return true;
         }
 
-        // Refresh failed
         return false;
     }
 }

@@ -260,13 +260,13 @@ class Map
         $characters = array();
         if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
         {
-            if ($results = \MySQL::getDB()->getRows("SELECT	c.id, c.name, c.userid, l.solarsystemid
-														FROM	mapwormholecharacterlocations l
-														    INNER JOIN characters c ON c.id = l.characterid
-														WHERE   l.authgroupid = ?
-														AND		l.lastdate >= ?
-														ORDER BY c.name"
-                    , array($map->authgroupID, date("Y-m-d H:i:s", strtotime("now")-(60*5)))))
+            if ($results = \MySQL::getDB()->getRows("select	c.id, c.name, c.userid, l.solarsystemid
+                                                     from   map_character_locations l
+                                                        inner join characters c ON c.id = l.characterid
+                                                     where  l.authgroupid = ?
+                                                     and    l.lastdate >= ?
+                                                     order by c.name"
+                    , [$map->authgroupID, date("Y-m-d H:i:s", strtotime("now")-(60*5))]))
             {
                 foreach ($results as $result)
                 {

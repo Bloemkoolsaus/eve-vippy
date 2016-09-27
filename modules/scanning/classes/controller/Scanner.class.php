@@ -63,7 +63,7 @@ namespace scanning\controller
 						$chain->addWormholeSystem($previousLocation, $currentLocation);
 					} else {
 						// Cache resetten van mensen zodat de systemjump op de map komt.
-						$chain->setMapUpdateDate();
+                        $chain->setMapUpdateDate();
 					}
 				}
 

@@ -33,6 +33,12 @@ class API
         $this->params[$param] = $value;
     }
 
+    /**
+     * Call api
+     * @param $page
+     * @return \stdClass|bool false on failure
+     * @throws \Exception
+     */
     function call($page)
     {
         $this->url = \Config::getCONFIG()->get("eve_api_url").trim($page,"/");

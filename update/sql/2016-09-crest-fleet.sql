@@ -3,6 +3,7 @@ create table crest_fleet (
   bossid int(11) unsigned not null,
   authgroupid int(11) unsigned not null,
   active tinyint(1) default 0,
+  statusmessage text default null,
   lastupdate datetime default null,
   primary key (id),
   key `CharacterBoss` (bossid),

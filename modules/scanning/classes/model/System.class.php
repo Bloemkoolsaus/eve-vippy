@@ -78,16 +78,16 @@ namespace scanning\model
 			$map = new \map\model\Map($mapID);
 			$lastdate = date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")));
 
-			if ($results = \MySQL::getDB()->getRows("SELECT	l.solarsystemid, l.lastdate,
+			if ($results = \MySQL::getDB()->getRows("select	l.solarsystemid, l.lastdate,
 															l.characterid, c.name,
-													        l.shiptypeid, i.typeName AS ship
-													FROM	mapwormholecharacterlocations l
-														INNER JOIN characters c on c.id = l.characterid
-														INNER JOIN ".\eve\Module::eveDB().".invtypes i on i.typeid = l.shiptypeid
-													WHERE	l.solarsystemid = ?
-													AND		l.lastdate > ?
-													AND		l.authgroupid = ?
-													ORDER BY c.name, i.typeName"
+													        l.shiptypeid, i.typeName as ship
+													from	map_character_locations l
+														inner join characters c on c.id = l.characterid
+														left join ".\eve\Module::eveDB().".invtypes i on i.typeid = l.shiptypeid
+													where	l.solarsystemid = ?
+													and		l.lastdate > ?
+													and		l.authgroupid = ?
+													order by c.name"
 									, [$this->id, $lastdate, $map->authgroupID]))
 			{
 				foreach ($results as $result) {

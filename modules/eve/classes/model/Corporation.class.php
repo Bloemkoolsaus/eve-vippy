@@ -53,9 +53,9 @@ namespace eve\model
             ];
 			\MySQL::getDB()->updateinsert("corporations", $data, array("id" => $this->id));
 
-			// Update CEO
+			// Update CEO, maar alleen als de CEO toon ook echt nog in die corp zit!!
 			\MySQL::getDB()->doQuery("update characters set isceo = 0 where corpid = ?", [$this->id]);
-			\MySQL::getDB()->doQuery("update characters set isceo = 1 where id = ?", [$this->ceoID]);
+			\MySQL::getDB()->doQuery("update characters set isceo = 1 where id = ? and corpid = ?", [$this->ceoID, $this->id]);
             return true;
 		}
 

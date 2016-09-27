@@ -2,6 +2,19 @@ drop table character_roles;
 drop table corptitles;
 drop table chrtitles;
 drop table mapsolarsystemjumps;
+drop table mapwormholecharacterlocations;
+
+create table map_character_locations (
+  characterid int(11) unsigned not null,
+  solarsystemid int(11) unsigned not null,
+  shiptypeid int(11) unsigned not null,
+  authgroupid int(11) unsigned not null,
+  lastdate datetime not null,
+  primary key (characterid),
+  key `SolarSystem` (solarsystemid),
+  key `AuthGroup` (authgroupid),
+  key `UpdateDate` (lastdate)
+);
 
 alter table characters drop column api_keyid;
 alter table characters drop column race;

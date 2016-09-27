@@ -145,9 +145,34 @@ class Login extends \api\Client
         \AppRoot::redirect("/");
     }
 
+    /**
+     * Refresh a token
+     * @param model\Token $token
+     * @return \crest\model\Token|boolean false on failure
+     */
     function refresh(\crest\model\Token $token)
     {
+        \AppRoot::doCliOutput("[CREST] Login->refreshToken($token->accessToken)");
 
+        $this->resetheader();
+        $this->addHeader("Content-Type: application/json");
+        $this->addHeader("Authorization: Basic " . $this->getBasicAuthorizationCode());
+        $this->post("token", ["grant_type" => "refresh_token", "refresh_token" => $token->refreshToken]);
+
+        if ($this->success())
+        {
+            $result = $this->getResult();
+            if (isset($result->access_token))
+            {
+                $token->accessToken = $result->access_token;
+                $token->refreshToken = $result->refresh_token;
+                $token->expires = date("Y-m-d H:i:s", strtotime("now")+$result->expires_in);
+                $token->store();
+                return $token;
+            }
+        }
+
+        return false;
     }
 
     /**

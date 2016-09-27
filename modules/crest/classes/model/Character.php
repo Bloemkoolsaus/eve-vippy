@@ -9,8 +9,7 @@ class Character extends \eve\model\Character
     function importData()
     {
         /**
-         * Gebruikt reguliere xml api
-         *      scheelt weer crest-requests. Limits enzo
+         * Gebruikt reguliere xml api. Scheelt weer crest-requests, rate-limits enzo
          */
         $charController = new \eve\controller\Character();
         $character = $charController->importCharacter($this->id);

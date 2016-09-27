@@ -291,11 +291,24 @@ class AppRoot
 		return self::$execTime;
 	}
 
+    public static function getMaxExecTime()
+    {
+        return self::$maxExecTime;
+    }
+
 	public static function setMaxExecTime($seconds=30)
 	{
 		set_time_limit($seconds);
 		self::$maxExecTime = self::getExecTime() + $seconds;
 	}
+
+    public static function approachingMaxExecTime($margin=10)
+    {
+        if (\AppRoot::getExecTime() < \AppRoot::getMaxExecTime()-$margin)
+            return true;
+
+        return false;
+    }
 
 	public static function setMaxMemory($bytes)
 	{
