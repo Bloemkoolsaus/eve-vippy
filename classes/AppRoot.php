@@ -357,7 +357,7 @@ class AppRoot
 		$data["info"] .= "GET: ".json_encode($_GET)."\n";
 		$data["info"] .= "POST: ".json_encode($_POST)."\n";
 		$data["info"] .= "SESSION: ".json_encode($_SESSION)."\n";
-		$data["info"] .= "USER: ".(is_object(\User::getUSER()) ? \User::getUSER()->getFullName() : "");
+		$data["info"] .= "USER: ".((\User::getUSER())?\User::getUSER()->getFullName():"");
 
 		self::errorToLog($message, $log);
 	}

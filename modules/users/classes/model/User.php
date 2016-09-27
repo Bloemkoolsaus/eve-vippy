@@ -169,7 +169,7 @@ namespace users\model
             return true;
 		}
 
-		public function setLoginStatus($loggedin=true)
+		public function setLoginStatus($loggedin=true, $setKeyCookie=false)
 		{
 			\AppRoot::debug("setLoginStatus(".$loggedin."): ".$this->id);
             \User::unsetUser();
@@ -177,6 +177,8 @@ namespace users\model
 				$this->resetCache();
 				$this->fetchIsAuthorized();
                 \User::setUSER($this);
+                if ($setKeyCookie)
+                    \Tools::setCOOKIE("vippy", $this->createLoginKey());
 			}
 		}
 
@@ -191,31 +193,19 @@ namespace users\model
 		public function login($username, $password, $retry=false, $setKeyCookie=false)
 		{
 			\AppRoot::debug("LOGIN: ".$username." ($retry)");
-
-			$loggedIn = false;
-			if ($users = \MySQL::getDB()->getRows("SELECT * FROM users WHERE username = ? AND deleted = 0", array($username)))
-			{
+			if ($users = \MySQL::getDB()->getRows("SELECT * FROM users WHERE username = ? AND deleted = 0", [$username]))
+            {
 				foreach ($users as $key => $user)
-				{
+                {
 					if ($user["password"] == \User::generatePassword($password, $user["password"]))
-					{
+                    {
 						$this->load($user);
-						$this->setLoginStatus();
-						$loggedIn = true;
-
-						if ($setKeyCookie)
-							\Tools::setCOOKIE("vippy", $this->createLoginKey());
-
-						\AppRoot::debug("LOGGED IN!");
-						break;
+						$this->setLoginStatus(true, $setKeyCookie);
+						return true;
 					}
 				}
 			}
-
-			if ($this->id == 0)
-				return false;
-
-			return $loggedIn;
+            return false;
 		}
 
 		public function loginByKey($key)

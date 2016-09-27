@@ -159,7 +159,7 @@ class Modules
 		foreach (self::getModules() as $module)
 		{
 			// Als we geen rechten hebben mogen we deze niet zien.
-			if (!\User::getUSER()->hasRight($module))
+			if (!\User::getUSER() || !\User::getUSER()->hasRight($module))
 				continue;
 
 			// Als er geen sub-items zijn, hoeven we deze niet te zien.
@@ -214,8 +214,7 @@ class Modules
 		else
 			$tpl->assign("today", \Tools::getDayOfTheWeek().", ".Tools::getWrittenMonth(date("m"))." ".date("d").", ".date("Y"));
 
-		if (\User::getUSER()->isAuthorized())
-        {
+		if (\User::getUSER() && \User::getUSER()->isAuthorized()) {
             $lastUpdateCheck = \User::getUSER()->getConfig("patchnotes");
             $lastPatchnotes = filemtime("documents/changelog.txt");
             if ($lastUpdateCheck == null || $lastUpdateCheck <= $lastPatchnotes)
@@ -228,7 +227,7 @@ class Modules
 	public static function getHomepage()
 	{
         // Check characters
-        if (count(\User::getUSER()->getAuthorizedCharacters()) == 0)
+        if (\User::getUSER() && count(\User::getUSER()->getAuthorizedCharacters()) == 0)
             \AppRoot::redirect("profile/characters");
 
 		\AppRoot::redirect("map");

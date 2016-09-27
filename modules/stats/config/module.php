@@ -4,7 +4,7 @@ $config = array();
 $config["name"] = "Statistics";
 $config["url"] = "stats/leaderboard";
 $config["public"] = true;
-$config["enabled"] = (\User::getUSER()->isAuthorized()) ? true : false;
+$config["enabled"] = (\User::getUSER() && \User::getUSER()->isAuthorized()) ? true : false;
 
 $config["submenu"][] = [
     "type" => "link",
@@ -12,7 +12,7 @@ $config["submenu"][] = [
     "url" => "stats/leaderboard"
 ];
 
-if (\User::getUSER()->isAdmin())
+if (\User::getUSER() && \User::getUSER()->isAdmin())
 {
 	$config["submenu"][] = [
         "type" => "link",

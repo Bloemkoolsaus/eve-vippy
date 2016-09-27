@@ -3,7 +3,7 @@
 $config = array();
 $config["name"] = "WH-Info";
 $config["public"] = true;
-$config["enabled"] = (\User::getUSER()->isAuthorized()) ? true : false;
+$config["enabled"] = (\User::getUSER() && \User::getUSER()->isAuthorized())?true:false;
 
 $config["submenu"][] = array("type" => "link",
 							"name"	=> "WH Colors",

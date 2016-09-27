@@ -114,7 +114,7 @@ class Login extends \api\Client
                                 $character->importData();
 
                                 $token->tokenid = $character->id;
-                                $token->tokentype = strtolower($result->tokentype);
+                                $token->tokentype = strtolower($result->TokenType);
                                 $token->ownerHash = $result->CharacterOwnerHash;
                                 $token->state = $state;
                                 $token->accessToken = $accessToken;
