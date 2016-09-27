@@ -1,5 +1,5 @@
 <?php
-class User extends \users\model\User
+class User
 {
 	private static $currentUser = null;
 

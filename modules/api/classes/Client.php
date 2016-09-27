@@ -126,20 +126,24 @@ namespace api
 			foreach (explode(";",$info["content_type"]) as $type)
 			{
 			    if (trim($type) == "application/json") {
+                    \AppRoot::debug("Parse as json");
 			        $result["result"] = json_decode($content, $this->asArray);
 			        break;
 			    } else if (trim($type) == "application/xml") {
+                    \AppRoot::debug("Parse as xml");
 			        $result["result"] = new \SimpleXMLElement($content);
 			        break;
 			    }
 			}
 
 			// Kon niet parsen. Geef ongeparsed.
-			if (!isset($result["result"]))
-			    $result["result"] = $content;
+			if (!isset($result["result"])) {
+                \AppRoot::debug("Unknown content-type. Return unparsed.");
+                $result["result"] = $content;
+            }
 
 			$this->result = $result["result"];
-
+            \AppRoot::debug("RESULT:<pre>".print_r($this->result,true)."</pre>");
 
 			// Loggen
 			\AppRoot::doCliCommand("*** HTTP: ".$this->httpStatus);
@@ -227,8 +231,7 @@ namespace api
 
 		function getResult()
 		{
-			return json_decode($this->result, $this->asArray);
+			return $this->result;
 		}
 	}
 }
-?>

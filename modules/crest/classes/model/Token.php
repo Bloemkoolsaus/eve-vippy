@@ -5,8 +5,8 @@ class Token extends \Model
 {
     protected $_keyfield = ["tokentype","tokenid"];
 
-    public $tokenType;
-    public $tokenID;
+    public $tokentype;
+    public $tokenid;
     public $ownerHash;
     public $state;
     public $accessToken;
@@ -47,6 +47,19 @@ class Token extends \Model
             if (strtotime("now") >= strtotime($this->expires))
                 return true;
         }
+        return false;
+    }
+
+    function refresh()
+    {
+        $oauth = new \crest\controller\Oauth();
+        if ($oauth->refresh($this)) {
+            // Herladen
+            $this->load();
+            return true;
+        }
+
+        // Refresh failed
         return false;
     }
 }

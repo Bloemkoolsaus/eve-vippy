@@ -1,10 +1,15 @@
 <?php
 require_once("init.php");
 \AppRoot::debug("finished init");
-
 if (\AppRoot::doDebug()) {
     \AppRoot::readSqlUpdates();
     \AppRoot::readPhpUpdates();
+}
+
+/* CREST callback */
+if (\Tools::GET("state") && \Tools::GET("code")) {
+    \AppRoot::doCliOutput("CREST Callback");
+    \AppRoot::redirect("crest/login/login/".\Tools::GET("state")."/".\Tools::GET("code"));
 }
 
 $mainContent = null;
@@ -12,33 +17,15 @@ $mainMenu = null;
 
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
-
-
-if (Tools::POST("sso") == "true")
-{
-    \AppRoot::doCliOutput("SSO Login");
-    $oath = new \crest\controller\Oauth();
-    $oath->requestAuthorization();
-}
-
-/**
- * CREST callback
- */
-if (\Tools::GET("state") && \Tools::GET("code"))
-{
-    $oath = new \crest\controller\Oauth();
-    $oath->getAccessToken(\Tools::GET("state"), \Tools::GET("code"));
-}
-
-
-
-// KONINGSDAG
+// Koningsdag
 if (date("Y-m-d") == date("Y")."-04-27") {
 	\SmartyTools::setTemplate("kingsday");
 }
+// Sinterklaas
 if (date("Y-m-d") == date("Y")."-12-05") {
 	\SmartyTools::setTemplate("sinterklaas");
 }
+// Kerst
 if (date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-26") {
 	\SmartyTools::setTemplate("kerst");
 }
@@ -49,16 +36,6 @@ if (Tools::GET("action") == "logout")
 	if (\User::getUSER())
 		\User::getUSER()->logout();
 	\AppRoot::redirect("");
-}
-
-if (Tools::POST("sso") == "true") {
-	$oath = new \crest\controller\Oauth();
-	$oath->requestAuthorization();
-}
-
-if (Tools::GET("state") && Tools::GET("code")) {
-	$oath = new \crest\controller\Oauth();
-	$oath->getAccessToken(Tools::GET("state"), Tools::GET("code"));
 }
 
 if (!\User::getLoggedInUserId())

@@ -223,6 +223,10 @@ class AppRoot
                 return false;
         }
 
+        // CREST
+        if (\Tools::GET("module") == "crest")
+            return false;
+
 		return true;
 	}
 
@@ -254,13 +258,12 @@ class AppRoot
 				self::$startTime = microtime(true);
 
 			if (is_array($value) || is_object($value))
-				$value = "<pre style='margin: 0px; padding: 0px;'>".print_r($value,true)."</pre>";
+				$value = "<pre>".print_r($value,true)."</pre>";
 			else
 				$value = nl2br($value);
 
 			if ($addStackTrace)
 				$value .= "<pre>".print_r(self::getStackTrace(),true)."</pre>";
-
 
 			self::$debug[] = array("time" => number_format(self::getExecTime(), 4), "msg" => $value);
 		}
