@@ -158,7 +158,7 @@ table.sectionoverview tr th {
 }
 
 table.sectionoverview tr th.large {
-	font-size: 15px;
+	font-size: 1.2em;
 	text-shadow: 1px 1px 1px #555555;
 }
 
@@ -170,7 +170,7 @@ table.sectionoverview tr th input {
 	width: 60px;
     font-family: Arial, sans-serif;
 	color: #FFFFFF;
-	font-size: 11px;
+	font-size: 1em;
 	margin: 1px;
 	padding: 1px;
 }
@@ -264,13 +264,11 @@ pre {
 	text-align: left;
 }
 
-pre.changelog
-{
+pre.changelog  {
     font-family: Consolas, monospace;
 	font-size: 11px;
 }
-pre.changelog h3
-{
+pre.changelog h3 {
     font-family: Consolas, monospace;
 	font-size: 15px;
 }
@@ -280,7 +278,6 @@ div.message, div.error, div.success,
 div.notice, div.warning {
     border-radius: 5px;
     padding: 5px 5px 10px;
-    font-size: 12px;
     margin: 5px;
 }
 div.message h1, div.message h2, div.message h3,
@@ -301,8 +298,7 @@ div.notice a, div.warning a {
 div.message {
     background-color: #DDDDDD;
     background: #DDDDDD linear-gradient(#FFFFFF, #CCCCCC);
-    font-family: Verdana,sans-serif;
-    font-size: 11px;
+    font-size: 1em;
     color: #111111;
 }
 div.message.soft {
@@ -339,24 +335,6 @@ div.error {
     background: #990000 linear-gradient(#CC0000, #880000);
     color: #eeeeee;
     text-align: center;
-}
-
-div.userNotification {
-	margin: 15px;
-}
-div.noteTitle {
-	font-weight: bold;
-	font-size: 18px;
-}
-div.noteContent {
-	font-weight: bold;
-	font-size: 13px;
-	padding: 10px;
-}
-div.noteInfo {
-	text-align: right;
-	font-size: 10px;
-	padding-right: 20px;
 }
 
 div.message a {
@@ -403,7 +381,6 @@ div.tabs ul li:hover {
 
 div.tabs ul li a {
     color: #FFFFFF;
-    font-size: 12px;
     font-weight: bold;
     text-decoration: none;
     text-transform: uppercase;
@@ -435,7 +412,6 @@ button:hover {
 button.small {
     width: 100px;
     padding: 2px 5px;
-    font-size: 12px;
     font-weight: normal;
 }
 button img {

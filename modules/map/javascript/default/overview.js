@@ -64,10 +64,30 @@ function loadSignatureMap(action, params, force)
         url: "/map/"+$("#mapName").val()+"/"+action+"/"+$("#mapSystem").val(),
         data: params,
         success: function(data) {
-            if (data != "cached") {
+            var data = $.parseJSON(data);
+
+            // Notifications
+            $("#notificationContainter>.notification").remove();
+            if (data.notifications != undefined && data.notifications.length > 0)
+            {
+                for (var n=0; n<data.notifications.length; n++)
+                {
+                    console.log(data.notifications[n]);
+                    var notification = {
+                        id: data.notifications[n].id,
+                        type: data.notifications[n].type,
+                        title: data.notifications[n].title,
+                        content: data.notifications[n].content
+                    };
+                    $("#notificationContainter").append(Mustache.to_html($('#notificationTPL').html(), notification));
+                }
+            }
+
+            // Map
+            var mapData = data.map;
+            if (mapData != "cached") {
                 destroyPopup();
-                var data = $.parseJSON(data);
-                generateMap(data);
+                generateMap(mapData);
             }
             allowMapLoadingStart = true;
             var currentTime = new Date();

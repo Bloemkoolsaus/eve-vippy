@@ -1,0 +1,33 @@
+#notificationContainter .notification {
+    text-align: center;
+    border: 0;
+    margin: .2em !important;
+    padding: .2em !important;
+}
+#notificationContainter .notification .title {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+#notificationContainter .notification .body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+#notificationContainter .notification {
+    background-image: url("/images/default/notifications/notice.png");
+    background-repeat: no-repeat;
+    background-position: .2em .2em;
+}
+#notificationContainter .notification.notice {
+    background-image: url("/images/default/notifications/notice.png");
+}
+#notificationContainter .notification.message {
+    background-image: url("/images/default/notifications/message.png");
+}
+#notificationContainter .notification.warning {
+    background-image: url("/images/default/notifications/warning.png");
+}
+#notificationContainter .notification.error {
+    background-image: url("/images/default/notifications/error.png");
+}

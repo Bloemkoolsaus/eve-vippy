@@ -3,37 +3,38 @@ namespace map\controller;
 
 class Map
 {
+    /**
+     * Get notices
+     * @param \scanning\model\Chain $chain
+     * @return \notices\model\Notice[]
+     */
     function getNotices(\scanning\model\Chain $chain)
     {
         $notices = array();
 
         // Build query
-        $queryParts = array();
-        $queryParts[] = "n.deleted = 0";
-        $queryParts[] = "n.expiredate >= NOW()";
-        $queryParts[] = "n.authgroupid = ".$chain->authgroupID;
-        $queryParts[] = "(w.chainid = ".$chain->id." OR n.global > 0)";
+        $queryParts = [
+            "n.deleted = 0",
+            "n.expiredate > '".date("Y-m-d H:i:s")."'",
+            "n.authgroupid = ".$chain->authgroupID,
+            "(w.chainid = ".$chain->id." or n.global > 0)"
+        ];
 
         // Exec query
-        if ($results = \MySQL::getDB()->getRows("	SELECT	n.*
-														FROM	notices n
-															INNER JOIN mapwormholes w ON w.solarsystemid = n.solarsystemid
-															LEFT JOIN notices_read r ON r.noticeid = n.id AND r.userid = 1000210
-														WHERE 	(r.userid IS NULL OR n.persistant > 0)
-														AND		".implode(" AND ", $queryParts)."
-														GROUP BY n.id"))
+        if ($results = \MySQL::getDB()->getRows("SELECT	n.*
+                                                FROM	notices n
+                                                    INNER JOIN mapwormholes w ON w.solarsystemid = n.solarsystemid
+                                                    LEFT JOIN notices_read r ON r.noticeid = n.id AND r.userid = ?
+                                                WHERE 	(r.userid IS NULL OR n.persistant > 0)
+                                                AND		".implode(" AND ", $queryParts)."
+                                                GROUP BY n.id"
+                                    , [\User::getUSER()->id]))
         {
             foreach ($results as $result)
             {
                 $notice = new \notices\model\Notice();
                 $notice->load($result);
-
-                $notices[] = array(	"id"	=> $notice->id,
-                    "type" 	=> $notice->getTypeName(),
-                    "title"	=> $notice->getTitle(),
-                    "body" 	=> $notice->body,
-                    "date" 	=> $notice->messageDate,
-                    "persistant" => ($notice->persistant)?1:0);
+                $notices[] = $notice;
             }
         }
 

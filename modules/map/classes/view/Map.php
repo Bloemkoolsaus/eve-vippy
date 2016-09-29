@@ -30,8 +30,46 @@ class Map
     function getMap(\map\model\Map $map, $arguments=[])
     {
         \AppRoot::debug("----- getMap(".$map->id." - ".$map->name.") -----");
+        $controller = new \map\controller\Map();
+        $data = ["map" => "cached", "notifications" => []];
+
+        /**
+         * Get notifications
+         */
+        foreach ($controller->getNotices($map) as $note) {
+            $wormhole = $map->getWormholeBySystem($note->solarSystemID);
+            $title = $note->getSystem()->name;
+            if ($wormhole)
+                $title = $wormhole->name." - ".$title;
+            $data["notifications"][] = [
+                "id" => $note->id,
+                "type" => $note->getTypeName(),
+                "title" => "[".$title."] - ".$note->title,
+                "content" => $note->body
+            ];
+        }
+
+        $fleets = [];
+        foreach (\crest\model\Fleet::findAll(["authgroupid" => $map->authgroupID]) as $fleet) {
+            if ($fleet->active)
+                $fleets[] = $fleet;
+        }
+        if (count($fleets) == 0) {
+            $data["notifications"][] = [
+                "id" => "no-active-fleets",
+                "type" => "error",
+                "title" => "There are currently no active fleets registered with VIPPY!",
+                "content" => "Vippy cannot determine character locations, auto-map wormholes and log jumped mass without an active fleet. Please register your fleet with Vippy using the 'Add Fleet' button."
+            ];
+        }
+
+
+        /**
+         * Get map data.
+         */
         $currentDate = date("Y-m-d H:i:s");
         $checkCache = (\Tools::REQUEST("nocache"))?false:true;
+        $isCached = false;
 
         // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
         if ($checkCache)
@@ -47,7 +85,7 @@ class Map
                     if (strtotime($cacheDate)+60 > strtotime("now")) {
                         if (strtotime($result["lastdate"]) < strtotime($cacheDate)-2) {
                             \AppRoot::debug("do cache");
-                            return "cached";
+                            $isCached = true;
                         } else {
                             \AppRoot::debug("cache out-dated.. gogogo!");
                             break;
@@ -60,24 +98,25 @@ class Map
             }
         }
 
-        // Maak de map
-        $controller = new \map\controller\Map();
-        $map = [
-            "settings"      => [
-                "defaultwidth"  => (int)\Config::getCONFIG()->get("map_wormhole_width"),
-                "defaultheight"  => (int)\Config::getCONFIG()->get("map_wormhole_height")
-            ],
-            "wormholes" 	=> $controller->getWormholes($map),
-            "connections" 	=> $controller->getConnections($map),
-            "homesystem" 	=> $map->homesystemID,
-            "notices"		=> $controller->getNotices($map)
-        ];
+        if (!$isCached)
+        {
+            // Maak de map
+            $data["map"] = [
+                "settings"      => [
+                    "defaultwidth"  => (int)\Config::getCONFIG()->get("map_wormhole_width"),
+                    "defaultheight"  => (int)\Config::getCONFIG()->get("map_wormhole_height")
+                ],
+                "wormholes" 	=> $controller->getWormholes($map),
+                "connections" 	=> $controller->getConnections($map),
+                "homesystem" 	=> $map->homesystemID
+            ];
 
-        // Cache datum opslaan.
-        $_SESSION["vippy_cachedate_map"] = $currentDate;
+            // Cache datum opslaan.
+            $_SESSION["vippy_cachedate_map"] = $currentDate;
+        }
 
         // Geef de map terug
-        return json_encode($map);
+        return json_encode($data);
     }
 
     function getMove(\map\model\Map $map, $arguments=[])

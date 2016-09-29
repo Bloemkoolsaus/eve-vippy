@@ -912,6 +912,20 @@ namespace scanning\model
 			return $this->wormholes;
 		}
 
+        /**
+         * Get wormhole by system
+         * @param $systemID
+         * @return \scanning\model\Wormhole|null
+         */
+        function getWormholeBySystem($systemID)
+        {
+            foreach ($this->getWormholes() as $wormhole) {
+                if ($wormhole->solarSystemID == $systemID)
+                    return $wormhole;
+            }
+            return null;
+        }
+
 
 
 		/**

@@ -2,109 +2,52 @@
 <input type="hidden" id="mapName" value="{$map->name}">
 <input type="hidden" id="mapSystem" value="{$system->name}" style="width: 230px;" />
 
-{if $App->map->trackingMode}
-	<div id="trackingOnlyModeActive" style="text-align: center; margin: 20px;">
-		<button type="button" onclick="disableTrackingOnly()">Disable Tracking-Only Mode</button>
-	</div>
-{else}
-
-{if $App->eve->igb && !$App->eve->igb->isTrusted()}
-	<div class="error">
-		<div style="padding: 10px;">
-			<b>You have not trusted VIPPY. Please trust VIPPY to enable location tracking.</b>
-		</div>
-		<button type="button" class="small" style="width: 150px;"
-			onclick="CCPEVE.requestTrust('{$App->url}*'); $(window).reload();">
-			Trust VIPPY now
-		</button>
-	</div>
-	<div style="clear:both;"></div>
-	<div id="mapHeader" style="margin-bottom: 10px;"></div>
-{else}
-	<div id="mapHeader" class="content nomargin">
-		<div id="mapHeaderTitle">
-			<div id="divNoTracking" style="text-align: right;">
-			{if $App->eve->igb}
-				<a href="#" onclick="showTrackingOnlyModeHelp();">What is this?</a> =>
-				<button type="button" onclick="enableTrackingOnly()">Enable Tracking-Only Mode</button>
+<div id="mapHeader" class="content nomargin">
+	<div id="mapHeaderTitle">
+		<div id="divSystemTitle">
+			<h1>
+				<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
+				{$system->name}
+			{if $wormhole->name|strlen > 0}
+				-
+				{$wormhole->name}
 			{/if}
-			</div>
-			<div id="divNotices"></div>
-			<div id="divSystemTitle">
-				<h1>
-					<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
-					{$system->name}
-				{if $wormhole->name|strlen > 0}
-					-
-					{$wormhole->name}
-				{/if}
-				</h1>
-			</div>
-			<div id="divRefreshTimer">
-				<div>
-					Last update:
-					&nbsp;
-					<span id="lastupdatetime"></span>
-					&nbsp;
-					(<i>Local time</i>)
-				</div>
-			</div>
-			<div style="clear:both;"></div>
+			</h1>
 		</div>
-		<div style="clear:both;"></div>
-		<div style="padding: 4px;">
-			<div style="float: left; width: 50%;">
-				<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$map->name}</h3>
-			</div>
-			<div id="mapControls" style="float: right; width: 300px;">
-                <img src="/images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
-				{*
-				<img src="/images/default/zoom_in.png" style="cursor:pointer;" onclick="mapZoomIn()" align="right"/>
-				<img src="/images/default/zoom_out.png" style="cursor:pointer;" onclick="mapZoomOut()" align="right"/>
-				*}
-{if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
-                <span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
-                    <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
-                    <span style="padding: 2px; display: inline-block; color: #ffdd00;">
-                        You have restricted controls on this map.
-                    </span>
-                </span>
-{/if}
+		<div id="divRefreshTimer">
+			<div>
+				Last update:
+				&nbsp;
+				<span id="lastupdatetime"></span>
+				&nbsp;
+				(<i>Local time</i>)
 			</div>
 		</div>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
+	<div style="padding: 4px;">
+		<div style="float: left; width: 50%;">
+			<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$map->name}</h3>
+		</div>
+		<div id="mapControls" style="float: right; width: 300px;">
+			<img src="/images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
+{if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
+			<span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
+				<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+				<span style="padding: 2px; display: inline-block; color: #ffdd00;">
+					You have restricted controls on this map.
+				</span>
+			</span>
 {/if}
+		</div>
+	</div>
+	<div style="clear:both;"></div>
 
-<script id="restrictionsTPL" type="text/template">
-<div style="text-align: left; padding: 20px;">
-    <div style="font-size: 1.1em; font-weight: bold;">
-        <img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
-        <span style="padding: 2px; display: inline-block; color: #ffdd00;">You have restricted controls on this map:</span>
-    </div>
-    <ul>
-    {if !$App->user->isAllowedChainAction($map, 'move')}
-        <li>You are not allowed to re-position systems on the map.</li>
-    {/if}
-    {if !$App->user->isAllowedChainAction($map, 'add')}
-        <li>You are not allowed to manually add systems to the map.</li>
-    {/if}
-    {if !$App->user->isAllowedChainAction($map, 'delete')}
-        <li>You are not allowed to remove systems from the map.</li>
-    {/if}
-    {if !$App->user->isAllowedChainAction($map, 'mass')}
-        <li>You are not allowed to manually add mass to a wormhole connection.</li>
-    {/if}
-    {if !$App->user->isAllowedChainAction($map, 'known')}
-        <li>You are not allowed to add/remove systems to the known-systems list.</li>
-    {/if}
-    {if !$App->user->isAllowedChainAction($map, 'notice')}
-        <li>You are not allowed to add a system notice.</li>
-    {/if}
-    </ul>
+	<div id="notificationContainter"></div>
+	<div style="clear:both;"></div>
 </div>
-</script>
+<div style="clear:both;"></div>
 
 <div id="signatureMapContainer" oncontextmenu="return false;">
 	<div id="signatureMap" oncontextmenu="return false;"></div>
@@ -391,7 +334,6 @@
 	</div>
 	<div style="clear:both;"></div>
 </div>
-{/if}
 
 
 
@@ -415,48 +357,86 @@
 {/literal}
 </script>
 <script id="signatureTPL" type="text/template">
-	{literal}
-		<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
-			<td class="sigID" onclick="editSignature('{{id}}')">{{sigid}}</td>
-			<td class="sigType" onclick="editSignature('{{id}}')">{{type}} <div class="whtype">{{whtype}}</div></td>
-			<td class="sigInfo" onclick="editSignature('{{id}}')">{{info}}</td>
-			<td class="sigUpdate" onclick="editSignature('{{id}}')">{{scanage}}</td>
-			<td class="sigControls">
-				<img src="/images/default/information.png">
-				<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
-				<img src="/images/default/cross.png" onclick="deleteSignature('{{id}}');">
-			</td>
-		</tr>
-	{/literal}
+{literal}
+	<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+		<td class="sigID" onclick="editSignature('{{id}}')">{{sigid}}</td>
+		<td class="sigType" onclick="editSignature('{{id}}')">{{type}} <div class="whtype">{{whtype}}</div></td>
+		<td class="sigInfo" onclick="editSignature('{{id}}')">{{info}}</td>
+		<td class="sigUpdate" onclick="editSignature('{{id}}')">{{scanage}}</td>
+		<td class="sigControls">
+			<img src="/images/default/information.png">
+			<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
+			<img src="/images/default/cross.png" onclick="deleteSignature('{{id}}');">
+		</td>
+	</tr>
+{/literal}
 </script>
 <script id="signatureEditTPL" type="text/template">
-	{literal}
-		<tr class="{{type}} sigedit" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
-			<td class="sigID">
-				<input type="text" id="sigId{{id}}" value="{{sigid}}">
-			</td>
-			<td class="sigType">
-				<select id="sigType{{id}}">
-					<option value=""></option>
-					<option value="wh">WH</option>
-					<option value="data">Data</option>
-					<option value="gas">Gas</option>
-					<option value="ore">Ore</option>
-					<option value="relic">Relic</option>
-					<option value="combat">Combat</option>
-					<option value="pos">POS</option>
-				</select>
-			</td>
-			<td class="sigInfo">
-				<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}" placeholder="K162">
-				<input type="text" class="signame" id="sigName{{id}}" value="{{info}}">
-			</td>
-			<td class="sigUpdate">{{scanage}}</td>
-			<td class="sigControls">
-				<img src="/images/default/save.png" onclick="document.formEditSignature.submit()">
-				&nbsp;
-				<img src="/images/default/cancel.png" onclick="editSignatureCancel('{{id}}')">
-			</td>
-		</tr>
-	{/literal}
+{literal}
+	<tr class="{{type}} sigedit" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+		<td class="sigID">
+			<input type="text" id="sigId{{id}}" value="{{sigid}}">
+		</td>
+		<td class="sigType">
+			<select id="sigType{{id}}">
+				<option value=""></option>
+				<option value="wh">WH</option>
+				<option value="data">Data</option>
+				<option value="gas">Gas</option>
+				<option value="ore">Ore</option>
+				<option value="relic">Relic</option>
+				<option value="combat">Combat</option>
+				<option value="pos">POS</option>
+			</select>
+		</td>
+		<td class="sigInfo">
+			<input type="text" class="whtype" id="whType{{id}}" value="{{whtype}}" placeholder="K162">
+			<input type="text" class="signame" id="sigName{{id}}" value="{{info}}">
+		</td>
+		<td class="sigUpdate">{{scanage}}</td>
+		<td class="sigControls">
+			<img src="/images/default/save.png" onclick="document.formEditSignature.submit()">
+			&nbsp;
+			<img src="/images/default/cancel.png" onclick="editSignatureCancel('{{id}}')">
+		</td>
+	</tr>
+{/literal}
+</script>
+
+<script id="restrictionsTPL" type="text/template">
+	<div style="text-align: left; padding: 20px;">
+		<div style="font-size: 1.1em; font-weight: bold;">
+			<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+			<span style="padding: 2px; display: inline-block; color: #ffdd00;">You have restricted controls on this map:</span>
+		</div>
+		<ul>
+		{if !$App->user->isAllowedChainAction($map, 'move')}
+			<li>You are not allowed to re-position systems on the map.</li>
+		{/if}
+		{if !$App->user->isAllowedChainAction($map, 'add')}
+			<li>You are not allowed to manually add systems to the map.</li>
+		{/if}
+		{if !$App->user->isAllowedChainAction($map, 'delete')}
+			<li>You are not allowed to remove systems from the map.</li>
+		{/if}
+		{if !$App->user->isAllowedChainAction($map, 'mass')}
+			<li>You are not allowed to manually add mass to a wormhole connection.</li>
+		{/if}
+		{if !$App->user->isAllowedChainAction($map, 'known')}
+			<li>You are not allowed to add/remove systems to the known-systems list.</li>
+		{/if}
+		{if !$App->user->isAllowedChainAction($map, 'notice')}
+			<li>You are not allowed to add a system notice.</li>
+		{/if}
+		</ul>
+	</div>
+</script>
+
+<script id="notificationTPL" type="text/template">
+{literal}
+	<div class="notification {{type}}" data-notification="{{id}}">
+		<div class="title">{{title}}</div>
+		<div class="body">{{content}}</div>
+	</div>
+{/literal}
 </script>
