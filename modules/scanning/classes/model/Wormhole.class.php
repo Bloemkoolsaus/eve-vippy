@@ -343,7 +343,7 @@ namespace scanning\model
 		{
 			\AppRoot::debug("getRouteToSystem()");
 			if ($toSystem == null)
-				$toSystem = self::getWormholeBySystemID($this->getChain()->getHomeSystem()->id);
+				$toSystem = self::getWormholeBySystemID($this->getChain()->getHomeSystem()->id, $this->chainID);
 
 			$routes = array();
 			foreach ($this->getChain()->getWormholes() as $wormhole)
@@ -374,17 +374,17 @@ namespace scanning\model
 		 */
 		public static function getWormholeBySystemID($solarSystemID, $chainID=null)
 		{
-			if ($chainID == null)
-				$chainID = \scanning\model\Chain::getCurrentChain()->id;
+            if (!$chainID)
+                $chainID = \Tools::REQUEST("chainid");
 
-			if ($result = \MySQL::getDB()->getRow("	SELECT * FROM mapwormholes
-													WHERE solarsystemid = ? AND chainid = ?"
-					, array($solarSystemID, $chainID)))
-			{
-				$system = new \scanning\model\Wormhole();
-				$system->load($result);
-				return $system;
-			}
+            if ($chainID)
+            {
+                if ($result = \MySQL::getDB()->getRow("select * from mapwormholes where solarsystemid = ? AND chainid = ?", [$solarSystemID, $chainID])) {
+                    $system = new \scanning\model\Wormhole();
+                    $system->load($result);
+                    return $system;
+                }
+            }
 
 			return null;
 		}

@@ -58,8 +58,8 @@ class Map
             $data["notifications"][] = [
                 "id" => "no-active-fleets",
                 "type" => "error",
-                "title" => "There are currently no active fleets registered with VIPPY!",
-                "content" => "Vippy cannot determine character locations, auto-map wormholes and log jumped mass without an active fleet. Please register your fleet with Vippy using the 'Add Fleet' button."
+                "title" => "!!! - There are currently no active fleets registered with VIPPY - !!!",
+                "content" => "Vippy cannot determine character locations, auto-map wormholes or log jumped mass without an active fleet. Please register your fleet with Vippy using the 'Add Fleet' button."
             ];
         }
 
@@ -117,6 +117,56 @@ class Map
 
         // Geef de map terug
         return json_encode($data);
+    }
+
+    function getAdd(\map\model\Map $map, $arguments=[])
+    {
+        $errors = [];
+
+        if (\Tools::POST("addwormhole"))
+        {
+            $fromSystem = null;
+            $fromSystemName = "";
+            $toSystem = null;
+            $toSystemName = "";
+
+            if (isset($_POST["from"]["name"]) && strlen(trim($_POST["from"]["name"])) > 0) {
+                $names = explode("(", $_POST["from"]["name"]);
+                $fromSystemName = $names[0];
+                $fromSystem = \eve\model\SolarSystem::getSolarsystemByName($fromSystemName);
+            }
+            if (!$fromSystem) {
+                if (isset($_POST["from"]["id"]) && strlen(trim($_POST["from"]["id"])) > 0)
+                    $fromSystem = new \eve\model\SolarSystem($_POST["from"]["id"]);
+            }
+
+            if (isset($_POST["to"]["name"]) && strlen(trim($_POST["to"]["name"])) > 0) {
+                $names = explode("(", $_POST["to"]["name"]);
+                $toSystemName = $names[0];
+                $toSystem = \eve\model\SolarSystem::getSolarsystemByName($toSystemName);
+            }
+            if (!$toSystem) {
+                if (isset($_POST["to"]["id"]) && strlen(trim($_POST["to"]["id"])) > 0)
+                    $toSystem = new \eve\model\SolarSystem($_POST["to"]["id"]);
+            }
+
+            if ($fromSystem && $toSystem) {
+                if ($map->addWormholeSystem($fromSystem->id, $toSystem->id))
+                    \AppRoot::redirect("map/".$map->name);
+                else
+                    $errors[] = "Something went wrong while adding the wormhole";
+            } else {
+                if (!$fromSystem)
+                    $errors[] = "From system `".$fromSystemName."` not be found";
+                if (!$toSystem)
+                    $errors[] = "From system `".$toSystemName."` not be found";
+            }
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("errors", $errors);
+        $tpl->assign("map", $map);
+        return $tpl->fetch("map/system/add");
     }
 
     function getMove(\map\model\Map $map, $arguments=[])

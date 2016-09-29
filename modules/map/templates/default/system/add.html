@@ -1,0 +1,42 @@
+{if isset($errors) && $errors|@count > 0}
+<div class="content">
+	<div class="error">
+		<div class="title">Could not add wormhole..</div>
+	{foreach from=$errors item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+</div>
+{else}
+<div style="padding: 1em;">
+	<form method="post" action="/map/{$map->name}/add">
+		<input type="hidden" name="addwormhole" value="1">
+		<h2>
+			<img src="/images/default/ui/map.png" align="left">
+			Add Wormhole
+		</h2>
+		<div class="form">
+			<div class="field">From:</div>
+			<div class="value">
+				<input type="hidden" id="fromid" name="from[id]" value="">
+				<input type="text" id="fromname" name="from[name]" value="" autocomplete="off"
+					   rel="autocomplete" field="fromid" element="eve-elements-SolarSystem">
+			</div>
+		</div>
+		<div class="form">
+			<div class="field">To:</div>
+			<div class="value">
+				<input type="hidden" id="toid" name="to[id]" value="">
+				<input type="text" id="toname" name="to[name]" value="" autocomplete="off"
+					   rel="autocomplete" field="fromid" element="eve-elements-SolarSystem">
+			</div>
+		</div>
+		<div class="form buttons">
+			<button type="submit">
+				<img src="/images/default/save.png" align="left">
+				Add Wormhole
+			</button>
+		</div>
+	</form>
+</div>
+{/if}

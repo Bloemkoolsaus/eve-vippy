@@ -68,11 +68,8 @@ function loadSignatureMap(action, params, force)
 
             // Notifications
             $("#notificationContainter>.notification").remove();
-            if (data.notifications != undefined && data.notifications.length > 0)
-            {
-                for (var n=0; n<data.notifications.length; n++)
-                {
-                    console.log(data.notifications[n]);
+            if (data.notifications != undefined && data.notifications.length > 0) {
+                for (var n=0; n<data.notifications.length; n++) {
                     var notification = {
                         id: data.notifications[n].id,
                         type: data.notifications[n].type,
@@ -109,26 +106,17 @@ function editConnection(connectionID)
 	});
 }
 
-function addWormhole(from,to)
+function addWormhole()
 {
 	$.ajax({
-		url: "/index.php?module=scanning&section=map&action=addwormhole&ajax=1",
-        data: {
-            from: from,
-            to: to
-        },
+		url: "/map/"+$("#mapName").val()+"/add",
+        data: { ajax: 1 },
 		success: function(data) {
-			if (data == "added") {
-				cancelAddWormhole();
-				showLoadingPopup(function() {
-                    location.reload();
-                });
-			} else {
-				$("#mapButtons").hide();
-				$("#addWormholeForm").fadeIn();
-				$("#addWormholeForm").html(data);
-                setAutoCompletes();
-			}
+            showPopup(data, 450, 200);
+            setTimeout(function() {
+                setAutoComplete($("#fromname"));
+                setAutoComplete($("#toname"));
+            }, 1500);
 		}
 	});
 }

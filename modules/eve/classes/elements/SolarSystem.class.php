@@ -72,7 +72,7 @@ namespace eve\elements
 				if ($records = \MySQL::getDB()->getRows("SELECT *
 													FROM	".\eve\Module::eveDB().".mapsolarsystems
 													WHERE	".implode(" AND ", $query)."
-													ORDER BY solarsystemname "))
+													ORDER BY solarsystemname limit 20"))
                 {
                     foreach ($records as $record)
                     {

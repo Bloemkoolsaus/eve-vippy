@@ -22,6 +22,8 @@ class Module extends \Module
                 if (strtolower($chain->name) == strtolower($mapName))
                 {
                     $map = new \map\model\Map($chain->id);
+                    $_GET["chainid"] = $map->id;
+
                     $view = new \map\view\Map();
                     $action = (count($arguments)>0)?array_shift($arguments):null;
                     $method = ($action) ? "get".ucfirst($action) : "Overview";
