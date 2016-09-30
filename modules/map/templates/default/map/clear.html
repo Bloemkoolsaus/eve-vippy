@@ -1,0 +1,29 @@
+<div style="padding: 1em;">
+	<form method="post" action="/map/{$map->name}/clear">
+		<input type="hidden" name="delete" value="all">
+		<h2>
+			<img src="/images/default/ui/map.png" align="left">
+			Delete ALL
+		</h2>
+		<div class="error">
+			<div>
+				<b>WARNING:</b> &nbsp;
+				This will remove <u>ALL</u> wormholes from this map!!
+			</div>
+		</div>
+		<div style="padding: 1em;">
+			Are you sure you want to remove <strong>all</strong> the wormholes from this map?
+		</div>
+		<div style="margin-top: 1em; text-align: right;">
+			<button type="submit">
+				<img src="/images/default/apply.png" align="left">
+				YES
+			</button>
+			&nbsp;
+			<button type="button" onclick="destroyPopup();">
+				<img src="/images/default/cross.png" align="left">
+				NO
+			</button>
+		</div>
+	</form>
+</div>

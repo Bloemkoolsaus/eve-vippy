@@ -163,7 +163,13 @@ class Map
             }
         }
 
+        $fromSystem = null;
+        if (count($arguments) > 0) {
+            $fromSystem = \eve\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+        }
+
         $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("fromSystem", $fromSystem);
         $tpl->assign("errors", $errors);
         $tpl->assign("map", $map);
         return $tpl->fetch("map/system/add");
@@ -207,5 +213,17 @@ class Map
             }
         }
         return "done";
+    }
+
+    function getClear(\map\model\Map $map, $arguments=[])
+    {
+        if (\Tools::POST("delete") == "all") {
+            $map->clearChain();
+            \AppRoot::redirect("map/".$map->name);
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        return $tpl->fetch("map/map/clear");
     }
 }

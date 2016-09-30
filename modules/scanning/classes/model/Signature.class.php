@@ -341,7 +341,7 @@ namespace scanning\model
 													WHERE 	c.id = ?
 													AND		s.solarsystemid = ?
 													AND		s.deleted = 0"
-									, array(\User::getSelectedChain(), $solarSystemID)))
+									, array(\Tools::REQUEST("chainid"), $solarSystemID)))
 			{
 				foreach ($results as $result)
 				{

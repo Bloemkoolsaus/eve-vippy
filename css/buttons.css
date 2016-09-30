@@ -1,0 +1,51 @@
+button {
+    background-color: #111111;
+    background: #111111 linear-gradient(#555555, #111111);
+    border: 1px solid #555555;
+    border-radius: 5px;
+    padding-top: .2em;
+    padding-bottom: .3em;
+    padding-left: .7em;
+    padding-right: .7em;
+    cursor: pointer;
+    color: #FFFFFF;
+    text-align: center;
+    text-decoration: none;
+    font-family: Calibri,Helvetica,Arial,sans-serif;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 1px;
+}
+button:hover {
+    border-color: #DD8800;
+    background-color: #DD8800;
+    background: #DD8800 linear-gradient(#FFAA00, #DD8800);
+}
+button.small {
+    width: 100px;
+    padding: 2px 5px;
+    font-weight: normal;
+}
+button img {
+    height: 14px;
+    margin-right: .5em;
+    margin-top: .2em;
+}
+
+button.combobox {
+    margin: 0;
+    padding: 0;
+    top: 1px;
+    width: 2.4em;
+    border-radius: 0 5px 5px 0;
+    display: inline-block;
+    overflow: visible;
+    position: relative;
+    text-decoration: none !important;
+}
+
+button.combobox .ui-button-text {
+    display: block;
+    margin: 0;
+    padding: 1px 0 2px;
+}

@@ -109,7 +109,7 @@ function editConnection(connectionID)
 function addWormhole()
 {
 	$.ajax({
-		url: "/map/"+$("#mapName").val()+"/add",
+		url: "/map/"+$("#mapName").val()+"/add/"+$("#mapSystem").val(),
         data: { ajax: 1 },
 		success: function(data) {
             showPopup(data, 450, 200);
@@ -168,8 +168,13 @@ function cancelMassDeleteWormholes()
 
 function clearChain()
 {
-	$("#mapButtons").hide();
-	$("#clearChainConfirmation").fadeIn();
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/clear",
+        data: { ajax: 1 },
+        success: function(data) {
+            showPopup(data, 450, 200);
+        }
+    });
 }
 function confirmClearChain()
 {

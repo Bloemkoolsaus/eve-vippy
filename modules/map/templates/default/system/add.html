@@ -18,8 +18,8 @@
 		<div class="form">
 			<div class="field">From:</div>
 			<div class="value">
-				<input type="hidden" id="fromid" name="from[id]" value="">
-				<input type="text" id="fromname" name="from[name]" value="" autocomplete="off"
+				<input type="hidden" id="fromid" name="from[id]" value="{if isset($fromSystem)}{$fromSystem->id}{/if}">
+				<input type="text" id="fromname" name="from[name]" value="{if isset($fromSystem)}{$fromSystem->name}{/if}" autocomplete="off"
 					   rel="autocomplete" field="fromid" element="eve-elements-SolarSystem">
 			</div>
 		</div>
