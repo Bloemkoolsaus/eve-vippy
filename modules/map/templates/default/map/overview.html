@@ -61,11 +61,13 @@
 	<div id="mapButtons">
     {if $App->user->isAllowedChainAction($map, 'add')}
 		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');">
+			<img src="/images/default/ui/plus.png" align="left">
 			Add Wormhole
 		</button>
     {/if}
     {if $App->user->isAllowedChainAction($map, 'delete')}
 		<button id="clearChainButton" onclick="clearChain();">
+			<img src="/images/default/ui/cross.png" align="left">
 			Delete ALL
 		</button>
     {/if}
@@ -73,9 +75,11 @@
 		<button id="showActivePeople" onclick="showActivePilots();" style="float: right; width: 150px;">Show Online Pilots</button>
 		-->
 		<button id="addFleet" class="right" onclick="addFleet()">
+			<img src="/images/default/ui/fleet.png" align="left">
 			Add Fleet
 		</button>
 		<button id="exitFinderButton" class="right" onclick="showExitFinder();">
+			<img src="/images/default/ui/view.png" align="left">
 			Exit Finder
 		</button>
 	</div>
@@ -114,6 +118,7 @@
 		<a name="signatures"></a>
 		<div id="signatureForm" style="{if isset($hidesignatures)}display: none;{/if}">
 			<h2 style="margin-bottom: 0;">
+				<img src="/images/default/ui/map.png" align="left" style="margin-right: .2em;">
 				Add signature
 			</h2>
 			<form method="post" action="Javascript: addSignature()">
@@ -142,11 +147,11 @@
 					</td>
 					<td rel="addsig_normal">
 						<b>Info:</b><br />
-						<input type="text" id="sigName" style="width: 95%;" />
+						<input type="text" id="sigName" style="width: 97%;" />
 					</td>
 					<td style="width: 60px;">
 						<br />
-						<button type="submit" class="small" style="width: 50px;">Add</button>
+						<button type="submit" class="small" style="width: 97%;">Add</button>
 					</td>
 				</tr>
 			</table>
@@ -159,8 +164,10 @@
 				</h3>
 				<div id="copyPasteHelp" class="message" style="text-align: left; display: none;">
 					<div style="padding: 3px;">
-						<div>Select all signatures in your scanner window (CTRL+A) and copy them (CTRL+C).</div>
-						<div>Then paste (CTRL+V) them below and press 'Add Signatures'.</div>
+						<div>
+							Select all signatures in your scanner window (<b>CTRL+A</b>) and copy them (<b>CTRL+C</b>).
+							Then, paste (<b>CTRL+V</b>) them below and press '<b>Add Signatures</b>'.
+						</div>
 					</div>
 				</div>
 				<form method="post" action="Javascript: signaturesCopyPaste();">
@@ -168,7 +175,10 @@
 					<textarea name="copypastesignatures" style="width: 98%; height: 3em;"></textarea>
 				</div>
 				<div style="text-align: right; margin-top: 2px;">
-					<button type="submit" class="small">Add Signatures</button>
+					<button type="submit" class="small" style="width: 150px;">
+						<img src="/images/default/ui/plus.png" align="left">
+						Add Signatures
+					</button>
 				</div>
 				</form>
 			</div>
