@@ -21,6 +21,9 @@ namespace system\model\cache
             $file = $this->getDirectory().$var;
             \AppRoot::debug("setCache: ".$file);
 
+            if (is_array($val) || is_object($val))
+                $val = json_encode($val);
+
             $dirParts = explode("/", $file);
             $filename = array_pop($dirParts);
             $dirname = "";

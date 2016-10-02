@@ -6,32 +6,38 @@ class Fleet
     function doFleet($arguments=[])
     {
         \AppRoot::setMaxExecTime(60);
+        \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doFleet(".implode(",",$arguments).")");
         $locationTracker = new \map\controller\LocationTracker();
 
         // Als we tegen de timeout aanlopen, afbreken
         while (!\AppRoot::approachingMaxExecTime(2))
         {
+            \AppRoot::doCliOutput("Find fleets");
             if ($results = \MySQL::getDB()->getRows(" select  *
                                                       from    crest_fleet
                                                       where   active > 0
-                                                      and     updatedate < ?"
+                                                      and     (lastupdate < ? or lastupdate is null)"
                                         , [date("Y-m-d H:i:s", strtotime("now")-2)]))
             {
+                \AppRoot::doCliOutput(count($results)." fleets found");
                 foreach ($results as $result)
                 {
+                    \AppRoot::doCliOutput("fleet: ".$result["id"]);
                     $fleet = new \crest\model\Fleet();
                     $fleet->load($result);
 
                     if (!$fleet->getBoss()) {
                         $fleet->active = 0;
                         $fleet->statusMessage = "Fleet boss not found";
+                        \AppRoot::doCliOutput("Fleet boss not found");
                         continue;
                     }
 
                     if (!$fleet->getBoss()->getToken()) {
                         $fleet->active = 0;
-                        $fleet->statusMessage = "Fleet boss does not have a valid CREST token.";
+                        $fleet->statusMessage = "Fleet boss does not have a valid CREST token";
+                        \AppRoot::doCliOutput("Fleet boss does not have a valid CREST token");
                         continue;
                     }
 
@@ -48,6 +54,7 @@ class Fleet
 
                     if ($crest->success())
                     {
+                        \AppRoot::debug($crest->getResult());
                         if (isset($crest->getResult()->items))
                         {
                             foreach ($crest->getResult()->items as $fleetMember)
@@ -94,12 +101,10 @@ class Fleet
                     }
                 }
             }
-        }
 
-        /** @var \crest\model\Fleet $fleet */
-        $fleet = \crest\model\Fleet::findById(array_shift($arguments));
-        if (!$fleet)
-            return null;
+            if (\AppRoot::doDebug())
+                break;
+        }
 
     }
 

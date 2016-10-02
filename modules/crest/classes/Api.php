@@ -32,4 +32,13 @@ class Api extends \api\Client
 
         return parent::get($url, $params);
     }
+
+    function getResult()
+    {
+        $result = parent::getResult();
+        if (!is_object($result))
+            $result = json_decode($result);
+
+        return $result;
+    }
 }

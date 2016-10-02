@@ -1578,6 +1578,22 @@ namespace users\model
 			return null;
 
 		}
+
+        /**
+         * Find user by username
+         * @param $username
+         * @return \users\model\User|null
+         */
+        public static function getUserByUsername($username)
+        {
+            if ($result = \MySQL::getDB()->getRow("SELECT * FROM users WHERE username = ?", array($username)))
+            {
+                $user = new \users\model\User();
+                $user->load($result);
+                return $user;
+            }
+            return null;
+        }
 	}
 }
 ?>

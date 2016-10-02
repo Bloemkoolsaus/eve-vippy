@@ -304,8 +304,11 @@ class AppRoot
 
     public static function approachingMaxExecTime($margin=10)
     {
-        if (\AppRoot::getExecTime() < \AppRoot::getMaxExecTime()-$margin)
+        if (\AppRoot::getExecTime() > \AppRoot::getMaxExecTime()-$margin)
+        {
+            \AppRoot::doCliOutput("Approaching max exec time limit (".\AppRoot::getExecTime()." - ".\AppRoot::getMaxExecTime().")");
             return true;
+        }
 
         return false;
     }
@@ -474,12 +477,12 @@ class AppRoot
 
 	public static function doDebug()
 	{
-		if (Tools::REQUEST("debug") == "1")
+		if (\Tools::REQUEST("debug") == "1")
 			return true;
 
 		if (defined("APP_DEBUG"))
 		{
-			if (APP_DEBUG && !Tools::REQUEST("ajax"))
+			if (APP_DEBUG && !\Tools::REQUEST("ajax"))
 				return true;
 		}
 
@@ -510,7 +513,7 @@ class AppRoot
 				$key = count($systemvars);
 				$systemvars[$key]["name"] = "GET";
 				foreach ($_GET as $var => $value) {
-					$systemvars[$key]["vars"][$var] = Tools::getVariableContentString($value);
+					$systemvars[$key]["vars"][$var] = \Tools::getVariableContentString($value);
 				}
 			}
 			if (count($_POST) > 0)
@@ -704,7 +707,11 @@ class AppRoot
             echo $msg.PHP_EOL;
         }
         else
+        {
             \AppRoot::debug("<div style='background-color: #111133; color: #eeeeee; padding: 1px;'>".$var."</div>");
+            if (\Tools::REQUEST("debug"))
+                echo "<pre>".$var."</pre>";
+        }
     }
 }
 ?>

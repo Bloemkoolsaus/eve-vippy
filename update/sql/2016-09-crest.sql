@@ -39,7 +39,7 @@ alter table characters drop column dob;
 
 create table crest_token (
   tokentype varchar(255) not null,
-  tokenid int(11) unsigned not null,
+  tokenid bigint(11) unsigned not null,
   ownerhash varchar(500) default null,
   state varchar(500) default null,
   accesstoken varchar(500) default null,
@@ -56,6 +56,6 @@ insert into system_config (var, val) values
 ('crest_url', 'https://crest-tq.eveonline.com/'),
 ('crest_login_url', 'https://login.eveonline.com/oauth/'),
 ('crest_accept_version', 'application/vnd.ccp.eve.character-v4+json'),
-('crest_callback_url', 'http://eve-vippy.com/crest/login'),
+('crest_callback_url', 'http://eve-vippy.com/'),
 ('crest_clientid', 'cc67fe1f7f4f41a08fab47590587e748'),
 ('crest_secret_key', '9m2g65oA93OZHJGC0lYX8AUbf0ZdE84GihzQZx6F');

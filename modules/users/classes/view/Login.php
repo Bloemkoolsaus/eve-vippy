@@ -25,7 +25,8 @@ class Login
 
         if (\Tools::POST("username"))
         {
-            if (\User::getUSER()->login(\Tools::POST("username"), \Tools::POST("password"), false, \Tools::POST("remember")))
+            $user = \users\model\User::getUserByUsername(\Tools::POST("username"));
+            if ($user->login(\Tools::POST("username"), \Tools::POST("password"), false, \Tools::POST("remember")))
                 \AppRoot::redirect("/");
 
             $errors = "Incorrect username or password";
