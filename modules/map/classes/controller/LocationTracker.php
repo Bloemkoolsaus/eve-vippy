@@ -69,11 +69,10 @@ class LocationTracker
                     $wormholeTo = null;
 
                     // Staan beide systemen al op de map?
-                    if ($results = \MySQL::getDB()->getRows("select w.*
-                                                            from    mapwormholes w
-                                                                inner join mapwormholechains c on c.id = w.chainid
-                                                            where   c.chainid = ?
-                                                            and     w.solarsystemid in (".$previousLocationID.",".$locationID.")"
+                    if ($results = \MySQL::getDB()->getRows("select *
+                                                            from    mapwormholes
+                                                            where   chainid = ?
+                                                            and     solarsystemid in (".$previousLocationID.",".$locationID.")"
                                                     , [$map->id]))
                     {
                         foreach ($results as $result)
@@ -96,8 +95,10 @@ class LocationTracker
                         continue;
 
                     // Beide systemen zijn kspace. Annuleer alle iteraties.
-                    if ($wormholeTo->getSolarsystem()->isKSpace() && $wormholeFrom->getSolarsystem()->isKSpace())
-                        return true;
+                    if ($wormholeTo && $wormholeTo->getSolarsystem()->isKSpace()) {
+                        if ($wormholeFrom && $wormholeFrom->getSolarsystem()->isKSpace())
+                            return true;
+                    }
 
                     // Magic!
                     return $map->addWormholeSystem($previousLocationID, $locationID);

@@ -226,6 +226,13 @@ function generateSystems(data)
                 wormhole.addIcon(mapIcons.pve);
         }
 
+        // Toons
+        if (data[i].characters != null) {
+            for (var c=0; c<data[i].characters.length; c++) {
+                wormhole.addCharacter(data[i].characters[c].id, data[i].characters[c].name);
+            }
+        }
+
         mapWormholes[wormhole.id] = wormhole;
 	}
 }

@@ -1,0 +1,4 @@
+test toevoegen nieuwe holes
+    - positioning
+
+Wisselen van holes kan traag zijn. Controleer tussenliggende holes en voeg daar de mass toe.

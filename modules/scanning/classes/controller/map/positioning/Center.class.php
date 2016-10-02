@@ -76,9 +76,6 @@ namespace scanning\controller\map\positioning
 			// Probeer systeem voor origin te achterhalen. Die bepaald de richting.
 			if ($this->origin != null)
 			{
-				$routeSystems = array($this->getOrigin());
-				$currentSystem = $this->getOrigin();
-
 				if (!$this->getOrigin()->isHomeSystem())
 				{
 					// Fetch terug naar home system

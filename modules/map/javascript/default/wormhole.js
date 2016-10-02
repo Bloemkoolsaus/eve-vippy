@@ -57,6 +57,7 @@ Wormhole.prototype.setHeight = function(h) {
     if (totalHeight < this.map.height+this.map.position.y)
         totalHeight = this.map.height+this.map.position.y;
 };
+
 Wormhole.prototype.addTitle = function(title, color) {
     this.titles.push({
         title: title,
@@ -68,6 +69,7 @@ Wormhole.prototype.addSubTitle = function(title, color) {
         title: title,
         color: (color)?color:"#888888"
     });
+    this.map.height += whDefaultLineHeight;
 };
 Wormhole.prototype.addStatic = function(whStatic) {
     this.solarsystem.statics.push(whStatic);
@@ -76,6 +78,8 @@ Wormhole.prototype.addStatic = function(whStatic) {
 };
 Wormhole.prototype.addCharacter = function(id, name) {
     this.characters.push({ id: id, name: name });
+    if (this.characters.length > 1)
+        this.map.height += whDefaultLineHeight;
 };
 Wormhole.prototype.addIcon = function(icon) {
     this.icons.push(icon);
@@ -254,7 +258,7 @@ Wormhole.prototype.render = function(canvas)
     // pilots
     var myCurrentLocation = false;
     extraTxtHeight += Math.round(whDefaultLineHeight/2);
-    for (var c=0; c<this.characters; c++) {
+    for (var c=0; c<this.characters.length; c++) {
         if (this.characters[c].isme)
             myCurrentLocation = true;
         wormhole.add(new Kinetic.Text({
