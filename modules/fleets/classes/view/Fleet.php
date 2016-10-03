@@ -5,7 +5,11 @@ class Fleet
 {
     function getOverview($arguments=[])
     {
+        $fleets = \fleets\model\Fleet::findAll(["authgroupid" => \User::getUSER()->getCurrentAuthGroupID()]);
 
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("fleets", $fleets);
+        return $tpl->fetch("fleets/overview");
     }
 
     function getAdd($arguments=[])

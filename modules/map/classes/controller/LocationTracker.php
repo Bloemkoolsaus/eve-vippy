@@ -17,6 +17,7 @@ class LocationTracker
 
         $cacheFileName = "map/character/".$characterID."/location";
         $previousLocationID = null;
+        /*
         $cache = \Cache::file()->get($cacheFileName);
         if ($cache) {
             // Cache. Maar is die nog recent?
@@ -25,6 +26,7 @@ class LocationTracker
                     $previousLocationID = $cache["location"];
             }
         }
+        */
         if (!$previousLocationID) {
             if ($previousLocation = \MySQL::getDB()->getRow("select *
                                                              from   map_character_locations

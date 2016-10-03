@@ -1,0 +1,32 @@
+<div class="content">
+    <h1>
+        <img src="/images/default/ui/fleet.png" align="left">
+        Fleets
+    </h1>
+    <table class="sectionoverview">
+        <tr>
+            <th>ID</th>
+            <th>Boss</th>
+            <th>Status</th>
+            <th>Last Updated</th>
+        </tr>
+    {foreach from=$fleets key=i item=fleet}
+        <tr class="{if $i%2==0}even{else}odd{/if}">
+            <td>{$fleet->id}</td>
+            <td>{$fleet->getBoss()->name}</td>
+            <td>
+            {if $fleet->active}
+                <img src="/images/default/apply.png" align="left">
+                {$fleet->statusMessage}
+            {else}
+                <img src="/images/default/cross.png" align="left">
+                <span style="color: red;">{$fleet->statusMessage}</span>
+            {/if}
+            </td>
+            <td>
+                {$fleet->lastUpdate|date_full} - {$fleet->lastUpdate|date_time}
+            </td>
+        </tr>
+    {/foreach}
+    </table>
+</div>
