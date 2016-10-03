@@ -48,6 +48,11 @@ class LocationTracker
             "characterid" => $characterID
         ]);
 
+        $chainMaps = \map\model\Map::getChainsByAuthgroup($authGroupID);
+        foreach ($chainMaps as $map) {
+            $map->setMapUpdateDate();
+        }
+
         if ($previousLocationID)
         {
             if (!is_numeric($previousLocationID))
@@ -63,7 +68,7 @@ class LocationTracker
                     return true;
 
                 // Check alle maps van deze authgroup
-                foreach (\map\model\Map::getChainsByAuthgroup($authGroupID) as $map)
+                foreach ($chainMaps as $map)
                 {
                     $wormholeFrom = null;
                     $wormholeTo = null;

@@ -1,4 +1,13 @@
-test toevoegen nieuwe holes
+Testen toevoegen nieuwe holes
     - positioning
+    - benaming
+    - foutmeldingen?
 
-Wisselen van holes kan traag zijn. Controleer tussenliggende holes en voeg daar de mass toe.
+
+Wisselen van holes kan traag zijn.
+Controleer tussenliggende holes en voeg daar de mass toe.
+
+
+Char-Location refresh button(s) die gebruik maken van de character location crest api.
+ - dropdown met te kiezen toon (die geldige crest tokens hebben)
+ - snel-button voor in profile ingestelde scan toon.

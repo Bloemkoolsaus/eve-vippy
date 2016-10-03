@@ -374,6 +374,7 @@ namespace scanning\model
 		 */
 		public static function getWormholeBySystemID($solarSystemID, $chainID=null)
 		{
+            \AppRoot::debug("getWormholeBySystemID($solarSystemID, $chainID)");
             if (!$chainID)
                 $chainID = \Tools::REQUEST("chainid");
 

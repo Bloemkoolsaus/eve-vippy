@@ -80,10 +80,18 @@ namespace scanning\controller\map\positioning
 				{
 					// Fetch terug naar home system
 					$route = $this->getOrigin()->getRouteToSystem();
+                    \AppRoot::debug("route");
+                    \AppRoot::debug($route);
+
 					if (count($route) >= 2)
 					{
-						$system1 = \scanning\model\Wormhole::getWormholeBySystemID($route[0]);
-						$system2 = \scanning\model\Wormhole::getWormholeBySystemID($route[1]);
+						$system1 = \scanning\model\Wormhole::getWormholeBySystemID($route[0], $this->getChain()->id);
+						$system2 = \scanning\model\Wormhole::getWormholeBySystemID($route[1], $this->getChain()->id);
+
+                        \AppRoot::debug("system1");
+                        \AppRoot::debug($system1);
+                        \AppRoot::debug("system2");
+                        \AppRoot::debug($system2);
 
 						// Bepaal plot richting
 						$offsetX = $system1->x - $system2->x;
