@@ -135,7 +135,6 @@ div#infoheader-info {
 }
 
 div.content {
-    position: relative;
     background: none repeat scroll 0 0 rgba(10, 10, 10, 0.6);
     padding: 1em;
     margin: 0;

@@ -14,7 +14,7 @@ class Characters
 
     function getAddnew($arguments=[])
     {
-        $oauth = new \crest\controller\Oauth();
-        $oauth->requestAuthorization();
+        $crest = new \crest\Login();
+        $crest->loginSSO("profile/characters");
     }
 }

@@ -71,16 +71,19 @@
 		</button>
     {/if}
     {if $App->user->isAllowedChainAction($map, 'delete')}
-		<button id="clearChainButton" onclick="clearChain();">
+		<button id="clearChainButton" onclick="clearChain();" style="margin-right: 2em;">
 			<img src="/images/default/ui/cross.png" align="left">
 			Delete ALL
 		</button>
     {/if}
-		<button style="margin-left: 2em; margin-right: .1em;">
+
+		<button id="bttnRefreshCharacterLocation" style="margin-right: .1em;"
+                onclick="refreshCharacterLocation({if $App->user->getSetting('scanalt')}{$App->user->getSetting('scanalt')}{/if});">
 			<img src="/images/default/ui/refresh.png" align="left">
 			Refresh Location
 		</button>
-		<button class="img" style="width: 26px; margin-left: 0;">
+		<button class="img" style="width: 26px; margin-left: 0;"
+                onclick="openRefreshCharacterSelector();">
 			<img src="/images/default/ui/tree.down.png">
 		</button>
 		<!--
@@ -94,8 +97,17 @@
 			<img src="/images/default/ui/view.png" align="left">
 			Exit Finder
 		</button>
+        <div style="clear:both;"></div>
 	</div>
-	<div id="addWormholeForm" style="display:none;"></div>
+    <div id="characterRefreshSelector">
+        <div>
+        {foreach from=$App->user->getAuthorizedCharacters() item=toon}
+            <div class="toon" onclick="refreshCharacterLocation({$toon->id});">
+                {$toon->name}
+            </div>
+        {/foreach}
+        </div>
+    </div>
 
 	<!-- EXIT FINDER -->
 	<div id="exitFinderForm" style="display: none; margin-top: 15px;">

@@ -8,3 +8,21 @@
     margin: 0;
     margin-left: .5em;
 }
+
+#characterRefreshSelector {
+    position: absolute;
+    border: solid 1px #999999;
+    border-radius: 3px;
+    background: none repeat scroll 0 0 rgba(10, 10, 10, 0.6);
+    min-width: 170px;
+    display: none;
+}
+#characterRefreshSelector div.toon {
+    padding: .5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    cursor: pointer;
+}
+#characterRefreshSelector div.toon:hover {
+    background: none repeat scroll 0 0 rgba(70, 70, 70, 0.6);
+}

@@ -85,7 +85,9 @@ function loadSignatureMap(action, params, force)
             if (mapData != "cached") {
                 destroyPopup();
                 generateMap(mapData);
-            }
+            } else
+                resizeMap();
+
             allowMapLoadingStart = true;
             var currentTime = new Date();
             $("#lastupdatetime").html(currentTime.toLocaleTimeString());
