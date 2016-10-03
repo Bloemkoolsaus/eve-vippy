@@ -24,9 +24,6 @@ Aparte help pagina ipv alleen legenda-popup.
 Voeg huidige directors toe als admin.
 
 
-Account settings pagina
-
-
 ======================== Lage prio ========================
 
 Beter beheer auth-groepen

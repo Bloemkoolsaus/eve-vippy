@@ -1,0 +1,64 @@
+<form method="post" action="">
+	<input type="hidden" name="save" value="1"/>
+
+	{if isset($errors) && $errors|@count>0}
+		<div class="content">
+			<div class="error">
+				{foreach from=$errors key=e item=error}
+					<p>{$error}</p>
+				{/foreach}
+			</div>
+		</div>
+	{/if}
+
+	<div class="content">
+		<h1>
+			<img src="/images/default/ui/charactersheet.png" align="left">
+			Account Settings
+		</h1>
+		<div class="col6">
+			<div class="form">
+				<label class="field">Username:</label>
+				<label class="value"><input type="text" name="username" value="{$user->username}"></label>
+			</div>
+			<div class="form">
+				<label class="field">E-mail:</label>
+				<label class="value"><input type="text" name="email" value="{$user->email}"></label>
+			</div>
+			<div style="clear:both;"></div>
+			<br />
+			<div class="form">
+				<label class="field">Password:</label>
+				<label class="value"><input type="password" name="password1" value=""></label>
+			</div>
+			<div class="form">
+				<label class="field">Password (again):</label>
+				<label class="value"><input type="password" name="password2" value=""></label>
+			</div>
+			<div class="form" style="text-align: right;">
+				<i>Leave password empty if you do <u>not</u> wish to change it.</i>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+		<div class="col6 right last">
+			{foreach from=$settings item=setting}
+				<div class="form">
+					<label class="field">{$setting->title}:</label>
+					{assign var=val value=$user->getSetting($setting->name)}
+					{$setting->getEditForm($val)}
+				</div>
+			{/foreach}
+			<div style="clear:both;"></div>
+		</div>
+		<div style="clear:both;"></div>
+
+		<div class="form buttons">
+			<button type="submit">
+				<img src="/images/default/save.png" align="left">
+				Save Settings
+			</button>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+</form>
