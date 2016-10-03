@@ -17,7 +17,7 @@ class Fleet
                                                       from    crest_fleet
                                                       where   active > 0
                                                       and     (lastupdate < ? or lastupdate is null)"
-                                , [date("Y-m-d H:i:s", strtotime("now")-10)]))
+                                   , [date("Y-m-d H:i:s", strtotime("now")-10)]))
             {
                 \AppRoot::doCliOutput(count($results)." fleets found");
                 foreach ($results as $result)
@@ -29,6 +29,8 @@ class Fleet
                 }
             }
 
+            \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
+            sleep(1);
             if (\AppRoot::doDebug())
                 break;
         }
