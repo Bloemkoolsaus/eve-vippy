@@ -1,0 +1,76 @@
+<div {if !$popup}class="content"{else}style="padding: 1em;"{/if}>
+{if isset($errors) && $errors|@count > 0}
+	<div class="error">
+	{foreach from=$errors item=error}
+		<div>{$error}</div>
+	{/foreach}
+	</div>
+{/if}
+	<h2>
+		<img src="/images/default/ui/fleet.png" align="left">
+		Add Fleet
+	</h2>
+{if !$popup}
+	<div class="col5">
+{/if}
+	<form method="post" action="/fleets/fleet/add">
+        <div class="form">
+            <div class="field">Boss Character:</div>
+            <div class="value">
+                <select name="boss">
+                {foreach from=$App->user->getCharacters() item=character}
+                    <option value="{$character->id}">
+                        {$character->name}
+                    </option>
+                {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="form">
+            <div class="field">CREST Link:</div>
+            <div class="value">
+                <input type="text" name="fleet">
+            </div>
+        </div>
+		<div class="form buttons">
+			<button type="submit">
+				<img src="/images/default/ui/plus.png" align="left">
+				Add Fleet
+			</button>
+		{if $popup}
+			<div style="float: left; padding-top: 2em;">
+				<img src="/images/default/info.png" align="left" style="margin-top: 1px;">
+				<a href="/fleets/fleet/add">Help</a>
+			</div>
+		{/if}
+		</div>
+		<div style="clear:both;"></div>
+	</form>
+	<div style="clear:both;"></div>
+{if !$popup}
+	</div>
+	<div class="col6 right last">
+		<div style="padding: 1em;">
+			<h3>
+				<img src="/images/default/info.png" align="left" style="margin-top: 2px; margin-right: .2em;">
+				Fleet boss
+			</h3>
+			<p>
+				If your character is not in the boss list, make sure you have added your character with CREST.<br />
+				Check the <a href="/profile/characters" target="_blank">profile</a> page to add a character through CREST.
+			</p>
+		</div>
+		<div style="padding: 1em;">
+			<h3>
+				<img src="/images/default/info.png" align="left" style="margin-top: 2px; margin-right: .2em;">
+				Getting the CREST Link
+			</h3>
+			<p>
+				If you are the boss of a fleet, you can get your CREST link from the fleet window ingame.
+			</p>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+{/if}
+	<div style="clear:both;"></div>
+</div>

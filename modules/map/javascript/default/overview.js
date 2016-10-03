@@ -283,7 +283,7 @@ function exitFinder()
 function addFleet()
 {
     $.ajax({
-        url: "/crest/fleet/add",
+        url: "/fleets/fleet/add",
         data: {
             ajax: 1
         },

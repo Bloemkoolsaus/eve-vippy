@@ -585,8 +585,7 @@ class AppRoot
 
     public static function redidrectToReferer()
     {
-        header("Location: ".$_SERVER["HTTP_REFERER"]);
-        exit;
+        \AppRoot::redirect($_SERVER["HTTP_REFERER"], false);
     }
 
 	public static function refresh()

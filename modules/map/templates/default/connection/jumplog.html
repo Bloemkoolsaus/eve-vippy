@@ -17,6 +17,7 @@
 </h3>
 <div style="clear:both;"></div>
 
+{if isset($jumplog.beforemass) && $jumplog.beforemass|@count > 0}
 <div style="margin-top: 1em; color: #ffffff;">
     <div class="col6"><b>Shiptype</b></div>
     <div class="col2"><b>Manually</b></div>
@@ -24,7 +25,6 @@
     <div style="clear:both;"></div>
 </div>
 <div style="margin-top: 1em;">
-{if isset($jumplog.beforemass) && $jumplog.beforemass|@count > 0}
 {assign var=subtotalmass value=0}
 {foreach from=$jumplog.beforemass item=ship}
     <div class="col6" {if $ship.class == "none"}style="text-align: right; font-style: italic;"{/if}>
@@ -89,6 +89,10 @@
     <div style="clear:both;"></div>
 </div>
 {/if}
-{/if}
     <div style="clear:both;"></div>
 </div>
+{else}
+	<div style="margin-top: 1em;">
+		<i>No registered jumps</i>
+	</div>
+{/if}
