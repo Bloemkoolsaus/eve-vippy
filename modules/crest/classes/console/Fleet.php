@@ -32,6 +32,7 @@ class Fleet
             if (\AppRoot::doDebug())
                 break;
         }
+        \AppRoot::doCliOutput("Timeout!");
     }
 
     function getFleetMembers(\fleets\model\Fleet $fleet)
