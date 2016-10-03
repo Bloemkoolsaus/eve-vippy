@@ -314,22 +314,22 @@ namespace scanning\model
             }
 		}
 
-		/**
-		 * Add jump
-		 * @param integer $shiptypeID
-		 * @param integer $pilotID|null
-		 * @param integer $chainID|null
-		 * @param integer $fromSystemID|null
-		 * @param integer $toSystemID|null
-		 */
-		function addJump($shiptypeID, $pilotID=null, $chainID=null, $fromSystemID=null, $toSystemID=null, $copy=true)
+        /**
+         * Add jump
+         * @param integer $shiptypeID
+         * @param integer $pilotID |null
+         * @param bool    $copy
+         */
+		function addJump($shiptypeID, $pilotID=null, $copy=true)
 		{
+            \AppRoot::debug("addJump($shiptypeID, $pilotID, $copy)");
+
             $ship = new \eve\model\Ship($shiptypeID);
 			\MySQL::getDB()->insert("mapwormholejumplog",
 								array(	"connectionid"	=> $this->id,
-										"chainid"		=> $chainID,
-										"fromsystemid"	=> $fromSystemID,
-										"tosystemid"	=> $toSystemID,
+										"chainid"		=> $this->getChain()->id,
+										"fromsystemid"	=> $this->getFromSystem()->id,
+										"tosystemid"	=> $this->getToSystem()->id,
 										"characterid"	=> $pilotID,
 										"shipid"		=> $ship->id,
                                         "mass"          => $ship->mass,
@@ -344,7 +344,7 @@ namespace scanning\model
 														$this->getChain()->authgroupID) as $connection)
 				{
 					if ($connection->id !== $this->id)
-						$connection->addJump($shiptypeID, $pilotID, $chainID, $fromSystemID, $toSystemID, false);
+						$connection->addJump($shiptypeID, $pilotID, false);
 				}
 			}
 		}

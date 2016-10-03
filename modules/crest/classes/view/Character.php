@@ -18,7 +18,7 @@ class Character
             if ($current)
             {
                 // Rate limit
-                if (strtotime($current["lastdate"]) > strtotime("now")-30)
+                if (strtotime($current["lastdate"]) > strtotime("now")-15)
                     return json_encode(["system" => $current["solarsystemid"]]);
 
                 $shipTypeID = $current["shiptypeid"];

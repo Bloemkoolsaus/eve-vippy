@@ -15,7 +15,7 @@ function refreshCharacterLocation(characterID)
                 setRefreshCharacterBttnIcon("/images/default/apply.png");
                 setTimeout(function() {
                     setRefreshCharacterBttnIcon(icon);
-                }, 20000);
+                }, 15000);
             } else {
                 setRefreshCharacterBttnIcon("/images/default/delete.png");
                 $("#mapButtons").before("<div class='error'><div><b>Character Refresh failed: </b> "+data.errors.join("<br />")+"</div></div>");
