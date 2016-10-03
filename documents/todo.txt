@@ -1,3 +1,4 @@
+
 Wisselen van holes kan traag zijn.
 Controleer tussenliggende holes en voeg daar de mass toe.
 
@@ -18,3 +19,22 @@ Aparte help pagina ipv alleen legenda-popup.
  - map
  - youtube video
  - werking en beperking crest (fleet) link
+
+
+Voeg huidige directors toe als admin.
+
+
+Account settings pagina
+
+
+======================== Lage prio ========================
+
+Beter beheer auth-groepen
+ - Beter inzicht betalingen
+ - Makkelijker nieuwe groepen toevoegen
+
+
+Beter beheer notificaties
+
+
+Menu opbouw

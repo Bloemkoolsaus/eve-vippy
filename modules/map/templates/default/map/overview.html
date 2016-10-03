@@ -31,7 +31,12 @@
 			<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$map->name}</h3>
 		</div>
 		<div id="mapControls" style="float: right; width: 300px;">
-			<img src="/images/default/info.png" style="cursor:pointer;" onclick="mapLegend()" align="right"/>
+			<div style="float: right;">
+				<a href="/help/map" target="_blank">
+					<img src="/images/default/info.png" style="cursor:pointer;" align="left"/>
+					Help
+				</a>
+			</div>
 {if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
 			<span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
 				<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />

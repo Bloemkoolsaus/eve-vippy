@@ -279,7 +279,7 @@ pre.changelog h3 {
 
 
 div.tabs {
-    border-bottom: solid 2px #555555;
+    border-bottom: solid 1px #343434;
     margin-bottom: 10px;
 }
 
@@ -291,12 +291,19 @@ div.tabs ul {
 
 div.tabs ul li {
     float: left;
-    margin: 3px 3px 0;
-    padding: 7px 15px;
+    margin: 0 .3em 0;
+    padding: .5em 1.5em;
     background-color: #555555;
     background: #555555 linear-gradient(#555555, #111111);
     border: solid 1px #555555;
     border-radius: 3px 3px 0 0;
+    border-bottom: 0;
+    letter-spacing: 0.1em;
+}
+div.tabs ul li img {
+    height: 16px;
+    margin-right: .6em;
+    margin-left: -.6em;
 }
 
 div.tabs ul li:hover {
