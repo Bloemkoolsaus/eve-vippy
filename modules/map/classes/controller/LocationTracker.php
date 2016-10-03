@@ -110,10 +110,13 @@ class LocationTracker
                         // Magic!
                         if ($map->addWormholeSystem($previousLocationID, $locationID))
                             break;
+
+
                     }
 
-                    // Log jump mass
-                    foreach (\map\model\Connection::getConnectionByLocationsAuthGroup($previousLocationID, $locationID, $authGroupID) as $connection) {
+
+                    $connections = \map\model\Connection::getConnectionByLocationsAuthGroup($previousLocationID, $locationID, $authGroupID);
+                    foreach ($connections as $connection) {
                         $connection->addJump($shipTypeID, $characterID, false);
                     }
                 }
