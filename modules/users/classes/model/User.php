@@ -305,9 +305,11 @@ namespace users\model
                 {
                     if ($setting->value != null)
                     {
-                        \MySQL::getDB()->insert("user_user_settings", ["settingid" => $setting->setting->id,
-                                                                       "userid" => $this->id,
-                                                                       "value" => $setting->value]);
+                        \MySQL::getDB()->insert("user_user_settings", [
+                            "settingid" => $setting->setting->id,
+                            "userid" => $this->id,
+                            "value" => $setting->value
+                        ]);
                     }
                 }
             }

@@ -58,7 +58,7 @@ class Setting extends \Model
      */
     public static function findAll($conditions = array(), $orderby = array(), $class = null)
     {
-        $where = array();
+        $where = ["active > 0"];
         $params = array();
         foreach ($conditions as $var => $val) {
             $where[] = $var." = ?";
