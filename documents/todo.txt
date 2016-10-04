@@ -12,6 +12,10 @@ Aparte help pagina ipv alleen legenda-popup.
 Voeg huidige directors toe als admin.
 
 
+Richting nieuw systeem
+    map\positioning\center.php -> getNextPosition();
+
+
 ======================== Lage prio ========================
 
 Beter beheer auth-groepen

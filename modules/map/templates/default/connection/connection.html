@@ -2,11 +2,19 @@
 	<table>
 		<tr>
 			<th style="text-align: center; font-size: 12px; width: 60px;">
-				{$connection->getFromSystem()->name}
+            {if $connection->getFromSystem()}
+                {$connection->getFromSystem()->name}
+            {else}
+                Uknown
+            {/if}
 			</th>
 			<td style="text-align: center; font-size: 12px;"> &gt; </td>
 			<th style="text-align: center; font-size: 12px; width: 60px;">
+            {if $connection->getToSystem()->name}
 				{$connection->getToSystem()->name}
+            {else}
+                Unknown
+            {/if}
 			</th>
 		</tr>
 	{if $connection->normalgates}

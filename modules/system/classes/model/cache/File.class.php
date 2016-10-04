@@ -36,8 +36,12 @@ namespace system\model\cache
             }
 
             $handle = fopen($dirname.$filename,"w");
-            fwrite($handle, $val);
-            fclose($handle);
+            if ($handle) {
+                fwrite($handle, $val);
+                fclose($handle);
+            } else {
+                \AppRoot::error("Could not write cache file: ".$dirname.$filename);
+            }
         }
 
         function remove($var)

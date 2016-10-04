@@ -69,11 +69,12 @@ namespace scanning\controller\map\positioning
 			$originX = ($this->getOrigin() !== null) ? $this->getOrigin()->x : 50;
 			$originY = ($this->getOrigin() !== null) ? $this->getOrigin()->y : 50;
 
-			$direction = null;
+			$direction = "left";
 			$pos = array("x" => 50, "y" => 50);
 
 
 			// Probeer systeem voor origin te achterhalen. Die bepaald de richting.
+            /**
 			if ($this->origin != null)
 			{
 				if (!$this->getOrigin()->isHomeSystem())
@@ -108,6 +109,7 @@ namespace scanning\controller\map\positioning
 					}
 				}
 			}
+             * */
 
 			$directionObject = null;
 			if ($direction !== null)

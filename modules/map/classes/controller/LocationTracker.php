@@ -138,12 +138,6 @@ class LocationTracker
                             }
                         }
                     }
-
-
-                    $connections = \map\model\Connection::getConnectionByLocationsAuthGroup($previousLocationID, $locationID, $authGroupID);
-                    foreach ($connections as $connection) {
-                        $connection->addJump($shipTypeID, $characterID, false);
-                    }
                 }
             }
         }

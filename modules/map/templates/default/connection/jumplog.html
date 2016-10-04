@@ -1,11 +1,15 @@
 
 {assign var=totalmass value=0}
+{if isset($jumplog.beforemass)}
 {foreach from=$jumplog.beforemass item=ship}
 	{assign var=totalmass value=$totalmass+$ship.mass}
 {/foreach}
+{/if}
+{if isset($jumplog.aftermass)}
 {foreach from=$jumplog.aftermass item=ship}
 	{assign var=totalmass value=$totalmass+$ship.mass}
 {/foreach}
+{/if}
 <h3 style="border-bottom: solid 1px #eeeeee;">
 	JUMP LOG
 {if $totalmass > 0}
