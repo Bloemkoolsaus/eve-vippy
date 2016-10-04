@@ -246,7 +246,7 @@ function openContextMenu(whName, mouseX, mouseY)
 
 	var contextContainer = "<div id='wormholeContext' style='top: "+mousePosY+"px; left: "+mousePosX+"px;'>";
 	contextContainer += "<div id='wormholeContextHeader'>&nbsp;</div>";
-	contextContainer += "<div id='wormholeContextMenu'><div style='padding: 10px;'><img src='images/loading.gif'> &nbsp; Loading context menu</div></div>";
+	contextContainer += "<div id='wormholeContextMenu'><div style='padding: 10px;'><img src='/images/loading.gif'> &nbsp; Loading context menu</div></div>";
 	contextContainer += "<div id='wormholeContextFooter'>&nbsp;</div>";
 	contextContainer += "</div>";
 	$("#maincontent").append(contextContainer);
@@ -392,7 +392,7 @@ function openConnectionDetails(connectionID, x, y)
 	var html = "<div class='sigInfo' id='"+popupID+"'>";
 	html += "<div class='header"+className+"'></div>";
 	html += "<div class='content"+className+"' id='conndetailsinfo' style='padding-left: 30px;'>";
-	html += "<img src='images/loading.gif'> &nbsp; Loading wormhole data";
+	html += "<img src='/images/loading.gif'> &nbsp; Loading wormhole data";
 	html += "</div>";
 	html += "<div class='footer"+className+"'></div>";
 	html += "</div>";
@@ -415,7 +415,7 @@ function openConnectionDetails(connectionID, x, y)
             $("#conndetailsinfo").html(data);
             if ($("#jumplogsummary").length > 0) {
                 // Jumplog halen
-                $("#jumplogsummary").html("<img src='images/loading.gif'> &nbsp; Loading jump log");
+                $("#jumplogsummary").html("<img src='/images/loading.gif'> &nbsp; Loading jump log");
                 $.ajax({
                     url: "/map/connection/jumplog/" + connectionID,
                     data: {ajax: 1},

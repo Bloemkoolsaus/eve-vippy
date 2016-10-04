@@ -5,9 +5,11 @@ class Map
 {
     function getOverview(\map\model\Map $map, $arguments=[])
     {
+        $system = null;
         if (count($arguments) > 0)
             $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
-        else
+
+        if (!$system)
             $system = $map->getHomeSystem();
 
         $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);

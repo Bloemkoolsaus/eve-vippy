@@ -7,8 +7,8 @@ function checkAPIs()
 
 		$("[data-valid="+keyID+"]").removeClass("valid");
 		$("[data-valid="+keyID+"]").removeClass("invalid");
-		$("[data-valid="+keyID+"]").html("<img src='images/loading.gif'> &nbsp; Fetching API data...");
-		
+		$("[data-valid="+keyID+"]").html("<img src='/images/loading.gif'> &nbsp; Fetching API data...");
+
 		$.ajax({
 			url: "index.php?module=profile&section=api&ajax=1&action=validate&keyid="+keyID+"&vcode="+vCode,
 			success: function(data) {

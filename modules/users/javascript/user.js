@@ -34,7 +34,7 @@ function validateAPI(userID)
 
 function showUserLogs()
 {
-	$("#userlogs").html("<img src='images/loading.gif'> Loading logs");
+	$("#userlogs").html("<img src='/images/loading.gif'> Loading logs");
 	$.ajax({
 		url: "/index.php?module=users&action=edit&ajax=1",
 		data: {
