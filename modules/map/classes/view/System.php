@@ -67,7 +67,7 @@ class System
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("wormhole", $wormhole);
 
-        if ($wormhole->getSolarsystem()->isKSpace()) {
+        if ($wormhole->getSolarsystem() && $wormhole->getSolarsystem()->isKSpace()) {
             $closeSysConsole = new \map\console\ClosestSystems();
             $closestSystems = $closeSysConsole->getClosestSystems($wormhole->getSolarsystem(), true);
             if (count($closestSystems) > 0)
