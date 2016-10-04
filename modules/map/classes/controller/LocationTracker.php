@@ -101,11 +101,6 @@ class LocationTracker
                         // Beide systemen zijn niet bekend.
                         if ($wormholeTo == null && $wormholeFrom == null)
                             $addNewWormhole = false;
-                        // Beide systemen zijn kspace.
-                        if ($wormholeTo && $wormholeTo->getSolarsystem()->isKSpace()) {
-                            if ($wormholeFrom && $wormholeFrom->getSolarsystem()->isKSpace())
-                                $addNewWormhole = false;
-                        }
 
                         // Magic!
                         if ($addNewWormhole)
