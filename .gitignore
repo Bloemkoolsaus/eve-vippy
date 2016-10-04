@@ -2,3 +2,4 @@
 config/db.php
 config/main.php
 config/crest.conf
+config/dev.conf

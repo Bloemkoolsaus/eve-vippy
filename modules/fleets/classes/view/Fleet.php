@@ -44,6 +44,10 @@ class Fleet
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("popup", \Tools::REQUEST("ajax"));
         $tpl->assign("errors", $errors);
+
+        if (!\Tools::REQUEST("ajax"))
+            $tpl->assign("fleets", \fleets\model\Fleet::findAll(["authgroupid" => \User::getUSER()->getCurrentAuthGroupID()]));
+
         return $tpl->fetch("fleets/add");
     }
 }

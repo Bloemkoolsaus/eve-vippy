@@ -53,7 +53,7 @@ class LocationTracker
         ]);
 
 
-        $chainMaps = \map\model\Map::getChainsByAuthgroup($authGroupID);
+        $chainMaps = \map\model\Map::findAll(["authgroupid" => $authGroupID]);
         foreach ($chainMaps as $map) {
             $map->setMapUpdateDate();
         }
@@ -72,6 +72,7 @@ class LocationTracker
                     // Check alle maps van deze authgroup
                     foreach ($chainMaps as $map)
                     {
+                        $addNewWormhole = true;
                         $wormholeFrom = null;
                         $wormholeTo = null;
 
@@ -94,23 +95,48 @@ class LocationTracker
                             }
                         }
 
-                        // Beide systemen zijn al bekend. We hoeven niets te doen.
+                        // Beide systemen zijn al bekend.
                         if ($wormholeTo != null && $wormholeFrom != null)
-                            continue;
-                        // Beide systemen zijn niet bekend. We hoeven niets te doen.
+                            $addNewWormhole = false;
+                        // Beide systemen zijn niet bekend.
                         if ($wormholeTo == null && $wormholeFrom == null)
-                            continue;
-
-                        // Beide systemen zijn kspace. Annuleer alle iteraties.
+                            $addNewWormhole = false;
+                        // Beide systemen zijn kspace.
                         if ($wormholeTo && $wormholeTo->getSolarsystem()->isKSpace()) {
                             if ($wormholeFrom && $wormholeFrom->getSolarsystem()->isKSpace())
-                                break;
+                                $addNewWormhole = false;
                         }
 
                         // Magic!
-                        if ($map->addWormholeSystem($previousLocationID, $locationID))
-                            break;
+                        if ($addNewWormhole)
+                            $map->addWormholeSystem($previousLocationID, $locationID);
 
+
+                        $connection = \map\model\Connection::getConnectionByLocations($previousLocationID, $locationID, $map->id);
+
+                        if ($connection)
+                        {
+                            // Systems zijn connected. Lekker makkelijk, registreer jump
+                            $connection->addJump($shipTypeID, $characterID, false);
+                        }
+                        else
+                        {
+                            // Systems niet connected. Zoek alle tussenliggende holes, en registreer daar ook de jump!
+                            $fromSystem = new \map\model\SolarSystem($previousLocationID);
+                            $toSystem = new \map\model\SolarSystem($locationID);
+
+                            $route = new \map\model\Route();
+                            $route->setMap($map);
+                            $route->setFromSystem($fromSystem);
+                            $route->setToSystem($toSystem);
+
+                            $connections = $route->getConnections();
+                            if ($connections) {
+                                foreach ($connections as $connection) {
+                                    $connection->addJump($shipTypeID, $characterID, false);
+                                }
+                            }
+                        }
 
                     }
 
