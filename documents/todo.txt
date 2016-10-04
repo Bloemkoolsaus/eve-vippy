@@ -1,8 +1,4 @@
 
-Wisselen van holes kan traag zijn.
-Controleer tussenliggende holes en voeg daar de mass toe.
-
-
 Exit finder ui fixen.
  - Set destination links via CREST
 

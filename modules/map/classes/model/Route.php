@@ -3,8 +3,7 @@ namespace map\model;
 
 /**
  * Class Route
- *  Route on the map between 2 systems
- * @package map\model
+ *  Find all wormholes / connections between two systems on the map
  */
 class Route
 {
@@ -106,13 +105,10 @@ class Route
         if ($this->connections === null)
         {
             $wormholes = $this->getWormholes();
-            if ($wormholes)
-            {
+            if ($wormholes) {
                 $this->connections = [];
-                foreach ($wormholes as $key => $wormhole)
-                {
-                    if (isset($wormholes[$key+1]))
-                    {
+                foreach ($wormholes as $key => $wormhole) {
+                    if (isset($wormholes[$key+1])) {
                         $connection = \map\model\Connection::getConnectionByLocations($wormhole->solarSystemID, $wormholes[$key+1]->solarSystemID, $this->getMap()->id);
                         if ($connection)
                             $this->connections[] = $connection;
@@ -149,33 +145,23 @@ class Route
         return null;
     }
 
-
     private function getkeypath($arr, $lookup)
     {
-        if (array_key_exists($lookup, $arr["connections"]))
-        {
+        if (array_key_exists($lookup, $arr["connections"])) {
             return array($lookup);
-        }
-        else
-        {
-            foreach ($arr["connections"] as $key => $subarr)
-            {
-                if (is_array($subarr))
-                {
+        } else {
+            foreach ($arr["connections"] as $key => $subarr) {
+                if (is_array($subarr)) {
                     $ret = $this->getkeypath($subarr, $lookup);
-
-                    if ($ret)
-                    {
+                    if ($ret) {
                         $ret[] = $key;
                         return $ret;
                     }
                 }
             }
         }
-
         return null;
     }
-
 
     private function getConnectedWormholes(\scanning\model\Wormhole $wormhole, $backlist=[], $route=null)
     {
