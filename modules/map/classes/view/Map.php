@@ -184,20 +184,17 @@ class Map
 
     function getRemove(\map\model\Map $map, $arguments=[])
     {
-        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
         $removeConnected = false;
         if (count($arguments) > 0) {
             if ($arguments[0] == "connected")
                 $removeConnected = true;
         }
-        if ($system) {
-            $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
-            if ($wormhole) {
-                if ($removeConnected)
-                    $map->removeConnectedWormholes($wormhole->id);
-                else
-                    $wormhole->delete();
-            }
+        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+        if ($wormhole) {
+            if ($removeConnected)
+                $map->removeConnectedWormholes($wormhole->id);
+            else
+                $wormhole->delete();
         }
         return "done";
     }
