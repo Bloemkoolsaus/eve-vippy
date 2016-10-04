@@ -365,6 +365,15 @@ Wormhole.prototype.render = function(canvas)
                     document.location = "/map/"+$("#mapName").val()+"/"+mapWormholes[this.getName()].solarsystem.name;
             }
         });
+    } else {
+        wormhole.on("click", function (e) {
+            closeContextMenu();
+            closeWormholeDetails(this.getName());
+            if (e.evt.which == 3) {
+                openContextMenu(this.getName(), mousePosX, mousePosY);
+                return false;
+            }
+        });
     }
 
 
