@@ -67,7 +67,7 @@ class Fleet
         if ($fleet->id == 0)
         {
             $fleet->active = 0;
-            $fleet->statusMessage = "Cannot call CREST, o fleet ID.";
+            $fleet->statusMessage = "Cannot call CREST, no fleet ID.";
             $fleet->store();
         }
         else

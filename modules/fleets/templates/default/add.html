@@ -6,12 +6,17 @@
 	{/foreach}
 	</div>
 {/if}
+{if !$popup}
+	<h1>
+		<img src="/images/default/ui/fleet.png" align="left">
+		Add Fleet
+	</h1
+	<div class="col5">>
+{else}
 	<h2>
 		<img src="/images/default/ui/fleet.png" align="left">
 		Add Fleet
 	</h2>
-{if !$popup}
-	<div class="col5">
 {/if}
 	<form method="post" action="/fleets/fleet/add">
         <div class="form">
@@ -68,9 +73,16 @@
 			<p>
 				If you are the boss of a fleet, you can get your CREST link from the fleet window ingame.
 			</p>
+			<p style="text-align: right;">
+				<a href="/help/crest" target="_blank">More Information</a>
+			</p>
 		</div>
 		<div style="clear:both;"></div>
 	</div>
 {/if}
 	<div style="clear:both;"></div>
 </div>
+
+{if !$popup}
+{include "fleets/overview" fleets=$fleets}
+{/if}

@@ -1,23 +1,34 @@
 {include "help/menu"}
 
 <div class="content">
-	<h2>Authentication - EVE SSO (Single-Sign-On)</h2>
-	<div class="col4">
-		<h3>SSO and Vippy</h3>
+	<h2>
+		<img src="/images/default/ui/charactersheet.png" align="left">
+		Authentication
+	</h2>
+	<div class="col5">
 		<div style="padding: .5em;">
-			You will now use your EVE login to login to Vippy.<br />
-			This will give Vippy access to CREST.
-			<span style="color: #ffffff;"><b>Under <u>no</u> circumstances is Vippy able to read or otherwise get your EVE login information.</b></span>
+			<h3>SSO (Single Sign On) and Vippy</h3>
+		</div>
+		<div style="padding: .5em;">
+			You now use your EVE account to log in to Vippy. This allows Vippy to access CREST.<br />
+			<span style="color: #ffffff;"><b>Under <u>no</u> circumstances is Vippy able to read or otherwise get your EVE account details.</b></span>
 		</div>
 		<div style="padding: .5em;">
 			See this
 			<a href="https://community.eveonline.com/news/dev-blogs/eve-online-sso-and-what-you-need-to-know/" target="_blank">dev blog</a>
 			for more details on how the sso works and why it is secure.
 		</div>
+		<div style="padding: .5em;">
+			<b>Using the SSO is safer then traditional API keys!</b><br />
+			With API keys, anyone that has an active key from you, can pretend to be you and get access.
+			Now with the SSO, they would need your EVE account details. Wich hopefully you don't share!?
+		</div>
 		<div style="clear:both;"></div>
 	</div>
-	<div class="col8 right last">
-		<h3>CREST and Vippy</h3>
+	<div class="col7 right last">
+		<div style="padding: .5em;">
+			<h3>CREST and Vippy</h3>
+		</div>
 		<div style="padding: .5em;">
 			With the death of the Ingame Browser, Vippy relies on CREST for authentication and tracking.
 			With CREST, Vippy can confirm that you are who you say you are and can track your location for valuable intel on your map.
@@ -27,18 +38,27 @@
 			I opted to replace them for CREST, since we need CREST anyway. No more juggling of API keys :)
 		</div>
 		<div style="padding: .5em;">
-			<b><u>Tracking</u></b> was previously done with headers from the ingame browser. Now that the IGB is going away,
+			<b><u>Tracking</u></b> was previously done with headers from the ingame browser (remember how you had to `trust` Vippy?). Now that the IGB is gone,
 			we need to use CREST to get your location and active ship-type.
+		</div>
+		<div style="padding: .5em;">
+			You can see (and revoke) what applications can access CREST in your
+			<a href="https://community.eveonline.com/support/third-party-applications/" target="_blank">EVE acount page</a>.
 		</div>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
 </div>
 
-<div class="content">
-	<h2>CREST Tracking</h2>
+<div class="content" style="padding-top: 2em;">
+	<h2>
+		<img src="/images/default/ui/map.png" align="left">
+		CREST Tracking
+	</h2>
 	<div class="col6">
-		<h3>CREST Fleet API</h3>
+		<div style="padding: .5em;">
+			<h3>CREST Fleet API</h3>
+		</div>
 		<div style="padding: .5em;">
 			Vippy's main method of tracking is via the CREST fleet api. This requires you to add your fleet to Vippy.
 		</div>
@@ -59,43 +79,53 @@
 		<div style="clear:both;"></div>
 	</div>
 	<div class="col6 right last">
-		<h3>CREST Character Location API</h3>
+		<div style="padding: .5em;">
+			<h3>CREST Character Location API</h3>
+		</div>
 		<div style="padding: .5em;">
 			With those restrictions on the fleet api, why are we even using that?
 		</div>
 		<div style="padding: .5em;">
-			<b>Ship type</b><br />
+			<b>1) Ship types</b><br />
 			The character location api does not provide any information about your current shiptype.
-			We cannot use this to log mass on wormholes for the jumplog.
+			We need your ship type to correctly log and estimate mass on wormholes.
 		</div>
 		<div style="padding: .5em;">
-			<b>Rate limits</b><br />
-			Authenticated CREST (wich is what we use here) has a really, really (like really) low rate limit. This means
+			<b>2) Rate limits</b><br />
+			Authenticated CREST (wich is what we use here) has a really, really (like a really) low rate limit. This means
 			Vippy can only do so many request in a given time. If Vippy needs to use the character location api to track
 			all active characters, and honor the rate limit imposed by CCP, it would need 15 minutes for a round trip.
 		</div>
 		<div style="padding: .5em;">
-			Add to that, we need to also call this api to check wether or not a character is even logged in!
+			To make it more interesting, Vippy does not know if a character is logged in. For not logged in character,
+			we just get an empty result. If we rely on the character-location api, it needs to be called continously for <b>all</b> characters.
+			This makes relying on the character-location api very impractical.
 		</div>
 		<div style="padding: .5em;">
+			CCP may up the rate limit in the future, but currently there are no signs of that. And, even if they up the limit,
+			Vippy currently has so many active toons it may not be enough!
+		</div>
+		<div style="padding: .5em; padding-top: 1em;">
 			<h3>Solution!</h3>
 		</div>
 		<div style="padding: .5em;">
-			To get around the rate limit and the slow update rate of the fleet api there are now 2 new buttons on the map page.
-			These buttons will update your location NOW, using the character-location api. This is usefull when you've just
-			jumped into a new hole and want to start scanning right away.
-		</div>
-		<div style="padding: .5em;">
-			Click the button, choose a toon and Vippy will try to use the character-location api to fetch your current location.
-			Ofcourse, your toon needs to have a valid CREST token.
-			<a href="/profile/characters" target="_blank">Check your character status here</a>
+			To get around the rate limit and the slow update rate of the fleet api there are new buttons just beneath the map.
+			With these buttons, you can trigger the character-location api manually and update your location <b>now</b>!<br />
+			Use this when you have just jumped into a new hole and want to start scanning right away.
 		</div>
 		<div style="padding: .5em;">
 			In your <a href="/profile/account" target="_blank">account settings</a> you can select your dedicated scan-alt.
-			If selected, you will have a second button that automatically selects your scan alt and refreshed it's location.
+			When selected, you can use the 'refresh location' button to refresh your scan-alts location.
 		</div>
 		<div style="padding: .5em;">
-			To prevent abuse, these buttons will be rate limited!!
+			To refresh any of your other toons (that have <a href="/profile/characters" target="_blank">CREST enabled</a> for Vippy),
+			click the arrow and select a toon to update it's location.
+		</div>
+		<div style="padding: .5em;">
+			To prevent abuse, these buttons are rate limited!! You can only refresh once every 15 seconds.
+		</div>
+		<div style="padding: .5em; margin-top: 1em; text-align: center;">
+			<img src="/modules/help/images/refresh-location.png">
 		</div>
 		<div style="clear:both;"></div>
 	</div>
