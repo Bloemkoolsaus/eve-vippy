@@ -82,7 +82,7 @@ class System
      * @param \map\model\System $system
      * @return string
      */
-    private function getWhEffectsData(\map\model\System $system)
+    private function getWhEffectsData($system)
     {
         $negativePositives = array("signatureRadiusMultiplier","heatDamageMultiplier");
         $typeNameReplacements = array("armorDamageAmountMultiplier"		=> "Armor Repair amount multiplier",
