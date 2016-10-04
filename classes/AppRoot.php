@@ -385,7 +385,7 @@ class AppRoot
 		fwrite($handle, $message."\n\n");
 		fwrite($handle, "CWD: ".getcwd()."\n");
 		fwrite($handle, "PHP_SELF: ".$_SERVER["PHP_SELF"]."\n");
-        fwrite($handle, "REQUEST_URI: ".$_SERVER["REQUEST_URI"]."\n");
+        fwrite($handle, "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n");
 		fclose($handle);
 	}
 
