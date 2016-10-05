@@ -35,7 +35,7 @@
 {if $App->user->isAllowedChainAction($wormhole->getChain(), 'delete')}
 	<div onclick="deleteWormhole('{$wormhole->id}'); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
-		Remove {$wormhole->getSolarsystem()->name}
+		Remove {$wormhole->name}
 	</div>
 	<div onclick="deleteWormhole('{$wormhole->id}', true); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />

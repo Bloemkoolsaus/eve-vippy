@@ -88,6 +88,14 @@ class Wormhole
                 $connection->chainID = $map->id;
                 $connection->store();
             }
+            else
+            {
+                \AppRoot::error("Connection already exists");
+            }
+        }
+        else
+        {
+            \AppRoot::error("Not both holes were added..?");
         }
 
         // Nieuw systeem is toegevoegd.
