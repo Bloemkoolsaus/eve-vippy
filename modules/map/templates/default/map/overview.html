@@ -379,17 +379,41 @@
 </script>
 <script id="signatureTPL" type="text/template">
 {literal}
-	<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}">
+	<tr class="{{type}}" rel="signature" data-id="{{id}}" data-type="{{type}}" data-whtype="{{whtype}}"
+		data-scannedon="{{scanage}}" data-scannedby="{{scanuser}}" data-updateon="{{updateage}}" data-updateby="{{updateuser}}">
 		<td class="sigID" onclick="editSignature('{{id}}')">{{sigid}}</td>
 		<td class="sigType" onclick="editSignature('{{id}}')">{{type}} <div class="whtype">{{whtype}}</div></td>
 		<td class="sigInfo" onclick="editSignature('{{id}}')">{{info}}</td>
-		<td class="sigUpdate" onclick="editSignature('{{id}}')">{{scanage}}</td>
-		<td class="sigControls">
+		<td class="sigUpdate" onclick="editSignature('{{id}}')">{{updateage}}</td>
+		<td class="sigControls" onmouseover="signatureTooltip('{{id}}');" onmouseout="signatureCloseTooltip('{{id}}');">
 			<img src="/images/default/information.png">
 			<img src="/images/default/edit.png" onclick="editSignature('{{id}}');">
 			<img src="/images/default/cross.png" onclick="deleteSignature('{{id}}');">
 		</td>
 	</tr>
+{/literal}
+</script>
+<script id="signatureTooltipTPL" type="text/template">
+{literal}
+	<div>
+		<div class="form">
+			<div class="field" style="width: 80px;"><b>Age:</b></div>
+			<div class="value">{{scanage}}</div>
+		</div>
+		<div class="form">
+			<div class="field" style="width: 80px;"><b>Updated:</b></div>
+			<div class="value">{{updateage}} ago</div>
+		</div>
+		<div class="form" style="margin-top: 1em;">
+			<div class="field" style="width: 80px;"><b>Scanned:</b></div>
+			<div class="value">{{scanuser}}</div>
+		</div>
+		<div class="form">
+			<div class="field" style="width: 80px;"><b>Updated:</b></div>
+			<div class="value">{{updateuser}}</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
 {/literal}
 </script>
 <script id="signatureEditTPL" type="text/template">

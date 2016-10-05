@@ -1,0 +1,52 @@
+
+div.tooltip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 400px;
+    display: none;
+    z-index: 10;
+}
+div.tooltip div.header,
+div.tooltip div.headerleft,
+div.tooltip div.headerright {
+    background-image: url("/images/default/popup.header.png");
+    height: 10px;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+div.tooltip div.footer,
+div.tooltip div.footerleft,
+div.tooltip div.footerright {
+    background-image: url("/images/default/popup.footer.png");
+    height: 10px;
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+}
+div.tooltip div.content {
+    background: none;
+    background-image: url("/images/default/popup.content.png");
+}
+div.tooltip div.contentleft {
+    background-image: url("/images/default/popup.content.arrowleft.png");
+}
+div.tooltip div.contentright {
+    background-image: url("/images/default/popup.content.arrowright.png");
+}
+div.tooltip div.content,
+div.tooltip div.contentleft,
+div.tooltip div.contentright {
+    margin: 0px;
+    padding: 0px;
+    padding-left: 3em;
+    padding-right: 1em;
+    text-align: left;
+    min-height: 80px;
+}
+
+div.tooltip table tr th {
+    background: none;
+    padding-right: 10px;
+}

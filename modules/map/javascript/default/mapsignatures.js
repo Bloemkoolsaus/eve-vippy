@@ -36,7 +36,10 @@ function loadSignatureList(noCache)
                             type: signatures[s].type,
                             whtype: (signatures[s].wormhole!=undefined) ? signatures[s].wormhole.type : "",
                             info: signatures[s].info,
-                            scanage: signatures[s].updateage
+                            scanage: signatures[s].scanage,
+                            scanuser: signatures[s].scanuser,
+                            updateage: signatures[s].updateage,
+                            updateuser: signatures[s].updateuser
                         }));
                     }
                 }
@@ -45,6 +48,25 @@ function loadSignatureList(noCache)
 			}
 		});
 	}
+}
+
+function signatureTooltip(id)
+{
+    var html = Mustache.to_html($("#signatureTooltipTPL").html(), {
+        scanage: $("tr[data-id="+id+"]").attr("data-scannedon"),
+        scanuser: $("tr[data-id="+id+"]").attr("data-scannedby"),
+        updateage: $("tr[data-id="+id+"]").attr("data-updateon"),
+        updateuser: $("tr[data-id="+id+"]").attr("data-updateby")
+    });
+
+    var tip = new Tooltip("sig"+id);
+    tip.render(html);
+    tip.show();
+}
+
+function signatureCloseTooltip(id)
+{
+    closeTooltip("sig"+id);
 }
 
 function deleteSignature(id)

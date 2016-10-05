@@ -16,55 +16,6 @@ div#signatureMap {
 	overflow: auto;
 }
 
-div.sigInfo {
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 400px;
-	display: none;
-	z-index: 10;
-}
-div.sigInfo div.header,
-div.sigInfo div.headerleft,
-div.sigInfo div.headerright {
-	background-image: url("../../../images/default/popup.header.png");
-	height: 10px;
-	overflow: hidden;
-	margin: 0px;
-	padding: 0px;
-}
-div.sigInfo div.footer,
-div.sigInfo div.footerleft,
-div.sigInfo div.footerright {
-	background-image: url("../../../images/default/popup.footer.png");
-	height: 10px;
-	overflow: hidden;
-	margin: 0px;
-	padding: 0px;
-}
-div.sigInfo div.content {
-	background: none;
-	background-image: url("../../../images/default/popup.content.png");
-}
-div.sigInfo div.contentleft {
-	background-image: url("../../../images/default/popup.content.arrowleft.png");
-}
-div.sigInfo div.contentright {
-	background-image: url("../../../images/default/popup.content.arrowright.png");
-}
-div.sigInfo div.content,
-div.sigInfo div.contentleft,
-div.sigInfo div.contentright {
-	margin: 0px;
-	padding: 0px;
-	padding-left: 15px;
-	padding-right: 15px;
-}
-
-div.sigInfo table tr th {
-	background: none;
-	padding-right: 10px;
-}
 
 div.whdetailspopup {
 	margin-left: 10px;
