@@ -194,12 +194,14 @@ class Map
 
     function getRemove(\map\model\Map $map, $arguments=[])
     {
+        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+
         $removeConnected = false;
         if (count($arguments) > 0) {
             if ($arguments[0] == "connected")
                 $removeConnected = true;
         }
-        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+
         if ($wormhole) {
             if ($removeConnected)
                 $map->removeConnectedWormholes($wormhole->id);
