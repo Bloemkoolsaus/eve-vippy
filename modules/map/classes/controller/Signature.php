@@ -43,7 +43,7 @@ class Signature
          */
         if ($map && $map->getSetting("create-unmapped"))
         {
-            \AppRoot::debug("add unmapped system");
+            \AppRoot::doCliOutput("add unmapped system");
             if (strtolower(trim($signature->sigType)) == "wh" && !$signature->deleted) {
                 $controller = new \map\controller\Wormhole();
                 $controller->addWormholeBySignature($map, $signature);
@@ -54,17 +54,21 @@ class Signature
         /**
          * Check wh-nummber, connection bijwerken.
          */
+        \AppRoot::debug("Signature->typeID: ".$signature->typeID);
         if ($signature->typeID > 0 && $signature->typeID != 9999)
         {
             // Parse signature name om de de juiste connectie te zoeken.
             $parts = explode(" ", $signature->sigInfo);
             $parts = explode("-", $parts[0]);
             $wormholename = (count($parts) > 1) ? $parts[1] : $parts[0];
-            \AppRoot::debug("UPDATE Connection Type: ".$wormholename);
+            \AppRoot::doCliOutput("UPDATE Connection Type: ".$wormholename);
 
             // Zoek dit wormhole
-            foreach (\map\model\Wormhole::getWormholesByAuthgroup($signature->authGroupID) as $wormhole) {
-                if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename))) {
+            foreach (\map\model\Wormhole::getWormholesByAuthgroup($signature->authGroupID) as $wormhole)
+            {
+                \AppRoot::debug($wormhole->name);
+                if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename)))
+                {
                     $fromWormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
                     $connection = \map\model\Connection::getConnectionByWormhole($fromWormhole->id, $wormhole->id, $map->id);
                     if ($connection != null) {
@@ -98,7 +102,7 @@ class Signature
         \AppRoot::debug("checkOpenSignatures($solarSystem->name)");
 
         $openSignatures = array();
-        foreach (\scanning\model\Signature::getSignaturesBySolarSystem($solarSystem->id) as $signature) {
+        foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]) as $signature) {
             if ($signature->sigType == null || strlen(trim($signature->sigType)) == 0)
                 $openSignatures[] = $signature;
         }

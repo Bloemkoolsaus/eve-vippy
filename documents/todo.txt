@@ -12,6 +12,25 @@ Aparte help pagina ipv alleen legenda-popup.
 Voeg huidige directors toe als admin.
 
 
+
+Auto k162 on reverse side of statics no longer auto filling on signature list.
+
+Also doesn't work the other way either e.g when entering 1-11 it won't auto fill the WH Type to M267/H296 etc.
+
+Copy-pasting un-scanned sigs causes a 'fully scanned' status on the Wormhole/System (no grey bars along the left hand side)
+
+Feature Request - Citadel Signature Type (Like POS)
+
+Adding eol to wormhole link does remember the flag on the form but no visuals on the map change.
+
+Tooltip on hover over the wh link does show correct eol info.
+
+Sugestie: switch active system to current location terugbrengen.
+
+Active toon list is not restricted anymore (+ x others)
+
+
+
 ======================== Lage prio ========================
 
 Beter beheer auth-groepen
@@ -37,12 +56,3 @@ Richting nieuw systeem
 -------------------------------------------------------
 ======================== Fixes ========================
 -------------------------------------------------------
-
-Fixed context menu (right click) on 'unknown' wormholes.
-Renaming a wormhole is now possible again.
-Fixed some background errors when refreshing a characters location.
-Remove connected systems works correctly again.
-Updated signatures now correctly update their last-update-date time date of update help.
-Copy-pasting signatures auto-removes old signatures again.
-Fix the signature information tooltip.
-Fixed a bug (and some errors) when registering a new system on the map.
