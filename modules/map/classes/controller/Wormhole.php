@@ -12,7 +12,7 @@ class Wormhole
      */
     function addWormhole(\map\model\Map $map, $fromSystemID, $toSystemID=null)
     {
-        \AppRoot::debug("=== addWormhole($fromSystemID, $toSystemID)", true);
+        \AppRoot::doCliOutput("=== addWormhole($fromSystemID, $toSystemID)", true);
         if ($fromSystemID == 0 || $toSystemID == 0)
             return false;
 
@@ -27,7 +27,7 @@ class Wormhole
          */
         if (!$fromWormhole && !$toWormhole)
         {
-            \AppRoot::debug("both systems are not on yet!");
+            \AppRoot::doCliOutput("both systems are not on yet!");
             $system = new \map\model\Wormhole();
             $system->solarSystemID = $fromSystemID;
             $system->chainID = $map->id;
@@ -65,7 +65,7 @@ class Wormhole
         // Voeg toe aan map
         if ($addSystemID !== null)
         {
-            \AppRoot::debug("Voeg toe aan map");
+            \AppRoot::doCliOutput("Voeg toe aan map");
             $position = $this->getNewPosition($map, $originHole);
 
             $addingHole = new \map\model\Wormhole();
@@ -79,7 +79,7 @@ class Wormhole
         // Verbinding toevoegen
         if ($originHole && $addingHole)
         {
-            \AppRoot::debug("Verbinding toevoegen");
+            \AppRoot::doCliOutput("Verbinding toevoegen");
             $connection = \map\model\Connection::getConnectionByWormhole($originHole->id, $addingHole->id, $map->id);
             if ($connection == null) {
                 $connection = new \map\model\Connection();
@@ -89,14 +89,10 @@ class Wormhole
                 $connection->store();
             }
             else
-            {
-                \AppRoot::error("Connection already exists");
-            }
+                \AppRoot::doCliOutput("Connection already exists");
         }
         else
-        {
-            \AppRoot::error("Not both holes were added..?");
-        }
+            \AppRoot::doCliOutput("Not both holes were added..?");
 
         // Nieuw systeem is toegevoegd.
         if ($addSystemID !== null)
