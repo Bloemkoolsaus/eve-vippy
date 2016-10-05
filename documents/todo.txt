@@ -12,10 +12,6 @@ Aparte help pagina ipv alleen legenda-popup.
 Voeg huidige directors toe als admin.
 
 
-Richting nieuw systeem
-    map\positioning\center.php -> getNextPosition();
-
-
 ======================== Lage prio ========================
 
 Beter beheer auth-groepen
@@ -27,3 +23,26 @@ Beter beheer notificaties
 
 
 Menu opbouw
+
+
+Richting nieuw systeem
+    map\positioning\center.php -> getNextPosition();
+
+
+
+
+
+
+
+-------------------------------------------------------
+======================== Fixes ========================
+-------------------------------------------------------
+
+Fixed context menu (right click) on 'unknown' wormholes.
+Renaming a wormhole is now possible again.
+Fixed some background errors when refreshing a characters location.
+Remove connected systems works correctly again.
+Updated signatures now correctly update their last-update-date time date of update help.
+Copy-pasting signatures auto-removes old signatures again.
+Fix the signature information tooltip.
+Fixed a bug (and some errors) when registering a new system on the map.
