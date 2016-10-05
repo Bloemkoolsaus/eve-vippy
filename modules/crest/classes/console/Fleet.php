@@ -84,13 +84,18 @@ class Fleet
                 {
                     foreach ($crest->getResult()->items as $fleetMember)
                     {
-                        \AppRoot::doCliOutput(" - ".$fleetMember->character->id);
+                        $character = new \eve\model\Character($fleetMember->character->id);
+                        \AppRoot::doCliOutput(" - ".$character->name);
+                        if ($character->getUser())
+                            \User::setUSER($character->getUser());
+
                         $locationTracker->setCharacterLocation(
                             $fleet->authGroupID,
                             $fleetMember->character->id,
                             $fleetMember->solarSystem->id,
                             $fleetMember->ship->id
                         );
+                        \User::unsetUser();
                     }
 
                     $fleet->active = 1;

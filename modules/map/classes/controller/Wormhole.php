@@ -92,7 +92,7 @@ class Wormhole
                 \AppRoot::doCliOutput("Connection already exists");
         }
         else
-            \AppRoot::doCliOutput("Not both holes were added..?");
+            \AppRoot::doCliOutput("Not both holes were added..");
 
         // Nieuw systeem is toegevoegd.
         if ($addSystemID !== null)

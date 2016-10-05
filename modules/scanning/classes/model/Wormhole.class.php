@@ -78,8 +78,7 @@ namespace scanning\model
 			if ($this->mappedByUserID == 0)
 				$this->mappedByUserID = (\User::getUSER())?\User::getUSER()->id:null;
 
-			if ($this->mappedByCharacterID == 0)
-			{
+			if ($this->mappedByCharacterID == 0) {
 				if (\eve\model\IGB::getIGB()->isIGB())
 					$this->mappedByCharacterID = \eve\model\IGB::getIGB()->getPilotID();
 			}
@@ -133,10 +132,12 @@ namespace scanning\model
 				$this->id = $result;
 
                 // User log
-				\User::getUSER()->addLog("add-wormhole", $this->solarSystemID,
-										array("chain"	=> array("id" => $this->getChain()->id,
-																"name"=> $this->getChain()->name),
-											"system" 	=> $system));
+                if (\User::getUSER()) {
+                    \User::getUSER()->addLog("add-wormhole", $this->solarSystemID,
+                        array("chain"	=> array("id" => $this->getChain()->id,
+                                                  "name"=> $this->getChain()->name),
+                              "system" 	=> $system));
+                }
 			}
 			else
 				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
