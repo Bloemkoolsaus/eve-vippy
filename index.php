@@ -40,7 +40,7 @@ if (Tools::GET("action") == "logout") {
 if (!\User::getUSER()) {
 	// Login by cookie
 	if (\Tools::COOKIE("vippy")) {
-		if (\User::getUSER()->loginByKey(Tools::COOKIE("vippy")))
+		if (\users\model\User::loginByKey(Tools::COOKIE("vippy")))
 			\AppRoot::redirect("/");
 	}
 	// Login by ATLAS

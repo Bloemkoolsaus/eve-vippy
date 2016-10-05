@@ -208,25 +208,6 @@ namespace users\model
             return false;
 		}
 
-		public function loginByKey($key)
-		{
-			$loggedIn = false;
-
-			$user = \users\model\User::getUserByKey($key);
-			if ($user !== null) {
-				$user->setLoginStatus();
-				$loggedIn = true;
-			}
-
-			if ($this->id == 0)
-				return false;
-
-			if ($loggedIn)
-				$this->addLog("login");
-
-			return $loggedIn;
-		}
-
 		public function createLoginKey()
 		{
 			$this->loginkey = sha1($this->username.$this->id);
@@ -1595,6 +1576,25 @@ namespace users\model
                 return $user;
             }
             return null;
+        }
+
+        public static function loginByKey($key)
+        {
+            $loggedIn = false;
+
+            $user = \users\model\User::getUserByKey($key);
+            if ($user !== null) {
+                $user->setLoginStatus();
+                $loggedIn = true;
+            }
+
+            if ($user->id == 0)
+                return false;
+
+            if ($loggedIn)
+                $user->addLog("login");
+
+            return $loggedIn;
         }
 	}
 }
