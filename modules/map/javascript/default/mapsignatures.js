@@ -36,7 +36,7 @@ function loadSignatureList(noCache)
                             type: signatures[s].type,
                             whtype: (signatures[s].wormhole!=undefined) ? signatures[s].wormhole.type : "",
                             info: signatures[s].info,
-                            scanage: signatures[s].scanage
+                            scanage: signatures[s].updateage
                         }));
                     }
                 }
@@ -233,14 +233,12 @@ function selectSignatureType(sigID)
 function signaturesCopyPaste()
 {
     $.ajax({
-        url: "/map/signatures/copypaste",
+        url: "/map/signatures/copypaste?ajax=1",
         type: "POST",
         data: {
             map: $("#mapName").val(),
             system: $("#mapSystem").val(),
-            signatures: $("textarea[name=copypastesignatures]").val(),
-            ajax: 1,
-            debug: 1
+            signatures: $("textarea[name=copypastesignatures]").val()
         },
         complete: function() {
             $("textarea[name=copypastesignatures]").val("");

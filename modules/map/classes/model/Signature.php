@@ -47,6 +47,23 @@ class Signature extends \Model
     {
         $this->deleted = true;
         $this->store();
+
+        /* Als deze sig een wormhole was, verwijder die wormhole! */
+        $nameParts = explode(" ", $this->sigInfo);
+        $nameParts = explode("-", $nameParts[0]);
+        $sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
+
+        foreach (\map\model\Map::findAll(["authgroupid" => $this->authGroupID]) as $map)
+        {
+            $wormhole = \map\model\Wormhole::findOne(["chainid" => $map->id, "name" => $sigName]);
+            if ($wormhole) {
+                $connection = $wormhole->getConnectionTo($this->solarSystemID);
+                if ($connection) {
+                    if (!$connection->normalgates)
+                        $connection->delete();
+                }
+            }
+        }
     }
 
     /**

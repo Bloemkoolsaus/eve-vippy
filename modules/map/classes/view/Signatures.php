@@ -206,37 +206,21 @@ class Signatures
                 }
 
                 $anomaly->solarSystemID = $solarSystem->id;
-                $anomaly->chainID = \User::getSelectedChain();
+                $anomaly->chainID = $map->id;
                 $anomaly->anomalyID = $anomID;
                 $anomaly->signatureID = $sigID;
                 $anomaly->store();
             }
         }
 
-        if ($nrSignatures > 2)
+        if ($nrSignatures > 4)
         {
-            foreach (\scanning\model\Signature::getSignaturesBySolarSystem($solarSystem->id) as $sig)
+            // Remove old signatures
+            foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "authgroupid" => $map->getAuthGroup()->id]) as $sig)
             {
-                if (strtotime($sig->updateDate) < strtotime("now")-3600)
-                {
-                    if (strtoupper($sig->sigType) !== "POS")
-                    {
+                if (strtotime($sig->updateDate) < strtotime("now")-3600) {
+                    if (strtoupper($sig->sigType) !== "POS") {
                         $sig->delete();
-
-                        $nameParts = explode(" ", $sig->sigInfo);
-                        $nameParts = explode("-", $nameParts[0]);
-                        $sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
-
-                        $wormhole = \scanning\model\Wormhole::getWormholeBySystemByName($sigName);
-                        if ($wormhole != null)
-                        {
-                            $connection = $sig->getWormhole()->getConnectionTo($wormhole->solarSystemID);
-                            if ($connection != null)
-                            {
-                                if (!$connection->isKspaceToKspace())
-                                    $connection->delete();
-                            }
-                        }
                     }
                 }
             }
