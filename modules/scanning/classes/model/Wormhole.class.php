@@ -76,7 +76,7 @@ namespace scanning\model
 				$this->addDate = date("Y-m-d H:i:s");
 
 			if ($this->mappedByUserID == 0)
-				$this->mappedByUserID = \User::getUSER()->id;
+				$this->mappedByUserID = (\User::getUSER())?\User::getUSER()->id:null;
 
 			if ($this->mappedByCharacterID == 0)
 			{
@@ -116,14 +116,18 @@ namespace scanning\model
                     $system["name"] = $this->getSolarsystem()->name;
 
                     // add to stats
-                    $stat = new \stats\model\Whmap();
-                    $stat->userID = \User::getUSER()->id;
-                    $stat->pilotID = \eve\model\IGB::getIGB()->getPilotID();
-                    $stat->corpID = \User::getUSER()->getMainCorporationID();
-                    $stat->chainID = $this->chainID;
-                    $stat->systemID = $this->solarSystemID;
-                    $stat->mapdate = date("Y-m-d H:i:s");
-                    $stat->store();
+                    if ($this->mappedByUserID && $this->mappedByCharacterID)
+                    {
+                        $character = new \eve\model\Character($this->mappedByCharacterID);
+                        $stat = new \stats\model\Whmap();
+                        $stat->userID = $this->mappedByUserID;
+                        $stat->pilotID = $this->mappedByCharacterID;
+                        $stat->corpID = $character->corporationID;
+                        $stat->chainID = $this->chainID;
+                        $stat->systemID = $this->solarSystemID;
+                        $stat->mapdate = date("Y-m-d H:i:s");
+                        $stat->store();
+                    }
                 }
 
 				$this->id = $result;
