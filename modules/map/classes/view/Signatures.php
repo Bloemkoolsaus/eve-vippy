@@ -86,7 +86,6 @@ class Signatures
             return false;
 
         $signature = null;
-
         if (\Tools::REQUEST("id"))
             $signature = \map\model\Signature::findById(\Tools::REQUEST("id"));
         if (!$signature) {

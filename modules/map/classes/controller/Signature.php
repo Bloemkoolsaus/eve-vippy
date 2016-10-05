@@ -45,8 +45,8 @@ class Signature
         {
             \AppRoot::debug("add unmapped system");
             if (strtolower(trim($signature->sigType)) == "wh" && !$signature->deleted) {
-                $controller = new \map\controller\Map();
-                $controller->addWormholeToMap($map, $signature);
+                $controller = new \map\controller\Wormhole();
+                $controller->addWormholeBySignature($map, $signature);
             }
         }
 

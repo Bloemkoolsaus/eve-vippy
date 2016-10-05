@@ -160,12 +160,16 @@ class Map
                     $toSystem = new \eve\model\SolarSystem($_POST["to"]["id"]);
             }
 
-            if ($fromSystem && $toSystem) {
-                if ($map->addWormholeSystem($fromSystem->id, $toSystem->id))
+            if ($fromSystem && $toSystem)
+            {
+                $controller = new \map\controller\Wormhole();
+                if ($controller->addWormhole($map, $fromSystem->id, $toSystem->id))
                     \AppRoot::redirect("map/".$map->name);
                 else
                     $errors[] = "Something went wrong while adding the wormhole";
-            } else {
+            }
+            else
+            {
                 if (!$fromSystem)
                     $errors[] = "From system `".$fromSystemName."` not be found";
                 if (!$toSystem)

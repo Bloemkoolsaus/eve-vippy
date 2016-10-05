@@ -17,11 +17,6 @@ div#signatureMap {
 }
 
 
-div.whdetailspopup {
-	margin-left: 10px;
-	margin-right: 10px;
-	z-index: 10;
-}
 div.whdetailspopup .form {
 	margin: 0px;
 	padding: 0px;

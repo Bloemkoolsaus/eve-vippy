@@ -3,19 +3,19 @@ namespace map\model\namingscheme;
 
 class Letters extends \map\model\NamingScheme
 {
-    function getNewWormholeName(\scanning\model\Wormhole $system, $ignoreReservations=false)
+    function getNewWormholeName(\map\model\Wormhole $wormhole, $ignoreReservations=false)
     {
         $letters = "abcdefghijklmnopqrstuvwxyz";
 
         $startIndex = 0;
-        $classname = strtolower($system->getSolarsystem()->getClass(true));
+        $classname = strtolower($wormhole->getSolarsystem()->getClass(true));
 
         // Ben ik verbonden met homesystem?
-        if ($system->isConnectedTo($system->getChain()->homesystemID))
+        if ($wormhole->isConnectedTo($wormhole->getChain()->homesystemID))
         {
             // Ben ik de static?
             $statics = array();
-            foreach ($system->getChain()->getHomeSystem()->getStatics(false,false) as $static) {
+            foreach ($wormhole->getChain()->getHomeSystem()->getStatics(false,false) as $static) {
                 $statics[] = strtolower($static["tag"]);
             }
 
@@ -26,7 +26,7 @@ class Letters extends \map\model\NamingScheme
 
                 // Bestaat deze naam al?
                 $exists = false;
-                foreach ($system->getChain()->getWormholes() as $hole)
+                foreach ($wormhole->getChain()->getWormholes() as $hole)
                 {
                     if ($hole->isReservation() && $ignoreReservations)
                         continue;
@@ -48,7 +48,7 @@ class Letters extends \map\model\NamingScheme
         {
             $exists = false;
             $title = $classname.$letters[$startIndex];
-            foreach ($system->getChain()->getWormholes() as $hole)
+            foreach ($wormhole->getChain()->getWormholes() as $hole)
             {
                 if ($hole->isReservation() && $ignoreReservations)
                     continue;

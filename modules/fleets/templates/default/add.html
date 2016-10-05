@@ -10,8 +10,8 @@
 	<h1>
 		<img src="/images/default/ui/fleet.png" align="left">
 		Add Fleet
-	</h1
-	<div class="col5">>
+	</h1>
+	<div class="col5">
 {else}
 	<h2>
 		<img src="/images/default/ui/fleet.png" align="left">
@@ -23,7 +23,7 @@
             <div class="field">Boss Character:</div>
             <div class="value">
                 <select name="boss">
-                {foreach from=$App->user->getCharacters() item=character}
+                {foreach from=$App->user->getAuthorizedCharacters() item=character}
                     <option value="{$character->id}">
                         {$character->name}
                     </option>
@@ -55,7 +55,7 @@
 {if !$popup}
 	</div>
 	<div class="col6 right last">
-		<div style="padding: 1em;">
+		<div>
 			<h3>
 				<img src="/images/default/info.png" align="left" style="margin-top: 2px; margin-right: .2em;">
 				Fleet boss
@@ -65,7 +65,7 @@
 				Check the <a href="/profile/characters" target="_blank">profile</a> page to add a character through CREST.
 			</p>
 		</div>
-		<div style="padding: 1em;">
+		<div style="padding-top: 1em;">
 			<h3>
 				<img src="/images/default/info.png" align="left" style="margin-top: 2px; margin-right: .2em;">
 				Getting the CREST Link

@@ -16,6 +16,9 @@ class Map extends \scanning\model\Chain
         return false;
     }
 
+
+
+
     /**
      * Find by id
      * @param $id

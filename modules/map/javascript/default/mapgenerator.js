@@ -297,7 +297,7 @@ function openWormholeDetails(system,x,y)
 	} else
 		className += "left";
 
-	var html = "<div class='sigInfo' id='whInfo"+system+"'>";
+	var html = "<div class='tooltip' id='whInfo"+system+"'>";
 	html += "<div id='whInfo"+system+"Header' class='header"+className+"'></div>";
 	html += "<div id='whInfo"+system+"Details' class='content"+className+"'>";
 	html += "<img src='/images/loading.gif'> &nbsp; Loading system data";
@@ -389,7 +389,7 @@ function openConnectionDetails(connectionID, x, y)
 		className += "left";
 
 	var popupID = "connInfo"+connectionID;
-	var html = "<div class='sigInfo' id='"+popupID+"'>";
+	var html = "<div class='tooltip' id='"+popupID+"'>";
 	html += "<div class='header"+className+"'></div>";
 	html += "<div class='content"+className+"' id='conndetailsinfo' style='padding-left: 30px;'>";
 	html += "<img src='/images/loading.gif'> &nbsp; Loading wormhole data";

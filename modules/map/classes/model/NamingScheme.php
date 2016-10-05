@@ -9,7 +9,7 @@ class NamingScheme extends \Model
     public $public = false;
 
 
-    function getNewWormholeName(\scanning\model\Wormhole $system, $ignoreReservations=false)
+    function getNewWormholeName(\map\model\Wormhole $wormhole, $ignoreReservations=false)
     {
         return null;
     }

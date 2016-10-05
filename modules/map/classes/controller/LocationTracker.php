@@ -30,11 +30,9 @@ class LocationTracker
         }
         */
         if (!$previousLocationID) {
-            if ($previousLocation = \MySQL::getDB()->getRow("select *
-                                                             from   map_character_locations
-                                                             where  characterid = ?
-                                                             and    lastdate > ?"
-                                    , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
+            if ($previousLocation = \MySQL::getDB()->getRow("select * from map_character_locations
+                                                             where characterid = ? and lastdate > ?"
+                            , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
             {
                 $previousLocationID = $previousLocation["solarsystemid"];
             }
@@ -103,12 +101,12 @@ class LocationTracker
                             $addNewWormhole = false;
 
                         // Magic!
-                        if ($addNewWormhole)
-                            $map->addWormholeSystem($previousLocationID, $locationID);
-
+                        if ($addNewWormhole) {
+                            $controller = new \map\controller\Wormhole();
+                            $controller->addWormhole($map, $previousLocationID, $locationID);
+                        }
 
                         $connection = \map\model\Connection::getConnectionByLocations($previousLocationID, $locationID, $map->id);
-
                         if ($connection)
                         {
                             // Systems zijn connected. Lekker makkelijk, registreer jump

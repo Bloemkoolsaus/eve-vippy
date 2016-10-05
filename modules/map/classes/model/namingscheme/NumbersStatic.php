@@ -3,12 +3,12 @@ namespace map\model\namingscheme;
 
 class NumbersStatic extends \map\model\NamingScheme
 {
-    function getNewWormholeName(\scanning\model\Wormhole $system, $ignoreReservations=false)
+    function getNewWormholeName(\map\model\Wormhole $wormhole, $ignoreReservations=false)
     {
         $letters = "abcdefghijklmnopqrstuvwxyz";
 
-        $classname = strtolower($system->getSolarsystem()->getClass(true));
-        $connectedSystems = $system->getConnectedSystems();
+        $classname = strtolower($wormhole->getSolarsystem()->getClass(true));
+        $connectedSystems = $wormhole->getConnectedSystems();
 
         // Wat is het vorige wormhole?
         if (count($connectedSystems) > 0)
@@ -19,14 +19,14 @@ class NumbersStatic extends \map\model\NamingScheme
 
             $startingName = $previousWormhole->name;
             \AppRoot::debug("Startingsystem: ".$startingName);
-            if ($system->getChain()->getHomeSystem()->id == $previousSystem->id)
+            if ($wormhole->getChain()->getHomeSystem()->id == $previousSystem->id)
                 $startingName = "";
 
 
             $wspaceStatics = [];
             $kspaceStatics = [];
 
-            if ($system->getSolarsystem()->isWSpace())
+            if ($wormhole->getSolarsystem()->isWSpace())
             {
                 // Ben ik de static?
                 foreach ($previousSystem->getStatics(false,false) as $static) {
@@ -54,7 +54,7 @@ class NumbersStatic extends \map\model\NamingScheme
 
             do
             {
-                if ($system->getSolarsystem()->isWSpace())
+                if ($wormhole->getSolarsystem()->isWSpace())
                 {
                     // Controleer naam!
                     if ($index <= count($wspaceStatics))
@@ -116,7 +116,7 @@ class NumbersStatic extends \map\model\NamingScheme
                 $title = str_replace($searches, $replacements, $title);
 
                 $exists = false;
-                foreach ($system->getChain()->getWormholes() as $hole)
+                foreach ($wormhole->getChain()->getWormholes() as $hole)
                 {
                     if ($hole->isReservation() && $ignoreReservations)
                         continue;
