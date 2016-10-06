@@ -70,6 +70,45 @@ namespace scanning\model
 			return false;
 		}
 
+        function goesToWspace()
+        {
+            if ($this->destination >= 1 && $this->destination <= 3)
+                return true;
+
+            return false;
+        }
+
+        function goesToKspace()
+        {
+            if ($this->goesToWspace())
+                return false;
+
+            return true;
+        }
+
+        function isHighsec()
+        {
+            if ($this->destination == 1)
+                return true;
+
+            return false;
+        }
+        function isLowsec()
+        {
+            if ($this->destination == 2)
+                return true;
+
+            return false;
+        }
+        function isNullsec()
+        {
+            if ($this->destination == 3)
+                return true;
+
+            return false;
+        }
+
+
         /**
          * Get destination class
          * @return \scanning\model\SystemClass

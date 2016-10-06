@@ -55,7 +55,7 @@ class Signature
          * Check wh-nummber, connection bijwerken.
          */
         \AppRoot::debug("Signature->whTypeID: ".$signature->whTypeID);
-        if ($signature->whTypeID > 0 && $signature->whTypeID != 9999)
+        if ($signature->isWormhole())
         {
             // Parse signature name om de de juiste connectie te zoeken.
             $parts = explode(" ", $signature->sigInfo);
@@ -63,12 +63,47 @@ class Signature
             $wormholename = (count($parts) > 1) ? $parts[1] : $parts[0];
             \AppRoot::doCliOutput("UPDATE Connection Type: ".$wormholename);
 
+            // Zoek wormhole type.
+            \AppRoot::debug("Find statics");
+            $wspaceStatics = 0;
+            foreach (\map\model\WormholeType::findStaticBySolarSystem($signature->solarSystemID) as $static)
+            {
+                $staticName = null;
+                $wormhole = \map\model\Wormhole::findOne(["chainid" => $map->id, "solarsystemid" => $signature->solarSystemID]);
+                if ($wormhole->isHomeSystem())
+                    $wormhole->name = "0";
+
+                if ($static->isHighsec())
+                    $staticName = $wormhole->name."Ha";
+                else if ($static->isLowsec())
+                    $staticName = $wormhole->name."La";
+                else if ($static->isNullsec())
+                    $staticName = $wormhole->name."Na";
+                else {
+                    $wspaceStatics++;
+                    $staticName = $wormhole->name.$wspaceStatics;
+                }
+
+                \AppRoot::debug("Staticname: ".$staticName);
+                if ($staticName && $staticName == $wormholename) {
+                    \AppRoot::doCliOutput("Store wormhole type");
+                    $signature->whTypeID = $static->id;
+                    $signature->store();
+                }
+            }
+
+            if (!$signature->whTypeID) {
+                $signature->whTypeID = 9999;
+                $signature->store();
+            }
+
             // Zoek dit wormhole
             foreach (\map\model\Wormhole::getWormholesByAuthgroup($signature->authGroupID) as $wormhole)
             {
-                \AppRoot::debug($wormhole->name);
+                \AppRoot::debug("Wormhole: ".$wormhole->name);
                 if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename)))
                 {
+                    \AppRoot::doCliOutput("Set connection type to wh: ".$wormholename);
                     $fromWormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
                     $connection = \map\model\Connection::getConnectionByWormhole($fromWormhole->id, $wormhole->id, $map->id);
                     if ($connection != null) {
