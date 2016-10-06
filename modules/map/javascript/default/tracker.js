@@ -15,19 +15,33 @@ function refreshCharacterLocation(characterID)
                 data = $.parseJSON(data);
                 if (data.errors == null) {
                     setRefreshCharacterBttnIcon("/images/default/apply.png");
+
+                    var id = "tracker"+$.now();
+                    $("#mapButtons").before("<div class='success' id='"+id+"'><div><b>Character Refreshed: </b> "+data.character.name+" updated to "+data.system.name+"</div></div>");
+
                     setTimeout(function() {
                         setRefreshCharacterBttnIcon(icon);
+                        $("#"+id).fadeOut(400, "swing", function() { $("#"+id).remove() });
                     }, 15000);
                 } else {
                     setRefreshCharacterBttnIcon("/images/default/delete.png");
-                    $("#mapButtons").before("<div class='error'><div><b>Character Refresh failed: </b> "+data.errors.join("<br />")+"</div></div>");
+                    var id = "tracker"+$.now();
+                    $("#mapButtons").before("<div class='error' id='"+id+"'><div><b>Character Refresh failed: </b> "+data.errors.join("<br />")+"</div></div>");
+                    setTimeout(function() {
+                        setRefreshCharacterBttnIcon(icon);
+                        $("#"+id).fadeOut(400, "swing", function() { $("#"+id).remove() });
+                    }, 15000);
                 }
             }
         });
     }
     else
     {
-        $("#mapButtons").before("<div class='warning'><div><b>No character selected: </b> Please select a scan-alt in your <a href='/profile/account'>profile</a></div></div>");
+        var id = "tracker"+$.now();
+        $("#mapButtons").before("<div class='warning' id='"+id+"'><div><b>No character selected: </b> Please select a scan-alt in your <a href='/profile/account'>profile</a></div></div>");
+        setTimeout(function() {
+            $("#"+id).fadeOut(400, "swing", function() { $("#"+id).remove() });
+        }, 15000);
     }
 }
 

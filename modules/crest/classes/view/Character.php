@@ -33,9 +33,19 @@ class Character
             {
                 if (isset($crest->getResult()->solarSystem))
                 {
+                    $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
-                    $locationTracker->setCharacterLocation($authGroupID, $character->id, $crest->getResult()->solarSystem->id, $shipTypeID);
-                    return json_encode(["system" => $crest->getResult()->solarSystem->id]);
+                    $locationTracker->setCharacterLocation($authGroupID, $character->id, $solarSystem->id, $shipTypeID);
+                    return json_encode([
+                        "system" => [
+                            "id" => $solarSystem->id,
+                            "name" => $solarSystem->name
+                        ],
+                        "character" => [
+                            "id" => $character->id,
+                            "name" => $character->name
+                        ]
+                    ]);
                 }
                 else
                     $errors[] = "No result from CREST. Is ".$character->name." logged in?";
