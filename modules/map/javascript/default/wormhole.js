@@ -93,6 +93,9 @@ Wormhole.prototype.setAsHomesystem = function() {
 
 
 /** Getters **/
+Wormhole.prototype.getPosition = function() {
+    return { x: this.map.position.x, y: this.map.position.y };
+};
 Wormhole.prototype.getFullname = function() {
     return this.solarsystem.name+" - "+this.name;
 };
@@ -330,16 +333,21 @@ Wormhole.prototype.render = function(canvas)
      */
     wormhole.on("dragstart", function() {
         if (!mapIsMassDeleteMode()) {
-            whDragX = mousePosX;
-            whDragY = mousePosY;
+            $(".tooltip").remove();
             disableMapRefresh();
-            closeWormholeDetails(this.getName());
+            whDrag.x = mousePosX;
+            whDrag.y = mousePosY;
+            whOldPosition.x = this.getPosition().x;
+            whOldPosition.y = this.getPosition().y;
         }
     });
     wormhole.on("dragend", function() {
         if (!mapIsMassDeleteMode()) {
+            $(".tooltip").remove();
             enableMapRefresh();
-            loadSignatureMap("move", { system: this.getName(), x: (mousePosX-whDragX), y: (mousePosY-whDragY) });
+            var diffX = mousePosX-whDrag.x;
+            var diffY = mousePosY-whDrag.y;
+            loadSignatureMap("move", { system: this.getName(), x: whOldPosition.x+diffX, y: whOldPosition.y+diffY }, true);
         }
     });
     if (!this.isUnknown()) {

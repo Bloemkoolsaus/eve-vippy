@@ -179,8 +179,8 @@ namespace scanning\model
 		{
             if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
             {
-                $this->x += $newX;
-                $this->y += $newY;
+                $this->x = $newX;
+                $this->y = $newY;
                 $this->store($modifier);
 
                 \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, [

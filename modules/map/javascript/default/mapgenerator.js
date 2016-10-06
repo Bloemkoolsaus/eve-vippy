@@ -13,8 +13,8 @@ var whDefaultLineHeight = 11;
 var massDeleteMode = false;
 var blockMapRefresh = false;
 
-var whDragX = 0;
-var whDragY = 0;
+var whOldPosition = { x: 0, y:0 };
+var whDrag = { x: 0, y: 0 };
 
 var mapWormholes = [];
 var mapConnections = [];
