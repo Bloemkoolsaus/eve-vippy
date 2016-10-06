@@ -13,10 +13,6 @@ Voeg huidige directors toe als admin.
 
 
 
-Auto k162 on reverse side of statics no longer auto filling on signature list.
-
-Also doesn't work the other way either e.g when entering 1-11 it won't auto fill the WH Type to M267/H296 etc.
-
 Adding eol to wormhole link does remember the flag on the form but no visuals on the map change.
 
 Tooltip on hover over the wh link does show correct eol info.
@@ -56,3 +52,4 @@ Richting nieuw systeem
 Feature Request - Citadel Signature Type (Like POS)
 Signatures show up from other auth-groups.
 Bugfix in moving systems around the map.
+Fixed auto-filling signature wormhole types for statics.

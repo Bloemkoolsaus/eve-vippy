@@ -17,7 +17,7 @@ function reloadSignatureMap(noCache)
 		loadSignatureMap();
 		loadSignatureList(noCache);
 	}
-    //setTimeout(reloadSignatureMap, 3000);
+    setTimeout(reloadSignatureMap, 3000);
 }
 
 function disableMapRefresh()

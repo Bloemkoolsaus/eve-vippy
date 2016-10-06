@@ -228,6 +228,41 @@ class Wormhole
             $newWormhole->store();
         }
 
+        // Zoek wormhole type.
+        \AppRoot::debug("Find statics");
+        $wspaceStatics = 0;
+        foreach (\map\model\WormholeType::findStaticBySolarSystem($signature->solarSystemID) as $static)
+        {
+            $staticName = null;
+            $wormhole = \map\model\Wormhole::findOne(["chainid" => $map->id, "solarsystemid" => $signature->solarSystemID]);
+            if ($wormhole->isHomeSystem())
+                $wormhole->name = "0";
+
+            if ($static->isHighsec())
+                $staticName = $wormhole->name."Ha";
+            else if ($static->isLowsec())
+                $staticName = $wormhole->name."La";
+            else if ($static->isNullsec())
+                $staticName = $wormhole->name."Na";
+            else {
+                $wspaceStatics++;
+                $staticName = $wormhole->name.$wspaceStatics;
+            }
+
+            \AppRoot::debug("Staticname: ".$staticName);
+            if ($staticName && $staticName == $newWormhole->name) {
+                \AppRoot::doCliOutput("Store wormhole type");
+                $signature->whTypeID = $static->id;
+                $signature->store();
+            }
+        }
+
+        if (!$signature->whTypeID) {
+            $signature->whTypeID = 9999;
+            $signature->store();
+        }
+
+
         // Connectie toevoegen
         $newConnection = \map\model\Connection::getConnectionByWormhole($originWormhole->id, $newWormhole->id, $map->id);
         if ($newConnection == null) {

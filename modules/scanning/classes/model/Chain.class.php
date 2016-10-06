@@ -581,7 +581,7 @@ namespace scanning\model
                 $datetime = date("Y-m-d H:i:s");
 
             \MySQL::getDB()->update("mapwormholechains",
-                array("lastmapupdatedate" => date("Y-m-d H:i:s", strtotime($datetime))),
+                array("lastmapupdatedate" => date("Y-m-d H:i:s", strtotime($datetime)+10)),
                 array("id" => $this->id));
 		}
 

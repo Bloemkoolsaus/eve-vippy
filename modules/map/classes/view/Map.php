@@ -92,27 +92,22 @@ class Map
         // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
         if ($checkCache)
         {
-            $cacheDate = (isset($_SESSION["vippy_cachedate_map"])) ? $_SESSION["vippy_cachedate_map"] : 0;
-            if ($results = \MySQL::getDB()->getRows("select lastmapupdatedate as lastdate from mapwormholechains where id = ?", [$map->id]))
+            if (isset($_SESSION["vippy"]["map"]["cache"]["map"][$map->id]))
             {
-                foreach ($results as $result)
-                {
-                    \AppRoot::debug("cache-date: ".date("Y-m-d H:i:s", strtotime($cacheDate)));
-                    \AppRoot::debug("lastupdate: ".date("Y-m-d H:i:s", strtotime($result["lastdate"])));
-
-                    if (strtotime($cacheDate)+60 > strtotime("now")) {
-                        if (strtotime($result["lastdate"]) < strtotime($cacheDate)-2) {
+                $cacheDate = $_SESSION["vippy"]["map"]["cache"]["map"][$map->id];
+                if (strtotime($cacheDate) + 60 > strtotime("now")) {
+                    if ($result = \MySQL::getDB()->getRow("select lastmapupdatedate as lastdate from mapwormholechains where id = ?", [$map->id]))
+                    {
+                        \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
+                        \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
+                        if (strtotime($result["lastdate"]) < strtotime($cacheDate) - 2) {
                             \AppRoot::debug("do cache");
                             $isCached = true;
-                        } else {
+                        } else
                             \AppRoot::debug("cache out-dated.. gogogo!");
-                            break;
-                        }
-                    } else {
-                        \AppRoot::debug("Cache is older then 1 minute");
-                        break;
                     }
-                }
+                } else
+                    \AppRoot::debug("Cache is older then 1 minute");
             }
         }
 
@@ -130,7 +125,7 @@ class Map
             ];
 
             // Cache datum opslaan.
-            $_SESSION["vippy_cachedate_map"] = $currentDate;
+            $_SESSION["vippy"]["map"]["cache"]["map"][$map->id] = date("Y-m-d H:i:s");
         }
 
         // Geef de map terug

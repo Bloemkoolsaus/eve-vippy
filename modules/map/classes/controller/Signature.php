@@ -63,40 +63,6 @@ class Signature
             $wormholename = (count($parts) > 1) ? $parts[1] : $parts[0];
             \AppRoot::doCliOutput("UPDATE Connection Type: ".$wormholename);
 
-            // Zoek wormhole type.
-            \AppRoot::debug("Find statics");
-            $wspaceStatics = 0;
-            foreach (\map\model\WormholeType::findStaticBySolarSystem($signature->solarSystemID) as $static)
-            {
-                $staticName = null;
-                $wormhole = \map\model\Wormhole::findOne(["chainid" => $map->id, "solarsystemid" => $signature->solarSystemID]);
-                if ($wormhole->isHomeSystem())
-                    $wormhole->name = "0";
-
-                if ($static->isHighsec())
-                    $staticName = $wormhole->name."Ha";
-                else if ($static->isLowsec())
-                    $staticName = $wormhole->name."La";
-                else if ($static->isNullsec())
-                    $staticName = $wormhole->name."Na";
-                else {
-                    $wspaceStatics++;
-                    $staticName = $wormhole->name.$wspaceStatics;
-                }
-
-                \AppRoot::debug("Staticname: ".$staticName);
-                if ($staticName && $staticName == $wormholename) {
-                    \AppRoot::doCliOutput("Store wormhole type");
-                    $signature->whTypeID = $static->id;
-                    $signature->store();
-                }
-            }
-
-            if (!$signature->whTypeID) {
-                $signature->whTypeID = 9999;
-                $signature->store();
-            }
-
             // Zoek dit wormhole
             foreach (\map\model\Wormhole::getWormholesByAuthgroup($signature->authGroupID) as $wormhole)
             {
