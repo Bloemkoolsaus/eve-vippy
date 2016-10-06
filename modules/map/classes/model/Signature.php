@@ -3,23 +3,22 @@ namespace map\model;
 
 class Signature extends \Model
 {
-    protected $_table = "mapsignatures";
-
-    public $id = 0;
-    public $solarSystemID = 0;
-    public $authGroupID = null;
-    public $sigID = null;
-    public $sigType;
-    public $typeID = 0;
+    public $id;
+    public $solarSystemID;
+    public $authGroupID;
+    public $sigID;
+    public $sigTypeID;
+    public $whTypeID;
     public $sigInfo;
     public $signalStrength;
-    public $scanDate = null;
+    public $scanDate;
     public $updateDate;
-    public $scannedBy = 0;
-    public $updateBy = 0;
+    public $scannedBy;
+    public $updateBy;
     public $deleted = false;
 
     private $_solarsystem;
+    private $_signatureType;
     private $_wormholeType;
     private $_scannedUser;
     private $_updatedUser;
@@ -35,10 +34,8 @@ class Signature extends \Model
             $this->scannedBy = \User::getUSER()->id;
             $this->scanDate = date("Y-m-d H:i:s");
         }
-
         $this->updateBy = \User::getUSER()->id;
         $this->updateDate = date("Y-m-d H:i:s");
-        $this->sigType = strtolower($this->sigType);
 
         parent::store();
     }
@@ -79,28 +76,40 @@ class Signature extends \Model
     }
 
     /**
+     * Get wormhole type
+     * @return \map\model\SignatureType|null
+     */
+    function getSignatureType()
+    {
+        if ($this->_signatureType === null && $this->sigTypeID)
+            $this->_signatureType = new \map\model\SignatureType($this->sigTypeID);
+
+        return $this->_signatureType;
+    }
+
+    /**
      * Is wormhole?
      * @return bool
      */
     function isWormhole()
     {
-        if ($this->sigType == "wh")
-            return true;
-
+        if ($this->getSignatureType()) {
+            if ($this->getSignatureType()->name == "wh")
+                return true;
+        }
         return false;
     }
 
     /**
      * Get wormhole type
-     * @return WormholeType|null
+     * @return \map\model\WormholeType|null
      */
     function getWormholeType()
     {
         if ($this->_wormholeType === null) {
             if ($this->isWormhole())
-                $this->_wormholeType = new \map\model\WormholeType($this->typeID);
+                $this->_wormholeType = new \map\model\WormholeType($this->whTypeID);
         }
-
         return $this->_wormholeType;
     }
 

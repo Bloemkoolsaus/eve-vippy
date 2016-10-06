@@ -82,13 +82,10 @@
 			<img src="/images/default/ui/refresh.png" align="left">
 			Refresh Location
 		</button>
-		<button class="img" style="width: 26px; margin-left: 0;"
-                onclick="openRefreshCharacterSelector();">
+		<button class="img" style="width: 26px; margin-left: 0;" onclick="openRefreshCharacterSelector();">
 			<img src="/images/default/ui/tree.down.png">
 		</button>
-		<!--
-		<button id="showActivePeople" onclick="showActivePilots();" style="float: right; width: 150px;">Show Online Pilots</button>
-		-->
+
 		<button id="addFleet" class="right" onclick="addFleet()">
 			<img src="/images/default/ui/fleet.png" align="left">
 			Add Fleet
@@ -156,13 +153,9 @@
 						<b>Type:</b><br />
 						<select name="sigtype" id="sigType" style="width: 60px;" onchange="selectSignatureType()">
 							<option value="" selected></option>
-							<option value="wh">WH</option>
-							<option value="data">Data</option>
-							<option value="gas">Gas</option>
-							<option value="ore">Ore</option>
-							<option value="relic">Relic</option>
-							<option value="combat">Combat</option>
-							<option value="pos">POS</option>
+						{foreach from=$signatureTypes item=type}
+							<option value="{$type->name}">{$type->name|strtoupper}</option>
+						{/foreach}
 						</select>
 					</td>
 					<td rel="addsig_wormhole" data-whtype-input="{$App->user->getSetting('whtypefield')}" style="display: none; width: 60px;">
@@ -425,13 +418,11 @@
 		<td class="sigType">
 			<select id="sigType{{id}}">
 				<option value=""></option>
-				<option value="wh">WH</option>
-				<option value="data">Data</option>
-				<option value="gas">Gas</option>
-				<option value="ore">Ore</option>
-				<option value="relic">Relic</option>
-				<option value="combat">Combat</option>
-				<option value="pos">POS</option>
+			{/literal}
+			{foreach from=$signatureTypes item=type}
+				<option value="{$type->name}">{$type->name|strtoupper}</option>
+			{/foreach}
+			{literal}
 			</select>
 		</td>
 		<td class="sigInfo">

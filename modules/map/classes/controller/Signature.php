@@ -10,13 +10,13 @@ class Signature
         if ($signature->id) {
             // Gewijzigd?
             $oldSignature = new \map\model\Signature($signature->id);
-            if (trim(strtoupper($signature->sigType)) != trim(strtoupper($oldSignature->sigType))) {
-                if (strlen(trim($signature->sigType)) > 0)
+            if ($signature->sigTypeID != $oldSignature->sigTypeID) {
+                if ($signature->getSignatureType())
                     $countInStats = true;
             }
         } else {
             // Nieuwe signature
-            if (strlen(trim($signature->sigType)) > 0)
+            if ($signature->getSignatureType())
                 $countInStats = true;
         }
 
@@ -44,7 +44,7 @@ class Signature
         if ($map && $map->getSetting("create-unmapped"))
         {
             \AppRoot::doCliOutput("add unmapped system");
-            if (strtolower(trim($signature->sigType)) == "wh" && !$signature->deleted) {
+            if ($signature->isWormhole() && !$signature->deleted) {
                 $controller = new \map\controller\Wormhole();
                 $controller->addWormholeBySignature($map, $signature);
             }
@@ -54,8 +54,8 @@ class Signature
         /**
          * Check wh-nummber, connection bijwerken.
          */
-        \AppRoot::debug("Signature->typeID: ".$signature->typeID);
-        if ($signature->typeID > 0 && $signature->typeID != 9999)
+        \AppRoot::debug("Signature->whTypeID: ".$signature->whTypeID);
+        if ($signature->whTypeID > 0 && $signature->whTypeID != 9999)
         {
             // Parse signature name om de de juiste connectie te zoeken.
             $parts = explode(" ", $signature->sigInfo);
@@ -74,10 +74,10 @@ class Signature
                     if ($connection != null) {
                         if ($connection->fromWormholeID == $wormhole->id) {
                             $connection->fromWHTypeID = 9999;
-                            $connection->toWHTypeID = $signature->typeID;
+                            $connection->toWHTypeID = $signature->whTypeID;
                         } else {
                             $connection->toWHTypeID = 9999;
-                            $connection->fromWHTypeID = $signature->typeID;
+                            $connection->fromWHTypeID = $signature->whTypeID;
                         }
                         $connection->store(false);
                     }
@@ -103,7 +103,7 @@ class Signature
 
         $openSignatures = array();
         foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]) as $signature) {
-            if ($signature->sigType == null || strlen(trim($signature->sigType)) == 0)
+            if (!$signature->getSignatureType())
                 $openSignatures[] = $signature;
         }
 

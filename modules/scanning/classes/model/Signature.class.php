@@ -32,7 +32,7 @@ namespace scanning\model
 		function load($result=false)
 		{
 			if (!$result)
-				$result = \MySQL::getDB()->getRow("SELECT * FROM mapsignatures WHERE id = ?", array($this->id));
+				$result = \MySQL::getDB()->getRow("SELECT * FROM map_signature WHERE id = ?", array($this->id));
 
 			if ($result)
 			{
@@ -107,7 +107,7 @@ namespace scanning\model
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
-			$result = \MySQL::getDB()->updateinsert("mapsignatures", $data, array("id" => $this->id));
+			$result = \MySQL::getDB()->updateinsert("map_signature", $data, array("id" => $this->id));
 			if ($this->id == 0)
 				$this->id = $result;
 
@@ -221,7 +221,7 @@ namespace scanning\model
 		{
 			$signatures = array();
 			if ($results = \MySQL::getDB()->getRows("SELECT s.*
-													FROM 	mapsignatures s
+													FROM 	map_signature s
 														INNER JOIN mapwormholechains c ON c.authgroupid = s.authgroupid
 													WHERE 	c.id = ?
 													AND		s.solarsystemid = ?

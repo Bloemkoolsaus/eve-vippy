@@ -112,7 +112,8 @@ table#signatureTable tr.combat {
     background-color: #776666;
     color: #EEEEEE;
 }
-table#signatureTable tr.pos {
+table#signatureTable tr.pos,
+table#signatureTable tr.citadel {
     background-color: #BBBBBB;
     color: #111111;
 }

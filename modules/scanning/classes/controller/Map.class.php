@@ -84,7 +84,7 @@ namespace scanning\controller
 			{
 				$cacheDate = (isset($_SESSION["vippy_cachedate_sigs"])) ? $_SESSION["vippy_cachedate_sigs"] : date("Y-m-d H:i:s");
 				if ($result = \MySQL::getDB()->getRow("	SELECT	MAX(s.updatedate) AS lastdate
-														FROM	mapsignatures s
+														FROM	map_signature s
 															INNER JOIN mapwormholechains c ON c.authgroupid = s.authgroupid
 														WHERE	c.id = ?"
 											, array($chain->id)))
@@ -111,7 +111,7 @@ namespace scanning\controller
 															IF(sig.sigtype='wh' and class.id > 0,class.tag,'') as whtypeto,
 															whtype.lifetime, whtype.jumpmass, whtype.maxmass,
 															u1.displayname AS scannedby, u2.displayname AS lastupdateby
-													FROM    mapsignatures sig
+													FROM    map_signature sig
 														INNER JOIN users u1 ON sig.scannedby = u1.id
 														INNER JOIN users u2 ON sig.updateby = u2.id
 														LEFT JOIN mapwormholetypes whtype ON whtype.id = sig.typeid

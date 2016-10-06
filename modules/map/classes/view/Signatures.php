@@ -7,7 +7,6 @@ class Signatures
     {
         \AppRoot::debug("----- getSignatures() -----");
         $signatures = [];
-
         $map = \map\model\Map::findByName(\Tools::REQUEST("map"));
         $solarSystem = \map\model\System::getSolarsystemByName(\Tools::REQUEST("system"));
 
@@ -28,10 +27,10 @@ class Signatures
                 iF (isset($_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id]))
                 {
                     $cacheDate = $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id];
-                    if ($result = \MySQL::getDB()->getRow("	SELECT	MAX(s.updatedate) AS lastdate
-                                                        FROM	mapsignatures s
-                                                            INNER JOIN mapwormholechains c ON c.authgroupid = s.authgroupid
-                                                        WHERE	c.id = ?"
+                    if ($result = \MySQL::getDB()->getRow("select max(s.updatedate) as lastdate
+                                                           from   map_signature s
+                                                              inner join mapwormholechains c on c.authgroupid = s.authgroupid
+                                                           where  c.id = ?"
                                                 , [$map->id]))
                     {
                         \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
@@ -47,27 +46,40 @@ class Signatures
                 }
             }
 
-            foreach (\map\model\Signature::findAll(["deleted" => 0, "solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]) as $sig)
+            if ($results = \MySQL::getDB()->getRows("select s.*, if (t.name in ('pos','citadel'), 0, 1) as sorting
+                                                    from    map_signature s
+                                                        left join map_signature_type t on t.id = s.sigtypeid
+                                                    where   s.deleted = 0
+                                                    and     s.solarsystemid = ?
+                                                    and     s.authgroupid = ?
+                                                    order by sorting, sigid, siginfo"
+                                        , [$solarSystem->id, $map->authgroupID]))
             {
-                $sigData = [
-                    "id" => $sig->id,
-                    "sigid" => $sig->sigID,
-                    "type" => $sig->sigType,
-                    "info" => $sig->sigInfo,
-                    "wormhole" => null,
-                    "scanage" => \Tools::getAge($sig->scanDate),
-                    "scanuser" => $sig->getScannedByUser()->getFullName(),
-                    "updateage" => \Tools::getAge($sig->updateDate),
-                    "updateuser" => $sig->getUpdatedByUser()->getFullName()
-                ];
+                foreach ($results as $result)
+                {
+                    $sig = new \map\model\Signature();
+                    $sig->load($result);
 
-                if ($sig->isWormhole()) {
-                    $sigData["wormhole"] = [
-                        "type" => $sig->getWormholeType()->name,
-                        "desto" => $sig->getWormholeType()->getDestinationclass()->tag
+                    $sigData = [
+                        "id" => $sig->id,
+                        "sigid" => $sig->sigID,
+                        "type" => ($sig->getSignatureType())?$sig->getSignatureType()->name:"",
+                        "info" => $sig->sigInfo,
+                        "wormhole" => null,
+                        "scanage" => \Tools::getAge($sig->scanDate),
+                        "scanuser" => $sig->getScannedByUser()->getFullName(),
+                        "updateage" => \Tools::getAge($sig->updateDate),
+                        "updateuser" => $sig->getUpdatedByUser()->getFullName()
                     ];
+
+                    if ($sig->isWormhole()) {
+                        $sigData["wormhole"] = [
+                            "type" => $sig->getWormholeType()->name,
+                            "desto" => $sig->getWormholeType()->getDestinationclass()->tag
+                        ];
+                    }
+                    $signatures[] = $sigData;
                 }
-                $signatures[] = $sigData;
             }
 
             $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id] = date("Y-m-d H:i:s");
@@ -98,16 +110,20 @@ class Signatures
         if (!$signature)
             $signature = new \map\model\Signature();
 
-        $signature->sigID = \Tools::REQUEST("sigid");
-        $signature->sigType = \Tools::REQUEST("type");
-        $signature->sigInfo = \Tools::REQUEST("info");
         $signature->solarSystemID = $solarSystem->id;
         $signature->authGroupID = $map->authgroupID;
+        $signature->sigID = \Tools::REQUEST("sigid");
+        $signature->sigInfo = \Tools::REQUEST("info");
 
-        $signature->typeID = 0;
+        $signature->sigTypeID = null;
+        $sigType = \map\model\SignatureType::findOne(["name" => \Tools::REQUEST("type")]);
+        if ($sigType)
+            $signature->sigTypeID = $sigType->id;
+
+        $signature->whTypeID = null;
         $whtype = \map\model\WormholeType::findByName(\Tools::REQUEST("whtype"));
         if ($whtype)
-            $signature->typeID = $whtype->id;
+            $signature->whTypeID = $whtype->id;
 
         $controller = new \map\controller\Signature();
         $controller->storeSignature($map, $signature);
@@ -161,7 +177,11 @@ class Signatures
 
             if (strpos(strtolower($line),"cosmic signature") !== false)
             {
-                $signature = \map\model\Signature::findOne(["solarsystemid" => $solarSystem->id, "sigid" => $sigID]);
+                $signature = \map\model\Signature::findOne([
+                    "solarsystemid" => $solarSystem->id,
+                    "authgroupid" => $map->authgroupID,
+                    "sigid" => $sigID
+                ]);
                 if (!$signature)
                     $signature = new \map\model\Signature();
 
@@ -172,8 +192,11 @@ class Signatures
                 $sigTypePasted = strtolower(trim(str_replace("site","",strtolower($parts[2]))));
                 if (strlen(trim($sigTypePasted)) > 0) {
                     $sigTypePasted = $sigTypePasted == "wormhole"? "WH": $sigTypePasted;
-                    $signature->sigType = $sigTypePasted;
+                    $signatureType = \map\model\SignatureType::findOne(["name" => $sigTypePasted]);
+                    if ($signatureType)
+                        $signature->sigTypeID = $signatureType->id;
                 }
+
                 $signature->sigInfo = (trim($signature->sigInfo) != "") ? $signature->sigInfo : $sigName;
                 $signature->signalStrength = str_replace("%","",$parts[4]);
                 $signature->deleted = false;
@@ -215,12 +238,17 @@ class Signatures
         if ($nrSignatures > 4)
         {
             // Remove old signatures
-            foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "authgroupid" => $map->getAuthGroup()->id]) as $sig)
+            foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id,
+                                                    "authgroupid" => $map->getAuthGroup()->id,
+                                                    "deleted" => 0]) as $sig)
             {
-                if (strtotime($sig->updateDate) < strtotime("now")-3600) {
-                    if (strtoupper($sig->sigType) !== "POS") {
+                if (strtotime($sig->updateDate) < strtotime("now")-3600)
+                {
+                    if ($sig->getSignatureType()) {
+                        if ($sig->getSignatureType()->mayCleanup())
+                            $sig->delete();
+                    } else
                         $sig->delete();
-                    }
                 }
             }
         }

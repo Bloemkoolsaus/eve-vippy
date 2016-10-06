@@ -182,7 +182,7 @@ namespace scanning\controller
 
 			$lastdate = date("Y-m-d H:i:s", mktime(0,0,0,date("m"),date("d")-5,date("Y")));
 			if ($result = \MySQL::getDB()->getRow("	SELECT 	*
-													FROM 	mapsignatures
+													FROM 	map_signature
 													WHERE 	solarsystemid = ? AND sigid = ? AND authgroupid = ?
 													AND		(deleted = 0 OR (deleted > 0 AND scandate < ?))"
 								, array($systemID, $sigID, $chain->authgroupID, $lastdate)))

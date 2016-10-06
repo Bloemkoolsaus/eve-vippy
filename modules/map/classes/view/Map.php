@@ -34,6 +34,7 @@ class Map
         $tpl->assign("map", $map);
         $tpl->assign("system", $system);
         $tpl->assign("wormhole", $wormhole);
+        $tpl->assign("signatureTypes", \map\model\SignatureType::findAll([], ["name"]));
         return $tpl->fetch("map/map/overview");
     }
 
