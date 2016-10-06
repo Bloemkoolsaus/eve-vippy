@@ -84,7 +84,7 @@ namespace scanning\model
 			}
 
             if (!$positionModifier)
-                $positionModifier = 20;
+                $positionModifier = 10;
             $this->x = round($this->x/$positionModifier)*$positionModifier;
             $this->y = round($this->y/$positionModifier)*$positionModifier;
 
@@ -144,27 +144,6 @@ namespace scanning\model
 
 			// Remove cache so that it resets
             \Cache::file()->remove("wormhole/".$this->id.".json");
-
-
-			// Check of dit wormhole ook op andere chains staat. Zo ja, wijzigingen kopieeren!
-			if ($copyToOtherChains)
-			{
-                /*
-				foreach (\scanning\model\Wormhole::getWormholesByAuthgroup($this->getChain()->authgroupID, $this->solarSystemID) as $wormhole)
-				{
-					if ($wormhole->id != $this->id)
-					{
-						$wormhole->status = $this->status;
-						$wormhole->mappedByUserID = $this->mappedByUserID;
-						$wormhole->mappedByCharacterID = $this->mappedByCharacterID;
-						$wormhole->fullScanDate = $this->fullScanDate;
-						$wormhole->fullScanDateBy = $this->fullScanDateBy;
-						$wormhole->store($positionModifier, false);
-						$wormhole->getChain()->setMapUpdateDate();
-					}
-				}
-                */
-			}
 
             $this->getChain()->setMapUpdateDate();
 		}

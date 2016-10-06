@@ -41,6 +41,16 @@ class Map
     function getMap(\map\model\Map $map, $arguments=[])
     {
         \AppRoot::debug("----- getMap(".$map->id." - ".$map->name.") -----");
+        $currentDate = date("Y-m-d H:i:s");
+        $isCached = false;
+        $checkCache = (\Tools::REQUEST("nocache"))?false:true;
+        while (count($arguments) > 0) {
+            $arg = array_shift($arguments);
+            if ($arg == "nocache")
+                $checkCache = false;
+        }
+
+
         $controller = new \map\controller\Map();
         $data = ["map" => "cached", "notifications" => []];
 
@@ -78,9 +88,6 @@ class Map
         /**
          * Get map data.
          */
-        $currentDate = date("Y-m-d H:i:s");
-        $checkCache = (\Tools::REQUEST("nocache"))?false:true;
-        $isCached = false;
 
         // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
         if ($checkCache)
@@ -194,7 +201,7 @@ class Map
     {
         $wormhole = new \map\model\Wormhole(\Tools::REQUEST("system"));
         $wormhole->move(\Tools::REQUEST("x"), \Tools::REQUEST("y"));
-        return $this->getMap($map);
+        return $this->getMap($map, ["nocache"]);
     }
 
     function getRemove(\map\model\Map $map, $arguments=[])

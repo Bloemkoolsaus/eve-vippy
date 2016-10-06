@@ -13,6 +13,7 @@ var whDefaultLineHeight = 11;
 var massDeleteMode = false;
 var blockMapRefresh = false;
 
+var whDragMode = false;
 var whOldPosition = { x: 0, y:0 };
 var whDrag = { x: 0, y: 0 };
 
@@ -26,7 +27,10 @@ function mapRendered()
 
 function generateMap(data) {
     if (!allowMapLoadingFinish)
+    {
+        console.log("NOT Allow Map Loading Finish!!");
         return false;
+    }
 
     if (data.settings != undefined) {
         whDefaultWidth = data.settings.defaultwidth;

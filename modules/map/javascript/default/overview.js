@@ -17,7 +17,7 @@ function reloadSignatureMap(noCache)
 		loadSignatureMap();
 		loadSignatureList(noCache);
 	}
-    setTimeout(reloadSignatureMap, 3000);
+    //setTimeout(reloadSignatureMap, 3000);
 }
 
 function disableMapRefresh()
@@ -54,6 +54,7 @@ function loadSignatureMap(action, params, force)
 
     if (force) {
         params.nocache = 1;
+        allowMapLoadingFinish = true;
     } else {
         if (!mapRendered())
             params.nocache = 1;
@@ -79,6 +80,9 @@ function loadSignatureMap(action, params, force)
                     $("#notificationContainter").append(Mustache.to_html($('#notificationTPL').html(), notification));
                 }
             }
+
+            if (force)
+                allowMapLoadingFinish = true;
 
             // Map
             var mapData = data.map;

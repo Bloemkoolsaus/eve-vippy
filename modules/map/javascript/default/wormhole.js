@@ -334,6 +334,7 @@ Wormhole.prototype.render = function(canvas)
     wormhole.on("dragstart", function() {
         if (!mapIsMassDeleteMode()) {
             $(".tooltip").remove();
+            whDragMode = true;
             disableMapRefresh();
             whDrag.x = mousePosX;
             whDrag.y = mousePosY;
@@ -348,12 +349,13 @@ Wormhole.prototype.render = function(canvas)
             var diffX = mousePosX-whDrag.x;
             var diffY = mousePosY-whDrag.y;
             loadSignatureMap("move", { system: this.getName(), x: whOldPosition.x+diffX, y: whOldPosition.y+diffY }, true);
+            whDragMode = false;
         }
     });
     if (!this.isUnknown()) {
         wormhole.on("mouseover", function () {
             document.body.style.cursor = "pointer";
-            if (!massDeleteMode)
+            if (!massDeleteMode && !whDragMode)
                 openWormholeDetails(this.getName(), this.getAbsolutePosition().x, this.getAbsolutePosition().y);
         });
         wormhole.on("mouseout", function () {
