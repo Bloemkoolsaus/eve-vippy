@@ -17,9 +17,21 @@ class Character
             $current = \MySQL::getDB()->getRow("select * from map_character_locations where characterid = ?", [$character->id]);
             if ($current)
             {
-                // Rate limit
-                if (strtotime($current["lastdate"]) > strtotime("now")-15)
-                    return json_encode(["system" => $current["solarsystemid"]]);
+                // Rate limit 5 seconden
+                if (strtotime($current["lastdate"]) > strtotime("now")-5)
+                {
+                    $solarSystem = \map\model\SolarSystem::findById($current["solarsystemid"]);
+                    return json_encode([
+                        "system" => [
+                            "id" => $solarSystem->id,
+                            "name" => $solarSystem->name
+                        ],
+                        "character" => [
+                            "id" => $character->id,
+                            "name" => $character->name
+                        ]
+                    ]);
+                }
 
                 $shipTypeID = $current["shiptypeid"];
                 $authGroupID = $current["authgroupid"];
