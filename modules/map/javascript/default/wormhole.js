@@ -260,14 +260,31 @@ Wormhole.prototype.render = function(canvas)
 
     // pilots
     var myCurrentLocation = false;
+    var extraPilots = 0;
     extraTxtHeight += Math.round(whDefaultLineHeight/2);
     for (var c=0; c<this.characters.length; c++) {
         if (this.characters[c].isme)
             myCurrentLocation = true;
+        if (c < 4) {
+            wormhole.add(new Kinetic.Text({
+                x: 22,
+                y: extraTxtHeight,
+                text: this.characters[c].name,
+                fontSize: 11,
+                fontFamily: "Calibri",
+                fill: "#666666",
+                draggable: false
+            }));
+            extraTxtHeight += whDefaultLineHeight;
+        } else
+            extraPilots += 1;
+    }
+
+    if (extraPilots > 0) {
         wormhole.add(new Kinetic.Text({
             x: 22,
             y: extraTxtHeight,
-            text: this.characters[c].name,
+            text: " + "+extraPilots+" others",
             fontSize: 11,
             fontFamily: "Calibri",
             fill: "#666666",
@@ -275,6 +292,7 @@ Wormhole.prototype.render = function(canvas)
         }));
         extraTxtHeight += whDefaultLineHeight;
     }
+
     if (myCurrentLocation) {
         wormhole.add(new Kinetic.Image({
             x: 5,
