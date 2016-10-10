@@ -25,13 +25,12 @@ function mapRendered()
 	return (stage != null);
 }
 
-function generateMap(data) {
-    if (!allowMapLoadingFinish)
-    {
+function generateMap(data)
+{
+    if (!allowMapLoadingFinish) {
         console.log("NOT Allow Map Loading Finish!!");
         return false;
     }
-
     if (data.settings != undefined) {
         whDefaultWidth = data.settings.defaultwidth;
         whDefaultHeight = data.settings.defaultheight;
@@ -46,7 +45,8 @@ function generateMap(data) {
     generateConnections(data.connections);
     generateSystems(data.wormholes);
 
-    if (stage != null) {
+    if (stage != null)
+    {
         console.log("clear stage");
         layer.removeChildren();
         stage.remove(layer);

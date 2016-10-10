@@ -167,36 +167,10 @@ $.fn.hasAttr = function(attrName) {
 };
 
 
-
-/**
- * IGB functions
- */
-
- function isIGB()
+function getRequestParameter(name)
 {
-    if (typeof CCPEVE === 'undefined')
-        return false;
-    else
-        return true;
-}
+    if (name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+        return decodeURIComponent(name[1]);
 
-function trustIGB(trustableURL)
-{
-    try {
-        CCPEVE.requestTrust(trustableURL);
-    } catch(err) {
-        alert("You are not in the ingame browser!");
-    }
-}
-
-function setDestination(systemID)
-{
-    try {
-        CCPEVE.setDestination(systemID);
-    } catch(err) {
-        alert("Cannot set destination!\nYou are not in the ingame browser.");
-    }
-
-    if ($("#wormholeContext").length > 0)
-        $("#wormholeContext").remove();
+    return null;
 }

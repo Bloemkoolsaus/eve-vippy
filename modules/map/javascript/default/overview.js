@@ -5,11 +5,31 @@ var allowMapLoadingStart = true;
 var allowMapLoadingFinish = true;
 
 $(window).load(function() {
+    reloadPage();
 	if ($("#signatureMap").length > 0) {
-		reloadSignatureMap(true);
-		$(document).bind("contextmenu", function() { return false; });
+		$("#signatureMapContainer").bind("contextmenu", function() { return false; });
+        reloadSignatureMap(true);
 	}
+
+    // Scroll positie
+    var scrollTop = getRequestParameter("scroll");
+    if (scrollTop)
+        $(document).scrollTop(scrollTop);
 });
+
+// Herlaad pagina. Garbage collector moet langskomen eens in de zoveel tijd!!
+var pageTimer = 0;
+function reloadPage()
+{
+    if (pageTimer >= 300000) {  // 5 minuten
+        if (allowMapRefresh()) {
+            document.location = "/map/"+$("#mapName").val()+"/"+$("#mapSystem").val()+"?scroll="+$(document).scrollTop();
+            return true;
+        }
+    }
+    setTimeout(reloadPage, 5000);
+    pageTimer += 5000;
+}
 
 function reloadSignatureMap(noCache)
 {
