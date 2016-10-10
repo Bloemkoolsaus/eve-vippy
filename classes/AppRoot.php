@@ -352,7 +352,7 @@ class AppRoot
         }
 
         if ($log)
-            self::storeError($message, $log);
+            self::log($message, $log);
     }
 
     public static function depricated($what, $message="")
@@ -360,34 +360,15 @@ class AppRoot
         self::error("Depricated call: ".$what."\n".$message, "depricated");
     }
 
-	public static function storeError($message, $log="error")
-	{
-		$data = array();
-		$data["error"] = $message;
-		$data["errordate"] = date("Y-m-d H:i:s");
-		$data["info"] = "DATE: ".date("Y-m-d H:i:s")."\n";
-		$data["info"] .= "WORKING DIR: ".str_replace(DIRECTORY_SEPARATOR,"/",getcwd())."\n";
-		$data["info"] .= "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n";
-		$data["info"] .= "SERVER_ADDR: ".((isset($_SERVER["SERVER_ADDR"]))?$_SERVER["SERVER_ADDR"]:"")."\n";
-		$data["info"] .= "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n";
-		$data["info"] .= "GET: ".json_encode($_GET)."\n";
-		$data["info"] .= "POST: ".json_encode($_POST)."\n";
-		$data["info"] .= "SESSION: ".json_encode($_SESSION)."\n";
-		$data["info"] .= "USER: ".((\User::getUSER())?\User::getUSER()->getFullName():"");
-
-		self::errorToLog($message, $log);
-	}
-
-	public static function errorToLog($message, $log="error")
-	{
-		$handle = fopen(\Tools::checkDirectory("logs/error/".date("Y-m-d")).$log.".log", "a");
-		fwrite($handle, "\n-=[ ".date("Y-m-d H:i:s")." ]=- --------------------------------------------------------\n");
-		fwrite($handle, $message."\n\n");
-		fwrite($handle, "CWD: ".getcwd()."\n");
-		fwrite($handle, "PHP_SELF: ".$_SERVER["PHP_SELF"]."\n");
+    public static function log($message, $log="log")
+    {
+        $handle = fopen(\Tools::checkDirectory("logs/".$log)."/".date("Ymd").".log", "a");
+        fwrite($handle, "\n-=[ ".date("Y-m-d H:i:s")." ]=- --------------------------------------------------------\n");
+        fwrite($handle, $message."\n\n");
+        fwrite($handle, "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n");
         fwrite($handle, "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n");
-		fclose($handle);
-	}
+        fclose($handle);
+    }
 
 	public static function doCliCommand($command, $expectOutput=false)
 	{

@@ -84,7 +84,7 @@ namespace scanning\model
 			}
 
             if (!$positionModifier)
-                $positionModifier = 10;
+                $positionModifier = 20;
             $this->x = round($this->x/$positionModifier)*$positionModifier;
             $this->y = round($this->y/$positionModifier)*$positionModifier;
 
