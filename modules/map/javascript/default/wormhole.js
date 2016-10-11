@@ -373,12 +373,17 @@ Wormhole.prototype.render = function(canvas)
     if (!this.isUnknown()) {
         wormhole.on("mouseover", function () {
             document.body.style.cursor = "pointer";
-            if (!massDeleteMode && !whDragMode)
-                openWormholeDetails(this.getName(), this.getAbsolutePosition().x, this.getAbsolutePosition().y);
+            if (!massDeleteMode && !whDragMode) {
+                if (!whMouseOver) {
+                    whMouseOver = true;
+                    openWormholeDetails(this.getName(), this.getAbsolutePosition().x, this.getAbsolutePosition().y);
+                }
+            }
         });
         wormhole.on("mouseout", function () {
             document.body.style.cursor = "default";
             closeWormholeDetails(this.getName());
+            whMouseOver = false;
         });
         wormhole.on("click", function (e) {
             closeContextMenu();

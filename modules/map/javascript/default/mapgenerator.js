@@ -16,6 +16,7 @@ var blockMapRefresh = false;
 var whDragMode = false;
 var whOldPosition = { x: 0, y:0 };
 var whDrag = { x: 0, y: 0 };
+var whMouseOver = false;
 
 var mapWormholes = [];
 var mapConnections = [];
