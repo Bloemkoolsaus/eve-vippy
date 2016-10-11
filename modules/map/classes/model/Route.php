@@ -167,7 +167,7 @@ class Route
     {
         $data = [
             "id" => $wormhole->id,
-            "name" => $wormhole->getSolarsystem()->name,
+            "name" => ($wormhole->getSolarsystem())?$wormhole->getSolarsystem()->name:"",
             "title" => $wormhole->name,
             "connections" => []
         ];
