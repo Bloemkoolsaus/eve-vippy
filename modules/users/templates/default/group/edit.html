@@ -10,7 +10,7 @@
 </div>
 
 <div class="content">
-    <div style="float: left; width: 45%;">
+    <div class="col7">
         <form method="post" action="" name="formEditUserGroup">
             <input type="hidden" name="save" value="true" />
             <input type="hidden" name="id" value="{$usergroup->id}"/>
@@ -48,7 +48,7 @@
                 <input type="checkbox" name="roles[admin]" id="roles-admin" {if $usergroup->hasRight('admin','admin')}checked{/if}>
                 <label for="roles-admin" style="float: none;">VIPPY Admin</label>
             </div>
-            <div class="form">
+            <div class="form" style="text-align: right;">
                 <div class="buttons">
                     <button type="submit">Save</button>
                 </div>
@@ -56,15 +56,15 @@
         </form>
         <div style="clear:both;"></div>
     </div>
-    <div style="float: right; width: 45%;">
+    <div class="col5 right last">
         <h2>Members</h2>
     {if $usergroup->getUsers()|@count > 0}
         <ul>
         {foreach from=$usergroup->getUsers() item=user}
             <li style="margin-bottom: 5px;">
-                <a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
+                <a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
                 &nbsp;
-                <a href="/index.php?module=users&section=usergroups&action=edit&id={$usergroup->id}&deleteuser={$user->id}">
+                <a href="/users/groups/edit?id={$usergroup->id}&deleteuser={$user->id}">
                     <img src="/images/default/cross.small.png" style="top: 3px;">
                 </a>
             </li>

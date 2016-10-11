@@ -157,7 +157,6 @@
 	<div class="tabs">
 		<ul>
 			<li><a href="#" onclick="showTabs('characters'); return false;">Known Characters</a></li>
-			<li><a href="#" onclick="showTabs('apikeys'); return false;">API Keys</a></li>
 			<li><a href="#" onclick="showTabs('logs'); showUserLogs(); return false;">Logs</a></li>
 		</ul>
 		<div style="clear:both;"></div>
@@ -201,19 +200,6 @@
 						<div style="clear:both;"></div>
 					</div>
 					<div style="clear:both;"></div>
-					<div style="margin-top: 10px;">
-						<div style="float: left; width: 90px;">
-							<b>Source:</b>
-						</div>
-						<div style="float: left;">
-							{if $char.apikey > 0}
-								<span style="color: #44dd44">API Fetched</i></span>
-							{else}
-								<i>Location Tracker</i>
-							{/if}
-						</div>
-						<div style="clear:both;"></div>
-					</div>
 					<div>
 						<div style="float: left; width: 90px;">
 							<b>Last Update:</b>
@@ -231,42 +217,6 @@
 			<div>This user does not have any characters installed.</div>
 		{/if}
 		<div style="clear:both;"></div>
-	</div>
-
-	<div id="detailtab-apikeys" rel="detailtab" style="display:none;">
-		<h1>API Keys</h1>
-	{foreach from=$user->getApiKeys() item=apikey}
-		<div>
-			<div style="float: left; width: 100px;">
-				<img src="/images/eve/profile.png"/>
-			</div>
-			<div style="float: left; width: 600px;">
-				<div class="form">
-					<label class="field" style="width: 100px;"><b>KeyID:</b></label>
-					{$apikey->keyID}
-				</div>
-				<div class="form">
-					<label class="field" style="width: 100px;"><b>vCode:</b></label>
-					{$apikey->vCode}
-				</div>
-				<div class="form">
-					<label class="field" style="width: 100px;"><b>Status:</b></label>
-					{if $apikey->valid && !$apikey->banned}
-						<span style="color: #00FF00;">Valid</span>
-						&nbsp; {$apikey->status}
-					{else}
-						<span style="color: #FF2222;">{$apikey->status}</span>
-					{/if}
-				</div>
-				<div class="form">
-					<label class="field" style="width: 100px;"><b>Access Mask:</b></label>
-					{$apikey->accesMask}
-				</div>
-			</div>
-			<div style="clear:both;"></div>
-			<hr/>
-		</div>
-	{/foreach}
 	</div>
 
 	<div id="detailtab-logs" rel="detailtab" style="display:none;">

@@ -1,16 +1,26 @@
 {assign var=numeric_naming value=0}
+{assign var=dir_admin_enabled value=1}
 {foreach from=$App->user->getAuthGroups() item=group}
 	{if $group->getConfig('wh_naming_numeric')}
 		{assign var=numeric_naming value=1}
+	{/if}
+	{if $group->getConfig('dir_admin_disabled')}
+		{assign var=dir_admin_enabled value=0}
 	{/if}
 {/foreach}
 
 
 <b><u>MAP</u></b>
- - Getting rid of the IGB means we can use new technologies. So, some background changes/improvements were done to the map.
- - Removed 'Mass Delete' mode. It has since been replaced by the two remove options in a systems context menu.
+ - Getting rid of the IGB means we can use new technologies. So, background changes/improvements were done to the map.
+ - Removed 'Mass Delete' mode. It has since been replaced by the two remove options in a systems right-click menu.
  	- 'Remove [systemname]': Removes that system.
  	- 'Remove connected systems': Removes all systems connected to this system. Remove a connection and then use this to remove that part of the chain!
+
+{if $dir_admin_enabled}
+<b><u>ADMIN</u></b>
+ - CREST does not have the option (yet) to see corp-roles. Therefor, it is not possible to see who is a director.
+ 	Everyone that had admin, is now added to a usergroup that gives you admin roles instead. You can edit who is a member of that group to add/remove admins.
+{/if}
 
 
 <h3>August 3, 2016</h3>

@@ -3,16 +3,15 @@ namespace users\view
 {
 	class Log
 	{
-		function showUserLog($userID)
+		function getUser($arguments=[])
 		{
-			$user = new \users\model\User($userID);
-
+			$user = new \users\model\User(\Tools::REQUEST("user"));
 			$tpl = \SmartyTools::getSmarty();
 			$tpl->assign("user", $user);
-			return $tpl->fetch("users/log");
+			return $tpl->fetch("users/user/log");
 		}
 
-		function getOverview()
+		function getOverview($arguments=[])
 		{
 			$filter = (\Tools::POST("filter"))?:"exceptions";
 			$sdate = date("Y-m-d", strtotime((\Tools::REQUEST("sdate"))?:"now"))." 00:00:00";
