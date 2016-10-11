@@ -160,7 +160,7 @@
 {/literal}
 
 {literal}
-{if $system->getActivePilots()|@count > 0}
+{if $system->getActivePilots($wormhole->chainID)|@count > 0}
 	<div class="systemPopupTitle">
 		<div style="float: left; width: 200px; overflow: hidden;">
 			<u>Active Pilots</u>
@@ -170,7 +170,7 @@
 		</div>
 	</div>
 	<div style="padding: 5px;">
-	{foreach from=$system->getActivePilots() item=pilot}
+	{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
 		<div style="float: left; width: 200px; overflow: hidden; white-space: nowrap;">
 			* {$pilot.name} ({$pilot.ship})
 		</div>

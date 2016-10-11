@@ -72,7 +72,7 @@ namespace scanning\model
 			return false;
 		}
 
-		function getActivePilots($mapID)
+		function getActivePilots($mapID=null)
 		{
 			$pilots = array();
 			$map = new \map\model\Map($mapID);
