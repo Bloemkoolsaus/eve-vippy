@@ -78,7 +78,7 @@ Wormhole.prototype.addStatic = function(whStatic) {
 };
 Wormhole.prototype.addCharacter = function(id, name) {
     this.characters.push({ id: id, name: name });
-    if (this.characters.length > 1)
+    if (this.characters.length > 1 && this.characters.length < 5)
         this.map.height += whDefaultLineHeight;
 };
 Wormhole.prototype.addIcon = function(icon) {
