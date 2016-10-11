@@ -17,7 +17,7 @@
             {/if}
 			</th>
 		</tr>
-	{if $connection->normalgates}
+	{if $connection->getFromSystem() && $connection->getToSystem() && $connection->normalgates}
 		<tr>
 			<td colspan="3" style="text-align: center; color: #0088ff;">
 				{$connection->getFromSystem()->getNrJumpsTo($connection->getToSystem()->id)} gate jumps
@@ -59,6 +59,7 @@
 <div style="float: right; width: 100px; text-align: right; margin-right: 20px;">
 	<i>* Click to update</i>
 </div>
+{if $connection->getWormholeType()}
 {if !$connection->getWormholeType()->isK162()}
 <div style="float: left; width: 210px; margin-top: 5px;">
 	<div>
@@ -99,6 +100,7 @@
 	<div style="clear:both;"></div>
 </div>
 {/if}
+{/if}
 <div style="clear:both;"></div>
 
 {if !$connection->normalgates}
@@ -125,8 +127,10 @@
 		</div>
 		<div style="float: left; width: 250px; white-space: nowrap; overflow: hidden;">
 			{$connection->addDate|date_age:1} ago
+        {if $connection->getAddedByUser()}
 			&nbsp; - &nbsp;
 			{$connection->getAddedByUser()->getFullname()}
+        {/if}
 		</div>
 		<div style="clear:both;"></div>
 	</div>
@@ -138,8 +142,10 @@
 		</div>
 		<div style="float: left; width: 250px; white-space: nowrap; overflow: hidden;">
 			{$connection->updateDate|date_age:1} ago
+        {if $connection->getUpdatedByUser()}
 			&nbsp; - &nbsp;
 			{$connection->getUpdatedByUser()->getFullname()}
+        {/if}
 		</div>
 		<div style="clear:both;"></div>
 	</div>
@@ -160,8 +166,10 @@
 		</div>
 		<div style="margin: 1px; margin-left: 15px;">
 			{$connection->massUpdateDate|date_age:1} ago
+        {if $connection->getUpdatedByUser()}
 			&nbsp; - &nbsp;
 			{$connection->getUpdatedByUser()->getFullname()}
+        {/if}
 		</div>
 		<div style="clear:both;"></div>
 	</div>
@@ -174,8 +182,10 @@
 		</div>
 		<div style="margin: 1px; margin-left: 15px;">
 			{$connection->lifetimeUpdateDate|date_age:1} ago
+        {if $connection->getUpdatedByUser()}
 			&nbsp; - &nbsp;
 			{$connection->getUpdatedByUser()->getFullname()}
+        {/if}
 		</div>
 		<div style="clear:both;"></div>
 	</div>
