@@ -265,7 +265,7 @@ Wormhole.prototype.render = function(canvas)
     for (var c=0; c<this.characters.length; c++) {
         if (this.characters[c].isme)
             myCurrentLocation = true;
-        if (c < 4) {
+        if (c < 4 && this.characters.length > 5) {
             wormhole.add(new Kinetic.Text({
                 x: 22,
                 y: extraTxtHeight,
