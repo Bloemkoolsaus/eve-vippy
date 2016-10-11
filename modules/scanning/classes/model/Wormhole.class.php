@@ -170,7 +170,7 @@ namespace scanning\model
                 \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, [
                     "delete-all" => false,
                     "wormhole"   => ["id" => $this->id, "name" => $this->name],
-                    "system"     => ["id" => $this->getSolarsystem()->id, "name" => $this->getSolarsystem()->name." - ".$this->name],
+                    "system"     => ["id" => ($this->getSolarsystem())?$this->getSolarsystem()->id:0, "name" => (($this->getSolarsystem())?$this->getSolarsystem()->name." - ":"").$this->name],
                     "chain"      => ["id" => $this->getChain()->id, "name" => $this->getChain()->name]
                 ]);
             }
