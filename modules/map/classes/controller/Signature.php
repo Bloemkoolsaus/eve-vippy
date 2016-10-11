@@ -52,7 +52,7 @@ class Signature
 
 
         /**
-         * Check wh-nummber, connection bijwerken.
+         * Check wh-nummber, wormhole-types bijwerken.
          */
         \AppRoot::debug("Signature->whTypeID: ".$signature->whTypeID);
         if ($signature->isWormhole())
@@ -69,18 +69,24 @@ class Signature
                 \AppRoot::debug("Wormhole: ".$wormhole->name);
                 if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename)))
                 {
-                    \AppRoot::doCliOutput("Set connection type to wh: ".$wormholename);
                     $fromWormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
-                    $connection = \map\model\Connection::getConnectionByWormhole($fromWormhole->id, $wormhole->id, $map->id);
-                    if ($connection != null) {
-                        if ($connection->fromWormholeID == $wormhole->id) {
-                            $connection->fromWHTypeID = 9999;
-                            $connection->toWHTypeID = $signature->whTypeID;
-                        } else {
-                            $connection->toWHTypeID = 9999;
-                            $connection->fromWHTypeID = $signature->whTypeID;
+                    \AppRoot::doCliOutput("This wormhole: ".$wormhole->name);
+                    \AppRoot::doCliOutput("From wormhole: ".$fromWormhole->name);
+
+                    $connection = \map\model\Connection::getConnectionByWormhole($wormhole->id, $fromWormhole->id, $map->id);
+                    if ($connection)
+                    {
+                        $fromSignature = \map\model\Signature::findWormholeSigByName($wormhole->solarSystemID, $wormhole->getChain()->authgroupID, $wormhole->name."-".$fromWormhole->name);
+                        if ($fromSignature) {
+                            \AppRoot::debug($fromSignature);
+                            if ($fromSignature->whTypeID && $fromSignature->whTypeID != 9999) {
+                                $signature->whTypeID = 9999;
+                                $signature->store();
+                            }
                         }
-                        $connection->store(false);
+
+                        // Reset wh-types op basis van de signatures.
+                        $connection->store();
                     }
                 }
             }

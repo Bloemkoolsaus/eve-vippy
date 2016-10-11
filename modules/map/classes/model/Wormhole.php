@@ -5,6 +5,7 @@ class Wormhole extends \scanning\model\Wormhole
 {
     private $_solarsystem;
 
+
     /**
      * Get solarsystem
      * @return \map\model\SolarSystem|null

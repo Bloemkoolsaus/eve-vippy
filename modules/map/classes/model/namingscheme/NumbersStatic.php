@@ -72,10 +72,11 @@ class NumbersStatic extends \map\model\NamingScheme
 
                             // kijk of de static signature bekend is.
                             $signature = null;
-                            foreach (\scanning\model\Signature::getSignaturesBySolarSystem($previousSystem->id) as $sig)
+                            foreach (\map\model\Signature::findAll(["solarsystemid" => $previousSystem->id,
+                                                                    "authgroupid" => $wormhole->getChain()->authgroupID]) as $sig)
                             {
-                                if (strtolower($sig->sigType) == "wh") {
-                                    if ($sig->sigTypeID == $static["id"]) {
+                                if ($sig->isWormhole()) {
+                                    if ($sig->whTypeID == $static["id"]) {
                                         $signature = $sig;
                                         break;
                                     }

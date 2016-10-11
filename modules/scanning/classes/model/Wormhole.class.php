@@ -142,9 +142,14 @@ namespace scanning\model
 			else
 				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
 
-			// Remove cache so that it resets
-            \Cache::file()->remove("wormhole/".$this->id.".json");
 
+            // Check en update connections
+            foreach ($this->getConnections() as $connection) {
+                $connection->store();
+            }
+
+            // Remove cache so that it resets
+            \Cache::file()->remove("wormhole/".$this->id.".json");
             $this->getChain()->setMapUpdateDate();
 		}
 
