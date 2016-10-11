@@ -4,6 +4,7 @@ $config = array();
 $config["name"] = "Profile";
 $config["public"] = true;
 $config["enabled"] = true;
+$config["sortorder"] = 1;
 
 $config["submenu"][] = [
     "type"  => "link",

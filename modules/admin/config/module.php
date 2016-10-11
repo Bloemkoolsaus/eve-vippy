@@ -4,6 +4,7 @@ $config = array();
 $config["name"] = "Admin";
 $config["public"] = true;
 $config["enabled"] = true;
+$config["sortorder"] = 1;
 
 if (\User::getUSER())
 {

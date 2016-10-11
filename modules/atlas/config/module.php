@@ -4,6 +4,7 @@ $config = array();
 $config["name"] = "Atlas";
 $config["public"] = false;
 $config["enabled"] = true;
+$config["sortorder"] = 99;
 
 $config["submenu"][] = array("type" => "link",
 							"name"	=> "Atlas",

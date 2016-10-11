@@ -167,7 +167,7 @@ class Modules
 			if (!$submenu || count($submenu) == 0)
 				continue;
 
-			$key = count($links);
+            $key = ((\AppRoot::config($module."sortorder"))?(\AppRoot::config($module."sortorder")):90).$module;
 			$links[$key]["url"] = (\AppRoot::config($module."url"))?:$module;
 			$links[$key]["name"] = ucfirst(\AppRoot::config($module."name"));
 
@@ -196,6 +196,8 @@ class Modules
 				}
 			}
 		}
+
+        ksort($links);
 
 		$mainmenu = \SmartyTools::getSmarty();
 		$mainmenu->assign("mainMenu", $links);

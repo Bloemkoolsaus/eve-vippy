@@ -4,6 +4,7 @@ $config = array();
 $config["name"] = "Map";
 $config["public"] = true;
 $config["enabled"] = true;
+$config["sortorder"] = 2;
 
 // Haal beschikbare chains
 if (\User::getUSER()) {

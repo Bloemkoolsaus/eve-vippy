@@ -4,6 +4,7 @@ $config = array();
 $config["name"] = "Help";
 $config["public"] = true;
 $config["enabled"] = true;
+$config["sortorder"] = 98;
 
 
 $config["submenu"][] = [
