@@ -189,7 +189,7 @@ class Wormhole
         // Nieuwe naam
         $originWormhole = \map\model\Wormhole::findOne(["solarsystemid" => $signature->solarSystemID, "chainid" => $map->id]);
         $newWormholeName = $signature->sigInfo;
-        \AppRoot::debug("new wormhole name: ".$newWormholeName);
+        \AppRoot::doCliOutput("new wormhole name: ".$newWormholeName);
         $parsedWormholeName = explode(" ", $newWormholeName);
         $parts = explode("-", $parsedWormholeName[0]);
         if (count($parts) > 1) {
@@ -229,7 +229,7 @@ class Wormhole
         }
 
         // Zoek wormhole type.
-        \AppRoot::debug("Find statics");
+        \AppRoot::doCliOutput("Find statics");
         $wspaceStatics = 0;
         foreach (\map\model\WormholeType::findStaticBySolarSystem($signature->solarSystemID) as $static)
         {
@@ -247,6 +247,12 @@ class Wormhole
             else {
                 $wspaceStatics++;
                 $staticName = $wormhole->name.$wspaceStatics;
+            }
+
+            if ($map->getSetting("wh-autoname-scheme")) {
+                $namingScheme = \map\model\NamingScheme::findByID($map->getSetting("wh-autoname-scheme"));
+                if ($namingScheme)
+                    $staticName = $namingScheme->parseTitle($staticName);
             }
 
             \AppRoot::debug("Staticname: ".$staticName);

@@ -14,6 +14,10 @@ class NamingScheme extends \Model
         return null;
     }
 
+    function parseTitle($title)
+    {
+        return $title;
+    }
 
 
     /**

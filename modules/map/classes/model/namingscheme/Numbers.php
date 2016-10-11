@@ -57,17 +57,7 @@ class Numbers extends \map\model\NamingScheme
                 else
                     $title = $startingName.$letters[$index];
 
-                $searches = array("11111111","1111111","111111","11111","1111");
-                $replacements = array("8x1","7x1","6x1","5x1","4x1");
-                $title = str_replace($searches, $replacements, $title);
-
-                $searches = array("22222222","2222222","222222","22222","2222");
-                $replacements = array("8x2","7x2","6x2","5x2","4x2");
-                $title = str_replace($searches, $replacements, $title);
-
-                $searches = array("33333333","3333333","333333","33333","3333");
-                $replacements = array("8x3","7x3","6x3","5x3","4x3");
-                $title = str_replace($searches, $replacements, $title);
+                $title = $this->parseTitle($title);
 
                 $exists = false;
                 foreach ($wormhole->getChain()->getWormholes() as $hole)
@@ -90,5 +80,22 @@ class Numbers extends \map\model\NamingScheme
         }
 
         return null;
+    }
+
+    function parseTitle($title)
+    {
+        $searches = array("11111111","1111111","111111","11111","1111");
+        $replacements = array("8x1","7x1","6x1","5x1","4x1");
+        $title = str_replace($searches, $replacements, $title);
+
+        $searches = array("22222222","2222222","222222","22222","2222");
+        $replacements = array("8x2","7x2","6x2","5x2","4x2");
+        $title = str_replace($searches, $replacements, $title);
+
+        $searches = array("33333333","3333333","333333","33333","3333");
+        $replacements = array("8x3","7x3","6x3","5x3","4x3");
+        $title = str_replace($searches, $replacements, $title);
+
+        return $title;
     }
 }
