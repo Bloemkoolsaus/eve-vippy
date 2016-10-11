@@ -18,7 +18,7 @@ class Character
             if ($current)
             {
                 // Rate limit 5 seconden
-                if (strtotime($current["lastdate"]) > strtotime("now")-5)
+                if (strtotime($current["lastdate"]) > strtotime("now")-15)
                 {
                     $solarSystem = \map\model\SolarSystem::findById($current["solarsystemid"]);
                     return json_encode([
