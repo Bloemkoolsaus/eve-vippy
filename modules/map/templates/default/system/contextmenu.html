@@ -20,7 +20,7 @@
 		<img src="/images/eve/route.png" align="left" />
 		Set Destination to <span style="color:#FFFFFF;">{$wormhole->getSolarsystem()->name}</span>
 	</div>
-	{if isset($closestsystem)}
+	{if $closestsystem}
 		<div onclick="setDestination('{$closestsystem->solarSystemID}'); closeContextMenu();">
 			<img src="/images/eve/route.png" align="left" />
 			Set Destination to {$closestsystem->name}
