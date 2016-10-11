@@ -178,7 +178,12 @@
 					Copy-Paste Signatures:
 					&nbsp;
 					<img src="/images/default/help.png" style="height: 12px; cursor: pointer;" onclick="$('#copyPasteHelp').fadeIn();">
+					<div style="margin-top: -1.5em; text-align: right; font-size: .9em; font-weight: normal;">
+						<a href="#" onclick="clearSignatures(); return false;">Clear all signatures</a>
+					</div>
+					<div style="clear:both;"></div>
 				</h3>
+				<div style="clear:both;"></div>
 				<div id="copyPasteHelp" class="message" style="text-align: left; display: none;">
 					<div style="padding: 3px;">
 						<div>
@@ -207,9 +212,13 @@
 				<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
 				{$system->name} - {$wormhole->name} - <span id="signaturesCount"></span> signatures
 			</h2>
+		{if $App->user->getScanAlt()}
 			<div style="margin-top: -2.5em; text-align: right;">
-				<a href="#" onclick="clearSignatures(); return false;">Clear all signatures</a>
+				<a href="#" onclick="switchToActiveSystem({$App->user->getScanAlt()->id}); return false;">
+					Switch to the location of {$App->user->getScanAlt()->name}
+				</a>
 			</div>
+		{/if}
 			<div style="clear:both;"></div>
 			<div style="margin-top: .5em;">
 				<form method="post" name="formEditSignature" action="Javascript: storeSignature()">

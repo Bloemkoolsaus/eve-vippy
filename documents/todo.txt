@@ -8,8 +8,6 @@ Aparte help pagina ipv alleen legenda-popup.
  - youtube video
  - werking en beperking crest (fleet) link
 
-Sugestie: switch active system to current location terugbrengen.
-
 
 ======================== Lage prio ========================
 
@@ -39,5 +37,4 @@ Richting nieuw systeem
 
 Active toon list is not restricted anymore (+ x others)
 Another fix for auto-filling wh-types on signatures and connections.
-
-Voeg huidige directors toe als admin.
+Switch to active system is back.
