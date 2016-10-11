@@ -3,14 +3,14 @@
     <div class="content">
         <h1>
 		{if $chain->id > 0}
-			Chain: &nbsp;
+			Map: &nbsp;
 			{if $chain->getHomesystem() != null}
 				{$chain->getHomesystem()->getFullname()}
 				-
 			{/if}
 			{$chain->name}
 		{else}
-			New Chain
+			New Map
 		{/if}
         </h1>
 	{if isset($errors)}
@@ -45,7 +45,7 @@
                 </label>
             </div>
             <div class="form">
-                <label class="field">Chain Name:</label>
+                <label class="field">Name:</label>
                 <label class="value">
                     <input type="text" name="name" value="{$chain->name}" />
                 </label>

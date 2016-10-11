@@ -17,7 +17,7 @@ button {
     margin: 1px;
 }
 h1 button {
-    font-size: .9em;
+    font-size: 14px;
 }
 button:hover {
     border-color: #DD8800;

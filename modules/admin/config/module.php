@@ -10,7 +10,7 @@ if (\User::getUSER())
     if (\User::getUSER()->isAdmin())
     {
         $config["submenu"][] = array("type" => "link",
-                                    "name"	=> "Manage Chains",
+                                    "name"	=> "Manage Maps",
                                     "url"   => "admin/chain");
         $config["submenu"][] = array("type" => "link",
                                     "name"	=> "Known wormholes",
