@@ -105,7 +105,7 @@ class LocationTracker
 
                         // kspace kspace systems
                         if ($addNewWormhole) {
-                            if ($fromSystem->isKnownSystem() && $toSystem->isKnownSystem()) {
+                            if (!$fromSystem->isWSpace() && !$toSystem->isWSpace()) {
                                 if ($fromSystem->getNrJumpsTo($toSystem->id) <= 3) // iets hoger dan 1 door lag in de CREST tracker
                                     $addNewWormhole = false;
                             }
