@@ -12,14 +12,6 @@ class Chain
         $chains = array();
         $adminChains = array();
 
-        if (\Tools::REQUEST("action") == "delete")
-        {
-            $chain = new \scanning\model\Chain(\Tools::REQUEST("id"));
-            $chain->deleted = true;
-            $chain->store();
-            \AppRoot::redirect("index.php?module=admin&section=chains");
-        }
-
         $chains = array();
         foreach (\User::getUSER()->getAvailibleChains(false) as $chain)
         {
@@ -31,6 +23,7 @@ class Chain
         if ($results = \MySQL::getDB()->getRows("SELECT *
                                                 FROM    mapwormholechains
                                                 WHERE   authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
+                                                and     deleted = 0
                                                 AND     id NOT IN (select chainid from mapwormholechains_alliances)
                                                 AND     id NOT IN (select chainid from mapwormholechains_corporations)"))
         {
@@ -50,6 +43,7 @@ class Chain
                                                     FROM 	mapwormholechains
                                                     WHERE 	deleted = 0
                                                     AND 	id NOT IN (".implode(",", \User::getUSER()->getAvailibleChainIDs()).")
+                                                    and     deleted = 0
                                                     ORDER BY authgroupid, prio, id, name ASC"))
             {
                 foreach ($results as $result)
@@ -70,6 +64,15 @@ class Chain
             $tpl->assign("sysadmin",1);
 
         return $tpl->fetch("admin/chain/overview");
+    }
+
+    function getDelete($arguments=[])
+    {
+        $id = (count($arguments) > 0) ? array_shift($arguments) : \Tools::REQUEST("id");
+        $chain = new \scanning\model\Chain($id);
+        $chain->deleted = true;
+        $chain->store();
+        \AppRoot::redirect("admin/chain");
     }
 
     function getNew($arguments=[])

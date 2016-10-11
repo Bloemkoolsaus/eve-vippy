@@ -100,6 +100,17 @@ class LocationTracker
                         if ($wormholeTo == null && $wormholeFrom == null)
                             $addNewWormhole = false;
 
+                        $fromSystem = new \map\model\SolarSystem($previousLocationID);
+                        $toSystem = new \map\model\SolarSystem($locationID);
+
+                        // kspace kspace systems
+                        if ($addNewWormhole) {
+                            if ($fromSystem->isKnownSystem() && $toSystem->isKnownSystem()) {
+                                if ($fromSystem->getNrJumpsTo($toSystem->id) <= 3) // iets hoger dan 1 door lag in de CREST tracker
+                                    $addNewWormhole = false;
+                            }
+                        }
+
                         // Magic!
                         if ($addNewWormhole) {
                             $controller = new \map\controller\Wormhole();
@@ -115,9 +126,6 @@ class LocationTracker
                         else
                         {
                             // Systems niet connected. Zoek alle tussenliggende holes, en registreer daar ook de jump!
-                            $fromSystem = new \map\model\SolarSystem($previousLocationID);
-                            $toSystem = new \map\model\SolarSystem($locationID);
-
                             $route = new \map\model\Route();
                             $route->setMap($map);
                             $route->setFromSystem($fromSystem);

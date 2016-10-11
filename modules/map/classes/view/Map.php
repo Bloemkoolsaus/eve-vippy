@@ -70,6 +70,16 @@ class Map
             ];
         }
 
+        if (!\User::getUSER()->getScanAlt())
+        {
+            $data["notifications"][] = [
+                "id" => "no-scan-alt",
+                "type" => "message",
+                "title" => "You have not selected a scan alt",
+                "content" => "Select your dedicated scanning toon (scan-alt) in your profile!"
+            ];
+        }
+
         $fleets = [];
         foreach (\crest\model\Fleet::findAll(["authgroupid" => $map->authgroupID]) as $fleet) {
             if ($fleet->active)

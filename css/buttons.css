@@ -16,6 +16,9 @@ button {
     font-weight: bold;
     margin: 1px;
 }
+h1 button {
+    font-size: 14px;
+}
 button:hover {
     border-color: #DD8800;
     background-color: #DD8800;

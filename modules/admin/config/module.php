@@ -10,7 +10,7 @@ if (\User::getUSER())
     if (\User::getUSER()->isAdmin())
     {
         $config["submenu"][] = array("type" => "link",
-                                    "name"	=> "Manage Chains",
+                                    "name"	=> "Manage Maps",
                                     "url"   => "admin/chain");
         $config["submenu"][] = array("type" => "link",
                                     "name"	=> "Known wormholes",
@@ -32,22 +32,26 @@ if (\User::getUSER())
 
     if (\User::getUSER()->hasRight("users", "manageusers") || \User::getUSER()->isAdmin())
     {
-        $config["submenu"][] = array("type" => "link",
-            "name"	=> "Users",
-            "module"=> "users");
+        $config["submenu"][] = array(
+            "type" => "link",
+            "name" => "Users",
+            "url" => "users/user"
+        );
 
         if (\User::getUSER()->isAdmin() || \User::getUSER()->hasRight("users", "manageusers"))
         {
-            $config["submenu"][] = array("type" => "link",
-                "name"	=> "User-Groups",
-                "module" => "users",
-                "section" => "usergroups");
+            $config["submenu"][] = array(
+                "type" => "link",
+                "name" => "User-Groups",
+                "url" => "users/groups"
+            );
         }
 
-        $config["submenu"][] = array("type" => "link",
+        $config["submenu"][] = array(
+            "type" => "link",
             "name"	=> "Logs",
-            "module"=> "users",
-            "section"=> "logs");
+            "url"=> "users/log"
+        );
     }
 
     // System admin

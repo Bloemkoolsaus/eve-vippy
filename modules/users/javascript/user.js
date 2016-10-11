@@ -1,7 +1,11 @@
 function resetPassword(userID)
 {
 	$.ajax({
-		url: "/index.php?module=users&action=resetpwform&ajax=1&id="+userID,
+		url: "/users/user/resetpw",
+        data: {
+            id: userID,
+            ajax: 1
+        },
 		success: function(data) {
 			showPopup(data, 500, 250);
 		}
@@ -10,7 +14,11 @@ function resetPassword(userID)
 function banUser(userID)
 {
 	$.ajax({
-		url: "/index.php?module=users&action=banform&ajax=1&id="+userID,
+		url: "/users/user/ban",
+        data: {
+            id: userID,
+            ajax: 1
+        },
 		success: function(data) {
 			showPopup(data, 500, 250);
 		}
@@ -19,27 +27,25 @@ function banUser(userID)
 function authorizeUser(userID)
 {
 	$.ajax({
-		url: "/index.php?module=users&action=authorizeform&ajax=1&id="+userID,
+		url: "/users/user/authorize",
+        data: {
+            id: userID,
+            ajax: 1
+        },
 		success: function(data) {
 			showPopup(data, 500, 250);
 		}
 	})
 }
-function validateAPI(userID)
-{
-	showPopup("<div style='margin: 20px; text-align: center;'><h3>Checking API</h3></div>", 300, 100);
-	document.location = '/index.php?module=users&action=edit&id='+userID+'&validateapi=1';
-}
-
 
 function showUserLogs()
 {
 	$("#userlogs").html("<img src='/images/loading.gif'> Loading logs");
 	$.ajax({
-		url: "/index.php?module=users&action=edit&ajax=1",
+		url: "/users/log/user",
 		data: {
-			action: "showlog",
-			id:	$("#userid").val(),
+			user: $("#userid").val(),
+            ajax: 1
 		},
 		success: function(data) {
 			$("#userlogs").html(data);

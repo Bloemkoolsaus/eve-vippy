@@ -63,3 +63,21 @@ function openRefreshCharacterSelector()
         $("#characterRefreshSelector").css("left", $("#bttnRefreshCharacterLocation").position().left);
     }
 }
+
+function switchToActiveSystem(characterID)
+{
+    $.ajax({
+        url: "/crest/character/location/"+characterID,
+        data: {
+            ajax: 1
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data.errors == null) {
+                document.location = "/map/"+$("#mapName").val()+"/"+data.system.name+"?scroll="+$(document).scrollTop();
+            } else {
+                showPopup("<div class='error'><div><b>Failed to switch systems</b></div><div>"+data.errors.join("<br />")+"</div></div>");
+            }
+        }
+    });
+}

@@ -39,6 +39,9 @@ namespace users\model
         /** @var \eve\model\Character */
         private $character = null;
 
+        /** @var \eve\model\Character */
+        private $_scanalt = null;
+
 
 		public function __construct($id=false)
 		{
@@ -552,7 +555,23 @@ namespace users\model
 			}
 		}
 
-		/**
+        /**
+         * Get scan alt
+         * @return \eve\model\Character|null
+         */
+        function getScanAlt()
+        {
+            if ($this->_scanalt === null)
+            {
+                if ($this->getSetting("scanalt"))
+                    $this->_scanalt = new \eve\model\Character($this->getSetting("scanalt"));
+            }
+
+            return $this->_scanalt;
+        }
+
+
+        /**
 		 * Get config
 		 * @param string $var
 		 * @return string|null

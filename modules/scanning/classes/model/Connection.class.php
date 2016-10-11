@@ -108,32 +108,41 @@ namespace scanning\model
 			// Kopie's even uit. Dit gaat niet helemaal goed...
 			$doCopy = false;
 
-
 			// Is er iets gewijzigd?
 			$oldConnection = new \scanning\model\Connection();
 			if ($this->id > 0)
 				$oldConnection->loadById($this->id);
 
-
 			// Mass gewijzigd
-			if ($this->mass > 0 && $oldConnection->mass !== $this->mass)
-			{
+			if ($this->mass > 0 && $oldConnection->mass !== $this->mass) {
 				$this->massUpdateBy = \User::getUSER()->id;
 				$this->massUpdateDate = date("Y-m-d H:i:s");
 			}
 
-
 			// Lifetime gewijzigd
-			if ($oldConnection->eol !== $this->eol)
-			{
+			if ($oldConnection->eol !== $this->eol) {
 				$this->lifetimeUpdateBy = \User::getUSER()->id;
 				$this->lifetimeUpdateDate = date("Y-m-d H:i:s");
 			}
 
 
-			if ($this->fromWHTypeID > 0 || $this->toWHTypeID > 0)
+            // Probeer wh-types te achterhalen.
+            $wormholeFrom = $this->getFromWormhole();
+            $wormholeTo = $this->getToWormhole();
+            if ($wormholeFrom && $wormholeTo)
+            {
+                $signatureFrom = \map\model\Signature::findWormholeSigByName($wormholeFrom->solarSystemID, $wormholeFrom->getChain()->authgroupID, $wormholeFrom->name."-".$wormholeTo->name);
+                if ($signatureFrom)
+                    $this->fromWHTypeID = $signatureFrom->whTypeID;
+
+                $signatureTo = \map\model\Signature::findWormholeSigByName($wormholeTo->solarSystemID, $wormholeFrom->getChain()->authgroupID, $wormholeTo->name."-".$wormholeFrom->name);
+                if ($signatureTo)
+                    $this->toWHTypeID = $signatureTo->whTypeID;
+            }
+
+            // WH Type bekend? Probeer te achterhalen of dit een frigate / capital hole is.
+			if ($this->fromWHTypeID || $this->toWHTypeID)
 			{
-				// WH Type bekend? Probeer te achterhalen of dit een frigate / capital hole is.
                 if (!$this->frigateHole)
 				    $this->frigateHole = false;
 

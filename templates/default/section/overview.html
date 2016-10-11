@@ -4,7 +4,7 @@ function doDelete(deleteURL)
 {
 	{/literal}
 	if(confirm('Delete. Are you sure?'))
-		document.location = deleteURL; 
+		document.location = deleteURL;
 	else
 		return false;
 	{literal}
@@ -46,12 +46,12 @@ function doDelete(deleteURL)
 		</td>
 	</tr>
 	{/if}
-{if $nrPages > 1}	
+{if $nrPages > 1}
 	{assign var="startPage" value=$pageNr-2}
 	{assign var="endPage" value=$pageNr+2}
-	
+
 	{if $startPage <= 0}{assign var="startPage" value=1}{/if}
-	{if $endPage > $nrPages}{assign var="endPage" value=$nrPages}{/if}	
+	{if $endPage > $nrPages}{assign var="endPage" value=$nrPages}{/if}
 	<tr>
 		<td class="tablebuttons" colspan="{$nrFields}">
 			<div class="pageinfo">
@@ -82,7 +82,7 @@ function doDelete(deleteURL)
 	{if $nrRecords > 0}
 	<tr>
 		{foreach from=$heads key=i item=title}
-		
+
 		{if $orderByField == $title.field}
 			{if $orderByDir=="ASC"}
 				{assign var="newOrderBy" value="DESC"}
@@ -98,15 +98,15 @@ function doDelete(deleteURL)
 			{if $allowsorting==0}
 				{if $orderByField == $title.field}
 					{if $orderByDir == "ASC"}
-						<img src="images/default/down.png" style="height: 12px; margin-top: 2px;" align="right" />
+						<img src="/images/default/down.png" style="height: 12px; margin-top: 2px;" align="right" />
 					{else}
-						<img src="images/default/up.png" style="height: 12px; margin-top: 2px;" align="right" />
+						<img src="/images/default/up.png" style="height: 12px; margin-top: 2px;" align="right" />
 					{/if}
 				{/if}
 			{/if}
 			</span>
 			{if isset($title.help) && $title.help != ""}
-				<img src="images/default/help.png" style="height: 12px; margin-top: 2px; cursor: pointer;" align="right" onclick="return showHelp('{$title.help}');" />
+				<img src="/images/default/help.png" style="height: 12px; margin-top: 2px; cursor: pointer;" align="right" onclick="return showHelp('{$title.help}');" />
 			{/if}
 		</th>
 		{/foreach}
@@ -126,15 +126,15 @@ function doDelete(deleteURL)
 		{/foreach}
 		{if $allowsorting==1}
 		<td class="buttons">
-			<a href="{$row.urlsort}&direction=down" title="Omlaag"><img src="images/default/down.png" alt="Omlaag" /></a>
-			<a href="{$row.urlsort}&direction=up" title="Omhoog"><img src="images/default/up.png" alt="Omhoog" /></a>
+			<a href="{$row.urlsort}&direction=down" title="Omlaag"><img src="/images/default/down.png" alt="Omlaag" /></a>
+			<a href="{$row.urlsort}&direction=up" title="Omhoog"><img src="/images/default/up.png" alt="Omhoog" /></a>
 		</td>
 		{/if}
 		{if $allowedit==1}
 		<td class="buttons">
-			<a href="{$row.urledit}" title="Edit"><img src="images/default/edit.png" alt="Edit" /></a>
+			<a href="{$row.urledit}" title="Edit"><img src="/images/default/edit.png" alt="Edit" /></a>
 			{if $allowdelete==1}
-			<a href="#" onclick="doDelete('{$row.urldelete}'); return false;" title="Delete"><img src="images/default/cross.png" alt="Delete" /></a>
+			<a href="#" onclick="doDelete('{$row.urldelete}'); return false;" title="Delete"><img src="/images/default/cross.png" alt="Delete" /></a>
 			{/if}
 		</td>
 		{/if}

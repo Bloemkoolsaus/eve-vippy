@@ -9,20 +9,6 @@ Aparte help pagina ipv alleen legenda-popup.
  - werking en beperking crest (fleet) link
 
 
-Voeg huidige directors toe als admin.
-
-
-
-Adding eol to wormhole link does remember the flag on the form but no visuals on the map change.
-
-Tooltip on hover over the wh link does show correct eol info.
-
-Sugestie: switch active system to current location terugbrengen.
-
-Active toon list is not restricted anymore (+ x others)
-
-
-
 ======================== Lage prio ========================
 
 Beter beheer auth-groepen
@@ -49,7 +35,6 @@ Richting nieuw systeem
 ======================== Fixes ========================
 -------------------------------------------------------
 
-Feature Request - Citadel Signature Type (Like POS)
-Signatures show up from other auth-groups.
-Bugfix in moving systems around the map.
-Fixed auto-filling signature wormhole types for statics.
+Active toon list is not restricted anymore (+ x others)
+Another fix for auto-filling wh-types on signatures and connections.
+Switch to active system is back.

@@ -149,4 +149,26 @@ class Signature extends \Model
     {
         return parent::findAll($conditions, $orderby, $class);
     }
+
+    /**
+     * Find signature by wh-names
+     * @param $solarSystemID
+     * @param $name
+     * @return \map\model\Signature|null
+     */
+    public static function findWormholeSigByName($solarSystemID, $authGroupID, $name)
+    {
+        if ($result = \MySQL::getDB()->getRow("select *
+                                               from   map_signature
+                                               where  solarsystemid = ?
+                                               and    authgroupid = ?
+                                               and    siginfo like ?"
+                                , [$solarSystemID, $authGroupID, $name."%"]))
+        {
+            $sig = new \map\model\Signature();
+            $sig->load($result);
+            return $sig;
+        }
+        return null;
+    }
 }
