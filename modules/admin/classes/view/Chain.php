@@ -22,7 +22,7 @@ class Chain
         // Chains toevoegen die GEEN alliances/corporations hebben.
         if ($results = \MySQL::getDB()->getRows("SELECT *
                                                 FROM    mapwormholechains
-                                                WHERE   authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
+                                                WHERE   authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs(false)).")
                                                 and     deleted = 0
                                                 AND     id NOT IN (select chainid from mapwormholechains_alliances)
                                                 AND     id NOT IN (select chainid from mapwormholechains_corporations)"))
@@ -96,6 +96,7 @@ class Chain
         }
         else
         {
+            /*
             if (\User::getUser()->getIsSysAdmin())
                 $allowed = true;
             else {
@@ -107,6 +108,7 @@ class Chain
             }
             if (!$allowed)
                 \AppRoot::redirect("");
+            */
         }
 
 
