@@ -871,11 +871,12 @@ namespace users\model
             {
                 $this->isAdmin = false;
 
-                if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
-                    if ($this->getIsDirector($corpid))
-                        $this->isAdmin = true;
+                if ($this->getCurrentAuthGroup()) {
+                    if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
+                        if ($this->getIsDirector($corpid))
+                            $this->isAdmin = true;
+                    }
                 }
-
                 if ($this->hasRight("admin", "admin"))
                     $this->isAdmin = true;
             }

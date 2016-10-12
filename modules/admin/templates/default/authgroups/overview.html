@@ -25,7 +25,9 @@
 					{$group->name}
 				</td>
 				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+				{if $group->getContactUser()}
 					{$group->getContactUser()->getFullname()}
+				{/if}
 				</td>
 				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
