@@ -68,6 +68,9 @@ function setPopupContent(content,width,height)
 		popupHeight = height;
 
 	$("#popupContent").html(popupContent);
+    setTimeout(function() {
+        setDatePicker();
+    }, 1000);
 	setPopupPosition();
 }
 

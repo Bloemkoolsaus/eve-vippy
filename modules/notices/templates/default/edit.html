@@ -1,0 +1,57 @@
+<div class="content">
+	<h1>Notice</h1>
+	{if isset($errors) && $errors|@count > 0}
+		<div class="error">
+			{foreach from=$errors item=error}
+				<div>{$error}</div>
+			{/foreach}
+		</div>
+	{/if}
+	<form method="post" action="/notices/notes/edit/{$notice->id}">
+		<div style="max-width: 700px;">
+			<div class="form">
+				<div class="field">Type:</div>
+				<div class="value">
+					<select name="type">
+					{foreach from=$types item=type}
+						<option value="{$type.id}">
+							{$type.name}
+						</option>
+					{/foreach}
+					</select>
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">SolarSystem:</div>
+				<div class="value">
+					<input type="text" name="system" value="{if $notice->getSystem()}{$notice->getSystem()->name}{/if}" />
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">Title:</div>
+				<div class="value">
+					<input type="text" name="title" value="{$notice->title}" />
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">Details:</div>
+				<div class="value">
+					<textarea name="body">{$notice->body}</textarea>
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">Expire Date:</div>
+				<div class="value">
+					<input type="text" name="expiredate" value="{$notice->expireDate|date_format:"d-m-Y"}" rel="datepicker" style="width: 100px;">
+				</div>
+			</div>
+			<div class="form buttons">
+				<button type="submit">
+					<img src="/images/default/ui/save.png" align="left">
+					Save
+				</button>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+	</form>
+</div>

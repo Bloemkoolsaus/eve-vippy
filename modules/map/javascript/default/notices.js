@@ -1,5 +1,5 @@
 function addNotice(notice)
-{	
+{
 	if ($("#shownotice"+notice.id).length > 0)
 	{
 		// Bestaat al..
@@ -9,10 +9,6 @@ function addNotice(notice)
 		var html = 	"<div id='shownotice"+notice.id+"' rel='notice' class='"+notice.type+"' style='display:none;'>";
 		html += 	"<div><h2>"+notice.title+"</h2></div>";
 		html += 	"<div>"+notice.body+"</div>";
-		
-		if (notice.persistant < 1)
-			html += "<div id='shownotice"+notice.id+"close' style='display:none;'><a href='#' onclick='hideNotice(\""+notice.id+"\")'>Hide Notice</a></div>";
-
 		html += 	"</div>";
 
 		$("#divNotices").append(html);
@@ -32,29 +28,15 @@ function addNotice(notice)
 	}
 }
 
-function hideNotice(noticeID)
-{
-	$.ajax({
-		url: "index.php?module=notices&section=fetch&action=markread&id="+noticeID+"&ajax=1",
-		success: function(data ) { }
-	})
-	$("#shownotice"+noticeID).fadeOut(500, function() { $("#shownotice"+noticeID).remove(); });
-}
-
 function createSystemNotice(systemID)
 {
 	loadingSigMap = true;
 	loadingSigList = true;
 	$.ajax({
-		url: "index.php?module=notices&section=map&action=new&ajax=1&systemid="+systemID+"&redirect=scanning",
+		url: "/map/notice/add/"+systemID+"/"+$("#mapID").val(),
+        data: { ajax: 1 },
 		success: function(data) {
-			showPopup("<div id='createNoticePopup' style='padding: 10px;'>"+data+"</div>", 650, 400);
+			showPopup(data, 650, 300);
 		}
 	});
-}
-function cancelCreateSystemNotice()
-{
-	loadingSigMap = false;
-	loadingSigList = false;
-	destroyPopup();
 }

@@ -18,7 +18,7 @@ if (\User::getUSER())
                                     "url" => "admin/knownwormholes");
         $config["submenu"][] = array("type" => "link",
                                     "name"	=> "Notifications",
-                                    "module"=> "notices");
+                                    "url" => "notices/notes");
         $config["submenu"][] = array("type" => "seperator");
     }
 

@@ -1,0 +1,59 @@
+<div class="content">
+	<h1>Notifications</h1>
+	<div style="text-align: right;">
+		<button type="button" onclick="document.location='/notices/notes/new'">
+			<img src="/images/default/ui/plus.png" align="left">
+			Add New Notification
+		</button>
+	</div>
+	<div>
+		<table class="sectionoverview">
+			<tr>
+				<th>SolarSystem</th>
+				<th>Type</th>
+				<th>Details</th>
+				<th>Expires</th>
+				<th>Added By</th>
+				<th style="width: 50px;"></th>
+			</tr>
+		{foreach from=$notices key=n item=notice}
+			<tr class="{if $n%2==0}even{else}odd{/if}">
+				<td onclick="document.location='/notices/notes/delete/{$notice->id}'">
+					{$notice->getSystem()->getFullname()}
+				</td>
+				<td onclick="document.location='/notices/notes/delete/{$notice->id}'">
+					<img src="/modules/notices/images/{$notice->getTypeName()}.png" align="left">&nbsp;
+					{$notice->getTypeName()}
+				</td>
+				<td onclick="document.location='/notices/notes/delete/{$notice->id}'">
+					<div>
+						{$notice->title}
+						{*
+						{if $notice->persistant}
+							<img src="/images/eve/pin.png" align="right">
+						{/if}
+						*}
+					</div>
+				{if $notice->body && $notice->body|trim|strlen > 0}
+					<div><i>{$notice->body}</i></div>
+				{/if}
+				</td>
+				<td onclick="document.location='/notices/notes/delete/{$notice->id}'">
+				{if $notice->expireDate}
+					{$notice->expireDate|date_full}
+				{/if}
+				</td>
+				<td onclick="document.location='/notices/notes/delete/{$notice->id}'">
+				{if $notice->getUser()}
+					{$notice->getUser()->getFullname()}
+				{/if}
+				</td>
+				<td style="text-align: center;">
+					<a href="/notices/notes/edit/{$notice->id}"><img src="/images/default/ui/edit.png"></a>
+					<img src="/images/default/cross.png" onclick="if (confirm('Remove notification?')) { document.location='/notices/notes/delete/{$notice->id}' }">
+				</td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+</div>

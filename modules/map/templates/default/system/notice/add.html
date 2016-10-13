@@ -1,0 +1,42 @@
+<div style="padding: 1em;">
+	<h2>{$system->getFullname()} - Add Notice</h2>
+	<form method="post" action="/map/notice/add/{$system->id}/{$map->id}">
+		<div class="form">
+			<div class="field">Type:</div>
+			<div class="value">
+				<select name="type">
+				{foreach from=$types item=type}
+					<option value="{$type.id}">
+						{$type.name}
+					</option>
+				{/foreach}
+				</select>
+			</div>
+		</div>
+		<div class="form">
+			<div class="field">Title:</div>
+			<div class="value">
+				<input type="text" name="title" value="" />
+			</div>
+		</div>
+		<div class="form">
+			<div class="field">Details:</div>
+			<div class="value">
+				<textarea name="body"></textarea>
+			</div>
+		</div>
+		<div class="form">
+			<div class="field">Expire Date:</div>
+			<div class="value">
+				<input type="text" name="expiredate" value="" rel="datepicker" style="width: 100px;">
+			</div>
+		</div>
+		<div class="form buttons">
+			<button type="submit">
+				<img src="/images/default/ui/save.png" align="left">
+				Save
+			</button>
+		</div>
+		<div style="clear:both;"></div>
+	</form>
+</div>

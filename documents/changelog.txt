@@ -9,6 +9,15 @@
 	{/if}
 {/foreach}
 
+<h3>DUNNO WHEN YET</h3>
+<b><u>MAP</u></b>
+ - Fixed system-notifications. Adding new notifications was broken.
+ - Fixed known-systems management. Was broken also...
+
+<b><u>VIPPY</u></b>
+ - Fixed several errors that were popping up at random places.
+
+
 
 <h3>October 11, 2016</h3>
 <b><u>CREST</u></b>

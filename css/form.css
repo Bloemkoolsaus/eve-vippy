@@ -46,9 +46,9 @@ div.form .value input[type=password],
 div.form .value select {
     width: 95%;
 }
-div.form label.value textarea {
+div.form .value textarea {
     width: 95%;
-    height: 100px;
+    height: 50px;
 }
 
 div.form .value input.small {
