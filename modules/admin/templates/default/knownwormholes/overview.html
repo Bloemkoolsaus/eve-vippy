@@ -1,5 +1,13 @@
 <div class="content">
-	<h1>Known Wormholes</h1>
+	<h1>Known Systems</h1>
+	<div style="text-align: right;">
+		<button type="button" onclick="document.location='/admin/knownwormholes/new'">
+			<img src="/images/default/ui/plus.png" align="left">
+			Add Known-System
+		</button>
+	</div>
+	<div style="clear:both;"></div>
+	<br />
 	<table class="sectionoverview">
 		<tr>
 			<th>SolarSystem</th>
@@ -9,26 +17,30 @@
 		</tr>
 	{foreach from=$systems key=s item=system}
 		<tr class="{if $s%2==0}even{else}odd{/if}">
-			<td onclick="document.location='index.php?module=admin&section=knownwormholes&action=edit&id={$system->systemID}'">
+			<td onclick="document.location='/admin/knownwormholes/edit/{$system->solarSystemID}'">
 				{$system->getSolarSystem()->getFullname()}
+			{if $system->getSolarSystem()->isWspace()}
+				<div style="float: right; font-size: .8em;">
+				{foreach from=$system->getSolarSystem()->getStatics() key=s item=static}
+					<div>{$static}</div>
+				{/foreach}
+				</div>
+			{/if}
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=knownwormholes&action=edit&id={$system->systemID}'">
-				{$system->name}
+			<td onclick="document.location='/admin/knownwormholes/edit/{$system->solarSystemID}'">
+				&nbsp; {$system->name} &nbsp;
 			</td>
-			<td onclick="document.location='index.php?module=admin&section=knownwormholes&action=edit&id={$system->systemID}'">
-				<img src="{$system->getIcon()}"/> 
+			<td onclick="document.location='/admin/knownwormholes/edit/{$system->solarSystemID}'">
+				<img src="/{$system->getIcon()}"/>
 				<span style="color: {$system->getColor()};">{$system->getStatus()}</span>
 			</td>
 			<td style="text-align: center;">
-				<a href="index.php?module=admin&section=knownwormholes&action=edit&id={$system->systemID}}"><img src="images/default/edit.png" style="cursor: pointer;"/></a>
-				<img src="images/default/cross.png" style="cursor: pointer;" 
-					onclick="if (confirm('Are you sure?')) {literal}{{/literal}document.location='index.php?module=admin&section=knownwormholes&action=delete&id={$system->systemID}'; {literal}}{/literal}" />
+				<a href="/admin/knownwormholes/edit/{$system->solarSystemID}}"><img src="/images/default/ui/edit.png" style="cursor: pointer;"/></a>
+				<img src="/images/default/cross.png" style="cursor: pointer;"
+					onclick="if (confirm('Are you sure?')) { document.location='/admin/knownwormholes/delete/{$system->solarSystemID}'; }" />
 			</td>
 		</tr>
 	{/foreach}
 	</table>
-	<div style="text-align: right; padding: 10px;">
-		<button type="button" onclick="document.location='index.php?module=admin&section=knownwormholes&action=new'">Add Wormhole</button>
-	</div>
 	<div style="clear:both;"></div>
 </div>

@@ -14,8 +14,8 @@ if (\User::getUSER())
                                     "name"	=> "Manage Maps",
                                     "url"   => "admin/chain");
         $config["submenu"][] = array("type" => "link",
-                                    "name"	=> "Known wormholes",
-                                    "section" => "knownwormholes");
+                                    "name"	=> "Known Systems",
+                                    "url" => "admin/knownwormholes");
         $config["submenu"][] = array("type" => "link",
                                     "name"	=> "Notifications",
                                     "module"=> "notices");

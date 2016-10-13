@@ -61,7 +61,7 @@
 				{$chain->prio}
 			</td>
 			<td style="text-align: center;">
-				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/edit.png" style="border:0px;"></a>
+				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/ui/edit.png" style="border:0px;"></a>
 				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = '/admin/chain/delete/{$chain->id}'; {literal}}{/literal}"><img src="/images/default/cross.png" style="border:0px;"></a>
 			</td>
 		</tr>
@@ -133,7 +133,7 @@
 			<td style="text-align: center;">
 				<a href="/index.php?module=scanning&section=overview&chain={$chain->id}"><img src="/images/default/view.png" style="border:0px;"></a>
 				&nbsp;
-				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/edit.png" style="border:0px;"></a>
+				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/ui/edit.png" style="border:0px;"></a>
 				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="/images/default/cross.png" style="border:0px;"></a>
 			</td>
 		</tr>

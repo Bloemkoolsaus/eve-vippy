@@ -33,28 +33,6 @@ namespace admin
 				$this->moduleContent = "<pre class='changelog'>".$notes->fetch("file:".getcwd()."/documents/changelog.txt")."</pre>";
 			}
 
-			if ($section == "knownwormholes")
-			{
-				$this->moduleTitle = "Known Wormhole Systems";
-
-				if ($action == "new" || $action == "edit")
-				{
-					$kwController = new \admin\controller\KnownWormhole();
-					return $kwController->getEditForm(\Tools::REQUEST("id"));
-				}
-				else if ($action == "delete")
-				{
-					$wormhole = new \map\model\KnownWormhole(\Tools::REQUEST("id"));
-					$wormhole->delete();
-					\AppRoot::redirect("index.php?module=admin&section=knownwormholes");
-				}
-				else
-				{
-					$kwController = new \admin\controller\KnownWormhole();
-					return $kwController->getOverview();
-				}
-			}
-
 			if ($section == "subscriptions")
 			{
 				if (\User::getUSER()->getIsSysAdmin())
