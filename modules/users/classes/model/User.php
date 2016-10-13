@@ -1272,13 +1272,13 @@ namespace users\model
 		 * Get auth-group ids
 		 * @return array
 		 */
-		public function getAuthGroupsIDs()
+		public function getAuthGroupsIDs($fromCache=true)
 		{
 			\AppRoot::debug("User->getAuthGroupsIDs()");
 			if (!is_array($this->authGroupIDs) || count($this->authGroupIDs) == 0)
 			{
 				$cacheFilename = $this->getCacheDirectory()."authgroups.json";
-				if ($cache = \Cache::file()->get($cacheFilename))
+				if ($fromCache && $cache = \Cache::file()->get($cacheFilename))
 					$this->authGroupIDs = json_decode($cache,true);
 				else
 				{

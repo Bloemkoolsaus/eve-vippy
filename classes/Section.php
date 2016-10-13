@@ -137,9 +137,6 @@ class Section
 		$rows = array();
 		if (is_array($this->records) && count($this->records) > 0)
 		{
-			if (count($this->records) == 1 && $this->allowEdit && (\Tools::REQUEST("search".$this->table) || !$this->allowNew))
-				\AppRoot::redirect($this->getEditURL($this->records[0][$this->keyfield]));
-
 			foreach ($this->records as $key => $result)
 			{
 				$row = array();

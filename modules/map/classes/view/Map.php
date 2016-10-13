@@ -3,7 +3,7 @@ namespace map\view;
 
 class Map
 {
-    function getOverview(\map\model\Map $map, $arguments=[])
+    function getOverview(\map\model\Map $map=null, $arguments=[])
     {
         $system = null;
         if (count($arguments) > 0)
