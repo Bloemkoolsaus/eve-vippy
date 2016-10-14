@@ -155,8 +155,11 @@ table.sectionoverview tr td {
 }
 
 table.sectionoverview tr th {
-	background-color: #232323;
-	color: #FFFFFF;
+    background-color: #232323;
+    color: #ffffff;
+}
+#popup table.sectionoverview tr th {
+    background-color: #151515;
 }
 
 table.sectionoverview tr th.large {

@@ -1,0 +1,67 @@
+<div id="exitFinderForm" style="padding: 1em; text-align: left;">
+{if !$solarSystem}
+	<h2>
+		<img src="/images/default/ui/map.png" align="left">
+		Exit Finder
+	</h2>
+	<div style="text-align: right;">
+		<form method="post" action="Javascript: exitFinderDistance();">
+			From system:
+			<input type="text" name="findexit" value="{if $findSystem}{$findSystem->name}{/if}">
+			<button id="bttnFindExit" type="submit" class="small">
+				<img src="/images/default/ui/view.png" align="left">
+				Find
+			</button>
+		</form>
+	</div>
+	<div style="clear:both;"></div>
+	<br />
+	<div id="currentExitSystems" style="text-align: left;">
+		<table class="sectionoverview">
+			<tr>
+				<th colspan="2">Exit systems</th>
+				<th style="width: 200px;">Distance</th>
+				<th style="width: 110px;"></th>
+			</tr>
+		{foreach from=$wormholes item=hole}
+			<tr class="even">
+				<td><strong>{$hole->name}</strong></td>
+				<td>{$hole->getSolarsystem()->getFullname()}</td>
+				<td>
+				{if $findSystem}
+					{$findSystem->getNrJumpsTo($hole->solarSystemID)} jumps to
+					{$findSystem->name}
+				{/if}
+				</td>
+				<td onclick="exitFinderSelect('{$hole->getSolarsystem()->name}');">
+					<img src="/images/eve/route.png" align="left"> &nbsp;
+					<a href="#" onclick="return false;">Set Destination</a>
+				</td>
+			</tr>
+		{/foreach}
+		</table>
+	</div>
+{else}
+	<h2>
+		<img src="/images/default/ui/map.png" align="left">
+		Exit Finder
+		<div style="float: right;">{$solarSystem->getFullname()}</div>
+	</h2>
+	<div>
+		For which character do you want to set destination?
+	</div>
+	<div style="text-align: center; padding-top: 1em;">
+	{foreach from=$App->user->getAuthorizedCharacters() item=toon}
+		<div>
+			<button type="button" class="small" style="width: 180px;"
+					onclick=" destroyPopup(); setDestination('{$toon->id}','{$solarSystem->id}');">
+				<img src="https://image.eveonline.com/Character/{$toon->id}_200.jpg" align="left" />
+				{$toon->name}
+			</button>
+		</div>
+	{/foreach}
+	</div>
+{/if}
+</div>
+
+<div style="clear:both;"></div>

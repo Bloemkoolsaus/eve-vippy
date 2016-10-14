@@ -11,10 +11,12 @@
 
 <h3>DUNNO WHEN YET</h3>
 <b><u>MAP</u></b>
+ - Set destination via CREST is working. You may need to re-authenticate your characters with CREST to get it working.
  - Fixed system-notifications. Adding new notifications was broken.
  - Fixed known-systems management. Was broken also...
 
 <b><u>VIPPY</u></b>
+ - Re-introduced the <strong>Exit-Finder</strong>!
  - Fixed several errors that were popping up at random places.
 
 

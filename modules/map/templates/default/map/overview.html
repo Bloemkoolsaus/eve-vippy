@@ -90,49 +90,22 @@
 			<img src="/images/default/ui/fleet.png" align="left">
 			Add Fleet
 		</button>
-	<!--
 		<button id="exitFinderButton" class="right" onclick="showExitFinder();">
 			<img src="/images/default/ui/view.png" align="left">
 			Exit Finder
 		</button>
-	-->
         <div style="clear:both;"></div>
 	</div>
     <div id="characterRefreshSelector">
         <div>
         {foreach from=$App->user->getAuthorizedCharacters() item=toon}
             <div class="toon" onclick="refreshCharacterLocation({$toon->id});">
+				<img src="https://image.eveonline.com/Character/{$toon->id}_200.jpg" align="left" />
                 {$toon->name}
             </div>
         {/foreach}
         </div>
     </div>
-
-	<!-- EXIT FINDER -->
-	<div id="exitFinderForm" style="display: none; margin-top: 15px;">
-		<div class="message">
-			<form method="post" action="Javascript: exitFinder();">
-			<div style="padding: 5px;">
-				<h3>
-					Exit Finder
-					<button type="button" class="small" style="float: right;" onclick="$('#exitFinderForm').slideUp('fast');">
-						<img src="/images/default/cross.png" style="height: 14px;" align="left">
-						Close
-					</button>
-				</h3>
-			</div>
-			<div style="padding: 5px;">
-				Find closest exit to:
-				&nbsp;
-				<input type="text" id="exitFinderSystem" value="" />
-				&nbsp;
-				<button type="submit" class="small">Find</button>
-			</div>
-			</form>
-			<div id="exitFinderResults" style="padding: 5px;"></div>
-		</div>
-	</div>
-	<div style="clear:both;"></div>
 </div>
 
 <div class="content">

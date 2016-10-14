@@ -12,32 +12,17 @@ $(document).ready(function() {
 $(window).resize(function() {
 	setMenuNotifications();
 });
-/*
-$(document).scroll(function() {
-	// Alleen map horizontaal scrollen
-    $("#header").css("left", "+"+$(window).scrollLeft()+"px");
-    $(".content").css("left", "+"+$(window).scrollLeft()+"px");
-});
-*/
+
 function setMenuNotifications()
 {
 	if ($("#menuNotifications").length > 0)
 	{
 		$("#menuNotifications").width($("#maincontainer").width());
-
-		if (isIGB())
-		{
-			$("#menuNotifications").show();
-			setLayoutPositions();
-		}
-		else if (!$("#menuNotifications").is(":visible"))
-		{
-			setTimeout(function() {
-				$("#menuNotifications").slideDown('fast', function() {
-					setLayoutPositions();
-				});
-			}, 1000);
-		}
+        setTimeout(function() {
+            $("#menuNotifications").slideDown('fast', function() {
+                setLayoutPositions();
+            });
+        }, 1000);
 	}
 }
 function setLayoutPositions()

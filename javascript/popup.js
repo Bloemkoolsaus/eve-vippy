@@ -85,7 +85,9 @@ function getPopupContent()
 
 function setPopupHeight(height)
 {
-	popupHeight = height;
+    console.log("setPopupHeight("+height+")");
+	popupHeight = (height=="auto") ? $("#popupContent").height() : height;
+    console.log(popupHeight);
 	popupHeight += $("#popupHeader").height();
 	popupHeight += $("#popupFooter").height();
 	setPopupPosition(true);

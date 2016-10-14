@@ -272,49 +272,13 @@ function removeFromKnownSystems(systemName)
 	});
 }
 
-function mapLegend()
-{
-	$.ajax({
-		url: "/index.php?module=scanning&section=maplegend&ajax=1",
-		success: function(data) {
-			showPopup(data,930,750);
-		}
-	});
-}
-
-function showExitFinder(system)
-{
-	$('#exitFinderForm').fadeIn();
-	if (system) {
-		$("#exitFinderSystem").val(system);
-	}
-}
-
-function exitFinder()
-{
-	$("#exitFinderResults").html("<img src='/images/loading.gif'> Calculating..");
-
-	$.ajax({
-		url: "/index.php?module=scanning&section=exitfinder",
-		data: {
-			system: $("#exitFinderSystem").val(),
-            ajax: 1
-		},
-		success: function(data) {
-			$("#exitFinderResults").html(data);
-		}
-	});
-}
-
 function addFleet()
 {
     $.ajax({
         url: "/fleets/fleet/add",
-        data: {
-            ajax: 1
-        },
+        data: { ajax: 1 },
         success: function(data) {
             showPopup(data, 450, 200);
         }
-    })
+    });
 }

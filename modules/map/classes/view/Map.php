@@ -252,4 +252,31 @@ class Map
         $tpl->assign("map", $map);
         return $tpl->fetch("map/map/clear");
     }
+
+    function getExitfinder(\map\model\Map $map, $arguments=[])
+    {
+        $wormholes = [];
+        foreach ($map->getWormholes() as $hole) {
+            if ($hole->getSolarsystem()) {
+                if (!$hole->getSolarsystem()->isWSpace())
+                    $wormholes[] = $hole;
+            }
+        }
+
+        $solarSystem = null;
+        if (count($arguments) > 0) {
+            $solarSystem = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+        }
+
+        $findSystem = null;
+        if (\Tools::REQUEST("find"))
+            $findSystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("find"));
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("wormholes", $wormholes);
+        $tpl->assign("solarSystem", $solarSystem);
+        $tpl->assign("findSystem", $findSystem);
+        return $tpl->fetch("map/map/exitfinder");
+    }
 }
