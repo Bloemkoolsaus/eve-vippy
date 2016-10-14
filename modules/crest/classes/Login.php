@@ -247,7 +247,7 @@ class Login extends \api\Client
             // 				'characterMailRead', 		//: Read your EVE Mail.
             // 				'characterMarketOrdersRead', //: Read your market orders.
             // 				'characterMedalsRead', 		//: List your public and private medals.
-            // 				'characterNavigationWrite', //: Allows an application to set your ships autopilot destination.
+            'characterNavigationWrite', //: Allows an application to set your ships autopilot destination.
             // 				'characterNotificationsRead',	//: Receive in-game notifications.
             // 				'characterOpportunitiesRead', //: List the opportunities your character has completed.
             // 				'characterResearchRead', 		//: List your research agents working for you and research progress.

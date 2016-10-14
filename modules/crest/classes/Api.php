@@ -19,7 +19,7 @@ class Api extends \api\Client
         $this->token = $token;
     }
 
-    function get($url, $params = array())
+    function get($url, $params=[])
     {
         $this->resetheader();
         $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
@@ -31,6 +31,20 @@ class Api extends \api\Client
         }
 
         return parent::get($url, $params);
+    }
+
+    function post($url, $params=[])
+    {
+        $this->resetheader();
+        $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
+
+        if ($this->token) {
+            if ($this->token->isExpired())
+                $this->token->refresh();
+            $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
+        }
+
+        return parent::post($url, $params);
     }
 
     function getResult()

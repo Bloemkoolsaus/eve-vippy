@@ -68,9 +68,7 @@ function switchToActiveSystem(characterID)
 {
     $.ajax({
         url: "/crest/character/location/"+characterID,
-        data: {
-            ajax: 1
-        },
+        data: { ajax: 1 },
         success: function(data) {
             data = $.parseJSON(data);
             if (data.errors == null) {
@@ -78,6 +76,19 @@ function switchToActiveSystem(characterID)
             } else {
                 showPopup("<div class='error'><div><b>Failed to switch systems</b></div><div>"+data.errors.join("<br />")+"</div></div>");
             }
+        }
+    });
+}
+
+function setDestination(characterID, solarSystemID)
+{
+    $.ajax({
+        url: "/crest/character/destination/"+characterID+"/"+solarSystemID,
+        data: { ajax: 1 },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data.errors != null)
+                showPopup("<div class='error'><div><b>Failed to set destination</b></div><div>"+data.errors.join("<br />")+"</div></div>");
         }
     });
 }
