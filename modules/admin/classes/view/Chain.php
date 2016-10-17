@@ -134,26 +134,34 @@ class Chain
                 }
             }
 
-
-            if (\Tools::POST("control"))
-            {
-                foreach ($_POST["control"] as $action => $group)
-                {
+            if (\Tools::POST("control")) {
+                foreach ($_POST["control"] as $action => $group) {
                     if (!is_numeric($group) || $group > 0)
                         $chain->setSetting("control-".$action, $group);
                 }
             }
 
-            if (\Tools::POST("corporations",true))
+            if (!$chain->id)
             {
-                foreach ($_POST["corporations"] as $key => $id) {
-                    $chain->addCorporation($id);
+                // Nieuwe chain, alle corp/alliances toevoegen!
+                foreach ($chain->getAuthGroup()->getAlliances() as $alliance) {
+                    $chain->addAlliance($alliance->id);
+                }
+                foreach ($chain->getAuthGroup()->getCorporations() as $corp) {
+                    $chain->addCorporation($corp->id);
                 }
             }
-            if (\Tools::POST("alliances",true))
+            else
             {
-                foreach ($_POST["alliances"] as $key => $id) {
-                    $chain->addAlliance($id);
+                if (\Tools::POST("corporations",true)) {
+                    foreach ($_POST["corporations"] as $key => $id) {
+                        $chain->addCorporation($id);
+                    }
+                }
+                if (\Tools::POST("alliances",true)) {
+                    foreach ($_POST["alliances"] as $key => $id) {
+                        $chain->addAlliance($id);
+                    }
                 }
             }
 
