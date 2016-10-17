@@ -9,7 +9,7 @@
 	{/if}
 {/foreach}
 
-<h3>DUNNO WHEN YET</h3>
+<h3>October 17, 2016</h3>
 <b><u>MAP</u></b>
  - Set destination via CREST is working. You may need to re-authenticate your characters with CREST to get it working.
  - Fixed system-notifications. Adding new notifications was broken.

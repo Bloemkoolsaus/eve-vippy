@@ -121,7 +121,7 @@
 		<b>Set Destination to {$closestsystem->name}</b>
 	</div>
 {foreach from=$App->user->getAuthorizedCharacters() item=char}
-	<div onclick="setDestination('{$char->id}','{$wormhole->getSolarsystem()->id}'); closeContextMenu();" class="character">
+	<div onclick="setDestination('{$char->id}','{$closestsystem->id}'); closeContextMenu();" class="character">
 		<img src="https://image.eveonline.com/Character/{$char->id}_200.jpg" align="left" />
 		{$char->name}
 	</div>
