@@ -476,7 +476,7 @@ namespace scanning\model
 		 */
 		function removeWormhole(\scanning\model\Wormhole $wormhole, $updateCacheTimer=true)
 		{
-            if (\User::getUSER()->isAllowedChainAction($this, "delete"))
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this, "delete"))
             {
                 if ($wormhole->getSolarsystem() !== null)
                 {
@@ -487,7 +487,8 @@ namespace scanning\model
                                                              "name" => $wormhole->getSolarsystem()->name . " - " . $wormhole->name),
                                        "chain"      => array("id"   => $this->id,
                                                              "name" => $this->name));
-                    \User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
+                    if (\User::getUSER())
+                        \User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
                 }
 
                 \MySQL::getDB()->delete("mapwormholes", array("id" => $wormhole->id));

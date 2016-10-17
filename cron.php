@@ -20,21 +20,14 @@ if (count($arguments) > 1)
     $script = array_shift($arguments);
     $moduleName = strtolower(array_shift($arguments));
     $moduleClass = '\\'.$moduleName.'\\Module';
-    if (class_exists($moduleClass))
-    {
+    if (class_exists($moduleClass)) {
         $moduleObject = new $moduleClass();
-        if (method_exists($moduleObject, "getCron"))
-        {
+        if (method_exists($moduleObject, "getCron")) {
             $result = $moduleObject->getCron($arguments);
             \AppRoot::doCliOutput($result);
-        }
-        else
+        } else
             \AppRoot::error("Module ".$moduleName." does not have cron method");
-    }
-    else
+    } else
         \AppRoot::error("Module ".$moduleName." not found");
-}
-else
-{
+} else
     \AppRoot::error("Missing arguments");
-}

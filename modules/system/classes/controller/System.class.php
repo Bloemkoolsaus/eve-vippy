@@ -7,7 +7,6 @@ namespace system\controller
 		{
 			\AppRoot::setMaxExecTime(6400);
 			\AppRoot::setMaxMemory("1000M");
-
 			$this->cleanupOldBackups();
 
 			// Maak de backup.
@@ -53,12 +52,14 @@ namespace system\controller
 		private function cleanupOldBackups()
 		{
 			$directory = $this->getBackupDir();
+            \AppRoot::doCliOutput("Clean old backups");
 			if ($handle = opendir($directory))
 			{
 				while (false !== ($file = readdir($handle)))
 				{
 					if (!is_file($file) && $file != "." && $file != "..")
 					{
+                        \AppRoot::doCliOutput(" - ".$file);
 						$year = $file[0].$file[1].$file[2].$file[3];
 						$month = $file[4].$file[5];
 						$day = $file[6].$file[7];

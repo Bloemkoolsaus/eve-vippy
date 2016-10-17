@@ -324,7 +324,7 @@ class MySQL
 
 	function makeBackUp($structureOnly=false, $backupFile=false)
 	{
-		\AppRoot::debug("MySQL: Start backup");
+		\AppRoot::doCliOutput("MySQL: Start backup");
 
 		$directoryParts = array();
 		foreach (explode("/",$backupFile) as $part) {
@@ -332,13 +332,15 @@ class MySQL
 		}
 		$filename = "documents/".array_pop($directoryParts);
 		$directory = implode("/", $directoryParts);
-
+        \AppRoot::doCliOutput(" - Backup to: ".$directory);
 		\AppRoot::doCliCommand("mysqldump -h ".$this->host." -u ".$this->user." -p".$this->pass." --lock-tables=false ".$this->dtbs." > ".$filename);
+
+        \AppRoot::doCliOutput(" - Archive backup: ".$filename);
 		\AppRoot::doCliCommand("tar -czf ".$filename.".tar.gz ".$filename);
 		\AppRoot::doCliCommand("mv ".$filename.".tar.gz ".$directory."/".str_replace("documents/","",$filename).".tar.gz");
 		\AppRoot::doCliCommand("rm ".$filename);
 
-		\AppRoot::debug("MySQL: Finished backup");
+		\AppRoot::doCliOutput("MySQL: Finished backup");
 		return true;
 	}
 

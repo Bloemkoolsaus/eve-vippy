@@ -30,12 +30,15 @@ class Signature extends \Model
      */
     function store()
     {
-        if ($this->scannedBy == 0) {
-            $this->scannedBy = \User::getUSER()->id;
-            $this->scanDate = date("Y-m-d H:i:s");
-        }
-        $this->updateBy = \User::getUSER()->id;
         $this->updateDate = date("Y-m-d H:i:s");
+        if (\User::getUSER())
+            $this->updateBy = \User::getUSER()->id;
+
+        if ($this->scannedBy == 0) {
+            $this->scanDate = date("Y-m-d H:i:s");
+            if (\User::getUSER())
+                $this->scannedBy = \User::getUSER()->id;
+        }
 
         parent::store();
     }

@@ -155,24 +155,26 @@ namespace scanning\model
 
 		function delete()
 		{
-            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
 			    $this->getChain()->removeWormhole($this);
 		}
 
 		function move($newX, $newY, $modifier=null)
 		{
-            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "move"))
             {
                 $this->x = $newX;
                 $this->y = $newY;
                 $this->store($modifier);
 
-                \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, [
-                    "delete-all" => false,
-                    "wormhole"   => ["id" => $this->id, "name" => $this->name],
-                    "system"     => ["id" => ($this->getSolarsystem())?$this->getSolarsystem()->id:0, "name" => (($this->getSolarsystem())?$this->getSolarsystem()->name." - ":"").$this->name],
-                    "chain"      => ["id" => $this->getChain()->id, "name" => $this->getChain()->name]
-                ]);
+                if (\User::getUSER()) {
+                    \User::getUSER()->addLog("move-wormhole", $this->solarSystemID, [
+                        "delete-all" => false,
+                        "wormhole"   => ["id" => $this->id, "name" => $this->name],
+                        "system"     => ["id" => ($this->getSolarsystem())?$this->getSolarsystem()->id:0, "name" => (($this->getSolarsystem())?$this->getSolarsystem()->name." - ":"").$this->name],
+                        "chain"      => ["id" => $this->getChain()->id, "name" => $this->getChain()->name]
+                    ]);
+                }
             }
 		}
 
@@ -253,16 +255,12 @@ namespace scanning\model
 		 */
 		function getConnectionTo($solarSystemID)
 		{
-			foreach ($this->getConnections() as $connection)
-			{
-				if ($connection->getFromWormhole()->id == $this->id)
-				{
-					if ($connection->getToSystem()->id == $solarSystemID)
+			foreach ($this->getConnections() as $connection) {
+				if ($connection->getFromWormhole() && $connection->getFromWormhole()->id == $this->id) {
+					if ($connection->getToSystem() && $connection->getToSystem()->id == $solarSystemID)
 						return $connection;
-				}
-				else
-				{
-					if ($connection->getFromSystem()->id == $solarSystemID)
+				} else {
+					if ($connection->getFromSystem() && $connection->getFromSystem()->id == $solarSystemID)
 						return $connection;
 				}
 			}

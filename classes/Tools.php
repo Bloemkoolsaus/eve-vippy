@@ -829,6 +829,7 @@ Class Tools
     /**
      * Get files from directory
      * @param string $directory
+     * @param bool $allowDirectory
      * @return string[]
      */
     public static function getFilesFromDirectory($directory, $allowDirectory=false)
@@ -837,20 +838,16 @@ Class Tools
         $files = array();
 
         \AppRoot::debug("getFilesFromDirectory([string]".$directory."[/string])");
-        if ($handle = @opendir($directory))
-        {
+        if ($handle = @opendir($directory)) {
             while (false !== ($file = readdir($handle)))
             {
                 if ($file == "." || $file == "..")
                     continue;
-                if (file_exists($directory."/".$file))
-                {
-                    if (!$allowDirectory)
-                    {
+                if (file_exists($directory."/".$file)) {
+                    if (!$allowDirectory) {
                         if (is_file($directory."/".$file))
                             $files[] = $directory."/".$file;
-                    }
-                    else
+                    } else
                         $files[] = $directory."/".$file;
                 }
             }

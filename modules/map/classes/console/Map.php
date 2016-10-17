@@ -3,24 +3,24 @@ namespace map\console;
 
 class Map
 {
-    function doMaintenance()
-    {
-        \AppRoot::setMaxExecTime(9999);
-        \AppRoot::setMaxMemory("2G");
-        $this->cleanupSignatures();
-        $this->cleanupWormholes();
-        return true;
-    }
-
     /**
      * Oude signatures opruimen.
      * @return bool
      */
     function cleanupSignatures()
     {
-        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-3,date("Y")));
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_signature WHERE updatedate < ? AND deleted = 0 AND sigtype != 'pos'", array($cleanupDate)))
+        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-14,date("Y")));
+        \AppRoot::doCliOutput("Cleanup signatures older then ".$cleanupDate);
+        if ($results = \MySQL::getDB()->getRows("select *
+                                                 from   map_signature
+                                                 where  deleted = 0
+                                                 and    updatedate < ?
+                                                 and    sigtypeid not in (
+                                                   select id from map_signature_type where name in ('pos','citadel')
+                                                 )"
+                                    , array($cleanupDate)))
         {
+            \AppRoot::doCliOutput(" - ".count($results)." signatures to clean up");
             foreach ($results as $result)
             {
                 $signature = new \map\model\Signature();
@@ -30,8 +30,11 @@ class Map
             }
         }
 
-        $cleanupDate = date("Y-m-d H:i:s", mktime(0,0,0,date("m")-1,date("d"),date("Y")));
-        \MySQL::getDB()->doQuery("DELETE FROM map_signature WHERE updatedate < ? AND deleted > 0 AND sigtype != 'pos'", array($cleanupDate));
+        $cleanupDate = date("Y-m-d H:i:s", mktime(0,0,0,date("m")-2,date("d"),date("Y")));
+        \MySQL::getDB()->doQuery("DELETE FROM map_signature
+                                  WHERE updatedate < ? AND deleted > 0
+                                  and sigtypeid not in (select id from map_signature_type where name in ('pos','citadel'))"
+                            , array($cleanupDate));
         return true;
     }
 
@@ -42,11 +45,13 @@ class Map
     function cleanupWormholes()
     {
         $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-2,date("Y")));
+        \AppRoot::doCliOutput("Cleanup wormholes older then ".$cleanupDate);
         if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE adddate < ?", array($cleanupDate)))
         {
+            \AppRoot::doCliOutput(" - ".count($results)." wormholes to clean up");
             foreach ($results as $result)
             {
-                $wormhole = new \scanning\model\Wormhole();
+                $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
                 if (!$wormhole->isPermenant())
                     $wormhole->delete();
@@ -54,18 +59,16 @@ class Map
         }
 
         // Oude connections opruimen
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholeconnections WHERE adddate < ?", array($cleanupDate)))
+        \AppRoot::doCliOutput("Cleanup connections with missing wormholes");
+        if ($results = \MySQL::getDB()->getRows("select  *
+                                                from    mapwormholeconnections
+                                                where   fromwormholeid not in (select id from mapwormholes)
+                                                or      towormholeid not in (select id from mapwormholes)"))
         {
-            foreach ($results as $result)
-            {
+            \AppRoot::doCliOutput(" - ".count($results)." connections to clean up");
+            foreach ($results as $result) {
                 $connection = new \scanning\model\Connection();
                 $connection->load($result);
-
-                if ($connection->getFromWormhole()->isPermenant())
-                    continue;
-                if ($connection->getToWormhole()->isPermenant())
-                    continue;
-
                 $connection->delete();
             }
         }

@@ -58,4 +58,12 @@ class Module extends \Module
         $appData->map->trackingMode = (isset($_SESSION["trackingonly"]) && $_SESSION["trackingonly"] === true) ? true : false;
         return $appData;
     }
+
+    function doMaintenance()
+    {
+        $console = new \map\console\Map();
+        $console->cleanupSignatures();
+        $console->cleanupWormholes();
+        return true;
+    }
 }

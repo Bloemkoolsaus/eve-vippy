@@ -304,7 +304,7 @@ namespace scanning\model
 
 		function delete()
 		{
-            if (\User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
             {
                 \MySQL::getDB()->delete("mapwormholeconnections", array("id" => $this->id));
 
