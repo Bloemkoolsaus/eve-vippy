@@ -84,10 +84,21 @@ class Fleet
                 {
                     foreach ($crest->getResult()->items as $fleetMember)
                     {
-                        $character = new \eve\model\Character($fleetMember->character->id);
+                        // Check character exists
+                        $character = \eve\model\Character::findByID($fleetMember->character->id);
+                        if (!$character) {
+                            $controller = new \eve\controller\Character();
+                            $character = $controller->importCharacter($fleetMember->character->id);
+                        }
+
                         \AppRoot::doCliOutput(" - ".$character->name);
                         if ($character->getUser())
+                        {
                             \User::setUSER($character->getUser());
+
+                            // Log entry
+                            $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id."-".date("Ymd"));
+                        }
 
                         $locationTracker->setCharacterLocation(
                             $fleet->authGroupID,

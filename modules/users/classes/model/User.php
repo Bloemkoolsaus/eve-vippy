@@ -108,36 +108,20 @@ namespace users\model
 			}
 		}
 
-		public function addLog($what, $whatid=0, $extrainfo=null)
+		public function addLog($what, $whatid=null, $extrainfo=null, $currentPilot=null, $sessionID=null)
 		{
 			if ($this->id == 0)
 				return false;
 
+            if (!$sessionID)
+                $sessionID = session_id();
+
 			if (is_array($extrainfo))
 				$extrainfo = json_encode($extrainfo);
 
-			$currentPilot = \eve\model\IGB::getIGB()->getPilotID();
-			if (!$currentPilot || $currentPilot == null)
-				$currentPilot = 0;
-			else
-			{
-				$pilot = new \eve\model\Character($currentPilot);
-				if ($pilot->userID != 0 && $pilot->userID != $this->id)
-				{
-					if ($what !== "login-unowned-character")
-					{
-						$user = new \users\model\User($this->id);
-						$user->addLog("login-unowned-character", $this->id,
-								array(	"character" => $this->id,
-										"fromuser"	=> $pilot->userID,
-										"touser"	=> $this->id));
-					}
-				}
-			}
-
 			$isDouble = false;
 			$checkForDoubles = true;
-			if (in_array($what, array("delete-wormhole","add-wormhole")))
+			if (in_array($what, ["delete-wormhole","add-wormhole"]))
 				$checkForDoubles = false;
 
 			if ($checkForDoubles)
@@ -145,26 +129,31 @@ namespace users\model
 				if ($result = \MySQL::getDB()->getRow("	SELECT * FROM user_log
 														WHERE sessionid = ?
 														AND what = ? AND whatid = ?"
-											, array(session_id(), $what, $whatid)))
+											, [$sessionID, $what, $whatid]))
 				{
-					\MySQL::getDB()->update("user_log",
-									array("lastdate" => date("Y-m-d H:i:s")),
-									array("id" => $result["id"]));
+					\MySQL::getDB()->update("user_log", ["lastdate" => date("Y-m-d H:i:s")], ["id" => $result["id"]]);
 					$isDouble = true;
 				}
 			}
 
 			if (!$isDouble)
 			{
+                $ipAddress = (isset($_SERVER["REMOTE_ADDR"]))?$_SERVER["REMOTE_ADDR"]:null;
+                $userAgent = (isset($_SERVER["HTTP_USER_AGENT"]))?$_SERVER["HTTP_USER_AGENT"]:null;
+                if (\AppRoot::isCommandline()) {
+                    $ipAddress = "localhost";
+                    $userAgent = "CommandLine";
+                }
+
 				$data = array("userid"	=> $this->id,
 							"pilotid"	=> $currentPilot,
 							"lastdate"	=> date("Y-m-d H:i:s"),
 							"logdate"	=> date("Y-m-d H:i:s"),
 							"what"		=> $what,
 						    "whatid"    => $whatid,
-							"ipaddress"	=> $_SERVER["REMOTE_ADDR"],
-							"sessionid"	=> session_id(),
-							"useragent"	=> $_SERVER["HTTP_USER_AGENT"],
+							"ipaddress"	=> $ipAddress,
+							"sessionid"	=> $sessionID,
+							"useragent"	=> $userAgent,
 						    "extrainfo" => $extrainfo);
 				\MySQL::getDB()->insert("user_log", $data);
 			}
@@ -1447,8 +1436,8 @@ namespace users\model
             $nrSecondsOnline = array();
             foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
             {
-                // Search for a login through the IGB. So, look for pilot-id
-                if ($log->what == "login" && $log->getPilot() != null)
+                // Zoek naar ingame log entries.
+                if ($log->what == "ingame" && $log->getPilot() != null)
                 {
                     if (!isset($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))]))
                         $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = 0;

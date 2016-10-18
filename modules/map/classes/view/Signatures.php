@@ -200,7 +200,6 @@ class Signatures
                 $signature->sigInfo = (trim($signature->sigInfo) != "") ? $signature->sigInfo : $sigName;
                 $signature->signalStrength = str_replace("%","",$parts[4]);
                 $signature->deleted = false;
-                $signature->store();
                 $controller->storeSignature($map, $signature);
 
                 $nrSignatures++;

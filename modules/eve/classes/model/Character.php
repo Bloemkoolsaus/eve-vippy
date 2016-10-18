@@ -15,7 +15,6 @@ namespace eve\model
 		private $isAuthorized = null;
         private $authMessage = null;
 		private $corporation = null;
-		private $roles = null;
 		private $user = null;
 
 		function __construct($id=false)
@@ -159,5 +158,23 @@ namespace eve\model
 
 			return $this->user;
 		}
+
+
+
+
+        /**
+         * Find character by ID
+         * @param $characterID
+         * @return \eve\model\Character|null
+         */
+        public static function findByID($characterID)
+        {
+            if ($result = \MySQL::getDB()->getRow("select * from characters where id = ?", [$characterID])) {
+                $char = new \eve\model\Character($characterID);
+                $char->load($result);
+                return $char;
+            }
+            return null;
+        }
 	}
 }

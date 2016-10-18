@@ -44,7 +44,7 @@ namespace eve\controller
 
             // Public info
             $api = new \eve\controller\API();
-            $api->setCharacterID($character->id);
+            $api->setCharacterID($characterID);
             $result = $api->call("/eve/CharacterInfo.xml.aspx");
 
             if ($errors = $api->getErrors())

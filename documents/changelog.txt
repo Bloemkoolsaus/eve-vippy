@@ -1,3 +1,9 @@
+<h3>October 18, 2016</h3>
+<b><u>STATISTICS</u></b>
+ - Some of statistic collection was still relying on the IGB. Fixed that.
+   Unfortunately, this means that from the moment the IGB got removed (11th) until today (18th) some statistics may be inaccurate!!!
+
+
 
 <h3>October 17, 2016</h3>
 <b><u>MAP</u></b>
@@ -26,11 +32,9 @@
  	- 'Remove connected systems': Removes all systems connected to this system. Remove a connection and then use this to remove that part of the chain!
  - Add a CITADEL signature type that behaves just like a POS signature.
 
-{if $dir_admin_enabled}
 <b><u>ADMIN</u></b>
  - CREST does not have the option (yet) to see corp-roles. Therefor, it is not possible to see who is a director.
- 	Everyone that had admin, is now added to a usergroup that gives you admin roles instead. You can edit who is a member of that group to add/remove admins.
-{/if}
+   Everyone that had admin, is now added to a usergroup that gives you admin roles instead. You can edit who is a member of that group to add/remove admins.
 
 
 
