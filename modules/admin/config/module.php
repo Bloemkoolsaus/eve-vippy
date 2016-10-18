@@ -70,6 +70,7 @@ if (\User::getUSER())
             "section" => "clearcache");
     }
 
+    /*
     if (\User::getUSER()->isAdmin())
     {
         $config["submenu"][] = array(
@@ -77,6 +78,7 @@ if (\User::getUSER())
             "name" => "API Management",
             "url" => "api/admin");
     }
+    */
 
     $config["rights"]["sysadmin"] = array(
         "title" => "System Administrator",

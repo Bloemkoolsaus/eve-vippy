@@ -127,7 +127,7 @@ div#mapHeader div#divRefreshTimer {
 	width: 40%;
 }
 div#mapHeader div#divRefreshTimer div {
-	padding-top: 10px;
+	padding-top: 3px;
 }
 
 @media (max-width: 600px) {

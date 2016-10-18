@@ -14,7 +14,7 @@ class User
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("section", $section);
-        return $tpl->fetch("users/group/overview");
+        return $tpl->fetch("users/user/overview");
     }
 
     function getEdit($arguments=[])

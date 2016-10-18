@@ -697,57 +697,21 @@ namespace users\model
 			$this->character = null;
 
 			// Welke characters mogen we allemaal als main gebruiken?
-			foreach ($this->getAuthorizedCharacters() as $char)
+			foreach ($this->getAuthorizedCharacters(false) as $char)
 			{
-				// Kijk of deze toon beter is dan die nu al staat
-				if ($this->character !== null)
-				{
-					if ($this->character->isCEO())
-					{
-						if ($char->isCEO())
-						{
-							// Allebij CEO.. wie is het oudst?
-							if (strtotime($this->character->dateOfBirth) > strtotime($char->dateOfBirth))
-								$this->character = $char;
-						}
-						break;
-					}
-
-					if ($char->isCEO())
-					{
-						$this->character = $char;
-						break;
-					}
-
-					if ($char->isDirector())
-					{
-						if ($this->character->isDirector())
-						{
-							// Allebij director.. wie is het oudst?
-							if (strtotime($this->character->dateOfBirth) > strtotime($char->dateOfBirth))
-								$this->character = $char;
-						}
-						else
-							$this->character = $char;
-					}
-					else
-					{
-						// Alleen verder als de huidige toon ook geen director is
-						if (!$this->character->isDirector())
-						{
-							// Kijk welke het oudst is
-							if (strtotime($this->character->dateOfBirth) > strtotime($char->dateOfBirth))
-								$this->character = $char;
-						}
-					}
-				}
-				else
-					$this->character = $char;
+                if ($char->isAuthorized())
+                {
+                    if ($this->character) {
+                        if ($char->isCEO())
+                            $this->character = $char;
+                    }
+                    else
+                        $this->character = $char;
+                }
 			}
 
 			// Geen toon gevonden..?
-			if ($this->character == null)
-			{
+			if (!$this->character) {
 				// Dan mag deze gebruiker eigenlijk helemaal niet in VIPPY. Zet toch maar iets.
 				foreach ($this->getCharacters() as $char) {
 					$this->character = $char;
@@ -755,8 +719,7 @@ namespace users\model
 				}
 			}
 
-			if ($this->character != null)
-			{
+			if ($this->character != null) {
 				$this->mainCharId = $this->character->id;
 				return $this->character;
 			}
@@ -949,7 +912,7 @@ namespace users\model
 			\AppRoot::debug("User()->getAuthorizedCharacters($fromCache)");
 
 			// Check cache
-            $characters = array();
+            $characters = [];
             $cacheFilename = $this->getCacheDirectory() . "authchars.json";
             if ($fromCache) {
                 if ($cache = \Cache::file()->get($cacheFilename)) {

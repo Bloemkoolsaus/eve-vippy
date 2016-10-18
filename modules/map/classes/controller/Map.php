@@ -17,7 +17,8 @@ class Map
             "n.deleted = 0",
             "n.expiredate > '".date("Y-m-d H:i:s")."'",
             "n.authgroupid = ".$chain->authgroupID,
-            "(w.chainid = ".$chain->id." or n.global > 0)"
+            "(w.chainid = ".$chain->id." or n.global > 0)",
+            "(r.userid is null or n.persistant > 0)"
         ];
 
         // Exec query
@@ -25,8 +26,7 @@ class Map
                                                 FROM	notices n
                                                     INNER JOIN mapwormholes w ON w.solarsystemid = n.solarsystemid
                                                     LEFT JOIN notices_read r ON r.noticeid = n.id AND r.userid = ?
-                                                WHERE 	(r.userid IS NULL OR n.persistant > 0)
-                                                AND		".implode(" AND ", $queryParts)."
+                                                WHERE 	".implode(" AND ", $queryParts)."
                                                 GROUP BY n.id"
                                     , [\User::getUSER()->id]))
         {
