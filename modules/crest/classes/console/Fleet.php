@@ -13,14 +13,14 @@ class Fleet
         \MySQL::getDB()->doQuery("delete from crest_fleet where active = 0 and lastupdate < ?", [date("Y-m-d H:i:s", mktime(date("H")-6,date("i"),date("s"),date("m"),date("d"),date("Y")))]);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (!\AppRoot::approachingMaxExecTime(2))
+        while (!\AppRoot::approachingMaxExecTime(5))
         {
             \AppRoot::doCliOutput("Find fleets");
             if ($results = \MySQL::getDB()->getRows(" select  *
                                                       from    crest_fleet
                                                       where   active > 0
                                                       and     (lastupdate < ? or lastupdate is null)"
-                                   , [date("Y-m-d H:i:s", strtotime("now")-31)]))
+                                   , [date("Y-m-d H:i:s", strtotime("now")-35)]))
             {
                 \AppRoot::doCliOutput(count($results)." fleets found");
                 foreach ($results as $result)
