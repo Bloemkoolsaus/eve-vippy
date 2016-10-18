@@ -3,6 +3,9 @@
  - Some of statistic collection was still relying on the IGB. Fixed that.
    Unfortunately, this means that from the moment the IGB got removed (11th) until today (18th) some statistics may be inaccurate!!!
 
+<b><u>MAP</u></b>
+ - Fixed a bug in the recently-scanned marker.
+ 
 
 
 <h3>October 17, 2016</h3>
