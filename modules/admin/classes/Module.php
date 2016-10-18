@@ -23,16 +23,6 @@ class Module extends \Module
             }
         }
 
-        if ($section == "changelog")
-        {
-            \User::getUSER()->setConfig("patchnotes", strtotime("now")+600);
-            \User::getUSER()->resetCache();
-
-            $notes = \SmartyTools::getSmarty();
-            $this->moduleTitle = "Patch notes";
-            $this->moduleContent = "<pre class='changelog'>".$notes->fetch("file:".getcwd()."/documents/changelog.txt")."</pre>";
-        }
-
         if ($section == "subscriptions")
         {
             if (\User::getUSER()->getIsSysAdmin())

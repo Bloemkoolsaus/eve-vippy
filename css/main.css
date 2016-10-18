@@ -269,13 +269,16 @@ pre {
 	text-align: left;
 }
 
-pre.changelog  {
+pre.patchnotes  {
     font-family: Consolas, monospace;
 	font-size: 11px;
 }
-pre.changelog h3 {
+pre.patchnotes h3 {
     font-family: Consolas, monospace;
 	font-size: 15px;
+}
+pre.patchnotes strong {
+    color: #ffffff;
 }
 
 

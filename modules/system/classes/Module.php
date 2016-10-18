@@ -17,10 +17,8 @@ class Module extends \Module
         $action = (\Tools::GET("action"))?\Tools::GET("action"):"cron";
         $arguments = array();
 
-        foreach (explode(",",\Tools::GET("arguments")) as $key => $arg)
-        {
-            if (strlen(trim($arg)) > 0)
-            {
+        foreach (explode(",",\Tools::GET("arguments")) as $key => $arg) {
+            if (strlen(trim($arg)) > 0) {
                 if ($key == 0)
                     $action = $arg;
                 else
@@ -49,7 +47,7 @@ class Module extends \Module
             exit;
         }
 
-        return "Done";
+        return parent::getContent();
     }
 
     function doMaintenance()

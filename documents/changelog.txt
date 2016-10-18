@@ -1,13 +1,3 @@
-{assign var=numeric_naming value=0}
-{assign var=dir_admin_enabled value=1}
-{foreach from=$App->user->getAuthGroups() item=group}
-	{if $group->getConfig('wh_naming_numeric')}
-		{assign var=numeric_naming value=1}
-	{/if}
-	{if $group->getConfig('dir_admin_disabled')}
-		{assign var=dir_admin_enabled value=0}
-	{/if}
-{/foreach}
 
 <h3>October 17, 2016</h3>
 <b><u>MAP</u></b>
@@ -313,8 +303,8 @@
  	- Ability to add multiple records
  	- Mark manually added mass on the jumplog
  - Add a button to mark a system fully scanned.
- 	- <img src="images/default/scanned.not.png"> Unmarked system will have an `unmarked` icon at the top right.
- 	- <img src="images/default/scanned.recently.png"> Marked systems that were marked over 2 hours ago will have also have an icon.
+ 	- <img src="/images/default/scanned.not.png"> Unmarked system will have an `unmarked` icon at the top right.
+ 	- <img src="/images/default/scanned.recently.png"> Marked systems that were marked over 2 hours ago will have also have an icon.
 
 
 
@@ -349,7 +339,7 @@
  - Fix button `<i>Switch active system to current location</i>` for the ingame browser.
  - Wormhole stubs:
 	- Improve parser for the wormhole stub names.
- 	- Added a naming help for wormhole stubs. See the `map legend` (<i>click the blue <img src="images/default/info.png"> at the top right of the main map</i>).
+ 	- Added a naming help for wormhole stubs. See the `map legend` (<i>click the blue <img src="/images/default/info.png"> at the top right of the main map</i>).
 
 
 
@@ -433,11 +423,11 @@
 
 <h3>Februari 18th 2014</h3>
 <b><u>SCANNING</u></b>
- - Add faction warfare icons for faction warfare (<img src="images/eve/fw.png">) systems and contested (<img src="images/eve/fw.contested.png">) systems.
+ - Add faction warfare icons for faction warfare (<img src="/images/eve/fw.png">) systems and contested (<img src="/images/eve/fw.contested.png">) systems.
  - Add faction logo's to systems that belong to an NPC faction.
  - Add an option to a connection to mark it as not a wormhole but normal gate jumps. These connections will show up with a blue color.
  - You are now able to define if you have a capital ship in k-space. Go to `profile` > `My Capital Ships`.
-   If a capital ship is in cyno range of a connecting k-space wormhole, VIPPY will show a cyno icon  (<img src="images/eve/cyno.png">).
+   If a capital ship is in cyno range of a connecting k-space wormhole, VIPPY will show a cyno icon  (<img src="/images/eve/cyno.png">).
    	<i>* By default, VIPPY will assume jump drive calibration 4. You can change this at `Profile` > `Account Settings`</i>
  - Limit the number of active characters shown on the map in a certain system.
  - Fixed an issue when calculating if a high-sec system is an hs island or not. 0.45 systems were seen as lowsec, while they are not.
@@ -447,8 +437,8 @@
 <h3>December 23, 2013</h3>
 <b><u>SCANNING</u></b>
  - Fixed the `on-map` tradehub calculation.
- - Add icons if a HS is on a hs-island (<img src="images/eve/stargate.red.png">).
- - Add icons if a LS has a direct gate to hs (<img src="images/eve/stargate.green.png">).
+ - Add icons if a HS is on a hs-island (<img src="/images/eve/stargate.red.png">).
+ - Add icons if a LS has a direct gate to hs (<img src="/images/eve/stargate.green.png">).
 
 
 
@@ -460,8 +450,8 @@
 
 <h3>August 17, 2013</h3>
 <b><u>SCANNING</u></b>
- - Add station icons (<img src="images/eve/station.png">) on the map for station systems.
- - Add yellow (<img src="images/eve/skull.orange.png">) and red (<img src="images/eve/skull.red.png">) skull icons to indicate recent pvp or pve activity.
+ - Add station icons (<img src="/images/eve/station.png">) on the map for station systems.
+ - Add yellow (<img src="/images/eve/skull.orange.png">) and red (<img src="/images/eve/skull.red.png">) skull icons to indicate recent pvp or pve activity.
  - Add a jump log for each wormhole (hover mouse over the connection to see it).
 
 <b><u>USERS</u></b>

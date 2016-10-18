@@ -1,0 +1,1 @@
+delete from user_config where var = 'patchnotes';

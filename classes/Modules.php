@@ -210,16 +210,11 @@ class Modules
 		$tpl = \SmartyTools::getSmarty();
 		$tpl->assign("mainmenu", \Modules::getMainMenu());
 		$tpl->assign("cachetime", filesize("documents/changelog.txt"));
+        $tpl->assign("today", \Tools::getDayOfTheWeek().", ".Tools::getWrittenMonth(date("m"))." ".date("d").", ".date("Y"));
 
-		if (\Tools::getCurrentSystem())
-			$tpl->assign("location", \Tools::getCurrentSystem());
-		else
-			$tpl->assign("today", \Tools::getDayOfTheWeek().", ".Tools::getWrittenMonth(date("m"))." ".date("d").", ".date("Y"));
-
-		if (\User::getUSER() && \User::getUSER()->isAuthorized()) {
-            $lastUpdateCheck = \User::getUSER()->getConfig("patchnotes");
-            $lastPatchnotes = filemtime("documents/changelog.txt");
-            if ($lastUpdateCheck == null || $lastUpdateCheck <= $lastPatchnotes)
+		if (\User::getUSER()) {
+            $patchNoteController = new \system\controller\PatchNotes();
+            if ($patchNoteController->hasNewPatchNotes(\User::getUSER()))
                 $tpl->assign("newPatchNotes", 1);
 		}
 

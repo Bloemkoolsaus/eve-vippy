@@ -6,9 +6,6 @@
 				Welcome: {$App->user->getFullname()}
 			</div>
 			<div id="infoheader-info">
-			{if isset($location)}
-				<span class="currentSolarSytem">{$location}</span>
-			{/if}
 			{if isset($today)}
 				{$today}
 			{/if}
@@ -24,7 +21,7 @@
 		<div>
 			New updates since your last visit!
 			&nbsp;
-			<a href="/index.php?module=admin&section=changelog">Patch-notes</a>
+			<a href="/system/patchnotes">Patch-notes</a>
 		</div>
 	</div>
 {/if}

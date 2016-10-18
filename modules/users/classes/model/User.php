@@ -597,6 +597,9 @@ namespace users\model
 
 		public function setConfig($var, $val)
 		{
+            if (is_object($val) || is_array($val))
+                $val = json_encode($val);
+
 			$this->config[$var] = $val;
 			\MySQL::getDB()->updateinsert("user_config",
 									array("userid" => $this->id, "var" => $var, "val" => $val),
