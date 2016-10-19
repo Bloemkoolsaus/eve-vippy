@@ -5,6 +5,9 @@ class Account
 {
     function getOverview($arguments = [])
     {
+        \AppRoot::title("Profile");
+        \AppRoot::title("Account Settings");
+
         if (\Tools::POST("save"))
         {
             \User::getUSER()->username = \Tools::POST("username");

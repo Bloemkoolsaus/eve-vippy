@@ -5,10 +5,10 @@ class Characters
 {
     function getOverview($arguments=[])
     {
-        $characters = \User::getUSER()->getCharacters();
+        \AppRoot::title("Profile");
+        \AppRoot::title("Characters");
 
         $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("characters", $characters);
         return $tpl->fetch("profile/characters/overview");
     }
 

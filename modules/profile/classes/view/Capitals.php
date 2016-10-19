@@ -5,6 +5,8 @@ class Capitals
 {
     function getOverview($arguments = [])
     {
+        \AppRoot::title("Profile");
+        \AppRoot::title("Capital Ships");
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("capitals", \profile\model\Capital::findAll(["userid" => \User::getUSER()->id]));
         return $tpl->fetch("profile/capitals/overview");

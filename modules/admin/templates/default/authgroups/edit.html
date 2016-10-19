@@ -19,7 +19,7 @@
 	<input type="hidden" name="config[atlas_url]" value="{$authgroup->getConfig('atlas_url')}">
 {/if}
 
-	<div style="float: left; width: 40%;">
+	<div class="col5">
 		<div class="form">
 			<label class="field">Name:</label>
 			<label class="value">
@@ -66,7 +66,7 @@
 		</div>
 	</div>
 
-	<div style="float: left; width: 16%;">
+	<div class="col2">
 		<h3>
 			Systems of interest
 			<img src="/images/eve/info.png" onclick="helpPopupTradehubs();" style="cursor: pointer;" align="right">
@@ -75,8 +75,7 @@
 		<table class="sectionoverview">
 			<tr>
 				<th>SolarSystem</th>
-				<th style="text-align: center;">On Map</th>
-				<th></th>
+				<th style="text-align: center;" colspan="2">On Map</th>
 			</tr>
 		{assign var=i value=0}
 		{foreach from=$authgroup->getClosestSystems() item=system}
@@ -109,11 +108,13 @@
 		</div>
 	</div>
 
-	<div style="float: right; width: 38%;">
+	<div class="col5 last right">
 	{if $authgroup->id > 0}
-		<div style="float: left; width: 250px;">
+		<div class="col8">
 			<div class="form">
-				<div class="field"><h3>Authorized Alliances:<h3></div>
+				<div class="field" style="white-space: nowrap;">
+					<h3>Authorized Alliances:<h3>
+				</div>
 				<div class="value" style="width: 230px;">
 				{foreach from=$authgroup->getAlliances() item=alliance}
 					<div style="margin: 2px;">
@@ -128,7 +129,9 @@
 			<div style="clear:both;"></div>
 			<br />
 			<div class="form">
-				<div class="field"><h3>Authorized Corporations:</h3></div>
+				<div class="field" style="white-space: nowrap;">
+					<h3>Authorized Corporations:</h3>
+				</div>
 				<div class="value" style="width: 230px;">
 				{foreach from=$authgroup->getCorporations() item=corp}
 					<div style="margin: 2px;">
@@ -157,7 +160,7 @@
 			<br />
 	{/if}
 		</div>
-		<div style="float: left; width: 180px;">
+		<div class="col4 last right">
 			<div>
 				<div class="field"><b>Add Alliance</b></div>
 				<div style="padding: 10px;">
@@ -201,6 +204,7 @@
 			</div>
 		</div>
 	{/if}
+		<div style="clear:both;"></div>
 		<div>
 			<i>When you add an alliance, <u>all</u> corporations in that alliance will be authorized!</i>
 		</div>

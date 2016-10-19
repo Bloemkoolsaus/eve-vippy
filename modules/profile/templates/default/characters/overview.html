@@ -1,10 +1,37 @@
-{if $characters|@count == 0}
-<div class="content">
-	<div class="warning">
-		<div><b>You have not registered any characters yet. Login to CREST below to add characters.</b></div>
-		<div>Atleast one character that is in a corporation or alliance allowed to use Vippy is required!</div>
+{if $App->user->getCharacters()|@count == 0}
+	<div class="content">
+		<div class="warning">
+			<div>
+				<b>You have not registered any characters yet. Login to CREST below to add characters.</b>
+			</div>
+			<div>
+				You need to have atleast one CREST authenticated character in order to use Vippy.
+				Access will be given based on your authed character(s) corporation.
+			</div>
+		</div>
 	</div>
-</div>
+{elseif $App->user->getAuthgroups()|@count == 0}
+	<div class="content">
+		<div class="warning">
+			<div class="message">
+				<div>
+					<h3>You do not seem to be part of an Access-Group.</h3>
+				</div>
+				<div>
+					Atleast one of your characters needs to be in a corporation that is part of an access group.
+				</div>
+				<div style="margin-top: 1em;">
+					Does your corporation not yet use Vippy? You can create a new access-group.
+				</div>
+				<div style="padding: .5em;">
+					<button type="button" class="small" onclick="document.location='/profile/accessgroup'" style="width: 160px;">
+						<img src="/images/default/ui/plus.png" align="left">
+						New Access Group
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {/if}
 <div class="content">
 	<h1>
@@ -33,14 +60,14 @@
 </div>
 <div style="clear:both;"></div>
 
-{if $characters|@count > 0}
+{if $App->user->getCharacters()|@count > 0}
 <div class="content">
 	<h1>
 		<img src="/images/eve/aura.png" align="left">
 		My Characters
 	</h1>
 	{assign var=i value=0}
-	{foreach from=$characters key=c item=character}
+	{foreach from=$App->user->getCharacters() key=c item=character}
 		<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
 			{include file="profile/characters/character" character=$character}
 		</div>

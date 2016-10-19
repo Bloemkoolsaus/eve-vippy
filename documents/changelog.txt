@@ -5,7 +5,7 @@
 
 <b><u>MAP</u></b>
  - Fixed a bug in the recently-scanned marker.
- 
+
 
 
 <h3>October 17, 2016</h3>

@@ -682,15 +682,15 @@ namespace admin\model
 			return $authgroups;
 		}
 
-		/**
-		 * Get authgroups by corporation
-		 * @param integer $corporationID
-		 * @return \admin\model\AuthGroup[]
-		 */
-		public static function getAuthgroupsByCorporation($corporationID)
-		{
-			$authgroups = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT	g.*
+        /**
+         * Get authgroups by corporation
+         * @param integer $corporationID
+         * @return \admin\model\AuthGroup[]
+         */
+        public static function getAuthgroupsByCorporation($corporationID)
+        {
+            $authgroups = array();
+            if ($results = \MySQL::getDB()->getRows("SELECT	g.*
 													FROM    user_auth_groups g
 													    INNER JOIN user_auth_groups_corporations c ON c.authgroupid = g.id
 													WHERE   c.corporationid = ?
@@ -701,17 +701,42 @@ namespace admin\model
 													    INNER JOIN corporations c ON c.allianceid = a.allianceid
 													WHERE   c.id = ?
 												GROUP BY g.id"
-								, array($corporationID, $corporationID)))
-			{
-				foreach ($results as $result)
-				{
-					$group = new \admin\model\AuthGroup();
-					$group->load($result);
-					$authgroups[] = $group;
-				}
-			}
-			return $authgroups;
-		}
+                , array($corporationID, $corporationID)))
+            {
+                foreach ($results as $result)
+                {
+                    $group = new \admin\model\AuthGroup();
+                    $group->load($result);
+                    $authgroups[] = $group;
+                }
+            }
+            return $authgroups;
+        }
+
+        /**
+         * Get authgroups by corporation
+         * @param integer $allianceID
+         * @return \admin\model\AuthGroup[]
+         */
+        public static function getAuthgroupsByAlliance($allianceID)
+        {
+            $authgroups = array();
+            if ($results = \MySQL::getDB()->getRows("SELECT	g.*
+													FROM    user_auth_groups g
+													    INNER JOIN user_auth_groups_alliances a ON a.authgroupid = g.id
+													WHERE   a.id = ?
+												    GROUP BY g.id"
+                                    , array($allianceID)))
+            {
+                foreach ($results as $result)
+                {
+                    $group = new \admin\model\AuthGroup();
+                    $group->load($result);
+                    $authgroups[] = $group;
+                }
+            }
+            return $authgroups;
+        }
 	}
 }
 ?>

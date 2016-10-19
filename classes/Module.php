@@ -28,15 +28,20 @@ class Module
     function getView()
     {
         // Pretty url stuff
-        $arguments = array();
+        $arguments = [];
         if (\Tools::REQUEST("arguments")) {
             foreach (explode(",",\Tools::REQUEST("arguments")) as $arg) {
                 if (strlen(trim($arg)) > 0)
                     $arguments[] = $arg;
             }
         }
+
         $section = (\Tools::REQUEST("section"))?:$this->moduleName;
         $action = (count($arguments)>0)?array_shift($arguments):"overview";
+
+        // Check of we toegang hebben. Zo niet, redirect naar profiel.
+        if (!$this->isAuthorized(array_merge([$section],[$action],$arguments)))
+            \AppRoot::redirect("profile/characters");
 
         $sectionParts = explode("-", $section);
         $classname = "";
@@ -122,6 +127,27 @@ class Module
 	{
 		return \AppRoot::config($this->moduleName."public");
 	}
+
+    /**
+     * Mag de user deze module zien?
+     * @param array $arguments
+     * @return bool
+     */
+    function isAuthorized($arguments=[])
+    {
+        if (\User::getUSER())
+        {
+            // Check aantal characters
+            if (count(\User::getUSER()->getCharacters()) == 0)
+                return false;
+
+            // Check geldige authgroup
+            if (count(\User::getUSER()->getAuthGroups()) == 0)
+                return false;
+        }
+
+        return true;
+    }
 
 	/**
 	 * Is module available for this user?

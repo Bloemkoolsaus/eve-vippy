@@ -21,7 +21,6 @@ div.notice a, div.warning a {
 }
 
 div.message {
-    background-color: #DDDDDD;
     background: #DDDDDD linear-gradient(#FFFFFF, #CCCCCC);
     font-size: 1em;
     color: #111111;
@@ -31,34 +30,37 @@ div.message.soft {
     background: #555555 linear-gradient(#555555, #333333);
     color: #BBBBBB;
 }
-#divNotices div.message {
-    text-align: center;
-}
 div.notice {
-    background-color: #00AAFF;
     background: #00AAFF linear-gradient(#00AAFF, #0088dd);
     color: #FFFFFF;
     text-align: center;
     padding: 5px;
 }
 div.success {
-    background-color: #008800;
     background: #008800 linear-gradient(#00cc00, #00aa00);
     color: #FFFFFF;
     text-align: center;
     padding: 5px;
 }
 div.warning {
-    background-color: #FFCC00;
     background: #FFCC00 linear-gradient(#FFCC00, #CC9900);
     border: double 3px #111111;
     color: #222222;
     text-align: center;
 }
 div.error {
-    background-color: #aa0000;
     background: #aa0000 linear-gradient(#cc0000, #aa0000);
     color: #ffffff;
+    text-align: center;
+}
+
+div.warning div.message {
+    margin: 1px;
+    text-align: center;
+    border: solid 1px #888888;
+    border-radius: 2px;
+}
+#divNotices div.message {
     text-align: center;
 }
 
