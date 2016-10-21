@@ -11,6 +11,7 @@ class Groups
         $section = $this->getOverviewSection();
         $section->urlOverview = "/users/groups?";
         $section->urlEdit = "/users/groups/edit?";
+        $section->urlNew = "/users/groups/edit?id=new";
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("section", $section);
@@ -99,6 +100,7 @@ class Groups
 
         $section->addElement("UserGroup", "name");
         $section->allowEdit = true;
+        $section->allowNew = true;
 
         if (!\User::getUSER()->getIsSysAdmin())
             $section->whereQuery = " WHERE authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")";

@@ -12,15 +12,26 @@ function doDelete(deleteURL)
 {/literal}
 </script>
 
-{if isset($allowsearch) && $allowsearch == 1}
-<form method="post" action="">
-<div class="searchoverview">
-	Search:
-	<input type="text" name="search{$tablename}" value="{$search}"/>
-	<button class="small" type="submit">Search</button>
+<div class="col6">
+	{if isset($allowsearch) && $allowsearch == 1}
+		<form method="post" action="">
+			<div class="searchoverview">
+				Search:
+				<input type="text" name="search{$tablename}" value="{$search}"/>
+				<button class="small" type="submit">Search</button>
+			</div>
+		</form>
+	{/if}
 </div>
-</form>
-{/if}
+<div class="col6 right last">
+	{if isset($allownew) && $allownew == 1 && ($nrRecords > 10 || $nrRecords == 0)}
+		<div style="text-align: right; margin-top: 2em;">
+			<button type="button" onclick="document.location='{$urlnew}'">Add new</button>
+		</div>
+	{/if}
+</div>
+<div style="clear:both;"></div>
+<br />
 
 {assign var="nrFields" value=$heads|@count}
 {if isset($allowedit) && $allowedit == 1}
@@ -39,13 +50,6 @@ function doDelete(deleteURL)
 {if $nrRecords == 0}<p>No data found.</p>{/if}
 
 <table class="sectionoverview">
-	{if isset($allownew) && $allownew == 1 && ($nrRecords > 10 || $nrRecords == 0)}
-	<tr>
-		<td class="tablebuttons" colspan="{$nrFields}">
-			<button type="button" onclick="document.location='{$urlnew}'">Add new</button>
-		</td>
-	</tr>
-	{/if}
 {if $nrPages > 1}
 	{assign var="startPage" value=$pageNr-2}
 	{assign var="endPage" value=$pageNr+2}

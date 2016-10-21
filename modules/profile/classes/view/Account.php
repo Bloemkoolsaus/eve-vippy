@@ -29,7 +29,7 @@ class Account
 
             if (\Tools::POST("maincharacter"))
                 \User::getUSER()->setMainCharacter(\Tools::POST("maincharacter"));
-            
+
             \AppRoot::refresh();
         }
 
