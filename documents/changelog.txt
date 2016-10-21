@@ -1,6 +1,6 @@
 <h3>October 21, 2016</h3>
 <b><u>VIPPY</u></b>
- - Add an option to set your main character in <a href="/profile/account" target="_blank">profile -> account settings</a>. Sometimes Vippy does not correctly set the main character.
+ - Add an option to set your main character in <a href="/profile/account" target="_blank">Profile > Account Settings</a>. Sometimes Vippy does not correctly set the main character.
 
 
 

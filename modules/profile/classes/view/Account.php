@@ -25,8 +25,11 @@ class Account
                 $setting = \users\model\Setting::findOne(["name" => $id]);
                 \User::getUSER()->setSetting($setting, $value);
             }
-
             \User::getUSER()->store();
+
+            if (\Tools::POST("maincharacter"))
+                \User::getUSER()->setMainCharacter(\Tools::POST("maincharacter"));
+            
             \AppRoot::refresh();
         }
 
