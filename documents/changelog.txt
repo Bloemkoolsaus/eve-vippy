@@ -1,3 +1,9 @@
+<h3>October 21, 2016</h3>
+<b><u>VIPPY</u></b>
+ - Add an option to set your main character in <a href="/profile/account" target="_blank">profile -> account settings</a>. Sometimes Vippy does not correctly set the main character.
+
+
+
 <h3>October 18, 2016</h3>
 <b><u>STATISTICS</u></b>
  - Some of statistic collection was still relying on the IGB. Fixed that.

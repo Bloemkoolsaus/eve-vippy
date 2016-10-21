@@ -165,12 +165,20 @@ namespace users\model
 		{
 			\AppRoot::debug("setLoginStatus(".$loggedin."): ".$this->id);
             \User::unsetUser();
-			if ($loggedin) {
+			if ($loggedin)
+            {
 				$this->resetCache();
 				$this->fetchIsAuthorized();
                 \User::setUSER($this);
+
                 if ($setKeyCookie)
                     \Tools::setCOOKIE("vippy", $this->createLoginKey());
+
+                // Controleer main character
+                if ($this->getMainCharacter()) {
+                    if (!$this->getMainCharacter()->isAuthorized())
+                        $this->resetMainCharacter();
+                }
 			}
 		}
 
@@ -738,11 +746,14 @@ namespace users\model
 
 		/**
 		 * Get main character id
-		 * @return number
+		 * @return number|null
 		 */
 		public function getMainCharacterID()
 		{
-			return $this->getMainCharacter()->id;
+            if ($this->getMainCharacter())
+			    return $this->getMainCharacter()->id;
+
+            return null;
 		}
 
 		public function setMainCharacter($characterID)

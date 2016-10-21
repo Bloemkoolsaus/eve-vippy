@@ -22,7 +22,7 @@ class Account
 
             // Settings
             foreach ($_POST["setting"] as $id => $value) {
-                $setting = \users\model\Setting::findById($id);
+                $setting = \users\model\Setting::findOne(["name" => $id]);
                 \User::getUSER()->setSetting($setting, $value);
             }
 
@@ -30,10 +30,8 @@ class Account
             \AppRoot::refresh();
         }
 
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("user", \User::getUSER());
-        $tpl->assign("settings", \users\model\Setting::findAll());
         return $tpl->fetch("profile/account/settings");
     }
 }
