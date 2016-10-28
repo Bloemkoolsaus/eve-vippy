@@ -40,7 +40,6 @@
 {if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
 			<span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
 				<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
-				<span style="padding: 2px; display: inline-block; color: #ffdd00;">
 					You have restricted controls on this map.
 				</span>
 			</span>
@@ -215,7 +214,7 @@
 	</div>
 
 	<div id="systemDetailsContainer">
-		<form method="post" action="">
+		<form method="post" action="/map/system/edit/{$system->name}/{$map->name}">
 		<input type="hidden" name="renameid" id="renameid" value="{$system->id}"/>
 
 	{assign var=evesurvival value="http://eve-survival.org/"}
@@ -244,7 +243,7 @@
 		<table class="sectionoverview nohover">
 			<tr class="even">
 				<td><b>Title:</b></td>
-				<td><input type="text" name="renamename" id="renamename" value="{$wormhole->name}" style="width: 95%;"/></td>
+				<td><input type="text" name="whname" value="{$wormhole->name}" style="width: 95%;"/></td>
 			</tr>
 			<tr class="even">
 				<td><b>Class:</b></td>
@@ -269,7 +268,7 @@
 					<b>Status:</b>
 				</td>
 				<td>
-					<select name="whstatus" id="whstatus" style="width: 99%;">
+					<select name="whstatus" style="width: 99%;">
 						<option value="1" {if $wormhole->status==1}selected{/if}>Unknown</option>
 						<option value="2" {if $wormhole->status==2}selected{/if}>Uninhabited</option>
 						<option value="3" {if $wormhole->status==3}selected{/if}>Inhabited</option>
@@ -280,15 +279,18 @@
 			<tr class="even">
 				<td style="vertical-align:top;"><b>Notes:</b></td>
 				<td>
-					<textarea id="notes" name="notes" style="width: 95%; height: 40px;">{if isset($notes)}{$notes}{/if}</textarea><br />
-					{if isset($noteslastdate)}
+				{if $system->getNotes()}
+					{assign var=notes value=$system->getNotes()}
+				{/if}
+					<textarea id="notes" name="notes" style="width: 95%; height: 40px;">{if isset($notes)}{$notes.notes}{/if}</textarea><br />
+				{if isset($notes)}
 					<div style="text-align: right;">
-						Last edit: <b>{$noteslastdate}</b>
+						<strong>Last edit:</strong> &nbsp; {$notes.updatedate|date_full:1} - {$notes.updatedate|date_time}
 					</div>
-					{/if}
-					<div style="font-size: 10px;">
-						<i>These notes are persistant.<br />
-						If this system is deleted from the chain, the notes will be stored and displayed on the next connection.</i>
+				{/if}
+					<div style="font-size: .8em;">
+						<div style="font-weight: bold;">** These notes are persistant. **</div>
+						<div style="font-style: italic;">If {$system->name} is deleted from the map, these notes will be stored and available the next time you are connected to  {$system->name}!</div>
 					</div>
 				</td>
 			</tr>
@@ -299,10 +301,7 @@
 				{if $system->getAnomalies($map->id)|@count>0}
 					{foreach from=$system->getAnomalies($map->id) key=s item=anom}
 						<div>
-							{$anom.sig}
-							-
-							{$anom.name}
-							&nbsp;
+							{$anom.sig} - {$anom.name} &nbsp;
 							<img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom.id}')"/>
 						</div>
 					{/foreach}
@@ -311,7 +310,7 @@
 					<div style="text-align: right;">
 						<a href="#" onclick="copypasteAnoms(); return false;">Add Anomalies</a>
 						|
-						<a href="#" onclick="removeAnomalies(); return false;">Clear Anomalies</a>
+						<a href="/map/anomalies/clear/{$map->name}/{$system->name}">Clear Anomalies</a>
 					</div>
 				</td>
 			</tr>

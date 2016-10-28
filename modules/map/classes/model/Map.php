@@ -36,7 +36,16 @@ class Map extends \scanning\model\Chain
      */
     public static function findByName($name)
     {
-        return self::findOne(["name" => $name]);
+        foreach (self::findAll(["name" => $name]) as $map) {
+            if (\User::getUSER()) {
+                foreach (\User::getUSER()->getAuthGroups() as $group) {
+                    if ($group->id == $map->authgroupID)
+                        return $map;
+                }
+            } else
+                return $map;
+        }
+        return null;
     }
 
     /**

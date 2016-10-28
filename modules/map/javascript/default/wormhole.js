@@ -57,6 +57,14 @@ Wormhole.prototype.setHeight = function(h) {
     if (totalHeight < this.map.height+this.map.position.y)
         totalHeight = this.map.height+this.map.position.y;
 };
+Wormhole.prototype.setStatus = function(code) {
+    if (code == 2)
+        this.map.colors.border = "#00cc00";
+    if (code == 3)
+        this.map.colors.border = "#ffaa00";
+    if (code == 4)
+        this.map.colors.border = "#ff0000";
+};
 
 Wormhole.prototype.addTitle = function(title, color) {
     this.titles.push({

@@ -154,6 +154,15 @@ function generateSystems(data)
         var wormhole = new Wormhole(data[i].id);
         wormhole.setPosition(data[i].position.x, data[i].position.y);
 
+        if (data[i].status != null) {
+            wormhole.setStatus(data[i].status);
+        }
+
+        if (data[i].persistant != null) {
+            if (data[i].persistant)
+                wormhole.status.persistant = true;
+        }
+
         if (data[i].whsystem != undefined) {
             wormhole.name = data[i].whsystem.name;
             if (data[i].whsystem.class)
@@ -195,11 +204,6 @@ function generateSystems(data)
             for (var t=0; t<data[i].whsystem.titles.length; t++) {
                 wormhole.addTitle(data[i].whsystem.titles[t].name, data[i].whsystem.titles[t].color)
             }
-        }
-
-        if (data[i].persistant != null) {
-            if (data[i].persistant)
-                wormhole.status.persistant = true;
         }
 
         if (data[i].attributes != null)

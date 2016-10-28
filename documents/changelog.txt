@@ -1,3 +1,15 @@
+
+<b><u>MAP</u></b>
+ - Fixed some bugs in updating system information
+ 	- Renaming a system was bugged.
+ 	- Setting the status (active/inhabited/etc) of a system was broken.
+ 	- Fixed saving and displaying of system notes.
+
+ <b><u>STATISTICS</u></b>
+ - Fixed a bug in nr-wormholes-mapped statistic.
+
+
+
 <h3>October 21, 2016</h3>
 <b><u>VIPPY</u></b>
  - Add an option to set your main character in <a href="/profile/account" target="_blank">Profile > Account Settings</a>. Sometimes Vippy does not correctly set the main character.

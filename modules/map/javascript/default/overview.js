@@ -234,10 +234,6 @@ function removeAnomaly(anomID)
 {
 	document.location = "index.php?module=scanning&section=anoms&action=remove&id="+anomID;
 }
-function removeAnomalies()
-{
-	document.location = "index.php?module=scanning&section=anoms&action=remove&id=all";
-}
 
 function showActivePilots()
 {

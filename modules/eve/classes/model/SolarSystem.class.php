@@ -68,44 +68,42 @@ namespace eve\model
 
 		function getNotes()
 		{
-			if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
-			{
-				$groupIDs = array();
-				if ($result = \MySQL::getDB()->getRow("	SELECT 	*
-														FROM 	mapwormholenotes
-														WHERE 	solarsystemid = ?
-														AND		authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")"
-												, array($this->id)))
-				{
-					return $result;
-				}
-			}
+            if (\User::getUSER()) {
 
-			return false;
+
+                if ($result = \MySQL::getDB()->getRow("select *
+                                                       from mapwormholenotes
+                                                       where solarsystemid = ?
+                                                       and authgroupid IN (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")"
+                                                , [$this->id]))
+                {
+                    return $result;
+                }
+            }
+
+			return null;
 		}
 
-		function setNotes($notes)
+        function resetNotes($authGroupID)
+        {
+            \MySQL::getDB()->delete("mapwormholenotes", ["solarsystemid" => $this->id, "authgroupid" => $authGroupID]);
+        }
+
+		function setNotes($notes, $authGroupID)
 		{
 			// Kijk eerst of de notes wel gezijgd zijn..
 			$curNotes = $this->getNotes();
-			$authGroup = 0;
-			if (!isset($curNotes["notes"]) || $curNotes["notes"] != \MySQL::escape($notes))
+			if (!isset($curNotes) || $curNotes["notes"] != \MySQL::escape($notes))
 			{
-				if (isset($curNotes["authgroupid"]))
-					$authGroup = $curNotes["authgroupid"];
-				else {
-					$authGroups = \User::getUSER()->getAuthGroupsIDs();
-					if (isset($authGroups[0]))
-						$authGroup = $authGroups[0];
-				}
-
-				\MySQL::getDB()->updateinsert("mapwormholenotes",
-									array(	"solarsystemid"	=> $this->id,
-											"notes"			=> $notes,
-											"authgroupid"	=> $authGroup,
-											"updatedate"	=> date("Y-m-d H:i:s")),
-									array(	"solarsystemid"	=> $this->id,
-											"authgroupid"	=> $authGroup));
+				\MySQL::getDB()->updateinsert("mapwormholenotes", [
+                    "solarsystemid"	=> $this->id,
+                    "notes"			=> $notes,
+                    "authgroupid"	=> $authGroupID,
+                    "updatedate"	=> date("Y-m-d H:i:s")
+                ], [
+                    "solarsystemid" => $this->id,
+                    "authgroupid" => $authGroupID
+                ]);
 			}
 		}
 
@@ -897,8 +895,15 @@ namespace eve\model
 
 
 
-
-
+        /**
+         * Find system by name
+         * @param string $name
+         * @return \eve\model\SolarSystem|null
+         */
+        public static function findByName($name)
+        {
+            return self::getSolarsystemByName($name);
+        }
 
 		/**
 		 * Get solarsystem by name

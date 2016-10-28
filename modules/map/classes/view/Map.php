@@ -18,14 +18,6 @@ class Map
             $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
         }
 
-        if (\Tools::POST("renameid"))
-        {
-            $wormhole = \map\model\Wormhole::getWormholeBySystemID(\Tools::POST("renameid"), $map->id);
-            $wormhole->name = \Tools::POST("renamename");
-            $wormhole->status = \Tools::POST("status");
-            $wormhole->store();
-        }
-
         \AppRoot::title($wormhole->name);
         \AppRoot::title($system->name);
         \AppRoot::title($map->name);
