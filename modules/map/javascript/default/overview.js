@@ -214,12 +214,13 @@ function cancelClearChain()
 
 
 
-function copypasteAnoms()
+function copypasteAnomalies()
 {
 	$.ajax({
-		url: "/index.php?module=scanning&section=anoms&action=copypaste&ajax=1",
+		url: "/map/anomalies/copypaste/"+$("#mapName").val()+"/"+$("#mapSystem").val(),
+        data: { ajax: 1 },
 		success: function(data) {
-			showPopup(data, 500, 400);
+			showPopup(data, 600, 280);
 		}
 	});
 }

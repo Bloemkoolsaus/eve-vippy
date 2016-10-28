@@ -211,11 +211,6 @@ table.sectionoverview tr.odd:hover {
 	cursor: pointer;
 }
 
-table.sectionoverview tr.odd:hover td a,
-table.sectionoverview tr.even:hover td a {
-	color: #FFFFFF !important;
-}
-
 table.nohover tr.even:hover,
 table.nohover tr.odd:hover {
 	color: inherit !important;

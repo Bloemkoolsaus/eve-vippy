@@ -1,0 +1,24 @@
+<div style="padding: 1em;">
+	<div>
+		<h2>Copy Paste Anomalies</h2>
+	</div>
+	<div>
+		<div class="message" style="text-align: left;">
+			<div>Select all signatures in your scanner window, press ctrl+c. Then paste them below and press the add button.</div>
+			<div style="text-align: right;"><i><u>Note:</u> Cosmic Signatures will be added to the systems signature list.</i></div>
+		</div>
+	</div>
+	<div>
+		<form method="post" action="/map/anomalies/copypaste/{$map->name}/{$system->name}">
+			<div class="form">
+				<textarea name="signatures" style="width: 98%; height: 6.5em;"></textarea>
+			</div>
+			<div class="form buttons">
+				<button type="submit">
+					<img src="/images/default/ui/save.png" align="left">
+					Add Anomalies
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

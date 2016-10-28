@@ -1,5 +1,6 @@
 
 <b><u>MAP</u></b>
+ - Fixed anomalies!!
  - Fixed some bugs in updating system information
  	- Renaming a system was bugged.
  	- Setting the status (active/inhabited/etc) of a system was broken.

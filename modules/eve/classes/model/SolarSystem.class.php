@@ -14,7 +14,8 @@ namespace eve\model
 		private $faction = null;
 		private $knownSystem = null;
 		private $jumps = null;
-        private $_status = array();
+        private $_status = [];
+        private $_anomalies;
 
 		function __construct($id=false)
 		{
@@ -514,10 +515,19 @@ namespace eve\model
 			return $midpoint;
 		}
 
+        /**
+         * Get anomalies
+         * @param integer $mapID
+         * @return \map\model\Anomaly[]
+         */
 		function getAnomalies($mapID)
 		{
-			$controller = new \eve\controller\SolarSystem();
-			return $controller->getWormholeAnomalies($this->id, $mapID);
+            if ($this->_anomalies === null) {
+                $map = new \map\model\Map($mapID);
+                $this->_anomalies = \map\model\Anomaly::findAll(["solarsystemid" => $this->id, "authgroupid" => $map->authgroupID]);
+            }
+
+            return $this->_anomalies;
 		}
 
 		function isHSIsland()

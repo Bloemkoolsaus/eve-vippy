@@ -156,10 +156,10 @@ class Signatures
         return "signature not found";
     }
 
-    function getCopypaste($arguments=[])
+    function getCopypaste($arguments=[], $mapID=null, $systemID=null)
     {
-        $map = \map\model\Map::findByName(\Tools::REQUEST("map"));
-        $solarSystem = \map\model\System::getSolarsystemByName(\Tools::REQUEST("system"));
+        $map = \map\model\Map::findByName((\Tools::REQUEST("map"))?:$mapID);
+        $solarSystem = \map\model\System::getSolarsystemByName((\Tools::REQUEST("system"))?:$systemID);
         if (!$map || !$solarSystem)
             return false;
 
@@ -210,26 +210,26 @@ class Signatures
                 $sigID = strtoupper($parts[0][0].$parts[0][1].$parts[0][2]);
                 $sigType = $parts[1];
 
-                // Check eerst of de sig al bestaat.
-                if ($existID = \scanning\Anomaly::checkSignatureID($sigID))
-                    $anomaly = new \scanning\Anomaly($existID);
-                else
-                    $anomaly = new \scanning\Anomaly();
-
-                // Check of de anomaly type al bestaat
-                if (!$anomID = \scanning\AnomalyType::getAnomalyIdByName($sigName))
-                {
-                    $anom = new \scanning\AnomalyType();
-                    $anom->name = $sigName;
-                    $anom->type = $sigType;
-                    $anom->store();
-                    $anomID = $anom->id;
+                // Check type
+                $anomType = \map\model\AnomalyType::findOne(["name" => $sigName]);
+                if (!$anomType) {
+                    $anomType = new \map\model\AnomalyType();
+                    $anomType->name = $sigName;
+                    $anomType->type = $sigType;
+                    $anomType->store();
                 }
 
-                $anomaly->solarSystemID = $solarSystem->id;
-                $anomaly->chainID = $map->id;
-                $anomaly->anomalyID = $anomID;
+                // Check eerst of de sig al bestaat.
+                $anomaly = \map\model\Anomaly::findOne(["signatureid" => $sigID, "solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]);
+                if (!$anomaly) {
+                    $anomaly = new \map\model\Anomaly();
+                    $anomaly->authGroupID = $map->authgroupID;
+                    $anomaly->solarSystemID = $solarSystem->id;
+                }
+
+                $anomaly->typeID = $anomType->id;
                 $anomaly->signatureID = $sigID;
+                $anomaly->description = $sigName;
                 $anomaly->store();
             }
         }
