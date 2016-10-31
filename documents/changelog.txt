@@ -1,12 +1,13 @@
 <h3>October 31, 2016</h3>
 <b><u>MAP</u></b>
- - Fixed anomalies!!
+ - Fixed copy+pasting Anomalies!!
  - Fixed some bugs in updating system information
  	- Renaming a system was bugged.
  	- Setting the status (active/inhabited/etc) of a system was broken.
  	- Fixed saving and displaying of system notes.
  - The 'mark fully-scanned' button was not doing anything. Now fixed!
  - Fixed a bug with editing and deleting maps with an apostrophe in the name.
+ - In Chrome, the map would sometimes make extra (and unnecessary) scrollbars. Should now be fixed.
 
  <b><u>STATISTICS</u></b>
  - Fixed a bug in nr-wormholes-mapped statistic.
@@ -41,9 +42,9 @@
 
 
 
-<h3>October 11, 2016</h3>
+<h3>October 11, 2016   -   CREST UPDATE</h3>
 <b><u>CREST</u></b>
- - CREST is here. <a href="/help/crest" target="_blank">Tell me all about it</a>.
+ - The ingame browser is replaced by CREST. <a href="/help/crest" target="_blank">Tell me all about it</a>
  - Unfortunately, some features that depended on the IGB are now gone temporarily.
   	- Set destination to a system
   	- Exit finder

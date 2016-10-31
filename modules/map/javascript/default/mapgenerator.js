@@ -82,11 +82,14 @@ function generateMap(data)
 
 function resizeMap()
 {
-	var stageWidth = totalWidth + 100;
+	var stageWidth = totalWidth + 90;
 	var stageHeight = totalHeight + 30;
 
     stage.setHeight(stageHeight);
     stage.setWidth(stageWidth);
+
+    stageWidth += 20;
+    stageHeight += 10;
 
 	$("#signatureMap").width(stageWidth);
 	$("#signatureMapContainer").width(stageWidth);
