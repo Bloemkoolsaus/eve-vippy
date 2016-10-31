@@ -6,6 +6,7 @@
  	- Setting the status (active/inhabited/etc) of a system was broken.
  	- Fixed saving and displaying of system notes.
  - The 'mark fully-scanned' button was not doing anything. Now fixed!
+ - Fixed a bug with editing and deleting maps with an apostrophe in the name.
 
  <b><u>STATISTICS</u></b>
  - Fixed a bug in nr-wormholes-mapped statistic.
