@@ -1,0 +1,9 @@
+{if $anomalies|@count>0}
+{foreach from=$anomalies key=s item=anom}
+    <div>
+        {$anom->signatureID} -
+        {$anom->description} &nbsp;
+        <img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom->id}')"/>
+    </div>
+{/foreach}
+{/if}

@@ -246,6 +246,17 @@ function selectSignatureType(sigID)
     }
 }
 
+function loadAnomalies()
+{
+    $.ajax({
+        url: "/map/anomalies/overview/"+$("#mapName").val()+"/"+$("#mapSystem").val(),
+        data: { ajax: 1},
+        success: function(data) {
+            $("#anomalies").html(data);
+        }
+    })
+}
+
 function signaturesCopyPaste()
 {
     $.ajax({
@@ -259,6 +270,7 @@ function signaturesCopyPaste()
         complete: function() {
             $("textarea[name=copypastesignatures]").val("");
             loadSignatureList(true);
+            loadAnomalies();
         }
     })
 }

@@ -296,15 +296,8 @@
 			<tr class="even">
 				<td style="vertical-align:top;"><b>Anoms:</b></td>
 				<td>
-					<div>
-				{if $system->getAnomalies($map->id)|@count>0}
-					{foreach from=$system->getAnomalies($map->id) key=s item=anom}
-						<div>
-							{$anom->signatureID} - {$anom->description} &nbsp;
-							<img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom->id}')"/>
-						</div>
-					{/foreach}
-				{/if}
+					<div id="anomalies">
+                        {include "map/anomaly/overview" anomalies=$system->getAnomalies($map->id)}
 					</div>
 					<div style="text-align: right;">
 						<a href="#" onclick="copypasteAnomalies(); return false;">Add Anomalies</a>

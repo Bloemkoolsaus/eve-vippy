@@ -3,6 +3,18 @@ namespace map\view;
 
 class Anomalies
 {
+    function getOverview($arguments=[])
+    {
+        $map = \map\model\Map::findByName(array_shift($arguments));
+        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("system", $system);
+        $tpl->assign("anomalies", $system->getAnomalies($map->id));
+        return $tpl->fetch("map/anomaly/overview");
+    }
+
     function getCopypaste($arguments=[])
     {
         $map = \map\model\Map::findByName(array_shift($arguments));
