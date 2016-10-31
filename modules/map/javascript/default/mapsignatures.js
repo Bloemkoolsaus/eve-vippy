@@ -195,12 +195,6 @@ function storeSignature()
     });
 }
 
-function markFullyScanned(systemID)
-{
-	// loadSignatureList();
-}
-
-
 function showSigInfo(sigID)
 {
     var top = $("#signatureList"+sigID).position().top-30;

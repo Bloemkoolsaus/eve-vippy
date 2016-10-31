@@ -23,7 +23,7 @@ body {
 }
 
 h1, h2 {
-	font-family: EveSans, OpenSans, MetaBlack, sans-serif;
+    font-family: EveSans, OpenSans, MetaBlack, sans-serif;
 	font-size: 2.5em;
 	color: #ffffff;
     margin: 1em 0 1em;
@@ -266,14 +266,25 @@ pre {
 
 pre.patchnotes  {
     font-family: Consolas, monospace;
-	font-size: 11px;
+	font-size: 1em;
+    color: #cccccc;
 }
 pre.patchnotes h3 {
-    font-family: Consolas, monospace;
-	font-size: 15px;
+    font-family: EveSans, OpenSans, MetaBlack, sans-serif;
+	font-size: 1.5em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin: 0;
+    margin-bottom: -.5em;
+    margin-top: 1em;
+    padding: 0;
 }
 pre.patchnotes strong {
     color: #ffffff;
+}
+pre.patchnotes b {
+    color: #dddddd;
+    font-size: 1.05em;
 }
 
 

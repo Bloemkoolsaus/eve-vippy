@@ -1,10 +1,11 @@
-
+<h3>October 31, 2016</h3>
 <b><u>MAP</u></b>
  - Fixed anomalies!!
  - Fixed some bugs in updating system information
  	- Renaming a system was bugged.
  	- Setting the status (active/inhabited/etc) of a system was broken.
  	- Fixed saving and displaying of system notes.
+ - The 'mark fully-scanned' button was not doing anything. Now fixed!
 
  <b><u>STATISTICS</u></b>
  - Fixed a bug in nr-wormholes-mapped statistic.
