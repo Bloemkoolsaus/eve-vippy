@@ -118,13 +118,17 @@ class LocationTracker
 
                             // Toevoegen aan stats.
                             $char = \eve\model\Character::findByID($characterID);
-                            $stat = new \stats\model\Whmap();
-                            $stat->chainID = $map->id;
-                            $stat->corpID = $char->corporationID;
-                            $stat->pilotID = $char->id;
-                            $stat->mapdate = date("Y-m-d H:i:s");
-                            $stat->systemID = $locationID;
-                            $stat->store();
+                            if ($char->getUser() || \User::getUSER())
+                            {
+                                $stat = new \stats\model\Whmap();
+                                $stat->userID = ($char->getUser())?$char->getUser()->id:\User::getUSER()->id;
+                                $stat->chainID = $map->id;
+                                $stat->corpID = $char->corporationID;
+                                $stat->pilotID = $char->id;
+                                $stat->mapdate = date("Y-m-d H:i:s");
+                                $stat->systemID = $locationID;
+                                $stat->store();
+                            }
                         }
 
                         $connection = \map\model\Connection::getConnectionByLocations($previousLocationID, $locationID, $map->id);
