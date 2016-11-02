@@ -25,7 +25,7 @@ namespace eve\controller
 		function importCorporation($corporationID)
 		{
             $corporation = new \eve\model\Corporation($corporationID);
-            \AppRoot::doCliCommand("Import Corporation ".$corporation->name);
+            \AppRoot::doCliOutput("Import Corporation ".$corporation->name);
 
             // Alleen udpaten indien ouder dan 20 uur
             if (strtotime($corporation->updateDate) <= strtotime("now")-72000)

@@ -40,7 +40,7 @@ namespace eve\controller
 		function importCharacter($characterID)
 		{
 			$character = new \crest\model\Character($characterID);
-            \AppRoot::doCliCommand("Import Character ".$character->name);
+            \AppRoot::doCliOutput("Import Character ".$character->name);
 
             // Public info
             $api = new \eve\controller\API();

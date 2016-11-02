@@ -12,8 +12,8 @@ class Signature extends \Model
     public $sigInfo;
     public $signalStrength;
     public $scanDate;
-    public $updateDate;
     public $scannedBy;
+    public $updateDate;
     public $updateBy;
     public $deleted = false;
 
@@ -34,7 +34,7 @@ class Signature extends \Model
         if (\User::getUSER())
             $this->updateBy = \User::getUSER()->id;
 
-        if ($this->scannedBy == 0) {
+        if (!$this->scanDate) {
             $this->scanDate = date("Y-m-d H:i:s");
             if (\User::getUSER())
                 $this->scannedBy = \User::getUSER()->id;

@@ -21,7 +21,7 @@ class Stats
         /**
          * Online / Active users
          */
-        if ($results = \MySQL::getDB()->getRows("select * from users where deleted = 0 and isvalid = 1 and id = 1000210"))
+        if ($results = \MySQL::getDB()->getRows("select * from users where deleted = 0 and isvalid = 1"))
         {
             foreach ($results as $result)
             {
@@ -55,8 +55,6 @@ class Stats
             }
         }
 
-
-        return true;
 
         /**
          * Signatures
