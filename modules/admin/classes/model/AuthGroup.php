@@ -241,12 +241,17 @@ namespace admin\model
 		{
             if ($this->allowedCorporations == null)
             {
+                \AppRoot::doCliOutput("AuthGroup(".$this->name.")->getAllowedCorporations()");
                 $this->allowedCorporations = array();
                 foreach ($this->getCorporations() as $corp) {
+                    if ($corp->isNPC())
+                        continue;
                     $this->allowedCorporations[$corp->id] = $corp;
                 }
                 foreach ($this->getAlliances() as $ally) {
                     foreach ($ally->getCorporations() as $corp) {
+                        if ($corp->isNPC())
+                            continue;
                         $this->allowedCorporations[$corp->id] = $corp;
                     }
                 }
@@ -293,7 +298,8 @@ namespace admin\model
 			if ($this->corporations === null)
 				$this->getCorporations();
 
-			$this->corporations[] = $corp;
+            if (!$corp->isNPC())
+			    $this->corporations[] = $corp;
 		}
 
 		/**

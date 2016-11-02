@@ -71,6 +71,17 @@ namespace eve\model
 			return $this->alliance;
 		}
 
+        /**
+         * is npc corp?
+         * @return bool
+         */
+        function isNPC()
+        {
+            if ($this->id < 1100000)
+                return true;
+
+            return false;
+        }
 
 
 

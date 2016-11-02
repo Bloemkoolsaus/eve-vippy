@@ -44,6 +44,7 @@ namespace eve\model
 
 		/**
 		 * Get corporations
+         * @return \eve\model\Corporation[]
 		 */
 		function getCorporations()
 		{

@@ -165,7 +165,7 @@ class User
         $section->addElement("Username", "username");
         $section->addElement("E-mail", "email");
         $section->addElement("Status", "status", "id", '\\users\\elements\\User\\Status');
-        $section->addElement("Last Login", "uid", "id", '\\users\\elements\\User\\LastLogin');
+        // $section->addElement("Last Login", "uid", "id", '\\users\\elements\\User\\LastLogin');
 
         $section->orderBy = "displayname";
         $section->updatefield = "updatedate";
@@ -176,24 +176,17 @@ class User
         if (!\User::getUSER()->hasRight("users", "manageusers"))
         {
             $allowedCorporationIDs = array();
-            foreach (\User::getUSER()->getAuthGroups() as $group)
-            {
-                foreach ($group->getAllowedCorporations() as $corp)
-                {
-                    if (\User::getUSER()->getIsCEO($corp->id))
-                    {
+            foreach (\User::getUSER()->getAuthGroups() as $group) {
+                foreach ($group->getAllowedCorporations() as $corp) {
+                    if (\User::getUSER()->getIsCEO($corp->id)) {
                         // Mag heel de alliance zien.
-                        if ($corp->getAlliance() != null)
-                        {
+                        if ($corp->getAlliance() != null) {
                             foreach ($corp->getAlliance()->getCorporations() as $acorp) {
                                 $allowedCorporationIDs[] = $acorp->id;
                             }
-                        }
-                        else
+                        } else
                             $allowedCorporationIDs[] = $corp->id;
-                    }
-                    else if (\User::getUSER()->isAdmin())
-                    {
+                    } else if (\User::getUSER()->isAdmin()) {
                         // Mag deze corp zien
                         $allowedCorporationIDs[] = $corp->id;
                     }

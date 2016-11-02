@@ -77,7 +77,13 @@ class Authgroup
             $authgroup->mainChainID = \Tools::POST("mainchain");
 
             if (\Tools::POST("corporation"))
-                $authgroup->addCorporationById(\Tools::POST("corporation"));
+            {
+                $corporation = new \eve\model\Corporation(\Tools::POST("corporation"));
+                if ($corporation->isNPC())
+                    $errors[] = "<b>Cannot add $corporation->name</b><br />`".$corporation->name."` is an NPC corp. Vippy only works for player corporations!";
+                else
+                    $authgroup->addCorporation($corporation);
+            }
 
             if (\Tools::POST("alliance"))
                 $authgroup->addAllianceById(\Tools::POST("alliance"));
@@ -149,7 +155,8 @@ class Authgroup
                 $subscription->store();
             }
 
-            \AppRoot::redirect("/admin/authgroup/edit/".$authgroup->id);
+            if (count($errors) == 0)
+                \AppRoot::redirect("/admin/authgroup/edit/".$authgroup->id);
         }
 
         $tpl = \SmartyTools::getSmarty();

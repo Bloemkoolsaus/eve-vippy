@@ -149,6 +149,9 @@ class MySQL
                 (($execTime>0.05)?"<span style='color:red;'>":"")."[execution-time: ".number_format($execTime,4)."]".(($execTime>0.05)?"</span>":"").
                 "\n[string]".$query."[/string]");
 
+            if ($execTime > 0.05)
+                \AppRoot::debug(\AppRoot::getStackTrace());
+
             return $result;
         }
         else
