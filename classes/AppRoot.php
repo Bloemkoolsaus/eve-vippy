@@ -265,6 +265,26 @@ class AppRoot
 			if ($addStackTrace)
 				$value .= "<pre>".print_r(self::getStackTrace(),true)."</pre>";
 
+            $terms = array();
+            $replacements = array();
+
+            $terms[] = "[string]";
+            $terms[] = "[/string]";
+            $replacements[] = "<span style='color:#1111AA'>";
+            $replacements[] = "</span>";
+
+            $terms[] = "[success]";
+            $terms[] = "[/success]";
+            $replacements[] = "<span style='color:#008800'>";
+            $replacements[] = "</span>";
+
+            $terms[] = "[error]";
+            $terms[] = "[/error]";
+            $replacements[] = "<span style='color:red'>";
+            $replacements[] = "</span>";
+
+            $value = str_replace($terms, $replacements, $value);
+
 			self::$debug[] = array("time" => number_format(self::getExecTime(), 4), "msg" => $value);
 		}
 	}

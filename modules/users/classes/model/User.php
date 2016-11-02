@@ -110,54 +110,56 @@ namespace users\model
 
 		public function addLog($what, $whatid=null, $extrainfo=null, $currentPilot=null, $sessionID=null)
 		{
+            \AppRoot::doCliOutput("user(".$this->username.")->addLog($what,$whatid,$extrainfo,$currentPilot,$sessionID)");
 			if ($this->id == 0)
 				return false;
 
             if (!$sessionID)
                 $sessionID = session_id();
-
 			if (is_array($extrainfo))
 				$extrainfo = json_encode($extrainfo);
 
-			$isDouble = false;
 			$checkForDoubles = true;
 			if (in_array($what, ["delete-wormhole","add-wormhole"]))
 				$checkForDoubles = false;
 
 			if ($checkForDoubles)
 			{
-				if ($result = \MySQL::getDB()->getRow("	SELECT * FROM user_log
-														WHERE sessionid = ?
-														AND what = ? AND whatid = ?"
-											, [$sessionID, $what, $whatid]))
+                $query = ["what = '".$what."'"];
+                if ($whatid === null)
+                    $query[] = "whatid is null";
+                else
+                    $query[] = "whatid = '".$whatid."'";
+
+				if ($result = \MySQL::getDB()->getRow("select * from user_log
+                                                       where sessionid = ? and logdate > ?
+                                                       and ".implode(" and ", $query)
+                                            , [$sessionID, date("Y-m-d")." 00:00:00"]))
 				{
 					\MySQL::getDB()->update("user_log", ["lastdate" => date("Y-m-d H:i:s")], ["id" => $result["id"]]);
-					$isDouble = true;
+					return true;
 				}
 			}
 
-			if (!$isDouble)
-			{
-                $ipAddress = (isset($_SERVER["REMOTE_ADDR"]))?$_SERVER["REMOTE_ADDR"]:null;
-                $userAgent = (isset($_SERVER["HTTP_USER_AGENT"]))?$_SERVER["HTTP_USER_AGENT"]:null;
-                if (\AppRoot::isCommandline()) {
-                    $ipAddress = "localhost";
-                    $userAgent = "CommandLine";
-                }
+            $ipAddress = (isset($_SERVER["REMOTE_ADDR"]))?$_SERVER["REMOTE_ADDR"]:null;
+            $userAgent = (isset($_SERVER["HTTP_USER_AGENT"]))?$_SERVER["HTTP_USER_AGENT"]:null;
+            if (\AppRoot::isCommandline()) {
+                $ipAddress = "localhost";
+                $userAgent = "CommandLine";
+            }
 
-				$data = array("userid"	=> $this->id,
-							"pilotid"	=> $currentPilot,
-							"lastdate"	=> date("Y-m-d H:i:s"),
-							"logdate"	=> date("Y-m-d H:i:s"),
-							"what"		=> $what,
-						    "whatid"    => $whatid,
-							"ipaddress"	=> $ipAddress,
-							"sessionid"	=> $sessionID,
-							"useragent"	=> $userAgent,
-						    "extrainfo" => $extrainfo);
-				\MySQL::getDB()->insert("user_log", $data);
-			}
-
+            \MySQL::getDB()->insert("user_log", [
+                "userid"	=> $this->id,
+                "pilotid"	=> $currentPilot,
+                "lastdate"	=> date("Y-m-d H:i:s"),
+                "logdate"	=> date("Y-m-d H:i:s"),
+                "what"		=> $what,
+                "whatid"    => $whatid,
+                "ipaddress"	=> $ipAddress,
+                "sessionid"	=> $sessionID,
+                "useragent"	=> $userAgent,
+                "extrainfo" => $extrainfo
+            ]);
             return true;
 		}
 
@@ -1441,14 +1443,14 @@ namespace users\model
          */
         public function getHoursOnline($sdate=null, $edate=null)
         {
+            $nrSecondsOnline = [];
             $sdate = ($sdate != null) ? date("Y-m-d", strtotime($sdate)) : date("Y-m-d", mktime(0,0,0,date("m"), 1,date("Y")));
             $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
 
-            $nrSecondsOnline = array();
-            foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate) as $log)
+            // Zoek naar ingame log entries.
+            foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate, "ingame") as $log)
             {
-                // Zoek naar ingame log entries.
-                if ($log->what == "ingame" && $log->getPilot() != null)
+                if ($log->pilotID)
                 {
                     if (!isset($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))]))
                         $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = 0;

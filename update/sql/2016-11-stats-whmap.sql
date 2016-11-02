@@ -5,3 +5,6 @@ update stats_whmap s
 set s.authgroupid = c.authgroupid;
 
 alter table stats_whmap drop column chainid;
+
+alter table user_log add key `LogDate` (logdate);
+alter table user_log add key `user-what-date` (userid, what, logdate);
