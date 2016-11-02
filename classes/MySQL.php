@@ -163,12 +163,18 @@ class MySQL
      * @param array $data
      * @return array|boolean false
      */
-    function getRows($query, $data=array())
+    function getRows($query, $data=[], $lowercaseColumnNames=true)
     {
         if ($result = $this->doQuery($query, $data))
         {
             $results = array();
             while ($row = $result->fetch_array()) {
+                if ($lowercaseColumnNames) {
+                    foreach ($row as $key => $val) {
+                        unset($row[$key]);
+                        $row[strtolower($key)] = $val;
+                    }
+                }
                 $results[] = $row;
             }
             $result->free_result();

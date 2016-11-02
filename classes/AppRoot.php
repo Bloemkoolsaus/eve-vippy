@@ -146,6 +146,7 @@ class AppRoot
                     \AppRoot::doCliOutput(" * Run sql patch: ".$sqlFile);
 					preg_match_all($queryRegex, file_get_contents($file), $queries);
 					foreach ($queries[1] as $query) {
+                        \AppRoot::doCliOutput($query);
 						\MySQL::getDB()->doQuery($query);
 					}
 					unset($queries);
