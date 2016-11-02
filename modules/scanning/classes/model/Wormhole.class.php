@@ -106,37 +106,23 @@ namespace scanning\model
 				$data["id"] = $this->id;
 
             // New wormhole
-			if ($this->id == 0)
+			if (!$this->id)
 			{
-				$result = \MySQL::getDB()->insert("mapwormholes", $data);
-				$system = array("id" => $this->solarSystemID);
-				if ($this->getSolarsystem() !== null)
-                {
-                    $system["name"] = $this->getSolarsystem()->name;
-
-                    // add to stats
-                    if ($this->mappedByUserID && $this->mappedByCharacterID)
-                    {
-                        $character = new \eve\model\Character($this->mappedByCharacterID);
-                        $stat = new \stats\model\Whmap();
-                        $stat->userID = $this->mappedByUserID;
-                        $stat->pilotID = $this->mappedByCharacterID;
-                        $stat->corpID = $character->corporationID;
-                        $stat->chainID = $this->chainID;
-                        $stat->systemID = $this->solarSystemID;
-                        $stat->mapdate = date("Y-m-d H:i:s");
-                        $stat->store();
-                    }
-                }
-
-				$this->id = $result;
+                $this->id = \MySQL::getDB()->insert("mapwormholes", $data);
 
                 // User log
-                if (\User::getUSER()) {
-                    \User::getUSER()->addLog("add-wormhole", $this->solarSystemID,
-                        array("chain"	=> array("id" => $this->getChain()->id,
-                                                  "name"=> $this->getChain()->name),
-                              "system" 	=> $system));
+                if (\User::getUSER())
+                {
+                    \User::getUSER()->addLog("add-wormhole", $this->solarSystemID, [
+                        "system" => [
+                            "id" => $this->solarSystemID,
+                            "name" => ($this->getSolarsystem() !== null) ? $this->getSolarsystem()->name : null
+                        ],
+                        "chain" => [
+                            "id" => $this->getChain()->id,
+                            "name" => $this->getChain()->name
+                        ]
+                    ]);
                 }
 			}
 			else

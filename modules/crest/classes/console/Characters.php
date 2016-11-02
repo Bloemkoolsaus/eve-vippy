@@ -17,14 +17,7 @@ class Characters
             {
                 $character = new \crest\model\Character();
                 $character->load($result);
-                \AppRoot::doCliOutput(" * ".$character->name);
-
-                /*
-                $token = $character->getToken();
-                if ($token->isExpired())
-                    $token->refresh();
-                */
-
+                \AppRoot::doCliOutput(" > ".$character->name);
                 $character->importData();
             }
         }

@@ -362,12 +362,14 @@ class AppRoot
 
     public static function log($message, $log="log")
     {
-        $handle = fopen(\Tools::checkDirectory("logs/".$log)."/".date("Ymd").".log", "a");
-        fwrite($handle, "\n-=[ ".date("Y-m-d H:i:s")." ]=- --------------------------------------------------------\n");
-        fwrite($handle, $message."\n\n");
-        fwrite($handle, "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n");
-        fwrite($handle, "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n");
-        fclose($handle);
+        if ($handle = fopen(\Tools::checkDirectory("logs/".$log)."/".date("Ymd").".log", "a"))
+        {
+            fwrite($handle, "\n-=[ ".date("Y-m-d H:i:s")." ]=- --------------------------------------------------------\n");
+            fwrite($handle, $message."\n\n");
+            fwrite($handle, "PHP_SELF: ".((isset($_SERVER["PHP_SELF"]))?$_SERVER["PHP_SELF"]:"")."\n");
+            fwrite($handle, "REQUEST_URI: ".((isset($_SERVER["REQUEST_URI"]))?$_SERVER["REQUEST_URI"]:"")."\n");
+            fclose($handle);
+        }
     }
 
 	public static function doCliCommand($command, $expectOutput=false)

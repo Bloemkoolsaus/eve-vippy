@@ -39,7 +39,7 @@ class Kills
                         $character = new \eve\model\Character($dat->characterID);
                         if ($character && $character->getUser() && $character->id == $character->getUser()->getMainCharacterID())
                         {
-                            \AppRoot::doCliOutput("     ".$dat->reduction." kills for ".$character->getUser()->getFullName());
+                            \AppRoot::doCliOutput("     ".$character->getUser()->getFullName().": ".$dat->reduction." kills");
                             $totalKills = (isset($dat->reduction))?$dat->reduction:0;
                             $requiredSigs = 0;
                             $bonusPoints = 0;
@@ -48,6 +48,8 @@ class Kills
                             {
                                 foreach ($dat->shipsFlown as $typeID => $nrKills)
                                 {
+                                    $ship = new \eve\model\Ship($typeID);
+                                    \AppRoot::doCliOutput("      > ".$nrKills." kills in a ".$ship->name);
                                     $stats = \stats\model\Kills::findOne([
                                         "userid" => $character->getUser()->id,
                                         "shiptypeid" => $typeID,

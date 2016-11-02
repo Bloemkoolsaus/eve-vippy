@@ -25,6 +25,7 @@ class Stats
         {
             foreach ($results as $result)
             {
+                break;
                 $user = new \users\model\User();
                 $user->load($result);
 
@@ -96,9 +97,9 @@ class Stats
          * Mapped wormholes
          */
         \AppRoot::doCliOutput("Calc wormholes");
-        if ($results = \MySQL::getDB()->getRows("select s.userid, s.corpid, c.authgroupid, count(s.id) as amount
+        if ($results = \MySQL::getDB()->getRows("select s.userid, s.corpid, c.authgroupid, count(distinct s.id) as amount
                                                 from    stats_whmap s
-                                                    inner join mapwormholechains c on c.id = s.chainid
+                                                    inner join mapwormholechains c on c.authgroupid = s.authgroupid
                                                     inner join map_chain_settings cs on cs.chainid = c.id
                                                 where   s.mapdate between ? and ?
                                                 and     cs.var = 'count-statistics'

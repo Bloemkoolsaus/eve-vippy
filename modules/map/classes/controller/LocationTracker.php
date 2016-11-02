@@ -67,6 +67,9 @@ class LocationTracker
                 // Pods tellen niet mee.
                 if (!in_array($shipTypeID, [0, 670, 33328]))
                 {
+                    /** @var \map\model\Wormhole[] $addedWormholes */
+                    $addedWormholes = [];
+
                     // Check alle maps van deze authgroup
                     foreach ($chainMaps as $map)
                     {
@@ -76,10 +79,10 @@ class LocationTracker
 
                         // Staan beide systemen al op de map?
                         if ($results = \MySQL::getDB()->getRows("select *
-                                                            from    mapwormholes
-                                                            where   chainid = ?
-                                                            and     solarsystemid in (".$previousLocationID.",".$locationID.")"
-                                                , [$map->id]))
+                                                                from    mapwormholes
+                                                                where   chainid = ?
+                                                                and     solarsystemid in (".$previousLocationID.",".$locationID.")"
+                                                        , [$map->id]))
                         {
                             foreach ($results as $result)
                             {
@@ -114,27 +117,15 @@ class LocationTracker
                         // Magic!
                         if ($addNewWormhole) {
                             $controller = new \map\controller\Wormhole();
-                            $controller->addWormhole($map, $previousLocationID, $locationID);
-
-                            // Toevoegen aan stats.
-                            $char = \eve\model\Character::findByID($characterID);
-                            if ($char->getUser() || \User::getUSER())
-                            {
-                                $stat = new \stats\model\Whmap();
-                                $stat->userID = ($char->getUser())?$char->getUser()->id:\User::getUSER()->id;
-                                $stat->chainID = $map->id;
-                                $stat->corpID = $char->corporationID;
-                                $stat->pilotID = $char->id;
-                                $stat->mapdate = date("Y-m-d H:i:s");
-                                $stat->systemID = $locationID;
-                                $stat->store();
-                            }
+                            $addedWH = $controller->addWormhole($map, $previousLocationID, $locationID);
+                            if ($addedWH)
+                                $addedWormholes[] = $addedWH;
                         }
 
                         $connection = \map\model\Connection::getConnectionByLocations($previousLocationID, $locationID, $map->id);
                         if ($connection)
                         {
-                            // Systems zijn connected. Lekker makkelijk, registreer jump
+                            // Systems zijn connected. Lekker makkelijk, registreer jump.
                             $connection->addJump($shipTypeID, $characterID, false);
                         }
                         else
@@ -152,6 +143,25 @@ class LocationTracker
                                 }
                             }
                         }
+                    }
+
+                    foreach ($addedWormholes as $wormhole)
+                    {
+                        // Toevoegen aan stats.
+                        $char = \eve\model\Character::findByID($characterID);
+                        if ($char->getUser() || \User::getUSER())
+                        {
+                            $stat = new \stats\model\Whmap();
+                            $stat->userID = ($char->getUser())?$char->getUser()->id:\User::getUSER()->id;
+                            $stat->corpID = $char->corporationID;
+                            $stat->pilotID = $char->id;
+                            $stat->systemID = $wormhole->solarSystemID;
+                            $stat->authGroupID = $wormhole->getChain()->authgroupID;
+                            $stat->mapdate = date("Y-m-d H:i:s");
+                            $stat->store();
+                        }
+                        // Hoeft maar 1x
+                        break;
                     }
                 }
             }

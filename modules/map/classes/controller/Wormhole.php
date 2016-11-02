@@ -8,13 +8,13 @@ class Wormhole
      * @param \map\model\Map $map
      * @param int $fromSystemID
      * @param int $toSystemID
-     * @return bool
+     * @return \map\model\Wormhole|null
      */
     function addWormhole(\map\model\Map $map, $fromSystemID, $toSystemID=null)
     {
         \AppRoot::doCliOutput("=== addWormhole($fromSystemID, $toSystemID)", true);
         if ($fromSystemID == 0 || $toSystemID == 0)
-            return false;
+            return null;
 
         // Wormholes alleen toevoegen als deze nog niet bestaan.
         $fromWormhole = \map\model\Wormhole::findOne(["solarsystemid" => $fromSystemID, "chainid" => $map->id]);
@@ -154,7 +154,7 @@ class Wormhole
         }
 
         $map->setMapUpdateDate();
-        return true;
+        return $addingHole;
     }
 
     function addWormholeBySignature(\map\model\Map $map, \map\model\Signature $signature)

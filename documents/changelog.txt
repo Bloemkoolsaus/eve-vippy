@@ -1,3 +1,12 @@
+<h3>November 2, 2016</h3>
+<b><u>MAP</u></b>
+ - Fixed another issue with copy+pasting Anomalies.
+
+<b><u>STATISTICS</u></b>
+ - Another pass on the nr-wormholes-mapped statistic as it still wasn't counting properly after the last update.
+
+
+
 <h3>October 31, 2016</h3>
 <b><u>MAP</u></b>
  - Fixed copy+pasting Anomalies!!

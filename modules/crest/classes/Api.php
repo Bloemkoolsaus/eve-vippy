@@ -1,6 +1,18 @@
 <?php
 namespace crest;
 
+/**
+ * Class Api
+ * @package crest
+ * http://eveonline-third-party-documentation.readthedocs.io/en/latest/crest/intro.html
+ *
+ *  Caching:
+ *      CCP Bartender: https://forums.eveonline.com/default.aspx?g=posts&m=6692497#post6692497
+ *    When you make a request to a CREST endpoint, it will return a "cache-control" header telling you how long in
+ *    seconds the cache for that endpoint is. Additionally, the "x-cache-status" header will tell you whether your
+ *    request was a cache hit or miss.
+ */
+
 class Api extends \api\Client
 {
     /** @var \crest\model\Token */

@@ -8,6 +8,6 @@ class Whmap extends \Model
     public $corpID;
     public $pilotID;
     public $systemID;
-    public $chainID;
+    public $authGroupID;
     public $mapdate;
 }
