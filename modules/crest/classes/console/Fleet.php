@@ -43,6 +43,13 @@ class Fleet
     function getFleetMembers(\fleets\model\Fleet $fleet)
     {
         \AppRoot::doCliOutput("getFleetMembers($fleet->id)");
+        if ($fleet->id == 0) {
+            $fleet->active = 0;
+            $fleet->statusMessage = "Cannot call CREST, no fleet ID.";
+            $fleet->store();
+            return $fleet;
+        }
+
         // Zet update date alvast, zodat we geen dubbele executies krijgen voor deze fleet.
         $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+1);
         $fleet->store();
@@ -64,82 +71,72 @@ class Fleet
         $fleet->active = false;
         $fleet->statusMessage = null;
 
-        if ($fleet->id == 0)
-        {
-            $fleet->active = 0;
-            $fleet->statusMessage = "Cannot call CREST, no fleet ID.";
-            $fleet->store();
-        }
-        else
-        {
-            $crest = new \crest\Api();
-            $crest->setToken($fleet->getBoss()->getToken());
-            $crest->get("fleets/".$fleet->id."/members/");
+        $crest = new \crest\Api();
+        $crest->setToken($fleet->getBoss()->getToken());
+        $crest->get("fleets/".$fleet->id."/members/");
 
-            if ($crest->success())
+        if ($crest->success())
+        {
+            \AppRoot::debug($crest->getResult());
+            $locationTracker = new \map\controller\LocationTracker();
+            if (isset($crest->getResult()->items))
             {
-                \AppRoot::debug($crest->getResult());
-                $locationTracker = new \map\controller\LocationTracker();
-                if (isset($crest->getResult()->items))
+                foreach ($crest->getResult()->items as $fleetMember)
                 {
-                    foreach ($crest->getResult()->items as $fleetMember)
-                    {
-                        // Check character exists
-                        $character = \eve\model\Character::findByID($fleetMember->character->id);
-                        if (!$character) {
-                            $controller = new \eve\controller\Character();
-                            $character = $controller->importCharacter($fleetMember->character->id);
-                        }
-
-                        \AppRoot::doCliOutput(" - ".$character->name);
-                        if ($character->getUser())
-                        {
-                            \User::setUSER($character->getUser());
-
-                            // Log entry
-                            $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id."-".date("Ymd"));
-                        }
-
-                        $locationTracker->setCharacterLocation(
-                            $fleet->authGroupID,
-                            $fleetMember->character->id,
-                            $fleetMember->solarSystem->id,
-                            $fleetMember->ship->id
-                        );
-                        \User::unsetUser();
+                    // Check character exists
+                    $character = \eve\model\Character::findByID($fleetMember->character->id);
+                    if (!$character) {
+                        $controller = new \eve\controller\Character();
+                        $character = $controller->importCharacter($fleetMember->character->id);
                     }
 
-                    $fleet->active = 1;
-                    $fleet->statusMessage = "Tracking ".count($crest->getResult()->items)." fleet members.";
-                    $fleet->store();
+                    \AppRoot::doCliOutput(" - ".$character->name);
+                    if ($character->getUser())
+                    {
+                        \User::setUSER($character->getUser());
+
+                        // Log entry
+                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id."-".date("Ymd"));
+                    }
+
+                    $locationTracker->setCharacterLocation(
+                        $fleet->authGroupID,
+                        $fleetMember->character->id,
+                        $fleetMember->solarSystem->id,
+                        $fleetMember->ship->id
+                    );
+                    \User::unsetUser();
                 }
-                else
-                {
-                    \AppRoot::doCliOutput("Could not parse anwser received from CREST. HELP....", "red");
-                    $fleet->active = 0;
-                    $fleet->statusMessage = "Could not parse anwser received from CREST. HELP....";
-                    $fleet->store();
-                }
+
+                $fleet->active = 1;
+                $fleet->statusMessage = "Tracking ".count($crest->getResult()->items)." fleet members.";
+                $fleet->store();
             }
             else
             {
-                if ($crest->httpStatus >= 500 and $crest->httpStatus < 600)
-                {
-                    \AppRoot::doCliOutput("CREST call failed, Is CREST down??  Retrying in 5 minutes.", "red");
-                    $fleet->active = 1;
-                    $fleet->statusMessage = "CREST call failed, Is CREST down??  Retrying in 5 minutes.";
-                    $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+(60*5));
-                    $fleet->store();
-                }
-                else
-                {
-                    \AppRoot::doCliOutput("Failed to call CREST for fleet info. ".$crest->httpStatus." returned!", "red");
-                    $fleet->active = 0;
-                    $fleet->statusMessage = "Failed to call CREST for fleet info. ".$crest->httpStatus." returned!";
-                    $fleet->store();
-                }
+                \AppRoot::doCliOutput("Could not parse anwser received from CREST. HELP....", "red");
+                $fleet->active = 0;
+                $fleet->statusMessage = "Could not parse anwser received from CREST. HELP....";
+                $fleet->store();
             }
-
+        }
+        else
+        {
+            if ($crest->httpStatus >= 500 and $crest->httpStatus < 600)
+            {
+                \AppRoot::doCliOutput("CREST call failed, Is CREST down??  Retrying in 5 minutes.", "red");
+                $fleet->active = 1;
+                $fleet->statusMessage = "CREST call failed, Is CREST down??  Retrying in 5 minutes.";
+                $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+(60*5));
+                $fleet->store();
+            }
+            else
+            {
+                \AppRoot::doCliOutput("Failed to call CREST for fleet info. ".$crest->httpStatus." returned!", "red");
+                $fleet->active = 0;
+                $fleet->statusMessage = "Failed to call CREST for fleet info. ".$crest->httpStatus." returned!";
+                $fleet->store();
+            }
         }
 
         return $fleet;
