@@ -15,6 +15,16 @@ class Fleet extends \Model
     private $_boss;
     private $_authgroup;
 
+    function store()
+    {
+        if ($this->id == 0) {
+            $this->id = strtotime("now");
+            $this->active = 0;
+            $this->statusMessage = "Invalid fleet ID.";
+        }
+
+        parent::store();
+    }
 
     /**
      * Get boss
