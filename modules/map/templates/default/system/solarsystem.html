@@ -89,6 +89,7 @@
 				<div class="form">&nbsp;</div>
 			{/if}
 			{literal}
+			{if $wormhole}
 				<div class="form">
 					{if $wormhole->fullScanDate != null && $wormhole->fullScanDate|strtotime > 0}
 					<img src="/images/default/scanned.recently.png" align="left">
@@ -105,11 +106,13 @@
 					&nbsp; <span style="color: #FFFFFF;"><b>Not scanned</b></span>
 					{/if}
 				</div>
+			{/if}
 			{/literal}
 			<div style="clear:both;"></div>
 		</div>
 	</div>
 	<div style="float: right; width: 170px; padding: 5px;">
+	{if $system}
 		{if $system->isWSpace()}
 			{if isset($whEffectsData)}
 				<div id="whinfoeffects">
@@ -124,6 +127,7 @@
 				<img src="/images/loading.gif" style="margin: 5px; margin-right: 10px;" align="left" />
 			</div>
 		{/if}
+	{/if}
 	</div>
 
 	<div style="clear:both;"></div>
@@ -157,6 +161,7 @@
 	{/literal}
 
 	{literal}
+	{if $system && $wormhole}
 		{if $system->getActivePilots($wormhole->chainID)|@count > 0}
 		<div class="systemPopupTitle">
 			<div style="float: left; width: 200px; overflow: hidden;">
@@ -181,6 +186,7 @@
 		<div style="clear:both;"></div>
 		<br />
 		{/if}
+	{/if}
 	{/literal}
 
 	{if !$system->isWSpace()}

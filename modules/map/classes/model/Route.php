@@ -136,8 +136,7 @@ class Route
             "chainid" => $this->getMap()->id
         ]);
 
-        if ($wormholeFrom)
-        {
+        if ($wormholeFrom && $wormholeTo) {
             $data = $this->getConnectedWormholes($wormholeFrom);
             $route = $this->getkeypath($data, $wormholeTo->id);
             return $route;

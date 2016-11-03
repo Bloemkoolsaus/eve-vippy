@@ -5,8 +5,7 @@ class NumbersStatic extends \map\model\NamingScheme
 {
     function getNewWormholeName(\map\model\Wormhole $wormhole, $ignoreReservations=false)
     {
-        $letters = "abcdefghijklmnopqrstuvwxyz";
-
+        $letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
         $classname = strtolower($wormhole->getSolarsystem()->getClass(true));
         $connectedSystems = $wormhole->getConnectedSystems();
 
@@ -14,6 +13,7 @@ class NumbersStatic extends \map\model\NamingScheme
         if (count($connectedSystems) > 0)
         {
             // We gaan er even vanuit dat het vorige systeem eerder toegevoegd is dan al de rest
+            /** @var \map\model\Wormhole $previousWormhole */
             $previousWormhole = array_shift($connectedSystems);
             $previousSystem = $previousWormhole->getSolarsystem();
 
@@ -22,14 +22,13 @@ class NumbersStatic extends \map\model\NamingScheme
             if ($wormhole->getChain()->getHomeSystem()->id == $previousSystem->id)
                 $startingName = "";
 
-
             $wspaceStatics = [];
             $kspaceStatics = [];
-
             if ($wormhole->getSolarsystem()->isWSpace())
             {
                 // Ben ik de static?
                 foreach ($previousSystem->getStatics(false,false) as $static) {
+                    \AppRoot::debug("static: ".$static["name"]);
                     if ($static["wspace"])
                         $wspaceStatics[] = strtolower($static["tag"]);
                     else
@@ -51,57 +50,12 @@ class NumbersStatic extends \map\model\NamingScheme
                 $startingName .= ucfirst($classname[0]);
                 $index = 0;
             }
+            \AppRoot::debug("StartingName: ".$startingName);
+            \AppRoot::debug("Index: ".$index);
 
             do
             {
-                if ($wormhole->getSolarsystem()->isWSpace())
-                {
-                    // Controleer naam!
-                    if ($index <= count($wspaceStatics))
-                    {
-                        // Dit is een van de statics
-                        $statics = [];
-                        foreach ($previousSystem->getStatics(false,false) as $static) {
-                            $statics[] = $static;
-                        }
-
-                        // Welke static is dit?
-                        if (isset($statics[$index-1]))
-                        {
-                            $static = $statics[$index - 1];
-
-                            // kijk of de static signature bekend is.
-                            $signature = null;
-                            foreach (\map\model\Signature::findAll(["solarsystemid" => $previousSystem->id,
-                                                                    "authgroupid" => $wormhole->getChain()->authgroupID]) as $sig)
-                            {
-                                if ($sig->isWormhole()) {
-                                    if ($sig->whTypeID == $static["id"]) {
-                                        $signature = $sig;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // Check of de static niet per ongeluk de weg terug is.
-                            if ($signature !== null)
-                            {
-                                $sigWhName = explode(" ",$signature->sigInfo);
-                                $sigWhName = explode("-",$sigWhName[0]);
-                                if ($sigWhName[1] != $startingName.$index) {
-                                    // Niet goed, geen static. Zet juiste naam.
-                                    $index = count($wspaceStatics)+1;
-                                }
-                            }
-                        }
-                    }
-
-                    $title = $startingName.$index;
-                }
-                else
-                    $title = $startingName.$letters[$index];
-
-
+                $title = $startingName.(($wormhole->getSolarsystem()->isWSpace())?$index:$letters[$index]);
                 $title = $this->parseTitle($title);
 
                 $exists = false;

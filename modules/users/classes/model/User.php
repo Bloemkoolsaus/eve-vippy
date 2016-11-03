@@ -110,7 +110,6 @@ namespace users\model
 
 		public function addLog($what, $whatid=null, $extrainfo=null, $currentPilot=null, $sessionID=null)
 		{
-            \AppRoot::doCliOutput("user(".$this->username.")->addLog($what,$whatid,$extrainfo,$currentPilot,$sessionID)");
 			if ($this->id == 0)
 				return false;
 

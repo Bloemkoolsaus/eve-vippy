@@ -5,10 +5,9 @@ class Letters extends \map\model\NamingScheme
 {
     function getNewWormholeName(\map\model\Wormhole $wormhole, $ignoreReservations=false)
     {
-        $letters = "abcdefghijklmnopqrstuvwxyz";
-
         $startIndex = 0;
         $classname = strtolower($wormhole->getSolarsystem()->getClass(true));
+        $letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
 
         // Ben ik verbonden met homesystem?
         if ($wormhole->isConnectedTo($wormhole->getChain()->homesystemID))
@@ -47,9 +46,18 @@ class Letters extends \map\model\NamingScheme
         do
         {
             $exists = false;
-            $title = $classname.$letters[$startIndex];
-            foreach ($wormhole->getChain()->getWormholes() as $hole)
-            {
+            if (isset($letters[$startIndex])) {
+                $titleLetters = [$letters[$startIndex]];
+            } else {
+                $nrLetters = count($letters)-1;
+                $titleLetters = [
+                    $letters[($startIndex>0)?floor($startIndex/$nrLetters)-1:0],
+                    $letters[($startIndex%$nrLetters)-1]
+                ];
+            }
+
+            $title = $classname.implode("",$titleLetters);
+            foreach ($wormhole->getChain()->getWormholes() as $hole) {
                 if ($hole->isReservation() && $ignoreReservations)
                     continue;
                 if (strtolower($hole->name) == $title) {

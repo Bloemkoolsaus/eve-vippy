@@ -364,23 +364,22 @@
 <script id="signatureTooltipTPL" type="text/template">
 {literal}
 	<div>
-		<div class="form">
-			<div class="field" style="width: 80px;"><b>Age:</b></div>
-			<div class="value">{{scanage}}</div>
+		<div>
+			<div class="col2"><b>Scanned:</b></div>
+			<div class="col8">
+				<div>{{scanage}} ago</div>
+				<div>{{scanuser}}</div>
+			</div>
+			<div style="clear:both;"></div>
 		</div>
-		<div class="form">
-			<div class="field" style="width: 80px;"><b>Updated:</b></div>
-			<div class="value">{{updateage}} ago</div>
+		<div style="margin-top: 1em;">
+			<div class="col2"><b>Updated:</b></div>
+			<div class="col8">
+				<div>{{updateage}} ago</div>
+				<div>{{updateuser}}</div>
+			</div>
+			<div style="clear:both;"></div>
 		</div>
-		<div class="form" style="margin-top: 1em;">
-			<div class="field" style="width: 80px;"><b>Scanned:</b></div>
-			<div class="value">{{scanuser}}</div>
-		</div>
-		<div class="form">
-			<div class="field" style="width: 80px;"><b>Updated:</b></div>
-			<div class="value">{{updateuser}}</div>
-		</div>
-		<div style="clear:both;"></div>
 	</div>
 {/literal}
 </script>

@@ -135,7 +135,7 @@ class Signature extends \Model
     function getUpdatedByUser()
     {
         if ($this->_updatedUser === null)
-            $this->_updatedUser = new \users\model\User($this->scannedBy);
+            $this->_updatedUser = new \users\model\User($this->updateBy);
 
         return $this->_updatedUser;
     }

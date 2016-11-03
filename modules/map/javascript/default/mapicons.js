@@ -1,7 +1,7 @@
 var mapIcons = {
     star: createImage('/images/eve/star.png'),
     pvp: createImage('/images/eve/skull.red.png'),
-    pve: createImage('/images/eve/skill.orange.png'),
+    pve: createImage('/images/eve/skull.orange.png'),
     station: createImage('/images/eve/station.png'),
     hsisland: createImage('/images/eve/stargate.red.png'),
     direcths: createImage('/images/eve/stargate.green.png'),

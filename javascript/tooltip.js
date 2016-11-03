@@ -26,6 +26,9 @@ Tooltip.prototype.getPosition = function() {
         left: posLeft
     };
 };
+Tooltip.prototype.setWidth = function(width) {
+    this.width = width;
+};
 
 Tooltip.prototype.render = function(content) {
     console.log("render");

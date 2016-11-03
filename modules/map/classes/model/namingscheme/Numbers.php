@@ -52,11 +52,7 @@ class Numbers extends \map\model\NamingScheme
 
             do
             {
-                if ($wormhole->getSolarsystem()->isWSpace())
-                    $title = $startingName.$index;
-                else
-                    $title = $startingName.$letters[$index];
-
+                $title = $startingName.(($wormhole->getSolarsystem()->isWSpace()))?$index:$letters[$index];
                 $title = $this->parseTitle($title);
 
                 $exists = false;
