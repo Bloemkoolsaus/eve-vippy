@@ -22,10 +22,9 @@ class User
      * Set logged in user
      * @param \users\model\User $user
      */
-	public static function setUSER(\users\model\User $user)
+	public static function setUSER(\users\model\User $user=null)
 	{
-        \AppRoot::doCliOutput("set user: ".$user->id." - ".$user->displayname." [".$user->username."]");
-        $_SESSION["vippy_userid"] = $user->id;
+        $_SESSION["vippy_userid"] = ($user)?$user->id:null;
         self::$loggedInUser = $user;
 	}
 
