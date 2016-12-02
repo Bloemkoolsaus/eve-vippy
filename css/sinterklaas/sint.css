@@ -15,6 +15,9 @@ body {
 #header #infoheaderbar {
     color: #222222 !important;
 }
+#header #infoheaderbar a {
+    color: #bb0000 !important;
+}
 #header #menucontainer {
     background: #bb0000 linear-gradient(#bb0000, #770000);
 }
@@ -34,8 +37,6 @@ table.sectionoverview tr.odd {
     color: #ffffff;
 }
 
-#zwarte-piet-1,
-#zwarte-piet-2,
 #sinterklaas {
     position: absolute;
     z-index: 100;

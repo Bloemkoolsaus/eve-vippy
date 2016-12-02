@@ -22,7 +22,7 @@ if (date("Y-m-d") == date("Y")."-04-27") {
 	\SmartyTools::setTemplate("kingsday");
 }
 // Sinterklaas
-if (date("Y-m-d") == date("Y")."-12-05") {
+if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") {
 	\SmartyTools::setTemplate("sinterklaas");
 }
 // Kerst
