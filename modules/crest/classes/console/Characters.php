@@ -7,6 +7,7 @@ class Characters
     {
         \AppRoot::doCliOutput("Import Characters");
 
+        $i = 0;
         if ($results = \MySQL::getDB()->getRows("select c.*
                                                  from   characters c
                                                     inner join crest_token t on t.tokentype = 'character' and t.tokenid = c.id
@@ -19,10 +20,12 @@ class Characters
                 $character->load($result);
                 \AppRoot::doCliOutput(" > ".$character->name);
                 $character->importData();
+                sleep(1);
+                $i++;
             }
         }
 
-        \AppRoot::doCliOutput("Finished");
-        return true;
+        \AppRoot::doCliOutput($i." characters imported");
+        return "Finished";
     }
 }

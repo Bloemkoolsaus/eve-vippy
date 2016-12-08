@@ -1253,6 +1253,7 @@ namespace users\model
 					if ($results = \MySQL::getDB()->getRows("SELECT	if (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid) AS authgroupid
 															FROM	users u
 																INNER JOIN characters c ON c.userid = u.id
+																INNER JOIN crest_token t on t.tokentype = 'character' and t.tokenid = c.id
 															    INNER JOIN corporations corp ON corp.id = c.corpid
 															    LEFT JOIN user_auth_groups_corporations uc ON uc.corporationid = corp.id
 															    LEFT JOIN user_auth_groups_alliances ua ON ua.allianceid = corp.allianceid
@@ -1508,6 +1509,7 @@ namespace users\model
 			if ($results = \MySQL::getDB()->getRows("SELECT	u.*
 													FROM	users u
 														INNER JOIN characters c ON c.userid = u.id
+														INNER JOIN crest_token t ON t.tokentype = 'character' AND t.tokenid = c.id
 													WHERE	c.corpid = ?
 													GROUP BY u.id
 													ORDER BY u.displayname ASC"

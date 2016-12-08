@@ -24,15 +24,21 @@ class Token extends \Model
 
     /**
      * Still valid? Can we still use this token?
+     * @param bool $refreshWhenExpired
      * @return bool
      */
-    function isValid()
+    function isValid($refreshWhenExpired=false)
     {
         if (!$this->refreshToken)
             return false;
 
-        if ($this->isExpired())
+        if ($this->isExpired()) {
+            if ($refreshWhenExpired) {
+                $this->refresh();
+                return $this->isValid(false);
+            }
             return false;
+        }
 
         return true;
     }

@@ -108,6 +108,7 @@ namespace eve\model
                 $this->isAuthorized = false;
 
                 // Heeft een geldige CREST token
+                /** @var \crest\model\Token $token */
                 $token = \crest\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
                 if ($token)
                 {
@@ -162,6 +163,22 @@ namespace eve\model
 
 
 
+        /**
+         * Find all
+         * @return \eve\model\Character[]
+         */
+        public static function findAll()
+        {
+            $characters = [];
+            if ($results = \MySQL::getDB()->getRows("select * from characters order by name")) {
+                foreach ($results as $result) {
+                    $char = new \eve\model\Character();
+                    $char->load($result);
+                    $characters[] = $char;
+                }
+            }
+            return $characters;
+        }
         /**
          * Find character by ID
          * @param $characterID

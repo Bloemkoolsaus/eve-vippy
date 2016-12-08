@@ -211,11 +211,12 @@ class User
         {
             $searchQueryParams = array();
             $searchQueryParams[] = "id IN (	SELECT	c.userid
-												FROM 	characters c
-													INNER JOIN corporations corp ON corp.id = c.corpid
-													LEFT JOIN alliances ally ON ally.id = corp.allianceid
-												WHERE 	corp.name LIKE '%".\Tools::POST("searchusers")."%'
-												OR 		ally.name LIKE '%".\Tools::POST("searchusers")."%')";
+                                            FROM 	characters c
+                                                INNER JOIN crest_token t ON t.tokentype = 'character' AND t.tokenid = c.id
+                                                INNER JOIN corporations corp ON corp.id = c.corpid
+                                                LEFT JOIN alliances ally ON ally.id = corp.allianceid
+                                            WHERE 	corp.name LIKE '%".\Tools::POST("searchusers")."%'
+                                            OR 		ally.name LIKE '%".\Tools::POST("searchusers")."%')";
 
             if (count($searchQueryParams) > 0)
                 $section->searchQuery = implode(" OR ", $searchQueryParams);

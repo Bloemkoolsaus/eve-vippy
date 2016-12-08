@@ -20,7 +20,7 @@ namespace users
 					$user = new \users\model\User(\Tools::REQUEST("loginas"));
 					$user->setLoginStatus();
 				}
-				\AppRoot::redirect("index.php?module=profile&section=chars");
+				\AppRoot::redirect("");
 			}
 
 			if ($section == "logs")

@@ -56,9 +56,11 @@
 	{if $App->user->getIsSysAdmin()}
 		<div class="form">
 			<label class="field"><b>Auth. Group:</b></label>
-		{foreach from=$user->getAuthGroups() item=group}
-			<div>{$group->name}</div>
-		{/foreach}
+			<div>
+			{foreach from=$user->getAuthGroups() item=group}
+				<div><a href="/admin/authgroup/edit/{$group->id}" target="_blank">{$group->name}</a></div>
+			{/foreach}
+			</div>
 		</div>
 	{/if}
 	</div>

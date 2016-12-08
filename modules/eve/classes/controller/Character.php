@@ -3,13 +3,6 @@ namespace eve\controller
 {
 	class Character
 	{
-		private $db = null;
-
-		function __construct()
-		{
-			$this->db = \MySQL::getDB();
-		}
-
 		/**
 		 * Get characters by UserID
 		 * @param int $userID
@@ -62,7 +55,7 @@ namespace eve\controller
 		function getCharactersByUserID($userID)
 		{
 			$characters = array();
-			if ($results = $this->db->getRows("SELECT * FROM characters WHERE userid = ? ORDER BY name", array($userID)))
+			if ($results = \MySQL::getDB()->getRows("SELECT * FROM characters WHERE userid = ? ORDER BY name", array($userID)))
 			{
 				foreach ($results as $result)
 				{

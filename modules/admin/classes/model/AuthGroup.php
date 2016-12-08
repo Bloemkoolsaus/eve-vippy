@@ -423,13 +423,12 @@ namespace admin\model
             \AppRoot::debug("AuthGroup->isAllowed([".$this->id."] ".$this->name.")");
 
 			// Check for active subscriptions
-			foreach ($this->getSubscriptions() as $subscription)
-			{
+			foreach ($this->getSubscriptions() as $subscription) {
 				if ($subscription->isActive())
 					return true;
 			}
 
-			return false;
+			return true;
 		}
 
         function isActive()
