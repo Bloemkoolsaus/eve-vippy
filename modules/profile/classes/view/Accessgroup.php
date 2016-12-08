@@ -61,6 +61,7 @@ class Accessgroup
                 $usergroup = new \users\model\UserGroup();
                 $usergroup->name = "VIPPY Admin";
                 $usergroup->authGroupID = $authgroup->id;
+                $usergroup->addRight("admin", "admin", "Vippy Admin");
                 $usergroup->store();
 
                 \User::getUSER()->addUserGroup($usergroup->id);

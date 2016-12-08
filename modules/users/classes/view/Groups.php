@@ -50,8 +50,7 @@ class Groups
             $usergroup->clearRights();
             if (\Tools::POST("roles"))
             {
-                foreach ($_POST["roles"] as $role => $value)
-                {
+                foreach ($_POST["roles"] as $role => $value) {
                     if ($role == "admin")
                         $usergroup->addRight("admin", "admin", "Vippy Admin");
                 }
