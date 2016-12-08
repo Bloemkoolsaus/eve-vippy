@@ -15,14 +15,11 @@
 
 {if isset($mainheader)}{$mainheader}{/if}
 
-{if $App->theme == 'kingsday'}
 <div id="alexander">&nbsp;</div>
 <div id="maxima">&nbsp;</div>
-{/if}
 
 <div id="maincontainer">
 	<div id="maincontent">
-	{if $App->theme == 'kingsday'}
 		<div id="levedekoning" class="content">
 			<div id="banner">
 				<div class="description">
@@ -40,14 +37,10 @@
 				</div>
 			</div>
 		</div>
-	{/if}
 		{$maincontent}
 	</div>
 	<div style="clear:both;"></div>
-	<br />
-	<br />
 </div>
-
 
 {$debug}
 

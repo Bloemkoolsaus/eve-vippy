@@ -412,49 +412,105 @@ class AppRoot
 		}
 	}
 
-	public static function addJavascriptFile($directory, $filename, $module=false)
-	{
-		if ($module)
-			$directory = "modules/".$module."/".$directory;
 
-		$keyMod = $module;
-		$keyDir = trim(str_replace("/".\SmartyTools::getTemplate()."/", "/", $directory),"/");
 
-		$fileParts = explode(".",$filename);
-		$extension = array_pop($fileParts);
-		$keyFile = implode(".",$fileParts);
+    public static function addJavascriptDirectory($directory, $allowSubDir=true)
+    {
+        if (file_exists($directory))
+        {
+            $directories = array();
+            if (!is_dir($directory))
+                \AppRoot::addJavascriptFile($directory);
+            else {
+                foreach (\Tools::getFilesFromDirectory($directory,$allowSubDir) as $file) {
+                    if (is_file($file))
+                        \AppRoot::addJavascriptFile($file);
+                    else
+                        $directories[] = $file;
+                }
+            }
 
-		$filePath = trim($directory, "/")."/".$filename;
-		if (is_file($filePath))
-		{
-			self::debug("Load Javascript File: ".$filePath);
-			$filePath .= "?".fileatime($filePath);
+            // Add after files!!
+            foreach ($directories as $dir) {
+                \AppRoot::addJavascriptDirectory($dir);
+            }
+        }
+    }
+    public static function addJavascriptFile($filename, $module=false)
+    {
+        if ($module)
+            $filename = "modules/".$module."/javascript/".\SmartyTools::getTemplate()."/".$filename;
 
-			self::$javascripts[$keyMod][$keyDir][$keyFile] = $filePath;
-		}
-	}
+        if (file_exists($filename))
+        {
+            if (is_file($filename))
+            {
+                // Check file extension
+                $parts = explode(".",$filename);
+                if (array_pop($parts) != "js")
+                    return;
 
-	public static function addStylesheetFile($directory, $filename, $module=false)
-	{
-		if ($module)
-			$directory = "modules/".$module."/".$directory;
+                self::debug("Load Javascript File: " . $filename);
+                if (!array_key_exists($filename, self::$javascripts))
+                    self::$javascripts[$filename] = $filename . "?" . filemtime($filename);
+            }
+            else if (is_dir($filename))
+                \AppRoot::debug($filename." is a directory","red");
+        }
+        else
+            \AppRoot::debug($filename." does not exist","red");
+    }
 
-		$keyMod = $module;
-		$keyDir = trim(str_replace("/".\SmartyTools::getTemplate()."/", "/", $directory),"/");
 
-		$fileParts = explode(".",$filename);
-		$extension = array_pop($fileParts);
-		$keyFile = implode(".",$fileParts);
 
-		$filePath = trim($directory, "/")."/".$filename;
-		if (is_file($filePath))
-		{
-			self::debug("Load Stylesheet File: ".$filePath);
-			$filePath .= "?".fileatime($filePath);
+    public static function addStylesheetDirectory($directory, $allowSubDir=true)
+    {
+        if (file_exists($directory))
+        {
+            $directories = array();
+            if (!is_dir($directory))
+                \AppRoot::addStylesheetFile($directory);
+            else {
+                foreach (\Tools::getFilesFromDirectory($directory,$allowSubDir) as $file) {
+                    if (is_file($file))
+                        \AppRoot::addStylesheetFile($file);
+                    else
+                        $directories[] = $file;
+                }
+            }
 
-			self::$stylesheets[$keyMod][$keyDir][$keyFile] = $filePath;
-		}
-	}
+            // Add after files!!
+            foreach ($directories as $dir) {
+                \AppRoot::addStylesheetDirectory($dir);
+            }
+        }
+    }
+    public static function addStylesheetFile($filename, $module=false)
+    {
+        if ($module)
+            $filename = "modules/".$module."/css/".\SmartyTools::getTemplate()."/".$filename;
+
+        if (file_exists($filename))
+        {
+            if (is_file($filename))
+            {
+                // Check file extension
+                $parts = explode(".",$filename);
+                if (array_pop($parts) != "css")
+                    return;
+
+                self::debug("Load Stylesheet File: ".$filename);
+                if (!array_key_exists($filename, self::$stylesheets))
+                    self::$stylesheets[$filename] = $filename."?".filemtime($filename);
+            }
+            else if (is_dir($filename))
+                \AppRoot::debug($filename." is a directory","red");
+        }
+        else
+            \AppRoot::debug($filename." does not exist","red");
+    }
+
+
 
 	public static function title($value)
 	{

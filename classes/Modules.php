@@ -22,50 +22,27 @@ class Modules
 		return new $class();
 	}
 
-	function loadJavascripts()
-	{
-		$this->javascripts = array();
+    function loadJavascripts()
+    {
+        \AppRoot::addJavascriptDirectory("modules/" . $this->name . "/javascript", false);
+        \AppRoot::addJavascriptDirectory("modules/" . $this->name . "/common/javascript", false);
 
-		$directories = array("javascript/");
-		if (strlen(trim(\SmartyTools::getTemplate())) > 0)
-			$directories[] ="javascript/".\SmartyTools::getTemplate()."/";
+        if (strlen(trim(\SmartyTools::getTemplate())) > 0) {
+            \AppRoot::addJavascriptDirectory("modules/" . $this->name . "/javascript/".\SmartyTools::getTemplate());
+            \AppRoot::addJavascriptDirectory("modules/" . $this->name . "/common/javascript/".\SmartyTools::getTemplate());
+        }
+    }
 
-		foreach ($directories as $directory) {
-			if (file_exists("modules/".$this->name."/".$directory)) {
-				if ($handle = opendir("modules/".$this->name."/".$directory)) {
-					while (false !== ($file = readdir($handle))) {
-						\AppRoot::addJavascriptFile($directory, $file, $this->name);
-					}
-					closedir($handle);
-				}
-			}
-		}
-	}
+    function loadStylesheets()
+    {
+        \AppRoot::addStylesheetDirectory("modules/" . $this->name . "/css", false);
+        \AppRoot::addStylesheetDirectory("modules/" . $this->name . "/common/css", false);
 
-	function loadStylesheets()
-	{
-		$this->stylesheets = array();
-
-		$directories = array("css/");
-		if (strlen(trim(\SmartyTools::getTemplate())) > 0)
-			$directories[] = "css/".\SmartyTools::getTemplate()."/";
-
-		foreach ($directories as $directory) {
-			if (file_exists("modules/".$this->name."/".$directory)) {
-				if ($handle = opendir("modules/".$this->name."/".$directory)) {
-					while (false !== ($file = readdir($handle))) {
-						\AppRoot::addStylesheetFile($directory, $file, $this->name);
-					}
-					closedir($handle);
-				}
-			}
-		}
-	}
-
-	function getContent()
-	{
-		return Module::getContent();
-	}
+        if (strlen(trim(\SmartyTools::getTemplate())) > 0) {
+            \AppRoot::addStylesheetDirectory("modules/" . $this->name . "/css/".\SmartyTools::getTemplate());
+            \AppRoot::addStylesheetDirectory("modules/" . $this->name . "/common/css/".\SmartyTools::getTemplate());
+        }
+    }
 
 
 	/** STATIC **/

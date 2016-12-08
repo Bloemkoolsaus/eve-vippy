@@ -1,0 +1,54 @@
+body {
+    background: #111111 linear-gradient(#111111, #222222);
+    background-image: url('/images/kerst/background.jpg');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    background-attachment: fixed;
+}
+div.content {
+    background: none repeat scroll 0 0 rgba(10, 10, 10, 0.8);
+}
+
+#header {
+    background: linear-gradient(to right, #B90008, #DE0112) !important;
+}
+#headercontainer {
+    background-image: url('/images/kerst/menu-left.jpg'), url('/images/kerst/menu-right.jpg') !important;
+    background-position: left top, right top !important;
+    background-repeat: no-repeat !important;
+    border-bottom: solid 1px #aaaaaa;
+}
+#header #infoheader {
+    background-color: none !important;
+    background: none !important;
+    border-bottom: solid 1px #bbbbbb;
+}
+#header #menucontainer {
+    background-color: none !important;
+    background: none !important;
+}
+
+li.mainmenu {
+    border-right: solid 1px #bbbbbb;
+}
+li.mainmenu.first {
+    border-left: solid 1px #bbbbbb;
+}
+li.mainmenu:hover {
+    background: #dddddd !important;
+}
+li.mainmenu:hover a {
+    color: #cc0000 !important;
+    text-shadow: none;
+}
+div.submenu {
+    background: #ffffff !important;
+}
+li.submenu:hover {
+    background-color: #dddddd !important;
+    background-image: none !important;
+    border-top: solid 1px #dddddd !important;
+    border-bottom: solid 1px #dddddd !important;
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}

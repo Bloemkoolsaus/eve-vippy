@@ -57,39 +57,17 @@ $stylesheets = array();
 // Een ajax verzoek hoeft geen javascript en css in te laden.
 if (!\Tools::REQUEST("ajax"))
 {
-	\AppRoot::addJavascriptFile("javascript/", "jquery.v1.11.3.js");
+    // Load Javascripts
+    \AppRoot::addJavascriptDirectory("javascript/common");
+    \AppRoot::addJavascriptDirectory("javascript", false);
+    \AppRoot::addJavascriptDirectory("javascript/".\SmartyTools::getTemplate());
+    \AppRoot::debug("Javascripts loaded");
 
-	// Load Javascripts
-	$directories = array("javascript/");
-	if (strlen(trim(SmartyTools::getTemplate())) > 0)
-		$directories[] = "javascript/".SmartyTools::getTemplate()."/";
-	foreach ($directories as $directory) {
-		if (file_exists($directory)) {
-			if ($handle = @opendir($directory)) {
-				while (false !== ($file = readdir($handle))) {
-					\AppRoot::addJavascriptFile($directory, $file);
-				}
-				closedir($handle);
-			}
-		}
-	}
-	\AppRoot::debug("Javascript loaded");
-
-	// Load Stylesheets
-	$directories = array("css/");
-	if (strlen(trim(SmartyTools::getTemplate())) > 0)
-		$directories[] = "css/".SmartyTools::getTemplate()."/";
-	foreach ($directories as $directory) {
-		if (file_exists($directory)) {
-			if ($handle = @opendir($directory)) {
-				while (false !== ($file = readdir($handle))) {
-					\AppRoot::addStylesheetFile($directory, $file);
-				}
-				closedir($handle);
-			}
-		}
-	}
-	\AppRoot::debug("Stylesheets loaded");
+    // Load Stylesheets
+    \AppRoot::addStylesheetDirectory("css/common");
+    \AppRoot::addStylesheetDirectory("css", false);
+    \AppRoot::addStylesheetDirectory("css/".\SmartyTools::getTemplate());
+    \AppRoot::debug("Stylesheets loaded");
 }
 
 // Niet ingelogd terwijl we dat wel moeten zijn

@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>{$pageTitle|implode:" - "}</title>
+	<link rel="shortcut icon" href="/images/fav.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="/images/fav.ico">
+{foreach from=$javascript item=file}
+	<script type="text/javascript" language="javascript" src="{$App->url}{$file}"></script>
+{/foreach}
+{foreach from=$stylesheet key=module item=file}
+	<link rel="stylesheet" type="text/css" href="{$App->url}{$file}" />
+{/foreach}
+</head>
+<body>
+
+{if isset($mainheader)}{$mainheader}{/if}
+
+<div id="maincontainer">
+	<div id="maincontent">
+		{$maincontent}
+	</div>
+	<div style="clear:both;"></div>
+</div>
+
+
+{$debug}
+
+</body>
+</html>

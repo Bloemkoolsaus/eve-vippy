@@ -1,20 +1,15 @@
 {if isset($App->user)}
 <div id="header">
-	<div id="infoheader">
-		<div id="infoheaderbar">
-			<div id="infoheader-name">
-				Welcome: {$App->user->getFullname()}
+	<div id="headercontainer">
+		<div id="infoheader">
+			<div id="infoheaderbar">
+				{include file="infoheader"}
 			</div>
-			<div id="infoheader-info">
-			{if isset($today)}
-				{$today}
-			{/if}
-			</div>
+			<div style="clear:both;"></div>
 		</div>
-		<div style="clear:both;"></div>
-	</div>
-	<div id="menucontainer">
-		{$mainmenu}
+		<div id="menucontainer">
+			{$mainmenu}
+		</div>
 	</div>
 {if isset($newPatchNotes)}
 	<div id="menuNotifications">
