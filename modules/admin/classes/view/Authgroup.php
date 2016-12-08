@@ -76,8 +76,7 @@ class Authgroup
 
             $authgroup->mainChainID = \Tools::POST("mainchain");
 
-            if (\Tools::POST("corporation"))
-            {
+            if (\Tools::POST("corporation")) {
                 $corporation = new \eve\model\Corporation(\Tools::POST("corporation"));
                 if ($corporation->isNPC())
                     $errors[] = "<b>Cannot add $corporation->name</b><br />`".$corporation->name."` is an NPC corp. Vippy only works for player corporations!";
@@ -88,13 +87,10 @@ class Authgroup
             if (\Tools::POST("alliance"))
                 $authgroup->addAllianceById(\Tools::POST("alliance"));
 
-            if (\Tools::POST("closestsystems"))
-            {
+            if (\Tools::POST("closestsystems")) {
                 \MySQL::getDB()->delete("map_closest_systems", ["authgroupid" => $authgroup->id, "userid" => 0]);
-                if (isset($_POST["closestsystems"]["systems"]))
-                {
-                    foreach ($_POST["closestsystems"]["systems"] as $key => $systemID)
-                    {
+                if (isset($_POST["closestsystems"]["systems"])) {
+                    foreach ($_POST["closestsystems"]["systems"] as $key => $systemID) {
                         $system = new \map\model\ClosestSystem();
                         $system->solarSystemID = $systemID;
                         $system->authGroupID = $authgroup->id;
@@ -102,8 +98,7 @@ class Authgroup
                     }
                 }
 
-                foreach (\map\model\ClosestSystem::getClosestSystemsBySystemID() as $system)
-                {
+                foreach (\map\model\ClosestSystem::getClosestSystemsBySystemID() as $system) {
                     // check of onmap aan is gevinkt.
                     if (isset($system->tradeHub)) {
                         if (!isset($_POST["closestsystems"]["onmap"][$system->solarSystemID])) {
@@ -120,13 +115,14 @@ class Authgroup
                 }
             }
 
-            if (\Tools::POST("removeSystem"))
-            {
-                \MySQL::getDB()->delete("map_closest_systems", ["solarsystemid" => \Tools::POST("removeSystem"), "authgroupid" => $authgroup->id, "userid" => 0]);
+            if (\Tools::POST("removeSystem")) {
+                \MySQL::getDB()->delete("map_closest_systems", [
+                    "solarsystemid" => \Tools::POST("removeSystem"),
+                    "authgroupid" => $authgroup->id, "userid" => 0
+                ]);
             }
 
-            if (\Tools::POST("addclosesystem"))
-            {
+            if (\Tools::POST("addclosesystem")) {
                 $system = new \map\model\ClosestSystem();
                 $system->solarSystemID = \Tools::POST("addclosesystem");
                 $system->authGroupID = $authgroup->id;
@@ -134,24 +130,20 @@ class Authgroup
             }
 
             $authgroup->clearConfig();
-            if (\Tools::POST("config"))
-            {
+            if (\Tools::POST("config")) {
                 foreach ($_POST["config"] as $var => $val) {
                     $authgroup->setConfig($var, $val);
                 }
             }
-
             $authgroup->store();
 
-
-            if (isset($_POST["subscription"]))
-            {
+            if (isset($_POST["subscription"])) {
                 $subscription = new \admin\model\Subscription();
                 $subscription->authgroupID = $authgroup->id;
                 $subscription->description = $_POST["subscription"]["description"];
                 $subscription->amount = $_POST["subscription"]["amount"];
-                $subscription->fromdate = (isset($_POST["subscription"]["fromdate"]))?$_POST["subscription"]["fromdate"]:null;
-                $subscription->tilldate = (isset($_POST["subscription"]["tilldate"]))?$_POST["subscription"]["tilldate"]:null;
+                $subscription->fromdate = (isset($_POST["subscription"]["fromdate"]))?date("Y-m-d", strtotime($_POST["subscription"]["fromdate"])):null;
+                $subscription->tilldate = (isset($_POST["subscription"]["tilldate"]))?date("Y-m-d", strtotime($_POST["subscription"]["tilldate"])):null;
                 $subscription->store();
             }
 

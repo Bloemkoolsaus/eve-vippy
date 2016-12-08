@@ -25,6 +25,7 @@ class User
         $errors = array();
         $messages = array();
         $user = new \users\model\User(\Tools::REQUEST("id"));
+        \AppRoot::title($user->username);
 
         // Directors may only manage their own members.
         if (\User::getUSER()->getIsDirector() && !\User::getUSER()->getIsSysAdmin()) {

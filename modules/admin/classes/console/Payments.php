@@ -54,8 +54,7 @@ class Payments
                     if (strpos(strtolower($transaction->description), "atlas") !== false)
                         $registerTransaction = true;
 
-                    if (!$registerTransaction)
-                    {
+                    if (!$registerTransaction) {
                         \AppRoot::doCliOutput(" - No vippy/atlas in description");
                         continue;
                     }
@@ -90,7 +89,7 @@ class Payments
                             $transaction->store();
                             \AppRoot::doCliOutput(" + Stored");
                         } else
-                            \AppRoot::doCliOutput(" - No authgroup");
+                            \AppRoot::doCliOutput(" ! No authgroup");
                     }
                     else
                         \AppRoot::doCliOutput(" - Already registered!");

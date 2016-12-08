@@ -10,6 +10,7 @@ namespace users
 		{
 			$section = (\Tools::REQUEST("section"))?:"users";
 			$action = (\Tools::REQUEST("action"))?:"overview";
+            \AppRoot::title("Users");
 
 			if (\Tools::REQUEST("loginas"))
 			{

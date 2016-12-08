@@ -1310,7 +1310,7 @@ namespace users\model
 		{
 			if ($this->authGroups === null)
 			{
-                \AppRoot::doCliOutput("User(".$this->displayname.")->getAuthGroups()");
+                \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
 				$this->authGroups = array();
                 foreach ($this->getAuthGroupsIDs() as $id) {
                     $group = new \admin\model\AuthGroup($id);

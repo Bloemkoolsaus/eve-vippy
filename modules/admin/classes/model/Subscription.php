@@ -10,6 +10,9 @@ namespace admin\model
 		public $fromdate;
 		public $tilldate;
 
+        public $totalDue;
+        public $totalPayed;
+
 		private $authGroup = null;
 
 		function __construct($id=false)

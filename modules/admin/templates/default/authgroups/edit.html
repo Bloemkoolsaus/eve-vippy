@@ -245,28 +245,15 @@
 <div class="content">
 	<div class="tabs">
 		<ul>
-			<li><a href="#" onclick="showTabs('users'); return false;">Users</a></li>
 			<li><a href="#" onclick="showTabs('subscriptions'); return false;">Subscriptions</a></li>
+			<li><a href="#" onclick="showTabs('users'); return false;">{$authgroup->getAllowedUsers()|@count} Users</a></li>
 		</ul>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
 </div>
 
-<div id="detailtab-users" class="content" rel="detailtab">
-	<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
-	<div>
-		{foreach from=$authgroup->getAllowedUsers() item=user}
-			<div style="float: left; width: 200px; padding: 2px;">
-				<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
-				<a href="/index.php?module=users&action=edit&id={$user->id}" target="_blank">{$user->getFullname()}</a>
-				<div style="clear:both;"></div>
-			</div>
-		{/foreach}
-	</div>
-	<div style="clear:both;"></div>
-</div>
-<div id="detailtab-subscriptions" class="content" rel="detailtab" style="display: none;">
+<div id="detailtab-subscriptions" class="content" rel="detailtab">
 	<h2>Subscription</h2>
 
 	<div style="float: left; width: 35%;">
@@ -402,6 +389,20 @@
 		{/if}
 			</table>
 		</div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+
+<div id="detailtab-users" class="content" rel="detailtab" style="display: none;">
+	<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
+	<div>
+		{foreach from=$authgroup->getAllowedUsers() item=user}
+			<div style="float: left; width: 200px; padding: 2px;">
+				<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+				<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
+				<div style="clear:both;"></div>
+			</div>
+		{/foreach}
 	</div>
 	<div style="clear:both;"></div>
 </div>
