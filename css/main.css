@@ -96,13 +96,9 @@ a:visited {
 }
 
 div#infoheader-name {
-	float: left;
-	width: 48%;
 	text-align: left;
 }
 div#infoheader-info {
-	float: right;
-	width: 48%;
 	text-align: right;
 }
 

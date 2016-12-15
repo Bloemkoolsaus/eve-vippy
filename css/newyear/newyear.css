@@ -1,0 +1,15 @@
+#fireworks1 {
+    position: absolute;
+    top: 50px;
+    left: 0;
+}
+#fireworks2 {
+    position: absolute;
+    top: 50px;
+    right: 0
+}
+
+#happynewyear {
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffaa00;
+}

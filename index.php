@@ -19,7 +19,7 @@ $mainMenu = null;
 
 // Koningsdag
 if (date("Y-m-d") == date("Y")."-04-27") {
-	\SmartyTools::setTemplate("kingsday");
+    \SmartyTools::setTemplate("kingsday");
 }
 // Sinterklaas
 if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") {
@@ -29,7 +29,10 @@ if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") 
 if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-26") {
 	\SmartyTools::setTemplate("kerst");
 }
-\SmartyTools::setTemplate("kerst");
+// Nieuw-jaar
+if (date("Y-m-d") == date("Y")."-01-01") {
+    \SmartyTools::setTemplate("newyear");
+}
 
 // Logout
 if (Tools::GET("action") == "logout") {

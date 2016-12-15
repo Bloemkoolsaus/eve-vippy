@@ -1,7 +1,10 @@
-<div id="infoheader-name">
-	<span style="font-size: 1.1em;">Merry Christmas!</span> &nbsp; | &nbsp; {$App->user->getFullname()}
+<div id="infoheader-name" class="col4">
+	{$App->user->getFullname()}
 </div>
-<div id="infoheader-info">
+<div class="col4">
+	<span style="font-size: 1.1em;">Merry Christmas!</span>
+</div>
+<div id="infoheader-info" class="col4 right last">
 	{if isset($today)}
 		{$today}
 	{/if}
