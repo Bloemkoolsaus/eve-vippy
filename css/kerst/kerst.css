@@ -1,6 +1,7 @@
 body {
     background: #111111 linear-gradient(#111111, #222222);
     background-image: url('/images/kerst/background.jpg');
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: bottom right;
     background-attachment: fixed;
@@ -28,6 +29,12 @@ div.content {
     background: none !important;
 }
 
+#santa {
+    position: absolute;
+    top: 6px;
+    margin-left: -55px;
+}
+
 li.mainmenu {
     border-right: solid 1px #bbbbbb;
 }
@@ -51,4 +58,13 @@ li.submenu:hover {
     border-bottom: solid 1px #dddddd !important;
     padding-top: 3px !important;
     padding-bottom: 3px !important;
+}
+
+table.sectionoverview th {
+    background: linear-gradient(#DE0112, #B90008) !important;
+}
+table.sectionoverview tr.even:hover,
+table.sectionoverview tr.odd:hover {
+    background-color: #2CB036 !important;
+    background: #2CB036 linear-gradient(#2CB036, #228E28) !important;
 }

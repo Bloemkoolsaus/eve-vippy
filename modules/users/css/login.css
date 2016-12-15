@@ -1,7 +1,27 @@
+div#vippylogo {
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 5em;
+    margin-bottom: 4em;
+    text-align: center;
+    padding-right: 7em;
+}
+div#vippylogo h1,
+div#vippylogo h2 {
+    border: 0;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    text-shadow: 5px 2px 4px rgba(20, 20, 20, .8);
+}
+div#vippylogo h1 {
+    font-size: 7em;
+}
+
 div#loginform {
     width: 600px;
 	margin: 0 auto;
-    margin-top: 10em;
+    margin-top: 2em;
     margin-bottom: 10em;
 }
 

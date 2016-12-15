@@ -26,9 +26,10 @@ if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") 
 	\SmartyTools::setTemplate("sinterklaas");
 }
 // Kerst
-if (date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-26") {
+if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-26") {
 	\SmartyTools::setTemplate("kerst");
 }
+\SmartyTools::setTemplate("kerst");
 
 // Logout
 if (Tools::GET("action") == "logout") {
