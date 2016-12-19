@@ -49,7 +49,6 @@ class Module extends \Module
             }
         }
 
-
         return parent::getContent();
     }
 
