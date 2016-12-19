@@ -94,23 +94,6 @@ class Chain
             $chain->setSetting("create-unmapped", 1);
             $chain->setSetting("count-statistics", 1);
         }
-        else
-        {
-            /*
-            if (\User::getUser()->getIsSysAdmin())
-                $allowed = true;
-            else {
-                $allowed = false;
-                foreach (\User::getUSER()->getAvailibleChains() as $userchain) {
-                    if ($userchain->id == $chain->id)
-                        $allowed = true;
-                }
-            }
-            if (!$allowed)
-                \AppRoot::redirect("");
-            */
-        }
-
 
         $errors = array();
 
@@ -141,11 +124,17 @@ class Chain
                 }
             }
 
-            if (!$chain->id)
+            $chain->resetAlliances();
+            $chain->resetCorporations();
+
+            // Nieuwe chain, alle corp/alliances toevoegen!
+            if (!$chain->id || (!\Tools::POST("corporations") && !\Tools::POST("alliances")))
             {
-                // Nieuwe chain, alle corp/alliances toevoegen!
                 foreach ($chain->getAuthGroup()->getAlliances() as $alliance) {
                     $chain->addAlliance($alliance->id);
+                    foreach ($alliance->getCorporations() as $corp) {
+                        $chain->addCorporation($corp->id);
+                    }
                 }
                 foreach ($chain->getAuthGroup()->getCorporations() as $corp) {
                     $chain->addCorporation($corp->id);

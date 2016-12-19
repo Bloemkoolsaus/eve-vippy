@@ -68,9 +68,7 @@
                     <input type="text" name="sortorder" value="{$chain->prio}" />
                 </label>
             </div>
-		{if $chain->getAuthGroup() != null}
 			<div class="form">
-			{if $chain->getAuthGroup() != null && $chain->getAuthGroup()->getConfig('wh_naming_numeric') > 0}
 				<label class="field">Auto-name systems:</label>
 				<label class="value">
 					<select name="settings[wh-autoname-scheme]">
@@ -82,13 +80,7 @@
 					{/foreach}
 					</select>
 				</label>
-			{else}
-				<label class="field">&nbsp;</label>
-				<input type="checkbox" name="settings[wh-autoname-scheme]" {if $chain->getSetting('wh-autoname-scheme')}checked{/if} value="1" />
-				Auto-name Wormholes
-			{/if}
 			</div>
-		{/if}
 			<div class="form">
 				<label class="field">&nbsp;</label>
 				<input type="checkbox" id="create-unmapped" name="settings[create-unmapped]" {if $chain->getSetting('create-unmapped')}checked{/if} value="1" />

@@ -366,10 +366,14 @@ namespace scanning\model
 
 		function addCorporation($id, $readonly=false, $admin=true)
 		{
-			if ($this->corporations === null)
-				$this->resetCorporations();
+            // Check of corp al toegevoegd is..
+            foreach ($this->getCorporations() as $corp) {
+                if ($corp->id == $id)
+                    return true;
+            }
 
 			$this->corporations[] = new \eve\model\Corporation($id);
+            return true;
 		}
 
 		/**
@@ -412,10 +416,14 @@ namespace scanning\model
 
 		function addAlliance($id, $readonly=false, $admin=true)
 		{
-			if ($this->alliances === null)
-				$this->resetAlliances();
+            // Check of alliance al toegevoegd is.
+            foreach ($this->getAlliances() as $ally) {
+                if ($ally->id == $id)
+                    return true;
+            }
 
 			$this->alliances[] = new \eve\model\Alliance($id);
+            return true;
 		}
 
 
