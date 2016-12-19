@@ -36,16 +36,19 @@ class Module extends \Module
                 }
             }
         }
-
-        // Geen map gekozen. Pak eerste map
-        if (count(\User::getUSER()->getAvailibleChains()) > 0) {
-            foreach (\User::getUSER()->getAvailibleChains() as $chain) {
-                \AppRoot::redirect("map/" . $chain->name);
+        else
+        {
+            // Geen map gekozen. Pak eerste map
+            if (count(\User::getUSER()->getAvailibleChains()) > 0) {
+                foreach (\User::getUSER()->getAvailibleChains() as $chain) {
+                    \AppRoot::redirect("map/" . $chain->name);
+                }
+            } else {
+                $tpl = \SmartyTools::getSmarty();
+                return $tpl->fetch("map/map/nomap");
             }
-        } else {
-            $tpl = \SmartyTools::getSmarty();
-            return $tpl->fetch("map/map/nomap");
         }
+
 
         return parent::getContent();
     }
