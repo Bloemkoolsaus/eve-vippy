@@ -4,12 +4,12 @@
 		&nbsp;Statistics {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -7px;">
 			<button type="button" class="small" style="width: 160px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")-1}'">
-				<img src="/images/default/left.png" align="left" />
+				<img src="/images/default/left.png" align="left" style="height: 16px;" />
 				Previous Month
 			</button>
 			<button type="button" class="small" style="width: 135px;" onclick="document.location='/stats/statistics/{$sdate|date_format:"Y"}/{($sdate|date_format:"m")+1}'">
 				Next Month
-				<img src="/images/default/right.png" align="right" />
+				<img src="/images/default/right.png" align="right" style="height: 16px;" />
 			</button>
 		</div>
 	</h1>
@@ -56,11 +56,11 @@
 	<div class="col6 right last">
 		<div class="message">
 			<ul>
-				<li>These statistics are only availible for Admins!</li>
+				<li><strong>These statistics are only availible for Admins!</strong></li>
 				<li>
 					Active users:
 					<ul>
-						<li>Users that have logged in to VIPPY via the Ingame Browser</li>
+						<li>Users that have logged active CREST sessions this month.</li>
 					</ul>
 				</li>
 			{if $authGroup->getConfig('stats_kills')}
@@ -168,7 +168,7 @@
 				{/if}
 				</td>
 				<td style="text-align: center; color: #aaaaaa;">
-				{if $stat->hoursOnline > 0}
+				{if $stat->hoursOnline > 0 && $stat->nrSigs > 0}
 					{($stat->nrSigs/$stat->hoursOnline)|round}
 				{/if}
 				</td>

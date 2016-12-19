@@ -21,11 +21,15 @@ class Statistics
         /** @var \stats\model\User[] $stats */
         $stats = array();
         $sortStatsBy = ($authGroup->getConfig("rank_leaderboard")=="wormholes")?"nrwormholes":"nrsigs";
+
+        if ($authGroup->getConfig("stats_kills"))
+            $sortStatsBy = "score desc, ratio desc, ".$sortStatsBy;
+
         if ($results = \MySQL::getDB()->getRows("select *
                                                 from    stats_users
                                                 where   authgroupid = ?
                                                 and     year = ? and month = ?
-                                                order by score desc, ratio desc, ".$sortStatsBy." desc"
+                                                order by ".$sortStatsBy." desc"
                                 , [$authGroup->id, $y, $m]))
         {
             foreach ($results as $result)

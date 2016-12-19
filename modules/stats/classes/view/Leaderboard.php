@@ -69,8 +69,11 @@ class Leaderboard
             {
                 $totalSignatures[] = [
                     "date" => \Tools::getFullMonth($result["month"])." ".$result["year"],
+                    "month" => $result["month"],
+                    "year" => $result["year"],
                     "sigs" => $result["sigs"],
-                    "whs" => $result["wormholes"]
+                    "whs" => $result["wormholes"],
+                    "selected" => ($result["year"].$result["month"] == date("Ym", strtotime($sdate)))?true:false
                 ];
             }
         }

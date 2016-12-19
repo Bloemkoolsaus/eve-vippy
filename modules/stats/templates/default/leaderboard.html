@@ -4,12 +4,12 @@
 		&nbsp;Leaderboard {$month}
 		<div style="float: right; width: 400px; text-align: right; margin-top: -6px;">
 			<button type="button" class="small" style="width: 160px;" onclick="reloadLeaderboard('{$sdate|date_format:"Y"}','{($sdate|date_format:"m")-1}')">
-				<img src="/images/default/left.png" align="left" />
+				<img src="/images/default/left.png" align="left" style="height: 16px;" />
 				Previous Month
 			</button>
 			<button type="button" class="small" style="width: 140px;" onclick="reloadLeaderboard('{$sdate|date_format:"Y"}','{($sdate|date_format:"m")+1}')">
 				Next Month
-				<img src="/images/default/right.png" align="right" />
+				<img src="/images/default/right.png" align="right" style="height: 16px;" />
 			</button>
 		</div>
 	</h1>
@@ -31,7 +31,7 @@
 		<br />
 		<table class="sectionoverview">
 			<tr>
-				<th class="large" colspan="3"></th>
+				<th class="large" colspan="3">Leaderboard</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
 				<th style="width: 70px; text-align: center;">Wormholes</th>
 			{if $authGroup->getConfig('stats_kills')}
@@ -49,147 +49,12 @@
 					<img src="http://image.eveonline.com/Corporation/{$stat->getUser()->getMainCharacter()->corporationID}_32.png"
 						 style="height: 22px; margin: -1px;">
 				</td>
-				<td style="{if $s==0}color: #ffffff; font-weight: bold;{/if}">
+				<td style="{if $stat->getUser()->id == $App->user->id}color: #ffffff; font-weight: bold;{/if}
+							{if $s == 0}color: #eeeeee; font-weight: bold; font-size: 1.1em;{/if}">
 					&nbsp;
 					<span style="font-weight: bold; font-size: 13px;">{$s+1}.</span>
 					&nbsp;
 					{$stat->getUser()->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">{$stat->nrSigs}</td>
-				<td style="text-align: center;">{$stat->nrWormholes}</td>
-			{if $authGroup->getConfig('stats_kills')}
-				<td style="text-align: left; background-color: #{$stat->getScoreColor()}; color: #ffffff; font-weight: bold;">
-					&nbsp;{$stat->getScoreTitle()}&nbsp;
-				</td>
-			{/if}
-			</tr>
-		{/if}
-	{/foreach}
-		</table>
-	</div>
-	<div class="col6 right last">
-		<div class="message">
-			<ul>
-				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
-				<li><b>Statistics may take up to 30 minutes to refresh.</b></li>
-				<li>Signatures:</li>
-				<ul>
-					<li>Newly added signatures AND updated signatures are counted.</li>
-					<li>Updating a signature that was not changed will <u>not</u> count.</li>
-				</ul>
-				<li>Wormholes:</li>
-				<ul>
-					<li>New systems that are added / mapped.</li>
-				</ul>
-				{if $authGroup->getConfig('stats_kills')}
-					<li>Score:</li>
-					<ul>
-						<li>As you know we expect everyone to contribute to the alliance in some way.</li>
-						<li>Score is an attempt to measure this based on these metrics:</li>
-						<ul>
-							<li>How much game time do you have?</li>
-							<li>How many kills are you getting?</li>
-							<li>How much do you scan?</li>
-							<li>Do you fly logi or other support ships in fleets?</li>
-						</ul>
-					</ul>
-					<li style="color: #cc0000;"><b>Score is <u>not</u> a hard limit but a tool to get insight in our activity levels!</b></li>
-					<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
-				{/if}
-			</ul>
-		</div>
-		<div style="clear: both;"></div>
-	</div>
-	<div style="clear:both;"></div>
-</div>
-
-<div class="content">
-	<br />
-
-	<div class="col6">
-		<table class="sectionoverview">
-			<tr>
-				<th class="large" colspan="3">
-					Your Rank
-				</th>
-				<th style="width: 70px; text-align: center;">Signatures</th>
-				<th style="width: 70px; text-align: center;">Wormholes</th>
-			{if $authGroup->getConfig('stats_kills')}
-				<th style="width: 100px;">Score</th>
-			{/if}
-			</tr>
-{foreach from=$stats key=s item=stat}
-	{if $stat->userID == $App->user->id}
-		{assign var=p value=$s-2}
-		{if $p > 0}
-			{assign var=prevStat value=$stats.$p}
-			<tr class="even" style="color: #999999;">
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td>
-					&nbsp; <b>{$p+1}</b>. &nbsp;
-					{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrSigs}
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrWormholes}
-				</td>
-				{if $authGroup->getConfig('stats_kills')}
-					<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
-						&nbsp;{$prevStat->getScoreTitle()}&nbsp;
-					</td>
-				{/if}
-			</tr>
-		{/if}
-		{assign var=p value=$s-1}
-		{if $p >= 0}
-			{assign var=prevStat value=$stats.$p}
-			<tr class="even" style="color: #999999;">
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td>
-					&nbsp; <b>{$p+1}</b>. &nbsp;
-					{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrSigs}
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrWormholes}
-				</td>
-				{if $authGroup->getConfig('stats_kills')}
-					<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
-						&nbsp;{$prevStat->getScoreTitle()}&nbsp;
-					</td>
-				{/if}
-			</tr>
-		{/if}
-			<tr class="odd" style="color: #ffffff;">
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
-						style="height: 22px; margin: -1px;">
-				</td>
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Corporation/{$stat->getUser()->getMainCharacter()->corporationID}_32.png"
-						style="height: 22px; margin: -1px;">
-				</td>
-				<td style="font-weight: bold; font-size: 13px;">
-					&nbsp;{$s+1}.&nbsp;
-					<b>{$stat->getUser()->getMainCharacter()->name}</b>&nbsp;
 				</td>
 				<td style="text-align: center;">
 					{$stat->nrSigs}
@@ -203,91 +68,225 @@
 				</td>
 			{/if}
 			</tr>
-		{assign var=n value=$s+1}
-		{if $n < $stats|@count}
-			{assign var=prevStat value=$stats.$n}
-			<tr class="even" style="color: #999999;">
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td>
-					&nbsp; <b>{$n+1}</b>. &nbsp;
-					{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrSigs}
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrWormholes}
-				</td>
-				{if $authGroup->getConfig('stats_kills')}
-					<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
-						&nbsp;{$prevStat->getScoreTitle()}&nbsp;
-					</td>
-				{/if}
-			</tr>
 		{/if}
-		{assign var=n value=$s+2}
-		{if $n < $stats|@count}
-			{assign var=prevStat value=$stats.$n}
-			<tr class="even" style="color: #999999;">
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td style="padding: 0; width: 20px; text-align: center;">
-					<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
-						 style="height: 22px; margin: -1px;">
-				</td>
-				<td>
-					&nbsp; <b>{$n+1}</b>. &nbsp;
-					{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrSigs}
-				</td>
-				<td style="text-align: center;">
-					{$prevStat->nrWormholes}
-				</td>
-				{if $authGroup->getConfig('stats_kills')}
-					<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
-						&nbsp;{$prevStat->getScoreTitle()}&nbsp;
-					</td>
-				{/if}
-			</tr>
-		{/if}
-	{/if}
-{/foreach}
+	{/foreach}
 		</table>
-		<br />
-
-    </div>
-    <div class="col6 last right">
+		<div style="margin-top: 2em;">
 		<table class="sectionoverview">
 			<tr>
-				<th class="large">Total Signatures scanned</th>
+				<th class="large" colspan="3">
+					Your Rank
+				</th>
 				<th style="width: 70px; text-align: center;">Signatures</th>
 				<th style="width: 70px; text-align: center;">Wormholes</th>
+				{if $authGroup->getConfig('stats_kills')}
+					<th style="width: 100px;">Score</th>
+				{/if}
 			</tr>
-		{assign var=i value=0}
-		{foreach from=$totalSignatures key=s item=data}
-			<tr class="{if $i%2==0}even{else}odd{/if}">
-				<td>{$data.date}</td>
-				<td style="text-align: center;">{$data.sigs}</td>
-				<td style="text-align: center;">{$data.whs}</td>
-			</tr>
-		{assign var=i value=$i+1}
-		{/foreach}
+			{foreach from=$stats key=s item=stat}
+				{if $stat->userID == $App->user->id}
+					{assign var=p value=$s-2}
+					{if $p > 0}
+						{assign var=prevStat value=$stats.$p}
+						<tr class="even" style="color: #999999;">
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td>
+								&nbsp; <b>{$p+1}</b>. &nbsp;
+								{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrSigs}
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrWormholes}
+							</td>
+							{if $authGroup->getConfig('stats_kills')}
+								<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+									&nbsp;{$prevStat->getScoreTitle()}&nbsp;
+								</td>
+							{/if}
+						</tr>
+					{/if}
+					{assign var=p value=$s-1}
+					{if $p >= 0}
+						{assign var=prevStat value=$stats.$p}
+						<tr class="even" style="color: #999999;">
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td>
+								&nbsp; <b>{$p+1}</b>. &nbsp;
+								{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrSigs}
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrWormholes}
+							</td>
+							{if $authGroup->getConfig('stats_kills')}
+								<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+									&nbsp;{$prevStat->getScoreTitle()}&nbsp;
+								</td>
+							{/if}
+						</tr>
+					{/if}
+					<tr class="odd" style="color: #ffffff;">
+						<td style="padding: 0; width: 20px; text-align: center;">
+							<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
+								 style="height: 22px; margin: -1px;">
+						</td>
+						<td style="padding: 0; width: 20px; text-align: center;">
+							<img src="http://image.eveonline.com/Corporation/{$stat->getUser()->getMainCharacter()->corporationID}_32.png"
+								 style="height: 22px; margin: -1px;">
+						</td>
+						<td style="font-weight: bold; font-size: 13px;">
+							&nbsp;{$s+1}.&nbsp;
+							<b>{$stat->getUser()->getMainCharacter()->name}</b>&nbsp;
+						</td>
+						<td style="text-align: center;">
+							{$stat->nrSigs}
+						</td>
+						<td style="text-align: center;">
+							{$stat->nrWormholes}
+						</td>
+						{if $authGroup->getConfig('stats_kills')}
+							<td style="text-align: left; background-color: #{$stat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+								&nbsp;{$stat->getScoreTitle()}&nbsp;
+							</td>
+						{/if}
+					</tr>
+					{assign var=n value=$s+1}
+					{if $n < $stats|@count}
+						{assign var=prevStat value=$stats.$n}
+						<tr class="even" style="color: #999999;">
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td>
+								&nbsp; <b>{$n+1}</b>. &nbsp;
+								{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrSigs}
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrWormholes}
+							</td>
+							{if $authGroup->getConfig('stats_kills')}
+								<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+									&nbsp;{$prevStat->getScoreTitle()}&nbsp;
+								</td>
+							{/if}
+						</tr>
+					{/if}
+					{assign var=n value=$s+2}
+					{if $n < $stats|@count}
+						{assign var=prevStat value=$stats.$n}
+						<tr class="even" style="color: #999999;">
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Character/{$prevStat->getUser()->getMainCharacter()->id}_32.jpg"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td style="padding: 0; width: 20px; text-align: center;">
+								<img src="http://image.eveonline.com/Corporation/{$prevStat->getUser()->getMainCharacter()->corporationID}_32.png"
+									 style="height: 22px; margin: -1px;">
+							</td>
+							<td>
+								&nbsp; <b>{$n+1}</b>. &nbsp;
+								{$prevStat->getUser()->getMainCharacter()->name}&nbsp;
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrSigs}
+							</td>
+							<td style="text-align: center;">
+								{$prevStat->nrWormholes}
+							</td>
+							{if $authGroup->getConfig('stats_kills')}
+								<td style="text-align: left; background-color: #{$prevStat->getScoreColor()}; color: #ffffff; font-weight: bold;">
+									&nbsp;{$prevStat->getScoreTitle()}&nbsp;
+								</td>
+							{/if}
+						</tr>
+					{/if}
+				{/if}
+			{/foreach}
 		</table>
+		</div>
+	</div>
+	<div class="col6 right last">
+		<div class="message">
+			<ul>
+				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
+				<li><b>Statistics are cached every 30 minutes!</b></li>
+				<li>Signatures:</li>
+				<ul>
+					<li>Newly added signatures AND updated signatures are counted.</li>
+					<li>Updating a signature that was not changed will <u>not</u> count.</li>
+				</ul>
+				<li>Wormholes:</li>
+				<ul>
+					<li>New systems that are added / mapped.</li>
+				</ul>
+			{if $authGroup->getConfig('stats_kills')}
+				<li>Score:</li>
+				<ul>
+					<li>As you know we expect everyone to contribute to the alliance in some way.</li>
+					<li>Score is an attempt to measure this based on these metrics:</li>
+					<ul>
+						<li>How much game time do you have?</li>
+						<li>How many kills are you getting?</li>
+						<li>How much do you scan?</li>
+						<li>Do you fly logi or other support ships in fleets?</li>
+					</ul>
+				</ul>
+				<li style="color: #cc0000;"><b>Score is <u>not</u> a hard limit but a tool to get insight in our activity levels!</b></li>
+				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
+			{/if}
+			</ul>
+		</div>
+		<div style="clear: both;"></div>
+		<br />
+
+		<div style="margin-top: 2em;">
+			<table class="sectionoverview">
+				<tr>
+					<th class="large">Total Signatures scanned</th>
+					<th style="width: 70px; text-align: center;">Signatures</th>
+					<th style="width: 70px; text-align: center;">Wormholes</th>
+				</tr>
+			{assign var=i value=0}
+			{foreach from=$totalSignatures key=s item=data}
+				<tr class="{if $i%2==0}even{else}odd{/if}" style="{if $data.selected}color: #ffffff; font-weight: bold;{/if}"
+					onclick="reloadLeaderboard('{$data.year}','{$data.month}');">
+					<td>{$data.date}</td>
+					<td style="text-align: center;">{$data.sigs}</td>
+					<td style="text-align: center;">{$data.whs}</td>
+				</tr>
+				{assign var=i value=$i+1}
+			{/foreach}
+			</table>
+		</div>
 	</div>
 	<div style="clear:both;"></div>
 </div>
-
 
 <script type="text/javascript">
 function reloadLeaderboard(y,m) {
