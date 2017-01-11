@@ -678,8 +678,7 @@ namespace users\model
 			if ($this->id == 0)
 				return array();
 
-			if ($this->characters == null)
-			{
+			if ($this->characters == null) {
 				$controller = new \eve\controller\Character();
 				$this->characters = $controller->getUserCharacters($this->id);
 			}
@@ -691,14 +690,14 @@ namespace users\model
 		 */
 		public function resetMainCharacter()
 		{
+            \AppRoot::doCliOutput("resetMainCharacter");
 			$this->mainCharId = 0;
 			$this->character = null;
 
 			// Welke characters mogen we allemaal als main gebruiken?
-			foreach ($this->getAuthorizedCharacters(false) as $char)
-			{
-                if ($char->isAuthorized())
-                {
+			foreach ($this->getAuthorizedCharacters(false) as $char) {
+                if ($char->isAuthorized()) {
+                    \AppRoot::debug("-> ".$char->name);
                     if ($this->character) {
                         if ($char->isCEO())
                             $this->character = $char;
@@ -710,6 +709,7 @@ namespace users\model
 
 			// Geen toon gevonden..?
 			if (!$this->character) {
+                \AppRoot::debug("No toon yet, find any");
 				// Dan mag deze gebruiker eigenlijk helemaal niet in VIPPY. Zet toch maar iets.
 				foreach ($this->getCharacters() as $char) {
 					$this->character = $char;
@@ -719,6 +719,7 @@ namespace users\model
 
 			if ($this->character != null) {
 				$this->mainCharId = $this->character->id;
+                $this->store();
 				return $this->character;
 			}
 
@@ -1235,10 +1236,11 @@ namespace users\model
             return $this->currentAuthGroup;
         }
 
-		/**
-		 * Get auth-group ids
-		 * @return array
-		 */
+        /**
+         * Get auth-group ids
+         * @param bool $fromCache
+         * @return array
+         */
 		public function getAuthGroupsIDs($fromCache=true)
 		{
 			\AppRoot::debug("User->getAuthGroupsIDs()");
@@ -1249,28 +1251,30 @@ namespace users\model
 					$this->authGroupIDs = json_decode($cache,true);
 				else
 				{
-					$this->authGroupIDs = array();
-					if ($results = \MySQL::getDB()->getRows("SELECT	if (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid) AS authgroupid
-															FROM	users u
-																INNER JOIN characters c ON c.userid = u.id
-																INNER JOIN crest_token t on t.tokentype = 'character' and t.tokenid = c.id
-															    INNER JOIN corporations corp ON corp.id = c.corpid
-															    LEFT JOIN user_auth_groups_corporations uc ON uc.corporationid = corp.id
-															    LEFT JOIN user_auth_groups_alliances ua ON ua.allianceid = corp.allianceid
-															WHERE	u.id = ?
-															AND		(uc.authgroupid is not null
-															OR		ua.authgroupid is not null)
-															GROUP BY IF (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid)"
-											, array($this->id)))
+					$this->authGroupIDs = [];
+					if ($results = \MySQL::getDB()->getRows("
+                                select  *
+                                from    user_auth_groups
+                                where   id in (
+                                    select	if (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid) AS authgroupid
+                                    from    users u
+                                        inner join characters c on c.userid = u.id
+                                        inner join crest_token t on t.tokentype = 'character' and t.tokenid = c.id
+                                        inner join corporations corp on corp.id = c.corpid
+                                        left join user_auth_groups_corporations uc on uc.corporationid = corp.id
+                                        left join user_auth_groups_alliances ua on ua.allianceid = corp.allianceid
+                                    where	u.id = ?
+                                    and     (uc.authgroupid is not null or ua.authgroupid is not null))"
+                            , array($this->id)))
 					{
 						foreach ($results as $result)
                         {
-                            $authgroup = new \admin\model\AuthGroup($result["authgroupid"]);
+                            $authgroup = new \admin\model\AuthGroup();
+                            $authgroup->load($result);
 
                             // Check if manual authorization is required
                             $allowed = false;
-                            if ($authgroup->getConfig("access_control") == "manual")
-                            {
+                            if ($authgroup->getConfig("access_control") == "manual") {
                                 if ($this->isAdmin())
                                     $allowed = true;
                                 else {
@@ -1281,8 +1285,7 @@ namespace users\model
                                         }
                                     }
                                 }
-                            }
-                            else
+                            } else
                                 $allowed = true;
 
                             if ($allowed) {
@@ -1313,10 +1316,19 @@ namespace users\model
 			{
                 \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
 				$this->authGroups = array();
-                foreach ($this->getAuthGroupsIDs() as $id) {
-                    $group = new \admin\model\AuthGroup($id);
-                    $this->authGroups[] = $group;
-                    \AppRoot::debug(" * ".$group->name);
+                foreach ($this->getAuthGroupsIDs() as $id)
+                {
+                    // dubbele?
+                    $exists = false;
+                    foreach ($this->authGroups as $group) {
+                        if ($group->id == $id)
+                            $exists = true;
+                    }
+                    if (!$exists) {
+                        $group = new \admin\model\AuthGroup($id);
+                        $this->authGroups[] = $group;
+                        \AppRoot::debug(" * ".$group->name);
+                    }
                 }
 			}
 			return $this->authGroups;

@@ -360,13 +360,15 @@ class AppRoot
 
     public static function error($message, $log="error")
     {
+        if (is_object($message) || is_array($message))
+            $message = print_r($message,true);
+
         if (\AppRoot::isCommandline()) {
             echo "[\033[31m".strtoupper($log)."\033[0m] ".$message.PHP_EOL;
         } else {
             $message .= "\n\n" . self::getStackTrace();
-
-            if (\AppRoot::doDebug())
-                echo "<pre>" . print_r($message, true) . "</pre>";
+            if (\AppRoot::doDebug() && $log)
+                echo "<pre>".$message."</pre>";
 
             self::$errors[] = $message;
             self::debug("<span style='color:red;'>" . $message . "</span>");

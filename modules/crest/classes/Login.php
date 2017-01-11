@@ -159,16 +159,22 @@ class Login extends \api\Client
         $this->addHeader("Authorization: Basic " . $this->getBasicAuthorizationCode());
         $this->post("token", ["grant_type" => "refresh_token", "refresh_token" => $token->refreshToken]);
 
-        if ($this->success())
-        {
-            $result = $this->getResult();
-            if (isset($result->access_token))
-            {
+        $result = $this->getResult();
+        if ($this->success()) {
+            if (isset($result->access_token)) {
                 $token->accessToken = $result->access_token;
                 $token->refreshToken = $result->refresh_token;
                 $token->expires = date("Y-m-d H:i:s", strtotime("now")+$result->expires_in);
                 $token->store();
                 return $token;
+            }
+        } else {
+            if (isset($result->error)) {
+                if (trim(strtolower($result->error)) == "invalid_grant") {
+                    // Toegang ontzegd. Delete deze token.
+                    \AppRoot::doCliOutput("Delete this token. Access revoked: ".$result->error_description);
+                    $token->delete();
+                }
             }
         }
 

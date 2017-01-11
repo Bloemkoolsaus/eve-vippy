@@ -86,35 +86,8 @@ class User
             \AppRoot::redirect("users/user?id=".$user->id);
         }
 
-        $characters = array();
-        $charController = new \eve\controller\Character();
-
-        foreach ($charController->getCharactersByUserID($user->id) as $char)
-        {
-            $corp = new \eve\model\Corporation($char->corporationID);
-            $alliance = new \eve\model\Alliance($corp->allianceID);
-            $character = array(	"id"	=> $char->id,
-                "name"	=> $char->name,
-                "corporationid"	=> $corp->id,
-                "corpticker"	=> $corp->ticker,
-                "corporation"	=> $corp->name,
-                "allianceid"	=> $alliance->id,
-                "alliance"		=> $alliance->name,
-                "ceo"		=> $char->isCEO,
-                "lastupdate"=> $char->updatedate,
-                "director"	=> $char->isDirector,
-                "title"		=> implode(", ",$char->titles),
-                "updatedate" => \Tools::getFullDate($char->updatedate,true,false));
-
-            if ($user->getMainCharacterID() == $char->id)
-                $character["main"] = 1;
-
-            $characters[] = $character;
-        }
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("user", $user);
-        $tpl->assign("chars", $characters);
         $tpl->assign("errors", $errors);
         $tpl->assign("messages", $messages);
 
@@ -155,6 +128,20 @@ class User
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("user", $user);
         return $tpl->fetch("users/user/ban");
+    }
+
+    function getRefresh($arguments=[])
+    {
+        $user = null;
+        if (count($arguments) > 0)
+            $user = new \users\model\User(array_shift($arguments));
+        if (!$user)
+            $user = \User::getUSER();
+
+        foreach ($user->getCharacters() as $char) {
+            $character  = new \crest\model\Character($char->id);
+            $character->importData();
+        }
     }
 
     private function getOverviewSection()

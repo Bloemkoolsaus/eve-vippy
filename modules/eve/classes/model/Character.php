@@ -110,23 +110,35 @@ namespace eve\model
                 // Heeft een geldige CREST token
                 /** @var \crest\model\Token $token */
                 $token = \crest\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
-                if ($token)
-                {
-                    // In een geldige auth-groep?
-                    foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
-                        if ($group->isAllowed()) {
-                            $this->isAuthorized = true;
-                            break;
-                        }
+                if ($token) {
+                    \AppRoot::debug("We have an active CREST token for ".$this->name);
+                    foreach ($this->getAuthGroups() as $group) {
+                        \AppRoot::debug($group->name);
+                        $this->isAuthorized = true;
+                        break;
                     }
                     if (!$this->isAuthorized)
                         $this->authMessage = "Not a member of an allowed Corporation or Alliance";
-                }
-                else
+                } else
                     $this->authMessage = "No valid CREST authentication token";
             }
 
             return $this->authMessage;
+        }
+
+        /**
+         * Get authgroups
+         * @param bool $allowedOnly
+         * @return \admin\model\AuthGroup[]
+         */
+        function getAuthGroups($allowedOnly=true)
+        {
+            $groups = [];
+            foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
+                if (!$allowedOnly || $group->isAllowed())
+                    $groups[] = $group;
+            }
+            return $groups;
         }
 
 		function isAuthorized($reset=false)

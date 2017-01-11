@@ -120,9 +120,11 @@ namespace api
 			if ($this->httpStatus != 200 && $this->httpStatus != 204)
 			    $result["error"] = $this->httpStatus;
 
+            \AppRoot::debug("RESULT:<br />".$content);
 
 			// Probeer resultaat te parsen aan de hand van content-type.
 			$result["info"] = $info;
+            \AppRoot::debug("Parse RESULT");
 			foreach (explode(";",$info["content_type"]) as $type)
 			{
 			    if (trim($type) == "application/json") {
@@ -143,12 +145,12 @@ namespace api
             }
 
 			$this->result = $result["result"];
-            \AppRoot::debug("RESULT:<pre>".print_r($this->result,true)."</pre>");
+            \AppRoot::debug("Parsed Result:<pre>".print_r($this->result,true)."</pre>");
 
 			// Loggen
 			\AppRoot::doCliOutput("*** HTTP: ".$this->httpStatus);
 			if (isset($result["error"]))
-				\AppRoot::error($this->result);
+				\AppRoot::error($this->result, null);
 
 			\AppRoot::doCliOutput("*** Finish api call: ".strtoupper($requestType)." ".$requestURL);
 
@@ -198,8 +200,7 @@ namespace api
 		 */
 		function success()
 		{
-			if ($this->curlStatus == 0)
-			{
+			if ($this->curlStatus == 0) {
 				if ($this->httpStatus == 200)
 					return true;
 			}

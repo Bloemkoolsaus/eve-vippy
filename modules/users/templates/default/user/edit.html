@@ -19,14 +19,7 @@
 	<input type="hidden" id="userid" name="save" value="{$user->id}"/>
 
 	<div style="float: left; width: 400px;">
-		<div class="form">
-			<label class="field"><b>Main Character:</b></label>
-	{foreach from=$chars key=c item=char}
-		{if isset($char.main)}
-			[{$char.corpticker}] {$char.name}
-		{/if}
-	{/foreach}
-		</div>
+		{*
 		<div class="form">
 			<label class="field"><b>Username:</b></label>
 			{$user->username}
@@ -34,6 +27,13 @@
 		<div class="form">
 			<label class="field"><b>E-mail:</b></label>
 			{$user->email}
+		</div>
+		*}
+		<div class="form">
+			<label class="field"><b>Main Character:</b></label>
+		{if $user->getMainCharacter()}
+			{$user->getMainCharacter()->name}
+		{/if}
 		</div>
 		<div class="form">
 			<label class="field"><b>Status:</b></label>
@@ -55,7 +55,7 @@
 		</div>
 	{if $App->user->getIsSysAdmin()}
 		<div class="form">
-			<label class="field"><b>Auth. Group:</b></label>
+			<label class="field"><b>Access Group:</b></label>
 			<div>
 			{foreach from=$user->getAuthGroups() item=group}
 				<div><a href="/admin/authgroup/edit/{$group->id}" target="_blank">{$group->name}</a></div>
@@ -64,8 +64,8 @@
 		</div>
 	{/if}
 	</div>
-
-	{if isset($usergroups)}
+{*
+{if isset($usergroups)}
 	<input type="hidden" name="saveusergroups" value="1"/>
 	<div style="float: left; width: 250px;">
 		<div>
@@ -83,8 +83,8 @@
 	{/foreach}
 		</div>
 	</div>
-	{/if}
-
+{/if}
+*}
 	<div style="float: right; width: 250px; text-align: right;">
 		<div style="margin-bottom: 2px;">
 			<button type="button" style="width: 200px;" onclick="resetPassword('{$user->id}')">
@@ -158,69 +158,51 @@
 <div class="content">
 	<div class="tabs">
 		<ul>
-			<li><a href="#" onclick="showTabs('characters'); return false;">Known Characters</a></li>
+			<li><a href="#" onclick="showTabs('characters'); return false;">Characters</a></li>
 			<li><a href="#" onclick="showTabs('logs'); showUserLogs(); return false;">Logs</a></li>
 		</ul>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
 
-
+	{* CHARACTERS *}
 	<div id="detailtab-characters" rel="detailtab">
-		<h1>Known Characters</h1>
-		{if $chars|@count > 0}
-			{foreach from=$chars key=c item=char}
-			<div style="float: left; width: 380px; height: 140px;">
-				<div style="padding: 10px;">
-					<img src="http://image.eveonline.com/Character/{$char.id}_128.jpg" align="left" style="margin-right: 10px; width: 80px; border: solid 1px {if isset($char.main)}#FFAA00{else}#888888{/if}; border-radius: 5px;" />
-					<div class="form" style="width: 250px;">
-						<h3>{$char.name}</h3>
-						{if $char.ceo > 0}
-							<i>CEO</i>
-						{elseif $char.director > 0}
-							<i>Director</i>
-						{/if}
-						{if $char.title != ""}
-							<i>{$char.title}</i>
-						{/if}
-					</div>
-					<div style="float: left; width: 250px;">
-						<div>
-							<img src="http://image.eveonline.com/Corporation/{$char.corporationid}_32.png" align="left"
-								style="margin-right: 5px; height: 18px;" title="{$char.corporation}" alt="{$char.corporation}" />
-							{$char.corporation}
-						</div>
-						<div style="clear:both;"></div>
-						<div>
-							{if $char.alliance != ""}
-								<img src="http://image.eveonline.com/Alliance/{$char.allianceid}_32.png" align="left"
-									style="margin-right: 5px; height: 18px;" title="{$char.alliance}" alt="{$char.alliance}" />
-								{$char.alliance}
-							{/if}
-							&nbsp;
-						</div>
-						<div style="clear:both;"></div>
-					</div>
-					<div style="clear:both;"></div>
-					<div>
-						<div style="float: left; width: 90px;">
-							<b>Last Update:</b>
-						</div>
-						<div>
-							{$char.updatedate|date_age} ago
-						</div>
-						<div style="clear:both;"></div>
-					</div>
-				</div>
-				<div style="clear:both;"></div>
+		<h1 style="margin-bottom: .3em;">
+			<img src="/images/default/ui/charactersheet.png" align="left">
+			Authorized Characters
+		</h1>
+		<div>
+	{assign var=i value=0}
+	{foreach from=$user->getCharacters() item=character}
+		{if $character->isAuthorized()}
+			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+				{include file="profile/characters/character" character=$character}
 			</div>
-			{/foreach}
-		{else}
-			<div>This user does not have any characters installed.</div>
+			{assign var=i value=$i+1}
 		{/if}
+	{/foreach}
+		</div>
+		<div style="clear:both;"></div>
+
+		<h1 style="margin-bottom: .3em;">
+			<img src="/images/default/ui/charactersheet.png" align="left">
+			Other Characters
+		</h1>
+		<div>
+	{assign var=i value=0}
+	{foreach from=$user->getCharacters() item=character}
+		{if !$character->isAuthorized()}
+			<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+				{include file="profile/characters/character" character=$character}
+			</div>
+			{assign var=i value=$i+1}
+		{/if}
+	{/foreach}
+		</div>
 		<div style="clear:both;"></div>
 	</div>
 
+	{* LOGS *}
 	<div id="detailtab-logs" rel="detailtab" style="display:none;">
 		<h1>USER LOGS</h1>
 		<div id="userlogs"></div>

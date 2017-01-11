@@ -35,6 +35,11 @@ namespace eve\controller
 			$character = new \crest\model\Character($characterID);
             \AppRoot::doCliOutput("Import Character ".$character->name);
 
+            // Refresh CREST token
+            $token = $character->getToken();
+            if ($token)
+                $valid = $token->isValid(true);
+
             // Public info
             $api = new \eve\controller\API();
             $api->setCharacterID($characterID);
@@ -48,6 +53,13 @@ namespace eve\controller
             $character->name = (string)$result->result->characterName;
             $character->corporationID = (string)$result->result->corporationID;
             $character->store();
+
+            $user = $character->getUser();
+            if ($user) {
+                $user->resetCache();
+                $user->resetAuthGroups();
+                $user->resetMainCharacter();
+            }
 
 			return $character;
 		}
