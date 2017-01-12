@@ -11,35 +11,25 @@ class LocationTracker
      * @param $shipTypeID
      * @return bool
      */
-    function setCharacterLocation($authGroupID, $characterID, $locationID, $shipTypeID=null)
+    function setCharacterLocation($authGroupID, $characterID, $locationID, $shipTypeID=0)
     {
         \AppRoot::doCliOutput("setCharacterLocation($authGroupID, $characterID, $locationID, $shipTypeID)");
         if (!is_numeric($locationID))
             return false;
 
         $previousLocationID = null;
-        /*
-        $cacheFileName = "map/character/".$characterID."/location";
-        $cache = \Cache::file()->get($cacheFileName);
-        if ($cache) {
-            // Cache. Maar is die nog recent?
-            if (isset($cache["timestamp"])) {
-                if (strtotime($cache["timestamp"]) > strtotime("now")-60)
-                    $previousLocationID = $cache["location"];
-            }
+        $previousShipTypeID = null;
+
+        if ($previousLocation = \MySQL::getDB()->getRow("select * from map_character_locations where characterid = ? and lastdate > ?"
+                                                , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
+        {
+            $previousLocationID = $previousLocation["solarsystemid"];
+            $previousShipTypeID = $previousLocation["shiptypeid"];
         }
-        */
-        if (!$previousLocationID) {
-            if ($previousLocation = \MySQL::getDB()->getRow("select * from map_character_locations
-                                                             where characterid = ? and lastdate > ?"
-                            , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
-            {
-                $previousLocationID = $previousLocation["solarsystemid"];
-            }
-        }
+        if (!$shipTypeID)
+            $shipTypeID = $previousShipTypeID;
 
         // Huidige locatie opslaan.
-        //\Cache::file()->set($cacheFileName, ["location" => $locationID, "timestamp" => date("Y-m-d H:i:s")]);
         \MySQL::getDB()->updateinsert("map_character_locations", [
             "characterid" => $characterID,
             "solarsystemid" => $locationID,

@@ -10,7 +10,8 @@ class Fleet
         \AppRoot::doCliOutput("doFleet(".implode(",",$arguments).")");
 
         // Oude fleets opruimen (ouder dan 6u)
-        \MySQL::getDB()->doQuery("delete from crest_fleet where active = 0 and lastupdate < ?", [date("Y-m-d H:i:s", mktime(date("H")-6,date("i"),date("s"),date("m"),date("d"),date("Y")))]);
+        \MySQL::getDB()->doQuery("delete from crest_fleet where active = 0 and (lastupdate < ? or lastupdate is null)"
+                    , [date("Y-m-d H:i:s", mktime(date("H")-6,date("i"),date("s"),date("m"),date("d"),date("Y")))]);
 
         // Als we tegen de timeout aanlopen, afbreken
         while (!\AppRoot::approachingMaxExecTime(5))
@@ -34,8 +35,6 @@ class Fleet
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
-            if (\AppRoot::doDebug())
-                break;
         }
         \AppRoot::doCliOutput("Timeout!");
     }

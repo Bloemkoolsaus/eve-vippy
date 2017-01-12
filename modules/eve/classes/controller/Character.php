@@ -36,9 +36,11 @@ namespace eve\controller
             \AppRoot::doCliOutput("Import Character ".$character->name);
 
             // Refresh CREST token
+            /*
             $token = $character->getToken();
             if ($token)
                 $valid = $token->isValid(true);
+            */
 
             // Public info
             $api = new \eve\controller\API();

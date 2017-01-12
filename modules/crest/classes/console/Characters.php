@@ -3,7 +3,7 @@ namespace crest\console;
 
 class Characters
 {
-    function doImport()
+    function doImport($arguments=[])
     {
         \AppRoot::doCliOutput("Import Characters");
 
