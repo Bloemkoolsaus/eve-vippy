@@ -51,14 +51,12 @@ namespace scanning\model
 			if (!$result)
 			{
 				// Check cache
-				if (!\AppRoot::config("no-cache-chains"))
-				{
+				if (!\AppRoot::config("no-cache-chains")) {
 					if ($result = \Cache::file()->get($this->getCacheDirectory()."chaininfo.json"))
 						$result = json_decode($result, true);
 				}
 
-				if (!$result)
-				{
+				if (!$result) {
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholechains WHERE id = ?", array($this->id));
                     \Cache::file()->set($this->getCacheDirectory()."chaininfo.json", json_encode($result));
 				}
@@ -79,8 +77,6 @@ namespace scanning\model
 
         function __get($param)
         {
-            //\AppRoot::depricated("__get($param)");
-
             if ($param == "directorsOnly")
                 return $this->getSetting("directors-only");
 
@@ -95,8 +91,6 @@ namespace scanning\model
 
         function __set($param, $value)
         {
-            \AppRoot::depricated("__set($param)");
-
             if ($param == "directorsOnly")
                 $this->setSetting("directors-only", ($value)?1:null);
 
@@ -182,8 +176,7 @@ namespace scanning\model
          */
         function getNamingScheme()
         {
-            if ($this->namingScheme === null)
-            {
+            if ($this->namingScheme === null) {
                 $schemeID = $this->getSetting("wh-autoname-scheme");
                 if ($schemeID != null)
                     $this->namingScheme = \map\model\NamingScheme::findByID($schemeID);
@@ -198,11 +191,9 @@ namespace scanning\model
          */
         function getSettings()
         {
-            if ($this->settings === null)
-            {
+            if ($this->settings === null) {
                 $this->clearSettings();
-                if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_chain_settings WHERE chainid = ?", [$this->id]))
-                {
+                if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_chain_settings WHERE chainid = ?", [$this->id])) {
                     foreach ($results as $result) {
                         $this->settings[$result["var"]] = $result["val"];
                     }
@@ -342,8 +333,7 @@ namespace scanning\model
 														ORDER BY c.name ASC"
 											, array($this->id)))
 				{
-					foreach ($results as $result)
-					{
+					foreach ($results as $result) {
 						$corp = new \eve\model\Corporation();
 						$corp->load($result);
 						$this->corporations[] = $corp;
@@ -390,10 +380,9 @@ namespace scanning\model
 															INNER JOIN mapwormholechains_alliances ca ON ca.allianceid = a.id
 														WHERE 	ca.chainid = ?
 														ORDER BY a.name ASC"
-											, array($this->id)))
+											, [$this->id]))
 				{
-					foreach ($results as $result)
-					{
+					foreach ($results as $result) {
 						$ally = new \eve\model\Alliance();
 						$ally->load($result);
 						$this->alliances[] = $ally;
@@ -458,20 +447,17 @@ namespace scanning\model
 
 		function updateWormholeSystem($systemID, $name=false, $status=false, $notes=false, $updateCacheTimer=true)
 		{
-			$data = array("updatedate" => date("Y-m-d H:i:s"));
+			$data = ["updatedate" => date("Y-m-d H:i:s")];
 			if ($name)
 				$data["name"] = $name;
 			if ($status !== false)
 				$data["status"] = $status;
-			$who = array("solarsystemid" => $systemID, "chainid" => $this->id);
-			\MySQL::getDB()->update("mapwormholes", $data, $who);
+			\MySQL::getDB()->update("mapwormholes", $data, ["solarsystemid" => $systemID, "chainid" => $this->id]);
 
 			// Notes opslaan
 			\MySQL::getDB()->updateinsert("mapwormholenotes",
-						array(	"solarsystemid" => $systemID,
-								"notes"			=> $notes,
-								"updatedate"	=> date("Y-m-d H:i:s")),
-						array(	"solarsystemid" => $systemID));
+                ["solarsystemid" => $systemID, "notes" => $notes, "updatedate" => date("Y-m-d H:i:s")],
+                ["solarsystemid" => $systemID]);
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();
@@ -486,17 +472,21 @@ namespace scanning\model
 		{
             if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this, "delete"))
             {
-                if ($wormhole->getSolarsystem() !== null)
+                if ($wormhole->getSolarsystem() && \User::getUSER())
                 {
-                    $extrainfo = array("delete-all" => false,
-                                       "wormhole"   => array("id"   => $wormhole->id,
-                                                             "name" => $wormhole->name),
-                                       "system"     => array("id"   => $wormhole->getSolarsystem()->id,
-                                                             "name" => $wormhole->getSolarsystem()->name . " - " . $wormhole->name),
-                                       "chain"      => array("id"   => $this->id,
-                                                             "name" => $this->name));
-                    if (\User::getUSER())
-                        \User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
+                    $extrainfo = [
+                        "delete-all" => false,
+                        "wormhole"   => [
+                            "id"   => $wormhole->id,
+                            "name" => $wormhole->name],
+                        "system"     => [
+                            "id"   => $wormhole->getSolarsystem()->id,
+                            "name" => $wormhole->getSolarsystem()->name . " - " . $wormhole->name],
+                        "chain"      => [
+                            "id"   => $this->id,
+                            "name" => $this->name]
+                    ];
+                    \User::getUSER()->addLog("delete-wormhole", $wormhole->solarSystemID, $extrainfo);
                 }
 
                 \MySQL::getDB()->delete("mapwormholes", array("id" => $wormhole->id));
@@ -531,8 +521,8 @@ namespace scanning\model
 
 		function removeWormholeConnection($wormholeID, $updateCacheTimer=true)
 		{
-			\MySQL::getDB()->delete("mapwormholeconnections", array("fromwormholeid" => $wormholeID, "chainid" => $this->id));
-			\MySQL::getDB()->delete("mapwormholeconnections", array("towormholeid" => $wormholeID, "chainid" => $this->id));
+			\MySQL::getDB()->delete("mapwormholeconnections", ["fromwormholeid" => $wormholeID, "chainid" => $this->id]);
+			\MySQL::getDB()->delete("mapwormholeconnections", ["towormholeid" => $wormholeID, "chainid" => $this->id]);
 
 			if ($updateCacheTimer)
 				$this->setMapUpdateDate();
@@ -540,15 +530,22 @@ namespace scanning\model
 
 		function clearChain($updateCacheTimer=true)
 		{
-			$extrainfo = array(	"delete-all"=> true,
-								"chain"		=> array("id"	=> $this->id,
-													"name"	=> $this->name));
-			\User::getUSER()->addLog("delete-wormhole", $this->id, $extrainfo);
-
-            foreach (\scanning\model\Wormhole::getWormholesByChain($this->id) as $wormhole)
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this, "delete"))
             {
-                if (!$wormhole->isPermenant())
-                    $wormhole->delete();
+                if (\User::getUSER())
+                {
+                    \User::getUSER()->addLog("delete-wormhole", $this->id, [
+                        "delete-all"=> true,
+                        "chain" => [
+                            "id" => $this->id,
+                            "name"	=> $this->name]
+                    ]);
+                }
+
+                foreach (\scanning\model\Wormhole::getWormholesByChain($this->id) as $wormhole) {
+                    if (!$wormhole->isPermenant())
+                        $wormhole->delete();
+                }
             }
 
 			if ($updateCacheTimer)

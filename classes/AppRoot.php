@@ -309,12 +309,12 @@ class AppRoot
 	public static function getExecTime()
 	{
 		self::$execTime = self::getCurrentTime() - self::$startTime;
-		return self::$execTime;
+		return round(self::$execTime,1);
 	}
 
     public static function getMaxExecTime()
     {
-        return self::$maxExecTime;
+        return floor(self::$maxExecTime);
     }
 
 	public static function setMaxExecTime($seconds=30)

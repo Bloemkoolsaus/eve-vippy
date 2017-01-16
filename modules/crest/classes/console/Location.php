@@ -25,7 +25,7 @@ class Location
                 foreach ($results as $result)
                 {
                     // Asynchroon uitvoeren
-                    \AppRoot::doCliOutput("> ".$result["name"]);
+                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
                     exec(getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &");
                 }
             }

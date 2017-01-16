@@ -34,7 +34,7 @@ class Module extends \Module
                 $module = new $className();
                 if (method_exists($module, "getCron")) {
                     echo $action.": ";
-                    echo $module->getCron($arguments);
+                    echo print_r($module->getCron($arguments),true);
                 } else
                     echo "<p style='color:red;'>Method ".$className."->getCron() does not exist</p>";
             }

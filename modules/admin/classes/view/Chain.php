@@ -154,8 +154,7 @@ class Chain
                 }
             }
 
-            if (count($errors) == 0)
-            {
+            if (count($errors) == 0) {
                 $chain->store();
                 \AppRoot::redirect("admin/chain");
             }

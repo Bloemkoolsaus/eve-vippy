@@ -42,7 +42,9 @@ class Api extends \api\Client
             $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
         }
 
-        return parent::get($url, $params);
+        $result = parent::get($url, $params);
+        $this->log("get", $url, $params);
+        return $result;
     }
 
     function post($url, $params=[])
@@ -56,7 +58,9 @@ class Api extends \api\Client
             $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
         }
 
-        return parent::post($url, $params);
+        $result = parent::post($url, $params);
+        $this->log("post", $url, $params);
+        return $result;
     }
 
     function getResult()
@@ -66,5 +70,25 @@ class Api extends \api\Client
             $result = json_decode($result);
 
         return $result;
+    }
+
+    function log($type, $url, $params)
+    {
+        $content = ($params)?$params:null;
+        if (is_object($content) || is_array($content))
+            $content = json_encode($content);
+
+        $response = $this->getResult();
+        if (is_object($response) || is_array($response))
+            $response = json_encode($response);
+
+        \MySQL::getDB()->insert("crest_log", [
+            "requesttype" => strtolower($type),
+            "url" => $url,
+            "httpstatus" => ($this->httpStatus)?$this->httpStatus:null,
+            "content" => $content,
+            "response" => $response,
+            "requestdate" => date("Y-m-d H:i:s")
+        ]);
     }
 }
