@@ -332,7 +332,7 @@ namespace scanning\model
 		 */
 		function getCorporations()
 		{
-			if ($this->corporations == null)
+			if ($this->corporations === null)
 			{
 				$this->resetCorporations();
 				if ($results = \MySQL::getDB()->getRows("SELECT c.*
@@ -356,7 +356,7 @@ namespace scanning\model
 
 		function resetCorporations()
 		{
-			$this->corporations = array();
+			$this->corporations = [];
 		}
 
 		function deleteCorporations()
@@ -382,7 +382,7 @@ namespace scanning\model
 		 */
 		function getAlliances()
 		{
-			if ($this->alliances == null)
+			if ($this->alliances === null)
 			{
 				$this->resetAlliances();
 				if ($results = \MySQL::getDB()->getRows("SELECT a.*
@@ -406,7 +406,7 @@ namespace scanning\model
 
 		function resetAlliances()
 		{
-			$this->alliances = array();
+			$this->alliances = [];
 		}
 
 		function deleteAlliances()
