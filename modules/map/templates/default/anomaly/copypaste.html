@@ -9,7 +9,7 @@
 		</div>
 	</div>
 	<div>
-		<form method="post" action="/map/anomalies/copypaste/{$map->name}/{$system->name}">
+		<form method="post" action="/map/anomalies/copypaste/{$map->getURL()}/{$system->name}">
 			<div class="form">
 				<textarea name="signatures" style="width: 98%; height: 6.5em;"></textarea>
 			</div>

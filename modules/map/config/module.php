@@ -12,7 +12,7 @@ if (\User::getUSER()) {
         $config["submenu"][] = array(
             "type" => "link",
             "name"	=> $chain->name,
-            "url"  => "map/".$chain->name
+            "url"  => "map/".$chain->getURL()
         );
     }
 }

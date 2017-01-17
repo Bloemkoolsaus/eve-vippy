@@ -29,7 +29,7 @@ class Chain
         {
             foreach ($results as $result)
             {
-                $chain = new \scanning\model\Chain();
+                $chain = new \map\model\Map();
                 $chain->load($result);
                 $chains[] = $chain;
             }
@@ -48,7 +48,7 @@ class Chain
             {
                 foreach ($results as $result)
                 {
-                    $chain = new \scanning\model\Chain();
+                    $chain = new \map\model\Map();
                     $chain->load($result);
                     $adminChains[] = $chain;
                 }

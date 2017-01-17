@@ -39,35 +39,6 @@ class System
         return $tpl->fetch($cacheFile);
     }
 
-    function getEdit($arguments=[])
-    {
-        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
-        $map = \map\model\Map::findByName(array_shift($arguments));
-        $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
-
-        $wormhole->name = \Tools::POST("whname");
-        $wormhole->status = \Tools::POST("whstatus");
-        $wormhole->store();
-
-        if (\Tools::POST("notes"))
-            $system->setNotes(\Tools::POST("notes"), $map->authgroupID);
-        else
-            $system->resetNotes($map->authgroupID);
-
-        $map->setMapUpdateDate();
-        \AppRoot::redirect("map/".$map->name."/".$system->name);
-    }
-
-    function getMarkscanned($arguments=[])
-    {
-        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
-        $map = \map\model\Map::findByName(array_shift($arguments));
-        $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
-        $wormhole->markFullyScanned();
-
-        \AppRoot::redirect("map/".$map->name."/".$system->name);
-    }
-
     function getActivity($arguments=[])
     {
         $wormhole = new \map\model\Wormhole(array_shift($arguments));

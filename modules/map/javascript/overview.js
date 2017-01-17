@@ -217,7 +217,7 @@ function cancelClearChain()
 function copypasteAnomalies()
 {
 	$.ajax({
-		url: "/map/anomalies/copypaste/"+$("#mapName").val()+"/"+$("#mapSystem").val(),
+		url: "/map/"+$("#mapName").val()+"/anomalies/copypaste/"+$("#mapSystem").val(),
         data: { ajax: 1 },
 		success: function(data) {
 			showPopup(data, 600, 280);
@@ -229,11 +229,6 @@ function hideSigInfo(sigID)
 {
 	$("#sigInfo"+sigID).fadeOut();
 	loadingSigList = false;
-}
-
-function removeAnomaly(anomID)
-{
-	document.location = "index.php?module=scanning&section=anoms&action=remove&id="+anomID;
 }
 
 function showActivePilots()

@@ -273,21 +273,18 @@ namespace scanning\model
 			}
 
 			// Update chain cache timer
-			$this->getChain()->setMapUpdateDate();
-
+            $map = new \map\model\Map($this->chainID);
+			$map->setMapUpdateDate();
 
 			// Check the same connection on other maps.
-			if ($doCopy)
-			{
+			if ($doCopy) {
 				foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
-														$this->getFromWormhole()->solarSystemID,
-														$this->getToWormhole()->solarSystemID,
-														$this->getChain()->authgroupID) as $connection)
+                    $this->getFromWormhole()->solarSystemID,
+                    $this->getToWormhole()->solarSystemID,
+                    $map->authgroupID) as $connection)
 				{
-					if ($connection->id !== $this->id)
-					{
-						foreach (get_object_vars($connection) as $var => $val)
-						{
+					if ($connection->id !== $this->id) {
+						foreach (get_object_vars($connection) as $var => $val) {
 							if (!in_array($var, array("id","chainID","fromWormholeID","toWormholeID")))
 								$connection->$var = $this->$var;
 						}
@@ -302,95 +299,14 @@ namespace scanning\model
 			return (strtotime("now") - strtotime($this->addDate))/3600;
 		}
 
-		function delete()
-		{
-            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
-            {
-                \MySQL::getDB()->delete("mapwormholeconnections", array("id" => $this->id));
-
-                // Update chain cache timer
-                $this->getChain()->setMapUpdateDate();
-
-                // Check the same connection on other maps.
-                foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
-                                $this->getFromWormhole()->solarSystemID,
-                                $this->getToWormhole()->solarSystemID,
-                                $this->getChain()->authgroupID) as $connection)
-                {
-                    if ($connection->id !== $this->id)
-                        $connection->delete();
-                }
-            }
-		}
-
-        /**
-         * Add jump
-         * @param integer $shiptypeID
-         * @param integer $pilotID |null
-         * @param bool    $copy
-         */
-		function addJump($shiptypeID, $pilotID=null, $copy=true)
-		{
-            \AppRoot::debug("addJump($shiptypeID, $pilotID, $copy)");
-
-            $ship = new \eve\model\Ship($shiptypeID);
-			\MySQL::getDB()->insert("mapwormholejumplog",
-								array(	"connectionid"	=> $this->id,
-										"chainid"		=> $this->getChain()->id,
-										"fromsystemid"	=> $this->getFromSystem()->id,
-										"tosystemid"	=> $this->getToSystem()->id,
-										"characterid"	=> $pilotID,
-										"shipid"		=> $ship->id,
-                                        "mass"          => $ship->mass,
-										"jumptime"		=> date("Y-m-d H:i:s")));
-
-			// Check the same connection on other maps.
-			if ($copy)
-			{
-				foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
-														$this->getFromWormhole()->solarSystemID,
-														$this->getToWormhole()->solarSystemID,
-														$this->getChain()->authgroupID) as $connection)
-				{
-					if ($connection->id !== $this->id)
-						$connection->addJump($shiptypeID, $pilotID, false);
-				}
-			}
-		}
-
-        function addMass($amount, $copy=true)
-        {
-            $data = array("connectionid"=> $this->id,
-                          "chainid"		=> $this->getChain()->id,
-                          "fromsystemid"=> $this->getFromSystem()->id,
-                          "tosystemid"	=> $this->getToSystem()->id,
-                          "characterid"	=> null,
-                          "shipid"		=> null,
-                          "mass"        => $amount,
-                          "jumptime"	=> date("Y-m-d H:i:s"));
-            \MySQL::getDB()->insert("mapwormholejumplog", $data);
-            \User::getUSER()->addLog("addmass", $this->id, $data);
-
-            // Check the same connection on other maps.
-            if ($copy)
-            {
-                foreach (\scanning\model\Connection::getConnectionByLocationsAuthGroup(
-                                                        $this->getFromWormhole()->solarSystemID,
-                                                        $this->getToWormhole()->solarSystemID,
-                                                        $this->getChain()->authgroupID) as $connection)
-                {
-                    if ($connection->id !== $this->id)
-                        $connection->addMass($amount, false);
-                }
-            }
-        }
-
 		/**
 		 * Get chain
 		 * @return \scanning\model\Chain
+         * @deprecated use \map\model\Connection->getMap()
 		 */
 		function getChain()
 		{
+            \AppRoot::depricated("getChain");
 			if ($this->chain == null)
 				$this->chain = new \scanning\model\Chain($this->chainID);
 
@@ -628,28 +544,12 @@ namespace scanning\model
 		 * Get connection
 		 * @param integer $fromSystemID
 		 * @param integer $toSystemID
-		 * @param integer $chainID
+		 * @param integer $mapID
 		 * @return \scanning\model\Connection|NULL
 		 */
-		public static function getConnectionByLocations($fromSystemID, $toSystemID, $chainID)
+		public static function getConnectionByLocations($fromSystemID, $toSystemID, $mapID)
 		{
-			if ($result = \MySQL::getDB()->getRow("	SELECT	c.*
-													FROM	mapwormholeconnections c
-														INNER JOIN mapwormholes wf ON wf.chainid = c.chainid AND c.fromwormholeid = wf.id
-														INNER JOIN mapwormholes wt ON wt.chainid = c.chainid AND c.towormholeid = wt.id
-													WHERE	((wf.solarsystemid = ? AND wt.solarsystemid = ?)
-														OR	(wf.solarsystemid = ? AND wt.solarsystemid = ?))
-													AND		c.chainid = ?
-													GROUP BY c.id"
-										, array($fromSystemID, $toSystemID,
-												$toSystemID, $fromSystemID,
-												$chainID)))
-			{
-				$connection = new \scanning\model\Connection();
-				$connection->load($result);
-				return $connection;
-			}
-			return null;
+			return \map\model\Connection::getConnectionByLocations($fromSystemID, $toSystemID, $mapID);
 		}
 
 		/**
@@ -657,33 +557,11 @@ namespace scanning\model
 		 * @param integer $fromSystemID
 		 * @param integer $toSystemID
 		 * @param integer $authGroupID
-		 * @return \scanning\model\Connection[]
+		 * @return \map\model\Connection[]
 		 */
 		public static function getConnectionByLocationsAuthGroup($fromSystemID, $toSystemID, $authGroupID)
 		{
-			$connections = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT	c.*
-													FROM	mapwormholeconnections c
-														INNER JOIN mapwormholechains ch ON ch.id = c.chainid
-														INNER JOIN mapwormholes wf ON wf.chainid = c.chainid AND c.fromwormholeid = wf.id
-														INNER JOIN mapwormholes wt ON wt.chainid = c.chainid AND c.towormholeid = wt.id
-													WHERE	((wf.solarsystemid = ? AND wt.solarsystemid = ?)
-														OR	(wf.solarsystemid = ? AND wt.solarsystemid = ?))
-													AND		ch.authgroupid = ?
-													GROUP BY c.id"
-										, array($fromSystemID, $toSystemID,
-												$toSystemID, $fromSystemID,
-												$authGroupID)))
-			{
-				foreach ($results as $result)
-				{
-					$connection = new \scanning\model\Connection();
-					$connection->load($result);
-					$connections[] = $connection;
-				}
-			}
-
-			return $connections;
+            return \map\model\Connection::getConnectionByLocationsAuthGroup($fromSystemID, $toSystemID, $authGroupID);
 		}
 
 		/**
@@ -691,23 +569,11 @@ namespace scanning\model
 		 * @param integer $fromWhID
 		 * @param integer $toWhID
 		 * @param integer $chainID
-		 * @return \scanning\model\Connection|NULL
+		 * @return \map\model\Connection|NULL
 		 */
 		public static function getConnectionByWormhole($fromWhID, $toWhID, $chainID)
 		{
-			if ($result = \MySQL::getDB()->getRow("	SELECT	*
-													FROM	mapwormholeconnections
-													WHERE	((fromwormholeid = ? AND towormholeid = ?)
-														OR	(fromwormholeid = ? AND towormholeid = ?))
-													AND		chainid = ?
-													GROUP BY id"
-										, array($fromWhID, $toWhID, $toWhID, $fromWhID, $chainID)))
-			{
-				$connection = new \scanning\model\Connection();
-				$connection->load($result);
-				return $connection;
-			}
-			return null;
+            return \map\model\Connection::getConnectionByWormhole($fromWhID, $toWhID, $chainID);
 		}
 	}
 }

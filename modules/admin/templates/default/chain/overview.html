@@ -90,7 +90,8 @@
 			<th>Corporations</th>
 			<th>Last Active</th>
 			<th style="width: 80px;">Sort Order</th>
-			<th style="width: 50px;"></th>
+			<th style="width: 20px;"></th>
+			<th style="width: 40px;"></th>
 		</tr>
 	{foreach from=$adminchains key=c item=chain}
 		<tr class="{if $c%2==0}even{else}odd{/if}">
@@ -131,6 +132,9 @@
 			</td>
 			<td style="text-align: center;" onclick="document.location='/admin/chain/edit/{$chain->id}'">
 				{$chain->prio}
+			</td>
+			<td style="text-align: center;">
+				<a href="/map/{$chain->getURL()}" target="_blank"><img src="/images/default/ui/view.png"></a>
 			</td>
 			<td style="text-align: center;">
 				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/ui/edit.png" style="border:0px;"></a>

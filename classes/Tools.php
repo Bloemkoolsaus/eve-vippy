@@ -718,6 +718,19 @@ Class Tools
 		return self::$IPLocations[$ip];
 	}
 
+    public static function formatURL($url)
+    {
+        $url = preg_replace("/[^A-Za-z0-9]/i", "-", $url);
+        $url = urlencode($url);
+        $url = str_replace("--","-",$url);
+        $url = str_replace("--","-",$url);
+        $url = str_replace("--","-",$url);
+
+        $url = strtolower($url);
+        $url = trim($url);
+        return $url;
+    }
+
 	public static function formatFilename($fileName,$isFile=true)
 	{
 		$directories = explode("/",$fileName);

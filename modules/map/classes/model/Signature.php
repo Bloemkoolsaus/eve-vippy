@@ -49,6 +49,10 @@ class Signature extends \Model
         $this->store();
 
         /* Als deze sig een wormhole was, verwijder die wormhole! */
+
+        /*
+         * even niet meer doen.. werkt irritant als iemand een foutje maakt!
+         *
         $nameParts = explode(" ", $this->sigInfo);
         $nameParts = explode("-", $nameParts[0]);
         $sigName = (isset($nameParts[1]))?$nameParts[1]:$nameParts[0];
@@ -64,6 +68,7 @@ class Signature extends \Model
                 }
             }
         }
+        */
     }
 
     /**

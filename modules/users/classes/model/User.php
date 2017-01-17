@@ -1134,7 +1134,7 @@ namespace users\model
         /**
          * Get available chains
          * @param bool $fromCache
-         * @return \scanning\model\Chain[]
+         * @return \map\model\Map[]
          */
 		public function getAvailibleChains($fromCache=true)
 		{
@@ -1151,8 +1151,7 @@ namespace users\model
                 $results = null;
                 $cacheFilename = $this->getCacheDirectory() . "chains.json";
 
-                if ($fromCache)
-                {
+                if ($fromCache) {
                     if ($cache = \Cache::file()->get($cacheFilename))
                         $results = json_decode($cache, true);
                 }
@@ -1189,11 +1188,10 @@ namespace users\model
 
 				foreach ($results as $result)
 				{
-					$chain = new \scanning\model\Chain();
+					$chain = new \map\model\Map();
 					$chain->load($result);
 
-					if ($chain->directorsOnly && !$this->hasRight("admin","sysadmin"))
-					{
+					if ($chain->directorsOnly && !$this->hasRight("admin","sysadmin")) {
 						if (!$this->isAdmin())
 							continue;
 					}

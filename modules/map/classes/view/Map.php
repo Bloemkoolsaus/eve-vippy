@@ -3,11 +3,43 @@ namespace map\view;
 
 class Map
 {
+    protected function doView($view, \map\model\Map $map, $arguments=[])
+    {
+        $action = (count($arguments)>0)?array_shift($arguments):null;
+        $method = ($action) ? "get".ucfirst($action) : "Overview";
+        if (!method_exists($view, $method)) {
+            $method = "getOverview";
+            if ($action)
+                array_unshift($arguments, $action);
+        }
+        return $view->$method($map, $arguments);
+    }
+
+    function getSignatures(\map\model\Map $map, $arguments=[])
+    {
+        $view = new \map\view\map\Signatures();
+        return $this->doView($view, $map, $arguments);
+    }
+
+    function getAnomalies(\map\model\Map $map, $arguments=[])
+    {
+        $view = new \map\view\map\Anomalies();
+        return $this->doView($view, $map, $arguments);
+    }
+
+    function getSystem(\map\model\Map $map, $arguments=[])
+    {
+        $view = new \map\view\map\System();
+        return $this->doView($view, $map, $arguments);
+    }
+
+
+
     function getOverview(\map\model\Map $map=null, $arguments=[])
     {
         $system = null;
         if (count($arguments) > 0)
-            $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
+            $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
 
         if (!$system)
             $system = $map->getHomeSystem();
@@ -220,7 +252,7 @@ class Map
 
     function getPermanent(\map\model\Map $map, $arguments=[])
     {
-        $system = \map\model\System::getSolarsystemByName(array_shift($arguments));
+        $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
         if ($system) {
             $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
             if ($wormhole) {

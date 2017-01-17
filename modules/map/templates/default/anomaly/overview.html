@@ -4,7 +4,7 @@
     <div>
         {$anom->signatureID} -
         {$anom->description} &nbsp;
-        <img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom->id}')"/>
+        <img src="/images/default/cross.small.png" onclick="removeAnomaly('{$anom->id}')" style="cursor: pointer;">
     </div>
 {/foreach}
 {/if}

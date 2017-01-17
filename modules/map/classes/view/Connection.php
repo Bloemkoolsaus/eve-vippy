@@ -34,8 +34,7 @@ namespace map\view
                 $connection->fromWHTypeID = (\Tools::REQUEST("fromtype"))?\Tools::REQUEST("fromtype"):0;
                 $connection->toWHTypeID = (\Tools::REQUEST("totype"))?\Tools::REQUEST("totype"):0;
                 $connection->store();
-
-                \AppRoot::redirect("map/".$connection->getChain()->name);
+                \AppRoot::redidrectToReferer();
             }
 
             $whtypes = array();
@@ -64,7 +63,7 @@ namespace map\view
 														INNER JOIN ".\eve\Module::eveDB().".invgroups g ON g.groupid = t.groupid
 													WHERE 	l.connectionid = ?
 													ORDER BY g.groupname, t.typename"
-                , array($connection->id)))
+                                        , [$connection->id]))
             {
                 foreach ($results as $result)
                 {
@@ -130,8 +129,7 @@ namespace map\view
         {
             $connection = new \map\model\Connection(array_shift($arguments));
 
-            if (isset($_POST["ship"]))
-            {
+            if (isset($_POST["ship"])) {
                 foreach ($_POST["ship"] as $key => $val)
                 {
                     $shipTypeID = null;
@@ -159,14 +157,14 @@ namespace map\view
                 }
             }
 
-            \AppRoot::redirect("map/".$connection->getChain()->name);
+            \AppRoot::redidrectToReferer();
         }
 
         function getDelete($arguments=[])
         {
             $connection = new \map\model\Connection(array_shift($arguments));
             $connection->delete();
-            \AppRoot::redirect("/map/".$connection->getChain()->name."/");
+            \AppRoot::redidrectToReferer();
         }
     }
 }

@@ -9,7 +9,7 @@
 </div>
 {else}
 <div style="padding: 1em;">
-	<form method="post" action="/map/{$map->name}/add">
+	<form method="post" action="/map/{$map->getURL()}/add">
 		<input type="hidden" name="addwormhole" value="1">
 		<h2>
 			<img src="/images/default/ui/map.png" align="left">

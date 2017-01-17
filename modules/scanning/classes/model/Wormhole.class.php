@@ -224,12 +224,12 @@ namespace scanning\model
 
 		/**
 		 * Get connections
-		 * @return \scanning\model\Connection[]
+		 * @return \map\model\Connection[]
 		 */
 		function getConnections()
 		{
 			if ($this->connections === null)
-				$this->connections = \scanning\model\Connection::getConnectionBySystem($this->solarSystemID, $this->chainID);
+				$this->connections = \map\model\Connection::getConnectionBySystem($this->solarSystemID, $this->chainID);
 
 			return $this->connections;
 		}

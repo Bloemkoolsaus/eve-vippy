@@ -1,14 +1,13 @@
 <?php
-namespace map\view;
+namespace map\view\map;
 
 class Signatures
 {
-    function getOverview($arguments=[])
+    function getOverview(\map\model\Map $map, $arguments=[])
     {
         \AppRoot::debug("----- getSignatures() -----");
         $signatures = [];
-        $map = \map\model\Map::findByName(\Tools::REQUEST("map"));
-        $solarSystem = \map\model\System::getSolarsystemByName(\Tools::REQUEST("system"));
+        $solarSystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("system"));
 
         if ($map && $solarSystem)
         {
@@ -88,12 +87,11 @@ class Signatures
         return json_encode($signatures);
     }
 
-    function getStore($arguments=[])
+    function getStore(\map\model\Map $map, $arguments=[])
     {
         \AppRoot::debug("storeSignature(".\Tools::REQUEST("system").")");
 
-        $map = \map\model\Map::findByName(\Tools::REQUEST("map"));
-        $solarSystem = \map\model\System::getSolarsystemByName(\Tools::REQUEST("system"));
+        $solarSystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("system"));
         if (!$map || !$solarSystem)
             return false;
 
@@ -130,15 +128,16 @@ class Signatures
         return "stored";
     }
 
-    function getDelete($arguments=[])
+    function getDelete(\map\model\Map $map, $arguments=[])
     {
         $sigid = array_shift($arguments);
         if ($sigid == "all")
         {
-            $solarSystem = \map\model\System::getSolarsystemByName(\Tools::REQUEST("system"));
+            $solarSystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("system"));
             if ($solarSystem) {
                 foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id]) as $signature) {
-                    $signature->delete();
+                    if (!$signature->getSignatureType() || $signature->getSignatureType()->mayCleanup())
+                        $signature->delete();
                 }
                 return "deleted";
             }
@@ -156,10 +155,9 @@ class Signatures
         return "signature not found";
     }
 
-    function getCopypaste($arguments=[], $mapID=null, $systemID=null)
+    function getCopypaste(\map\model\Map $map, $arguments=[], $mapID=null, $systemID=null)
     {
-        $map = \map\model\Map::findByName((\Tools::REQUEST("map"))?:$mapID);
-        $solarSystem = \map\model\System::getSolarsystemByName((\Tools::REQUEST("system"))?:$systemID);
+        $solarSystem = \map\model\SolarSystem::getSolarsystemByName((\Tools::REQUEST("system"))?:$systemID);
         if (!$map || !$solarSystem)
             return false;
 

@@ -8,9 +8,8 @@ function loadSignatureList(noCache)
 	{
 		loadingSigList = true;
 		$.ajax({
-            url: "/map/signatures/"+((noCache)?"nocache":""),
+            url: "/map/"+$("#mapName").val()+"/signatures/"+((noCache)?"nocache":""),
             data: {
-                map: $("#mapName").val(),
                 system: $("#mapSystem").val(),
                 ajax: 1
             },
@@ -73,7 +72,7 @@ function deleteSignature(id)
 {
     $("tr[rel=signature][data-id="+id+"]").fadeOut("fast", function() {
         $.ajax({
-            url: "/map/signatures/delete/"+id,
+            url: "/map/"+$("#mapName").val()+"/signatures/delete/"+id,
             data: {
                 map: $("#mapName").val(),
                 system: $("#mapSystem").val(),
@@ -89,9 +88,8 @@ function deleteSignature(id)
 function clearSignatures()
 {
     $.ajax({
-        url: "/map/signatures/delete/all",
+        url: "/map/"+$("#mapName").val()+"/signatures/delete/all",
         data: {
-            map: $("#mapName").val(),
             system: $("#mapSystem").val(),
             ajax: 1
         },
@@ -105,9 +103,8 @@ function addSignature()
 {
     $.ajax({
         type: "POST",
-        url: "/map/signatures/store",
+        url: "/map/"+$("#mapName").val()+"/signatures/store",
         data:  {
-            map: $("#mapName").val(),
             system: $("#mapSystem").val(),
             id: 0,
             sigid: $("#sigId").val(),
@@ -177,9 +174,8 @@ function storeSignature()
 {
     var id = $("tr.sigedit").attr("data-id");
     $.ajax({
-        url: "/map/signatures/store",
+        url: "/map/"+$("#mapName").val()+"/signatures/store",
         data: {
-            map: $("#mapName").val(),
             system: $("#mapSystem").val(),
             id: id,
             sigid: $("#sigId"+id).val(),
@@ -246,24 +242,12 @@ function selectSignatureType(sigID)
     }
 }
 
-function loadAnomalies()
-{
-    $.ajax({
-        url: "/map/anomalies/overview/"+$("#mapName").val()+"/"+$("#mapSystem").val(),
-        data: { ajax: 1},
-        success: function(data) {
-            $("#anomalies").html(data);
-        }
-    })
-}
-
 function signaturesCopyPaste()
 {
     $.ajax({
-        url: "/map/signatures/copypaste?ajax=1",
+        url: "/map/"+$("#mapName").val()+"/signatures/copypaste?ajax=1",
         type: "POST",
         data: {
-            map: $("#mapName").val(),
             system: $("#mapSystem").val(),
             signatures: $("textarea[name=copypastesignatures]").val()
         },
@@ -273,4 +257,40 @@ function signaturesCopyPaste()
             loadAnomalies();
         }
     })
+}
+
+
+
+
+function loadAnomalies()
+{
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/anomalies/overview/"+$("#mapSystem").val(),
+        data: { ajax: 1},
+        success: function(data) {
+            $("#anomalies").html(data);
+        }
+    });
+}
+
+function clearAnomalies()
+{
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/anomalies/clear/"+$("#mapSystem").val(),
+        data: { ajax: 1},
+        success: function(data) {
+            $("#anomalies").html(data);
+        }
+    });
+}
+
+function removeAnomaly(anomalyID)
+{
+    $.ajax({
+        url: "/map/"+$("#mapName").val()+"/anomalies/delete/"+anomalyID,
+        data: { ajax: 1},
+        success: function(data) {
+            $("#anomalies").html(data);
+        }
+    });
 }

@@ -14,42 +14,38 @@ class Module extends \Module
                 $arguments[] = $arg;
         }
 
-        $mapName = (\Tools::REQUEST("section"))?:null;
-        if ($mapName)
+        $map = null;
+        if (\Tools::REQUEST("section"))
         {
-            foreach (\User::getUSER()->getAvailibleChains() as $chain)
-            {
-                if (strtolower($chain->name) == strtolower($mapName))
-                {
-                    $map = new \map\model\Map($chain->id);
-                    $_GET["chainid"] = $map->id;
-
-                    $view = new \map\view\Map();
-                    $action = (count($arguments)>0)?array_shift($arguments):null;
-                    $method = ($action) ? "get".ucfirst($action) : "Overview";
-                    if (!method_exists($view, $method)) {
-                        $method = "getOverview";
-                        if ($action)
-                            array_unshift($arguments, $action);
-                    }
-                    return $view->$method($map, $arguments);
+            $map = \map\model\Map::findByURL(\Tools::REQUEST("section"));
+            if ($map) {
+                $_GET["chainid"] = $map->id;
+                $view = new \map\view\Map();
+                $action = (count($arguments)>0)?array_shift($arguments):null;
+                $method = ($action) ? "get".ucfirst($action) : "Overview";
+                if (!method_exists($view, $method)) {
+                    $method = "getOverview";
+                    if ($action)
+                        array_unshift($arguments, $action);
                 }
+                return $view->$method($map, $arguments);
             }
+
+            $view = parent::getView();
+            if ($view)
+                return $view;
         }
-        else
-        {
-            // Geen map gekozen. Pak eerste map
-            if (count(\User::getUSER()->getAvailibleChains()) > 0) {
-                foreach (\User::getUSER()->getAvailibleChains() as $chain) {
-                    \AppRoot::redirect("map/" . $chain->name);
-                }
-            } else {
-                $tpl = \SmartyTools::getSmarty();
-                return $tpl->fetch("map/map/nomap");
+
+        // Geen map gekozen. Pak eerste map
+        if (count(\User::getUSER()->getAvailibleChains()) > 0) {
+            foreach (\User::getUSER()->getAvailibleChains() as $chain) {
+                \AppRoot::redirect("map/".$chain->getURL());
             }
         }
 
-        return parent::getContent();
+        // Geen map gevonden..
+        $tpl = \SmartyTools::getSmarty();
+        return $tpl->fetch("map/map/nomap");
     }
 
     function getAppData(\stdClass $appData)

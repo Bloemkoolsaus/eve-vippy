@@ -1,5 +1,5 @@
 <input type="hidden" id="mapID" value="{$map->id}">
-<input type="hidden" id="mapName" value="{$map->name}">
+<input type="hidden" id="mapName" value="{$map->getURL()}">
 <input type="hidden" id="mapSystem" value="{$system->name}" style="width: 230px;" />
 
 <div id="mapHeader" class="content nomargin">
@@ -213,7 +213,7 @@
 	</div>
 
 	<div id="systemDetailsContainer">
-		<form method="post" action="/map/system/edit/{$system->name}/{$map->name}">
+		<form method="post" action="/map/{$map->getURL()}/system/edit/{$system->name}">
 		<input type="hidden" name="renameid" id="renameid" value="{$system->id}"/>
 
 	{assign var=evesurvival value="http://eve-survival.org/"}
@@ -302,7 +302,7 @@
 					<div style="text-align: right;">
 						<a href="#" onclick="copypasteAnomalies(); return false;">Add Anomalies</a>
 						|
-						<a href="/map/anomalies/clear/{$map->name}/{$system->name}">Clear Anomalies</a>
+						<a href="#" onclick="clearAnomalies(); return false;">Clear Anomalies</a>
 					</div>
 				</td>
 			</tr>

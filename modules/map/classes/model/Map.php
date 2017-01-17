@@ -3,6 +3,11 @@ namespace map\model;
 
 class Map extends \scanning\model\Chain
 {
+    /**
+     * Is the user allowed to see this map?
+     * @param \users\model\User $user=null logged in user
+     * @return bool
+     */
     function getUserAllowed($user=null)
     {
         if (!$user)
@@ -12,8 +17,14 @@ class Map extends \scanning\model\Chain
             if ($chain->id == $this->id)
                 return true;
         }
-
         return false;
+    }
+
+    function getURL()
+    {
+        $url = \Tools::formatURL($this->name);
+        $url = $this->id."-".$url;
+        return $url;
     }
 
 
@@ -48,6 +59,39 @@ class Map extends \scanning\model\Chain
         return null;
     }
 
+
+
+    /**
+     * Find (allowed) map by URL
+     * @param $url
+     * @return \map\model\Map|null
+     */
+    public static function findByURL($url)
+    {
+        \AppRoot::doCliOutput("Find map by url: ".$url);
+        $findByID = null;
+        $parts = explode("-",$url);
+        if (is_numeric($parts[0])) {
+            // Mogelijk id?
+            \AppRoot::debug("Find by id: ".$parts[0]);
+            $findByID = $parts[0];
+            $map = new \map\model\Map($parts[0]);
+            if ($map->getUserAllowed() || (\User::getUSER() && \User::getUSER()->getIsSysAdmin()))
+                return $map;
+        }
+
+        if (\User::getUSER()) {
+            foreach (\User::getUSER()->getAvailibleChains() as $map) {
+                $findURL = $url;
+                if (!$findByID)
+                    $findURL = $map->id."-".$url;
+                if ($map->getURL() == $findURL)
+                    return $map;
+            }
+        }
+        return null;
+    }
+
     /**
      * Find one instances
      * @param array $conditions
@@ -71,19 +115,21 @@ class Map extends \scanning\model\Chain
      */
     public static function findAll($conditions=[], $orderby=["name"])
     {
-        $where = array();
-        $params = array();
+        $where = [];
+        $params = [];
         foreach ($conditions as $var => $val) {
             $where[] = $var." = ?";
             $params[] = $val;
         }
+        if (!isset($conditions["deleted"]))
+            $where[] = "deleted = 0";
 
         $entities = array();
         if ($results = \MySQL::getDB()->getRows("SELECT *
                                                 FROM    mapwormholechains
                                                 ".((count($where)>0)?"WHERE ".implode(" AND ", $where):"")."
                                                 ".((count($orderby)>0)?"ORDER BY ".implode(",", $orderby):"")
-            , $params))
+                                            , $params))
         {
             foreach ($results as $result)
             {
