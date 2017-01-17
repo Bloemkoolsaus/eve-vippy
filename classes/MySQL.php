@@ -352,7 +352,7 @@ class MySQL
         $dumpFile = "/tmp/".$this->dtbs.".sql";
 
         \AppRoot::doCliCommand("mysqldump -h ".$this->host." -u ".$this->user." -p".$this->pass." --lock-tables=false ".$this->dtbs." > ".$dumpFile);
-        \AppRoot::doCliCommand("tar -czf ".$backupFile." -C /tmp ".basename($dumpFile));
+        \AppRoot::doCliCommand("tar -czf ".$backupFile." -C ".$dumpFile);
         \AppRoot::doCliCommand("rm ".$dumpFile);
 
         \AppRoot::debug("MySQL: Finished backup");

@@ -1,6 +1,0 @@
-<?php
-	
-phpinfo();
-	print "hello";	
-
-?>

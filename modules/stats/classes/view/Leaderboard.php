@@ -18,6 +18,7 @@ class Leaderboard
 
         $y = (count($arguments) > 0) ? array_shift($arguments) : date("Y");
         $m = (count($arguments) > 0) ? array_shift($arguments) : date("m");
+
         $sort = (count($arguments) > 0) ? array_shift($arguments) : null;
         if (!$sort) {
             if ($authGroup->getConfig("stats_kills"))
@@ -30,6 +31,7 @@ class Leaderboard
 
         $sdate = date("Y-m-d", mktime(0, 0, 0, $m, 1, $y));
         $edate = date("Y-m-d", mktime(0, 0, 0, $m+1, 0, $y));
+        \AppRoot::doCliOutput("sdate: ".$sdate." || edate: ".$edate);
 
         /** @var \stats\model\User[] $stats */
         $stats = array();
@@ -47,7 +49,7 @@ class Leaderboard
                                                 where   authgroupid = ?
                                                 and     year = ? and month = ?
                                                 order by ".$sortStatsBy
-                                        , [$authGroup->id, $y, $m]))
+                                , [$authGroup->id, date("Y", strtotime($sdate)), date("m", strtotime($sdate))]))
         {
             foreach ($results as $result)
             {
