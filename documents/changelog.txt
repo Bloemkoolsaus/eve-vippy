@@ -1,3 +1,18 @@
+<h3>January 23, 2017</h3>
+<b><u>ADMIN</u></b>
+ - Fixed a bug in setting map permissions. Removing a corporation from a map did not save.
+
+<b><u>CREST</u></b>
+ - <strong>Now introducing individual location tracking through CREST!</strong>
+ 	CCP have increased the rate limits for CREST. This means it is now viable for VIPPY to start fetching locations of characters, no need to rely on fleet information anymore.
+ 	If all goes well, you should see an improvement to VIPPY's ability to track your characters. The refresh rate has gone from 30 seconds to 10 seconds.
+ 		- Ofcourse, VIPPY can only track characters for which you have an <a href="/profile/characters" target="_blank">active CREST token</a>.
+ 		- Fleet tracking will still be possible for characters that do not have an active CREST token.
+ 		- Fleet tracking is, for now, still needed to get shiptypes.
+ - I will be monitoring the character tracking closely in the next couple of days and may tweak the process when needed.
+
+
+
 <h3>November 2, 2016</h3>
 <b><u>MAP</u></b>
  - Fixed another issue with copy+pasting Anomalies.
