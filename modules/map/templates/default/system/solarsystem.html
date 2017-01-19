@@ -4,13 +4,14 @@
 		<h3 style="margin-bottom: 10px;">
 			<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
 			{$system->name}
+{literal}
 			{if $wormhole->name|strlen > 0}
-				-
-				{$wormhole->name}
+				- {$wormhole->name}
 			{/if}
+{/literal}
 		</h3>
-		{literal}
-			{if $system->getNotes()}
+{literal}
+		{if $system->getNotes()}
 			{assign var=notes value=$system->getNotes()}
 			{if $notes.notes|strlen > 0}
 			<div style="margin: 8px; padding: 3px; color: #EEEEEE; border: dashed 1px #777777; border-radius: 5px;">
@@ -22,8 +23,8 @@
 				{/if}
 			</div>
 			{/if}
-			{/if}
-		{/literal}
+		{/if}
+{/literal}
 		<div>
 			{if $system->isWSpace()}
 				<div class="form">
@@ -88,26 +89,26 @@
 				{/if}
 				<div class="form">&nbsp;</div>
 			{/if}
-			{literal}
-			{if $wormhole}
+{literal}
+		{if $wormhole}
 				<div class="form">
-					{if $wormhole->fullScanDate != null && $wormhole->fullScanDate|strtotime > 0}
+			{if $wormhole->fullScanDate != null && $wormhole->fullScanDate|strtotime > 0}
 					<img src="/images/default/scanned.recently.png" align="left">
 					&nbsp; <span style="color: #FFFFFF;"><b>Recently scanned</b></span><br />
 					&nbsp; <i>{$wormhole->fullScanDate|date_age} ago</i><br />
 					<b>By:</b>
-					{if $wormhole->getFullyScannedByUser() != null}
+				{if $wormhole->getFullyScannedByUser() != null}
 					<i>{$wormhole->getFullyScannedByUser()->getFullname()}</i>
-					{else}
+				{else}
 					<i>Unknown</i>
-					{/if}
-					{else}
+				{/if}
+			{else}
 					<img src="/images/default/scanned.not.png" align="left">
 					&nbsp; <span style="color: #FFFFFF;"><b>Not scanned</b></span>
-					{/if}
-				</div>
 			{/if}
-			{/literal}
+				</div>
+		{/if}
+{/literal}
 			<div style="clear:both;"></div>
 		</div>
 	</div>
@@ -133,14 +134,14 @@
 	<div style="clear:both;"></div>
 	<br />
 
-	{literal}
-		{if !$system->isWSpace() && $system->getCapitalRange()|@count > 0}
+{literal}
+	{if !$system->isWSpace() && $system->getCapitalRange()|@count > 0}
 		<div class="systemPopupTitle">
 			My Capitals
 		</div>
 		{assign var=i value=0}
-		{foreach from=$system->getCapitalRange() key=jumps item=caps}
-		{foreach from=$caps key=c item=cap}
+{foreach from=$system->getCapitalRange() key=jumps item=caps}
+	{foreach from=$caps key=c item=cap}
 		{if $i<5 || $jumps<=1}
 		<div style="padding-left: 5px;">
 			<div style="float: left; width: 150px;">
@@ -153,14 +154,14 @@
 		</div>
 		{assign var=i value=$i+1}
 		{/if}
-		{/foreach}
-		{/foreach}
+	{/foreach}
+{/foreach}
 		<div style="clear:both;"></div>
 		<br />
-		{/if}
-	{/literal}
+	{/if}
+{/literal}
 
-	{literal}
+{literal}
 	{if $system && $wormhole}
 		{if $system->getActivePilots($wormhole->chainID)|@count > 0}
 		<div class="systemPopupTitle">
@@ -172,7 +173,7 @@
 			</div>
 		</div>
 		<div style="padding: 5px;">
-			{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
+		{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
 			<div style="float: left; width: 200px; overflow: hidden; white-space: nowrap;">
 				* {$pilot.name} ({$pilot.ship})
 			</div>
@@ -180,14 +181,14 @@
 				&nbsp;&nbsp;
 				<i>{$pilot.lastdate|date_age:1}</i> ago
 			</div>
-			{/foreach}
+		{/foreach}
 		</div>
 
 		<div style="clear:both;"></div>
 		<br />
 		{/if}
 	{/if}
-	{/literal}
+{/literal}
 
 	{if !$system->isWSpace()}
 		<div id="whActivityTitle" class="systemPopupTitle">
