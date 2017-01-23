@@ -41,45 +41,48 @@ class Location
 
     function doCharacter($arguments=[])
     {
+        $errors = [];
         $character = new \crest\model\Character(array_shift($arguments));
         $authGroup = null;
         if ($character->getUser())
             $authGroup = $character->getUser()->getCurrentAuthGroup();
         if (!$authGroup)
-            return ["errors" => "No authgroup for ".$character->name];
+            $errors[] = "No authgroup for ".$character->name;
 
-        // Locatie ophalen
-        $crest = new \crest\Api();
-        $crest->setToken($character->getToken());
-        $crest->get("characters/".$character->id."/location/");
-
-        if ($crest->success())
+        if (count($errors) == 0)
         {
-            if (isset($crest->getResult()->solarSystem))
-            {
-                $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
-                $locationTracker = new \map\controller\LocationTracker();
-                $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
-                return [
-                    "system" => [
-                        "id" => $solarSystem->id,
-                        "name" => $solarSystem->name
-                    ],
-                    "character" => [
-                        "id" => $character->id,
-                        "name" => $character->name
-                    ]
-                ];
-            }
-            else
-            {
-                // Offline..?
-                $errors[] = "No result from CREST. Is ".$character->name." logged in?";
-            }
-        } else
-            $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
+            // Locatie ophalen
+            $crest = new \crest\Api();
+            $crest->setToken($character->getToken());
+            $crest->get("characters/".$character->id."/location/");
 
-
+            if ($crest->success())
+            {
+                if (isset($crest->getResult()->solarSystem))
+                {
+                    $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
+                    $locationTracker = new \map\controller\LocationTracker();
+                    $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
+                    return [
+                        "system" => [
+                            "id" => $solarSystem->id,
+                            "name" => $solarSystem->name
+                        ],
+                        "character" => [
+                            "id" => $character->id,
+                            "name" => $character->name
+                        ]
+                    ];
+                }
+                else
+                {
+                    // Offline..?
+                    $errors[] = "No result from CREST. Is ".$character->name." logged in?";
+                }
+            } else
+                $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
+        }
+        
         // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
         if (count($errors) > 0)
             \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
