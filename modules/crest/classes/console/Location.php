@@ -27,7 +27,9 @@ class Location
                 {
                     // Asynchroon uitvoeren
                     \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
-                    exec("php ".getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &");
+                    $command = "php ".getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &";
+                    \AppRoot::doCliOutput($command);
+                    exec($command);
                 }
             }
 
