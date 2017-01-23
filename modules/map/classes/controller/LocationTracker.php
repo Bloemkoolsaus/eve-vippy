@@ -40,6 +40,9 @@ class LocationTracker
             "characterid" => $characterID
         ]);
 
+        // Update character last-online
+        \MySQL::getDB()->update("characters", ["lastonline" => date("Y-m-d H:i:s")], ["id" => $characterID]);
+
 
         $chainMaps = \map\model\Map::findAll(["authgroupid" => $authGroupID]);
         foreach ($chainMaps as $map) {

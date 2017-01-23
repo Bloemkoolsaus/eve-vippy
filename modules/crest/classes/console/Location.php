@@ -14,14 +14,23 @@ class Location
         {
             \AppRoot::doCliOutput("Find characters");
 
-            if ($results = \MySQL::getDB()->getRows("select c.*
+            $i = 0;
+            if ($results = \MySQL::getDB()->getRows("select 1 as online, c.*
                                                     from    characters c
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ?
-                                                    order by l.lastdate asc
-                                                    limit 100"
-                        , [date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y")))]))
+                                                union
+                                                    select  0 as online, c.*
+                                                    from    characters c
+                                                        inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
+                                                        left join map_character_locations l on l.characterid = c.id
+                                                    where   l.characterid is null
+                                                    and    (c.lastonline is null or c.lastonline < ?)
+                                                order by online desc, lastonline asc, updatedate desc
+                                                limit 100"
+                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y"))),
+                            date("Y-m-d H:i:s", mktime(date("H"),date("i")-10,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
                 {
@@ -30,13 +39,18 @@ class Location
                     $command = "php ".getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &";
                     \AppRoot::doCliOutput($command);
                     exec($command);
+                    $i++;
                 }
             }
+
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
         }
         \AppRoot::doCliOutput("Timeout!");
+
+        // Online characters opruimen
+        \MySQL::getDB()->doQuery("delete from map_character_locations where lastdate < ?", [date("Y-m-d H:i:s", mktime(date("H"),date("i")-10,date("s"),date("m"),date("d"),date("Y")))]);
     }
 
     function doCharacter($arguments=[])
@@ -82,7 +96,7 @@ class Location
             } else
                 $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
         }
-        
+
         // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
         if (count($errors) > 0)
             \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);

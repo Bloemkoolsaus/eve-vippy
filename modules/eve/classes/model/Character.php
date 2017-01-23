@@ -11,6 +11,7 @@ namespace eve\model
 		public $isCEO = false;
 		public $titles = array();
 		public $updatedate;
+        public $lastonline;
 
 		private $isAuthorized = null;
         private $authMessage = null;
@@ -38,7 +39,8 @@ namespace eve\model
 				$this->corporationID = $result["corpid"];
 				$this->isDirector = ($result["isdirector"]>0)?true:false;
 				$this->isCEO = ($result["isceo"]>0)?true:false;
-				$this->updatedate = $result["updatedate"];
+                $this->updatedate = $result["updatedate"];
+                $this->lastonline = $result["lastonline"];
 			}
 		}
 
@@ -61,7 +63,8 @@ namespace eve\model
                 "corpid"		=> $this->corporationID,
                 "isdirector"	=> ($this->isDirector())?1:0,
                 "isceo"			=> ($this->isCEO())?1:0,
-                "updatedate"	=> date("Y-m-d H:i:s")
+                "updatedate"	=> date("Y-m-d H:i:s"),
+                "lastonline"	=> date("Y-m-d H:i:s", strtotime($this->lastonline))
             ];
 			\MySQL::getDB()->updateinsert("characters", $data, ["id" => $this->id]);
 
