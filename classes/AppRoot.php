@@ -761,6 +761,9 @@ class AppRoot
     {
         if (\AppRoot::isCommandline())
         {
+            if (is_object($var) || is_array($var))
+                $var = json_encode($var);
+
             $msg = $var;
             if ($color == "red")
                 $msg = "\e[31m".$var."\e[0m";

@@ -19,7 +19,8 @@ class Location
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ?
-                                                    order by l.lastdate asc"
+                                                    order by l.lastdate asc
+                                                    limit 100"
                         , [date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
