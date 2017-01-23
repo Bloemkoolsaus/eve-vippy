@@ -245,6 +245,11 @@ function generateSystems(data)
             }
         }
 
+        // Notifications
+        if (data[i].notifications != undefined) {
+            wormhole.notification = data[i].notifications[0].type;
+        }
+
         mapWormholes[wormhole.id] = wormhole;
 	}
 }

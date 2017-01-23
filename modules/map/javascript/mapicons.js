@@ -10,19 +10,23 @@ var mapIcons = {
     pin: createImage('/images/eve/pin-dark.png'),
     fw: createImage('/images/eve/fw.png'),
     contested: createImage('/images/eve/fw.contested.png'),
-    faction: []
+    faction: [],
+    notifications: {
+        message: createImage("/modules/map/images/notifications/message.png"),
+        notice: createImage("/modules/map/images/notifications/notice.png"),
+        warning: createImage("/modules/map/images/notifications/warning.png"),
+        error: createImage("/modules/map/images/notifications/error.png")
+    }
 };
 
 for (var i=500001; i<=500020; i++) {
-	mapIcons.faction[i] = createImage('/images/eve/factions/'+i+'.png');
+	mapIcons.faction[i] = createImage('/modules/map/images/factions/'+i+'.png');
 }
 
 function createImage(file) {
 	var img = new Image();
 	img.ready = false;
-	img.onload = function () {
-		   this.ready = true;
-		};
+	img.onload = function() { this.ready = true; };
 	img.src = file;
 	return img;
 }

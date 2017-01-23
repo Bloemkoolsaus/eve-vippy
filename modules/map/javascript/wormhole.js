@@ -35,6 +35,7 @@ function Wormhole(id) {
     };
     this.characters = [];
     this.icons = [];
+    this.notification = null;
 }
 
 /** Setters **/
@@ -224,6 +225,41 @@ Wormhole.prototype.render = function(canvas)
 
     var extraTxtHeight = 14;
 
+
+    // Icons (eerst, zodat de tekst(en) er over heen vallen)
+    if (this.solarsystem.faction) {
+        wormhole.add(new Kinetic.Image({
+            x: this.map.width-25,
+            y: this.map.height-25,
+            image: mapIcons.faction[this.solarsystem.faction],
+            width: 24,
+            height: 24,
+            draggable: false
+        }));
+    }
+    if (this.notification) {
+        wormhole.add(new Kinetic.Image({
+            x: this.map.width-20,
+            y: 2,
+            image: mapIcons.notifications[this.notification],
+            width: 18,
+            height: 18,
+            draggable: false
+        }));
+    } else {
+        if (this.status.persistant) {
+            wormhole.add(new Kinetic.Image({
+                x: this.map.width-15,
+                y: 2,
+                image: mapIcons.pin,
+                width: 13,
+                height: 13,
+                draggable: false
+            }));
+        }
+    }
+
+
     // titles
     for (var t=0; t<this.titles.length; t++) {
         wormhole.add(new Kinetic.Text({
@@ -313,27 +349,6 @@ Wormhole.prototype.render = function(canvas)
     }
 
 
-    // Icons
-    if (this.solarsystem.faction) {
-        wormhole.add(new Kinetic.Image({
-            x: this.map.width-25,
-            y: this.map.height-25,
-            image: mapIcons.faction[this.solarsystem.faction],
-            width: 24,
-            height: 24,
-            draggable: false
-        }));
-    }
-    if (this.status.persistant) {
-        wormhole.add(new Kinetic.Image({
-            x: this.map.width-15,
-            y: 2,
-            image: mapIcons.pin,
-            width: 13,
-            height: 13,
-            draggable: false
-        }));
-    }
 
     var iconPosition = {
         x: 22,

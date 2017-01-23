@@ -88,6 +88,7 @@ class Map
                 $title = $wormhole->name." - ".$title;
             $data["notifications"][] = [
                 "id" => $note->id,
+                "wormhole" => $wormhole->id,
                 "type" => $note->getTypeName(),
                 "title" => "[".$title."] - ".$note->title,
                 "content" => $note->body
@@ -147,13 +148,21 @@ class Map
 
         if (!$isCached)
         {
+            $wormholes = $controller->getWormholes($map);
+            foreach ($wormholes as $key => $wh) {
+                foreach ($data["notifications"] as $note) {
+                    if (isset($note["wormhole"]) && $note["wormhole"] == $wh["id"])
+                        $wormholes[$key]["notifications"][] = $note;
+                }
+            }
+
             // Maak de map
             $data["map"] = [
                 "settings"      => [
                     "defaultwidth"  => (int)\Config::getCONFIG()->get("map_wormhole_width"),
                     "defaultheight"  => (int)\Config::getCONFIG()->get("map_wormhole_height")
                 ],
-                "wormholes" 	=> $controller->getWormholes($map),
+                "wormholes" 	=> $wormholes,
                 "connections" 	=> $controller->getConnections($map),
                 "homesystem" 	=> $map->homesystemID
             ];

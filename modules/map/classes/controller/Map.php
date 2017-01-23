@@ -149,15 +149,12 @@ class Map
 
                 if ($system != null)
                 {
-                    if ($system->isWSpace())
-                    {
+                    if ($system->isWSpace()) {
                         $data["whsystem"]["class"] = $system->getClass(true);
                         $data["whsystem"]["statics"] = $system->getStatics(true);
                         if ($system->getEffect())
                             $data["whsystem"]["effect"] = $system->getEffect();
-                    }
-                    else
-                    {
+                    } else {
                         if ($system->getStationSystem())
                             $data["attributes"]["stations"] = true;
                     }
