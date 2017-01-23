@@ -74,12 +74,15 @@ class Location
             else
             {
                 // Offline..?
-                \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
                 $errors[] = "No result from CREST. Is ".$character->name." logged in?";
             }
-        }
-        else
+        } else
             $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
+
+
+        // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
+        if (count($errors) > 0)
+            \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
 
         return ["errors" => $errors];
     }
