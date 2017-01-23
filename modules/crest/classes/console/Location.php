@@ -15,23 +15,20 @@ class Location
             \AppRoot::doCliOutput("Find characters");
 
             $i = 0;
-            if ($results = \MySQL::getDB()->getRows("select 1 as online, c.*, l.lastdate as requestdate
+            if ($results = \MySQL::getDB()->getRows("select 1 as online, c.*, l.lastdate as lastupdate
                                                     from    characters c
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ?
                                                 union
-                                                    select  0 as online, c.*, clog.requestdate
+                                                    select  0 as online, c.*, cl.lastupdate
                                                     from    characters c
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         left join map_character_locations l on l.characterid = c.id
-                                                        left join (select   max(requestdate) as requestdate, url
-                                                                    from    crest_log
-                                                                    group by url
-                                                            ) clog on clog.url = concat('characters/', c.id, '/location/')
+                                                        left join crest_character_location cl on cl.characterid = c.id
                                                     where   l.characterid is null
-                                                    and    (clog.requestdate is null or clog.requestdate < ?)
-                                                order by online desc, requestdate asc, updatedate desc
+                                                    and    (cl.lastupdate is null or cl.lastupdate < ?)
+                                                order by online desc, lastupdate asc, updatedate desc
                                                 limit 100"
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-10,date("s"),date("m"),date("d"),date("Y")))]))
@@ -60,13 +57,15 @@ class Location
     function doCharacter($arguments=[])
     {
         $errors = [];
-        $character = new \crest\model\Character(array_shift($arguments));
+        $results = [];
         $authGroup = null;
+        $character = new \crest\model\Character(array_shift($arguments));
         if ($character->getUser())
             $authGroup = $character->getUser()->getCurrentAuthGroup();
         if (!$authGroup)
             $errors[] = "No authgroup for ".$character->name;
 
+        $solarSystem = null;
         if (count($errors) == 0)
         {
             // Locatie ophalen
@@ -81,7 +80,7 @@ class Location
                     $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
                     $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
-                    return [
+                    $results = [
                         "system" => [
                             "id" => $solarSystem->id,
                             "name" => $solarSystem->name
@@ -101,10 +100,20 @@ class Location
                 $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
         }
 
-        // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
-        if (count($errors) > 0)
-            \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
+        // Last location check date bijwerken.
+        \MySQL::getDB()->updateinsert("crest_character_location", [
+            "characterid" => $character->id,
+            "solarsystemid" => ($solarSystem)?$solarSystem->id:null,
+            "lastupdate" => date("Y-m-d H:i:s")
+        ], [
+            "characterid" => $character->id
+        ]);
 
-        return ["errors" => $errors];
+        // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
+        if (count($errors) > 0) {
+            \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
+            return ["errors" => $errors];
+        }
+        return $results;
     }
 }
