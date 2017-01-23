@@ -104,6 +104,7 @@ class Location
         \MySQL::getDB()->updateinsert("crest_character_location", [
             "characterid" => $character->id,
             "solarsystemid" => ($solarSystem)?$solarSystem->id:null,
+            "remark" => (count($errors) > 0)?json_encode($errors):$solarSystem->name,
             "lastupdate" => date("Y-m-d H:i:s")
         ], [
             "characterid" => $character->id
