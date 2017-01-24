@@ -215,7 +215,7 @@ namespace scanning\controller
 			}
 
 			$tpl = \SmartyTools::getSmarty();
-			$tpl->assign("characters",$characters);
+			$tpl->assign("characters", $characters);
 			return $tpl->fetch(\SmartyTools::getTemplateDir("scanning")."activepilots.html");
 		}
 
