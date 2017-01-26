@@ -125,7 +125,7 @@
 			{/if}
 		{else}
 			<div id="whinfotradehubs" style="margin-top: 10px;">
-				<img src="/images/loading.gif" style="margin: 5px; margin-right: 10px;" align="left" />
+				<img src="/images/loading.gif" style="margin: 5px 10px 5px 5px;" align="left" />
 			</div>
 		{/if}
 	{/if}
@@ -175,7 +175,8 @@
 		<div style="padding: 5px;">
 		{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
 			<div style="float: left; width: 200px; overflow: hidden; white-space: nowrap;">
-				* {$pilot.name} ({$pilot.ship})
+				* {$pilot.name}
+				{if $pilot.shiptypeid}({$pilot.ship}){/if}
 			</div>
 			<div style="float: right; text-align: left; width: 100px; overflow: hidden;">
 				&nbsp;&nbsp;

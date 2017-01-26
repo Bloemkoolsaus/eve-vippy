@@ -33,7 +33,7 @@ class LocationTracker
         \MySQL::getDB()->updateinsert("map_character_locations", [
             "characterid" => $characterID,
             "solarsystemid" => $locationID,
-            "shiptypeid" => $shipTypeID,
+            "shiptypeid" => ($shipTypeID)?:0,
             "authgroupid" => $authGroupID,
             "lastdate" => date("Y-m-d H:i:s")
         ],[
