@@ -44,10 +44,6 @@ class LocationTracker
         \MySQL::getDB()->update("characters", ["lastonline" => date("Y-m-d H:i:s")], ["id" => $characterID]);
 
 
-        $chainMaps = \map\model\Map::findAll(["authgroupid" => $authGroupID]);
-        foreach ($chainMaps as $map) {
-            $map->setMapUpdateDate();
-        }
 
         if ($previousLocationID)
         {
@@ -57,6 +53,9 @@ class LocationTracker
             // We jumpen naar een ander systeem!
             if ($previousLocationID != $locationID)
             {
+                // Map update
+                \MySQL::getDB()->update("mapwormholechains", ["lastmapupdatedate" => date("Y-m-d H:i:s")], ["authgroupid" => $authGroupID]);
+
                 // Pods tellen niet mee.
                 if (!in_array($shipTypeID, [0, 670, 33328]))
                 {
@@ -64,17 +63,15 @@ class LocationTracker
                     $addedWormholes = [];
 
                     // Check alle maps van deze authgroup
-                    foreach ($chainMaps as $map)
+                    foreach (\map\model\Map::findAll(["authgroupid" => $authGroupID]) as $map)
                     {
                         $addNewWormhole = true;
                         $wormholeFrom = null;
                         $wormholeTo = null;
 
                         // Staan beide systemen al op de map?
-                        if ($results = \MySQL::getDB()->getRows("select *
-                                                                from    mapwormholes
-                                                                where   chainid = ?
-                                                                and     solarsystemid in (".$previousLocationID.",".$locationID.")"
+                        if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where chainid = ?
+                                                                 and solarsystemid in (".$previousLocationID.",".$locationID.")"
                                                         , [$map->id]))
                         {
                             foreach ($results as $result)
@@ -99,7 +96,7 @@ class LocationTracker
                         $fromSystem = new \map\model\SolarSystem($previousLocationID);
                         $toSystem = new \map\model\SolarSystem($locationID);
 
-                        // kspace kspace systems
+                        // kspace-kspace systems
                         if ($addNewWormhole) {
                             if (!$fromSystem->isWSpace() && !$toSystem->isWSpace()) {
                                 if ($fromSystem->getNrJumpsTo($toSystem->id) <= 3) // iets hoger dan 1 door lag in de CREST tracker
