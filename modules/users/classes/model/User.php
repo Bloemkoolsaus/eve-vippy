@@ -19,9 +19,6 @@ namespace users\model
 
 		private $config = null;
 		private $groups = null;
-		private $authGroups = null;
-		private $authGroupIDs = array();
-		private $currentAuthGroup = null;
 		private $visibleUserIDs = null;
 		private $rights = null;
 		private $permissions = null;
@@ -35,6 +32,11 @@ namespace users\model
 		private $capitalShips = null;
         private $logs = null;
 		private $notifications = null;
+
+        private $authGroups = null;
+        private $authGroupIDs = array();
+        private $currentAuthGroup = null;
+        private $_accessLists = null;
 
         /** @var \eve\model\Character */
         private $character = null;
@@ -1353,6 +1355,53 @@ namespace users\model
 			}
 			return $authGroups;
 		}
+
+        /**
+         * Get access lists
+         * @return \admin\model\AccessList[]
+         */
+        public function getAccessLists()
+        {
+            \AppRoot::debug("User->getAccessLists()");
+            if ($this->_accessLists === null)
+            {
+                $this->_accessLists = [];
+                if ($results = \MySQL::getDB()->getRows("select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_user u on u.userid = a.id
+                                                         where  u.userid = ?
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_corporation ac on ac.accesslistid = a.id
+                                                            inner join characters c on c.id = ac.corporationid
+                                                        where  c.userid = ?
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_alliance aa on aa.accesslistid = a.id
+                                                            inner join corporations cc on cc.allianceid = aa.allianceid
+                                                            inner join characters c on c.corpid = cc.id
+                                                        where  c.userid = ?
+                                                      union
+                                                        select  a.*
+                                                        from    user_accesslist a
+                                                        where   a.ownerid = ?
+                                                    group by id
+                                                    order by title"
+                                    , [$this->id, $this->id, $this->id, $this->id]))
+                {
+                    foreach ($results as $result)
+                    {
+                        $list = new \admin\model\AccessList();
+                        $list->load($result);
+                        $this->_accessLists[] = $list;
+                    }
+                }
+            }
+
+            return $this->_accessLists;
+        }
 
 		public function getVisibleUserIDs()
 		{

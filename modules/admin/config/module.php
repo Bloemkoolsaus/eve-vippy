@@ -20,6 +20,12 @@ if (\User::getUSER())
                                     "name"	=> "Notifications",
                                     "url" => "notices/notes");
         $config["submenu"][] = array("type" => "seperator");
+
+        $config["submenu"][] = [
+            "type" => "link",
+            "name" => "Access Lists",
+            "url" => "admin/accesslist"
+        ];
     }
 
     if (count(\User::getUSER()->getAuthGroupsAdmins()) > 0)
@@ -38,16 +44,11 @@ if (\User::getUSER())
             "name" => "Users",
             "url" => "users/user"
         );
-
-        if (\User::getUSER()->isAdmin() || \User::getUSER()->hasRight("users", "manageusers"))
-        {
-            $config["submenu"][] = array(
-                "type" => "link",
-                "name" => "User-Groups",
-                "url" => "users/groups"
-            );
-        }
-
+        $config["submenu"][] = array(
+            "type" => "link",
+            "name" => "User-Groups",
+            "url" => "users/groups"
+        );
         $config["submenu"][] = array(
             "type" => "link",
             "name"	=> "Logs",
