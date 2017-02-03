@@ -224,56 +224,54 @@
     <div class="content">
         <h2>Access Control</h2>
 
-		<div class="col8">
-			<div class="col5" style="margin-right: 3em;">
-			{if $chain->getAlliances()|@count > 0}
-				<div style="margin-bottom: 1em;">
-					<div style="margin: 2px;">
-						<h3>Alliances:</h3>
-					</div>
-				{foreach from=$chain->getAlliances() item=alliance}
-					<div style="margin: 2px;">
-						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
-						<a href="/admin/chain/edit/{$chain->id}?deletealliance={$alliance->id}"><img src="/images/eve/cross.png" align="right"></a>
-						&nbsp; {$alliance->name}
-						<div style="clear:both;"></div>
-					</div>
-				{/foreach}
+		<div class="col4">
+		{if $chain->getAlliances()|@count > 0}
+			<div style="margin-bottom: 1em;">
+				<div style="margin: 2px;">
+					<h3>Alliances:</h3>
 				</div>
-			{/if}
-			{if $chain->getCorporations()|@count > 0}
-				<div style="margin-bottom: 1em;">
-					<div style="margin: 2px;">
-						<h3>Corporations:</h3>
-					</div>
-				{foreach from=$chain->getCorporations() item=corp}
-					<div style="margin: 2px;">
-						<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 18px;" align="left">
-						<a href="/admin/chain/edit/{$chain->id}?deletecorporation={$corp->id}"><img src="/images/eve/cross.png" align="right"></a>
-						&nbsp; {$corp->name}
-						<div style="clear:both;"></div>
-					</div>
-				{/foreach}
+			{foreach from=$chain->getAlliances() item=alliance}
+				<div style="margin: 2px;">
+					<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
+					<a href="/admin/chain/edit/{$chain->id}?deletealliance={$alliance->id}"><img src="/images/eve/cross.png" align="right"></a>
+					&nbsp; {$alliance->name}
+					<div style="clear:both;"></div>
 				</div>
-			{/if}
-			{if $chain->getAccessLists()|@count > 0}
-				<div style="margin-bottom: 1em;">
-					<div style="margin: 2px;">
-						<h3>Access Lists:</h3>
-					</div>
-				{foreach from=$chain->getAccessLists() item=list}
-					<div style="margin: 2px;">
-						<img src="/images/default/ui/key.png" align="left">
-						<a href="/admin/chain/edit/{$chain->id}?deleteaccesslist={$list->id}"><img src="/images/eve/cross.png" align="right"></a>
-						&nbsp; {$list->title|ucfirst}
-						<div style="clear:both;"></div>
-					</div>
-				{/foreach}
-				</div>
-			{/if}
+			{/foreach}
 			</div>
+		{/if}
+		{if $chain->getCorporations()|@count > 0}
+			<div style="margin-bottom: 1em;">
+				<div style="margin: 2px;">
+					<h3>Corporations:</h3>
+				</div>
+			{foreach from=$chain->getCorporations() item=corp}
+				<div style="margin: 2px;">
+					<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 18px;" align="left">
+					<a href="/admin/chain/edit/{$chain->id}?deletecorporation={$corp->id}"><img src="/images/eve/cross.png" align="right"></a>
+					&nbsp; {$corp->name}
+					<div style="clear:both;"></div>
+				</div>
+			{/foreach}
+			</div>
+		{/if}
+		{if $chain->getAccessLists()|@count > 0}
+			<div style="margin-bottom: 1em;">
+				<div style="margin: 2px;">
+					<h3>Access Lists:</h3>
+				</div>
+			{foreach from=$chain->getAccessLists() item=list}
+				<div style="margin: 2px;">
+					<img src="/images/default/ui/key.png" align="left">
+					<a href="/admin/chain/edit/{$chain->id}?deleteaccesslist={$list->id}"><img src="/images/eve/cross.png" align="right"></a>
+					&nbsp; {$list->title|ucfirst}
+					<div style="clear:both;"></div>
+				</div>
+			{/foreach}
+			</div>
+		{/if}
 		</div>
-		<div class="col4 right last">
+		<div class="col4">
 			<div class="form">
 				<h3>Add Access:</h3>
 			</div>
@@ -309,6 +307,18 @@
 					{/foreach}
 					</select>
 				</div>
+			</div>
+		</div>
+		<div class="col4 right last">
+			<div class="standout">
+				<div>
+					You can only add alliances and corporations from your own access-group.
+					When you add an alliance, all corporations in that alliance have access!
+				</div>
+				<br />
+				<div><b>Access Lists:</b></div>
+				<div> - Grant access to this map only to specific people</div>
+				<div> - Grant access to this map for alliances, corporations, or people not in your access-group</div>
 			</div>
 		</div>
         <div style="clear:both;"></div>
