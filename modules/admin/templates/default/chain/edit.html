@@ -45,7 +45,7 @@
                 </label>
             </div>
             <div class="form">
-                <label class="field">Name:</label>
+                <label class="field">Map Name:</label>
                 <label class="value">
                     <input type="text" name="name" value="{$chain->name}" />
                 </label>
@@ -57,7 +57,7 @@
                 </label>
             </div>
             <div class="form">
-                <label class="field">System Name:</label>
+                <label class="field">Home-system Title:</label>
                 <label class="value">
                     <input type="text" name="homesystemname" value="{$chain->systemName}" />
                 </label>
@@ -65,7 +65,8 @@
             <div class="form">
                 <label class="field">Sort Order:</label>
                 <label class="value">
-                    <input type="text" name="sortorder" value="{$chain->prio}" />
+                    <input type="text" name="sortorder" value="{$chain->prio}" style="width: 40px; text-align: center;"/>
+					&nbsp; <i>The order in which maps will appear in the menu.</i>
                 </label>
             </div>
 			<div class="form">
@@ -84,7 +85,7 @@
 			<div class="form">
 				<label class="field">&nbsp;</label>
 				<input type="checkbox" id="create-unmapped" name="settings[create-unmapped]" {if $chain->getSetting('create-unmapped')}checked{/if} value="1" />
-				<label for="create-unmapped" style="float: none;">Create an unmapped system when a wh signature is added?</label>
+				<label for="create-unmapped" style="float: none;">Create an unmapped system when a wh signature is added</label>
 			</div>
 			<div class="form">
 				<label class="field">&nbsp;</label>
@@ -99,17 +100,17 @@
         </div>
         <div style="float: right; width: 45%; min-width: 450px;">
             <h3>Control Settings:</h3>
-            <div style="padding: 10px;">
-                <div>Use these settings to restrict map controls for <u>this</u> chain.</div>
-                <ul>
-                    <li>Each setting can be restricted to users in a certain usergroup.<br />
-                        You can set usergroups via `admin` -> `user-groups`.</li>
-                    <li>Each setting is <u>always</u> enabled for CEO and Directors!</li>
-                </ul>
-            </div>
-            <div class="form">
-                <label class="field"><u>Action:</u></label>
-                <label class="value"><u>Enabled for:</u></label>
+			<div class="standout">
+				<div><b>Use these settings to restrict map controls for <u>this</u> chain.</b></div>
+				<ul>
+					<li>Every setting is <u>always</u> enabled for <b>CEOs</b> and <b>Admins</b>!</li>
+					<li>Every setting can be restricted to users in a certain usergroup.<br />
+						You can set usergroups via <a href="/users/groups" target="_blank">admin > user-groups</a>.</li>
+				</ul>
+			</div>
+            <div class="form" style="margin-bottom: .7em; color: #ffffff;">
+                <label class="field"><strong>Action:</strong></label>
+                <label class="value"><strong>Enabled for:</strong></label>
             </div>
             <div class="form">
                 <label class="field">Re-position systems:</label>
@@ -209,86 +210,116 @@
             </div>
         </div>
         <div style="clear:both;"></div>
-        <br />
-        <div style="text-align: right;">
-            <button type="submit">Save Chain</button>
+
+        <div style="text-align: right; margin-top: 2em;">
+            <button type="submit">
+				<img src="/images/default/ui/save.png" align="left">
+				Save Map
+			</button>
         </div>
         <div style="clear:both;"></div>
     </div>
 
+{if $chain->id}
     <div class="content">
         <h2>Access Control</h2>
-    {if $chain->getAuthGroup() != null}
-        <div style="float: left; width: 25%; min-width: 200px;">
-            <div style="padding: 5px;">
-                <u><b>Alliances:</b></u>
-            </div>
-        {if $chain->getAuthGroup()->getAlliances()|@count > 0}
-            <div style="padding: 5px;">
-			{foreach from=$chain->getAuthGroup()->getAlliances() item=ally}
-				<div>
-					<input type="checkbox" id="alliance{$ally->id}" name="alliances[]" value="{$ally->id}"
-						{foreach from=$chain->getAlliances() item=cally}
-							{if $ally->id == $cally->id}checked{/if}
-						{/foreach}>
-					<label for="alliance{$ally->id}" style="float: none;">
-						{$ally->name}
-					</label>
+
+		<div class="col8">
+			<div class="col5" style="margin-right: 3em;">
+			{if $chain->getAlliances()|@count > 0}
+				<div style="margin-bottom: 1em;">
+					<div style="margin: 2px;">
+						<h3>Alliances:</h3>
+					</div>
+				{foreach from=$chain->getAlliances() item=alliance}
+					<div style="margin: 2px;">
+						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 18px;" align="left">
+						<a href="/admin/chain/edit/{$chain->id}?deletealliance={$alliance->id}"><img src="/images/eve/cross.png" align="right"></a>
+						&nbsp; {$alliance->name}
+						<div style="clear:both;"></div>
+					</div>
+				{/foreach}
 				</div>
-			{/foreach}
-            </div>
-        {/if}
-        </div>
-        <div style="float: left; width: 25%; min-width: 200px;">
-            <div style="padding: 5px;">
-                <u><b>Corporations:</b></u>
-            </div>
-        {if $chain->getAuthGroup()->getCorporations()|@count > 0 || $chain->getAuthGroup()->getAlliances()|@count > 0}
-            <div style="padding: 5px;">
-			{foreach from=$chain->getAuthGroup()->getAllowedCorporations() item=corp}
-				<div>
-					<input type="checkbox" id="corp{$corp->id}" name="corporations[]" value="{$corp->id}"
-						{foreach from=$chain->getCorporations() item=ccorp}
-							{if $corp->id == $ccorp->id}checked{/if}
-						{/foreach}>
-					<label for="corp{$corp->id}" style="float:none;">
-						{$corp->name}
-					{if $corp->getAlliance() != null && $corp->getAlliance()->ticker}
-						(<i>{$corp->getAlliance()->ticker}</i>)
-					{/if}
-					</label>
+			{/if}
+			{if $chain->getCorporations()|@count > 0}
+				<div style="margin-bottom: 1em;">
+					<div style="margin: 2px;">
+						<h3>Corporations:</h3>
+					</div>
+				{foreach from=$chain->getCorporations() item=corp}
+					<div style="margin: 2px;">
+						<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 18px;" align="left">
+						<a href="/admin/chain/edit/{$chain->id}?deletecorporation={$corp->id}"><img src="/images/eve/cross.png" align="right"></a>
+						&nbsp; {$corp->name}
+						<div style="clear:both;"></div>
+					</div>
+				{/foreach}
 				</div>
-			{/foreach}
-            </div>
-        {/if}
-        </div>
-        <div style="float: right; width: 45%; min-width: 200px;">
-            <div class="message">
-                <ul>
-                    <li>Only Alliances and Corporations in the selected Access Group can be allowed.</li>
-                    <li>When you allow an alliance, <u>all</u> corporations in that alliance will have access to this chain.</li>
-                </ul>
-            </div>
-        </div>
-    {else}
-        <div style="color: red;">
-            <u>No Access Group selected.</u>
-        </div>
-        <div>
-            <div>
-                Before you can assign access, an Access Group must be selected for this chain.
-            </div>
-            <div>
-                Select an Access Group and hit save.
-            </div>
-        </div>
-    {/if}
+			{/if}
+			{if $chain->getAccessLists()|@count > 0}
+				<div style="margin-bottom: 1em;">
+					<div style="margin: 2px;">
+						<h3>Access Lists:</h3>
+					</div>
+				{foreach from=$chain->getAccessLists() item=list}
+					<div style="margin: 2px;">
+						<img src="/images/default/ui/key.png" align="left">
+						<a href="/admin/chain/edit/{$chain->id}?deleteaccesslist={$list->id}"><img src="/images/eve/cross.png" align="right"></a>
+						&nbsp; {$list->title|ucfirst}
+						<div style="clear:both;"></div>
+					</div>
+				{/foreach}
+				</div>
+			{/if}
+			</div>
+		</div>
+		<div class="col4 right last">
+			<div class="form">
+				<h3>Add Access:</h3>
+			</div>
+			<div class="form">
+				<div class="field">Alliance:</div>
+				<div class="value">
+					<select name="alliance" onchange="document.formEditChain.submit()">
+						<option value=""></option>
+					{foreach from=$chain->getAuthGroup()->getAlliances() item=alliance}
+						<option value="{$alliance->id}">{$alliance->name}</option>
+					{/foreach}
+					</select>
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">Corporation:</div>
+				<div class="value">
+					<select name="corporation" onchange="document.formEditChain.submit()">
+						<option value=""></option>
+					{foreach from=$chain->getAuthGroup()->getCorporations() item=corporation}
+						<option value="{$corporation->id}">{$corporation->name}</option>
+					{/foreach}
+					</select>
+				</div>
+			</div>
+			<div class="form">
+				<div class="field">Access List:</div>
+				<div class="value">
+					<select name="accesslist" onchange="document.formEditChain.submit()">
+						<option value=""></option>
+					{foreach from=$App->user->getAdminAccessLiss() item=list}
+						<option value="{$list->id}">{$list->title}</option>
+					{/foreach}
+					</select>
+				</div>
+			</div>
+		</div>
         <div style="clear:both;"></div>
-        <br />
-        <div style="text-align: right;">
-            <button type="submit">Save Chain</button>
-        </div>
+
+		<div style="text-align: right; margin-top: 2em;">
+			<button type="submit">
+				<img src="/images/default/ui/save.png" align="left">
+				Save Map
+			</button>
+		</div>
         <div style="clear:both;"></div>
     </div>
-
+{/if}
 </form>

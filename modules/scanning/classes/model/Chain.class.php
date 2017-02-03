@@ -12,12 +12,13 @@ namespace scanning\model
 		public $deleted = false;
 		public $lastActive;
 
-		private $alliances = null;
-		private $corporations = null;
+		private $_alliances;
+		private $_corporations;
+        private $_accesslists;
+
 		private $homesystem = null;
 		private $authgroup = null;
 		private $wormholes = null;
-		private $allowedUsers = null;
         private $settings = null;
         private $namingScheme = null;
 
@@ -103,65 +104,57 @@ namespace scanning\model
 
 		function store()
 		{
-			if ($this->authgroupID == 0)
-			{
+			if ($this->authgroupID == 0) {
 				foreach (\User::getUSER()->getAuthGroupsIDs() as $groupID) {
 					$this->authgroupID = $groupID;
 					break;
 				}
 			}
 
-			$data = array(	"authgroupid"	=> $this->authgroupID,
-							"homesystemid"	=> $this->homesystemID,
-							"name"			=> $this->name,
-							"homesystemname"=> $this->systemName,
-							"prio"			=> $this->prio,
-                            "deleted"		=> ($this->deleted)?1:0);
+			$data = [
+                "authgroupid"	=> $this->authgroupID,
+                "homesystemid"	=> $this->homesystemID,
+                "name"			=> $this->name,
+                "homesystemname"=> $this->systemName,
+                "prio"			=> $this->prio,
+                "deleted"		=> ($this->deleted)?1:0
+            ];
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
 			$result = \MySQL::getDB()->updateinsert("mapwormholechains", $data, array("id" => $this->id));
-			if ($this->id == 0)
-			{
+			if ($this->id == 0) {
 				$this->id = $result;
-
-				// Home systeem toevoegen
-				$this->addHomeSystemToMap(false);
+				$this->addHomeSystemToMap(false); // Home systeem toevoegen
 			}
 
-            if ($this->settings !== null)
-            {
+            if ($this->settings !== null) {
                 \MySQL::getDB()->delete("map_chain_settings", ["chainid" => $this->id]);
                 foreach ($this->getSettings() as $var => $val) {
                     \MySQL::getDB()->insert("map_chain_settings", ["chainid" => $this->id, "var" => $var, "val" => $val]);
                 }
             }
 
-			if ($this->corporations !== null)
-			{
-				$this->deleteCorporations();
-				foreach ($this->getCorporations() as $corp)
-				{
-					$data = array(	"chainid"	=> $this->id,
-									"corpid"	=> $corp->id,
-									"readonly"	=> 1,
-									"canadmin"	=> 1);
-					\MySQL::getDB()->insert("mapwormholechains_corporations", $data);
+			if ($this->_corporations !== null) {
+				\MySQL::getDB()->delete("mapwormholechains_corporations", ["chainid" => $this->id]);
+				foreach ($this->getCorporations() as $corp)  {
+					\MySQL::getDB()->insert("mapwormholechains_corporations", ["chainid" => $this->id, "corpid" => $corp->id]);
 				}
 			}
 
-			if ($this->alliances !== null)
-			{
-				$this->deleteAlliances();
-				foreach ($this->getAlliances() as $alliance)
-				{
-					$data = array(	"chainid"	=> $this->id,
-									"allianceid"=> $alliance->id,
-									"readonly"	=> 1,
-									"canadmin"	=> 1);
-					\MySQL::getDB()->insert("mapwormholechains_alliances", $data);
-				}
-			}
+            if ($this->_alliances !== null) {
+                \MySQL::getDB()->delete("mapwormholechains_alliances", ["chainid" => $this->id]);
+                foreach ($this->getAlliances() as $alliance)  {
+                    \MySQL::getDB()->insert("mapwormholechains_alliances", ["chainid" => $this->id, "allianceid" => $alliance->id]);
+                }
+            }
+
+            if ($this->_accesslists !== null) {
+                \MySQL::getDB()->delete("mapwormholechains_accesslists", ["chainid" => $this->id]);
+                foreach ($this->getAccessLists() as $list)  {
+                    \MySQL::getDB()->insert("mapwormholechains_accesslists", ["chainid" => $this->id, "accesslistid" => $list->id]);
+                }
+            }
 
 			// Cache opruimen
 			$this->resetCache();
@@ -323,48 +316,57 @@ namespace scanning\model
 		 */
 		function getCorporations()
 		{
-			if ($this->corporations === null)
+			if ($this->_corporations === null)
 			{
-				$this->resetCorporations();
+                $this->_corporations = [];
 				if ($results = \MySQL::getDB()->getRows("SELECT c.*
 														FROM 	corporations c
 															INNER JOIN  mapwormholechains_corporations cc ON cc.corpid = c.id
 														WHERE 	cc.chainid = ?
 														ORDER BY c.name ASC"
-											, array($this->id)))
+											, [$this->id]))
 				{
 					foreach ($results as $result) {
 						$corp = new \eve\model\Corporation();
 						$corp->load($result);
-						$this->corporations[] = $corp;
+						$this->_corporations[] = $corp;
 					}
 				}
 			}
 
-			return $this->corporations;
+			return $this->_corporations;
 		}
 
-		function resetCorporations()
-		{
-			$this->corporations = [];
-		}
-
-		function deleteCorporations()
-		{
-			\MySQL::getDB()->delete("mapwormholechains_corporations", array("chainid" => $this->id));
-		}
-
-		function addCorporation($id, $readonly=false, $admin=true)
+        /**
+         * Add corporation
+         * @param \eve\model\Corporation $corporation
+         * @return bool
+         */
+		function addCorporation(\eve\model\Corporation $corporation)
 		{
             // Check of corp al toegevoegd is..
             foreach ($this->getCorporations() as $corp) {
-                if ($corp->id == $id)
+                if ($corp->id == $corporation->id)
                     return true;
             }
 
-			$this->corporations[] = new \eve\model\Corporation($id);
+			$this->_corporations[] = $corporation;
             return true;
 		}
+
+        /**
+         * Delete corporation
+         * @param \eve\model\Corporation $corporation
+         */
+        function deleteCorporation(\eve\model\Corporation $corporation)
+        {
+            foreach ($this->getCorporations() as $key => $corp) {
+                if ($corp->id == $corporation->id)
+                    unset($this->_corporations[$key]);
+            }
+        }
+
+
 
 		/**
 		 * Get alliances
@@ -372,9 +374,9 @@ namespace scanning\model
 		 */
 		function getAlliances()
 		{
-			if ($this->alliances === null)
+			if ($this->_alliances === null)
 			{
-				$this->resetAlliances();
+                $this->_alliances = [];
 				if ($results = \MySQL::getDB()->getRows("SELECT a.*
 														FROM 	alliances a
 															INNER JOIN mapwormholechains_alliances ca ON ca.allianceid = a.id
@@ -385,35 +387,98 @@ namespace scanning\model
 					foreach ($results as $result) {
 						$ally = new \eve\model\Alliance();
 						$ally->load($result);
-						$this->alliances[] = $ally;
+						$this->_alliances[] = $ally;
 					}
 				}
 			}
 
-			return $this->alliances;
+			return $this->_alliances;
 		}
 
-		function resetAlliances()
-		{
-			$this->alliances = [];
-		}
-
-		function deleteAlliances()
-		{
-			\MySQL::getDB()->delete("mapwormholechains_alliances", array("chainid" => $this->id));
-		}
-
-		function addAlliance($id, $readonly=false, $admin=true)
+        /**
+         * Add alliance
+         * @param \eve\model\Alliance $alliance
+         * @return bool
+         */
+		function addAlliance(\eve\model\Alliance $alliance)
 		{
             // Check of alliance al toegevoegd is.
             foreach ($this->getAlliances() as $ally) {
-                if ($ally->id == $id)
+                if ($ally->id == $alliance->id)
                     return true;
             }
 
-			$this->alliances[] = new \eve\model\Alliance($id);
+			$this->_alliances[] = $alliance;
             return true;
 		}
+
+        function deleteAlliance(\eve\model\Alliance $alliance)
+        {
+            foreach ($this->getAlliances() as $key => $ally) {
+                if ($ally->id == $alliance->id)
+                    unset($this->_alliances[$key]);
+            }
+        }
+
+
+
+        /**
+         * Get access lists
+         * @return \admin\model\AccessList[]
+         */
+        function getAccessLists()
+        {
+            if ($this->_accesslists === null)
+            {
+                $this->_accesslists = [];
+                if ($results = \MySQL::getDB()->getRows("select a.*
+                                                        from    user_accesslist a
+                                                          inner join mapwormholechains_accesslists l on l.accesslistid = a.id
+                                                        where   l.chainid = ?
+                                                        order by a.title, a.id"
+                                                , [$this->id]))
+                {
+                    foreach ($results as $result) {
+                        $list = new \admin\model\AccessList();
+                        $list->load($result);
+                        $this->_accesslists[] = $list;
+                    }
+                }
+            }
+
+            return $this->_accesslists;
+        }
+
+        /**
+         * Add access list
+         * @param \admin\model\AccessList $accessList
+         * @return bool
+         */
+        function addAccessList(\admin\model\AccessList $accessList)
+        {
+            foreach ($this->getAccessLists() as $list) {
+                if ($list->id == $accessList->id) {
+                    // Al toegevoegd
+                    return true;
+                }
+            }
+            $this->_accesslists[] = $accessList;
+            return true;
+        }
+
+        /**
+         * Remove access list
+         * @param \admin\model\AccessList $accessList
+         */
+        function deleteAccessList(\admin\model\AccessList $accessList)
+        {
+            foreach ($this->getAccessLists() as $key => $list) {
+                if ($list->id == $accessList->id)
+                    unset($this->_accesslists[$key]);
+            }
+        }
+
+
 
 
 		function addHomeSystemToMap($updateCacheTimer=true)

@@ -9,7 +9,7 @@ class Accesslist
             \AppRoot::redirect("");
 
         $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("accesslists", \User::getUSER()->getAccessLists());
+        $tpl->assign("accesslists", \User::getUSER()->getAdminAccessLiss());
         return $tpl->fetch("admin/accesslists/overview");
     }
 
@@ -38,7 +38,7 @@ class Accesslist
 
         $accessList = new \admin\model\AccessList(array_shift($arguments));
         if (!$accessList->canAdmin(\User::getUSER()->id))
-            \AppRoot::redirect("");
+            \AppRoot::redidrectToReferer();
 
         if (\Tools::REQUEST("deletealliance")) {
             $accessList->removeAlliance(\Tools::REQUEST("deletealliance"));
@@ -82,5 +82,18 @@ class Accesslist
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("accesslist", $accessList);
         return $tpl->fetch("admin/accesslists/edit");
+    }
+
+    function getDelete($arguments=[])
+    {
+        if (!\User::getUSER()->isAdmin())
+            \AppRoot::redirect("");
+
+        $accessList = new \admin\model\AccessList(array_shift($arguments));
+        if (!$accessList->canAdmin(\User::getUSER()->id))
+            \AppRoot::redidrectToReferer();
+
+        $accessList->delete();
+        \AppRoot::redirect("admin/accesslist");
     }
 }

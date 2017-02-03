@@ -86,16 +86,37 @@ class Chain
         if (!\User::getUSER()->isAdmin())
             \AppRoot::redirect("");
 
+        $errors = [];
         $id = (count($arguments) > 0) ? array_shift($arguments) : \Tools::REQUEST("id");
         $chain = new \scanning\model\Chain($id);
+        \AppRoot::title("Admin Map");
+        \AppRoot::title($chain->name);
 
-        if ($chain->id == 0)    // new chain
-        {
+        if ($chain->id == 0) {  // new chain
             $chain->setSetting("create-unmapped", 1);
             $chain->setSetting("count-statistics", 1);
         }
 
-        $errors = array();
+        if (\Tools::REQUEST("deletealliance")) {
+            $alliance = new \eve\model\Alliance(\Tools::REQUEST("deletealliance"));
+            $chain->deleteAlliance($alliance);
+            $chain->store();
+            \AppRoot::redirect("admin/chain/edit/".$chain->id);
+        }
+
+        if (\Tools::REQUEST("deletecorporation")) {
+            $corporation = new \eve\model\Corporation(\Tools::REQUEST("deletecorporation"));
+            $chain->deleteCorporation($corporation);
+            $chain->store();
+            \AppRoot::redirect("admin/chain/edit/".$chain->id);
+        }
+
+        if (\Tools::REQUEST("deleteaccesslist")) {
+            $accesslist = new \admin\model\AccessList(\Tools::REQUEST("deleteaccesslist"));
+            $chain->deleteAccessList($accesslist);
+            $chain->store();
+            \AppRoot::redirect("admin/chain/edit/".$chain->id);
+        }
 
         if (\Tools::POST("store"))
         {
@@ -124,39 +145,36 @@ class Chain
                 }
             }
 
-            $chain->resetAlliances();
-            $chain->resetCorporations();
-
-            // Nieuwe chain, alle corp/alliances toevoegen!
-            if (!$chain->id || (!\Tools::POST("corporations") && !\Tools::POST("alliances")))
-            {
+            if (!$chain->id) {
+                // Nieuwe chain, alle corp/alliances toevoegen!
                 foreach ($chain->getAuthGroup()->getAlliances() as $alliance) {
-                    $chain->addAlliance($alliance->id);
+                    $chain->addAlliance($alliance);
                     foreach ($alliance->getCorporations() as $corp) {
-                        $chain->addCorporation($corp->id);
+                        $chain->addCorporation($corp);
                     }
                 }
                 foreach ($chain->getAuthGroup()->getCorporations() as $corp) {
-                    $chain->addCorporation($corp->id);
-                }
-            }
-            else
-            {
-                if (\Tools::POST("corporations",true)) {
-                    foreach ($_POST["corporations"] as $key => $id) {
-                        $chain->addCorporation($id);
-                    }
-                }
-                if (\Tools::POST("alliances",true)) {
-                    foreach ($_POST["alliances"] as $key => $id) {
-                        $chain->addAlliance($id);
-                    }
+                    $chain->addCorporation($corp);
                 }
             }
 
+            if (\Tools::POST("alliance")) {
+                $alliance = new \eve\model\Alliance(\Tools::POST("alliance"));
+                $chain->addAlliance($alliance);
+            }
+            if (\Tools::POST("corporation")) {
+                $corporation = new \eve\model\Corporation(\Tools::POST("corporation"));
+                $chain->addCorporation($corporation);
+            }
+            if (\Tools::POST("accesslist")) {
+                $accesslist = new \admin\model\AccessList(\Tools::POST("accesslist"));
+                $chain->addAccessList($accesslist);
+            }
+
+            // No errors, store chain!
             if (count($errors) == 0) {
                 $chain->store();
-                \AppRoot::redirect("admin/chain");
+                \AppRoot::redirect("admin/chain/edit/".$chain->id);
             }
         }
 

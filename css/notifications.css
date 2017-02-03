@@ -20,6 +20,18 @@ div.notice a, div.warning a {
     color: inherit;
 }
 
+div.standout {
+    background: none repeat scroll 0 0 rgba(50, 50, 50, 0.3);
+    border: solid 1px #555555;
+    border-radius: 5px;
+    color: #bbbbbb;
+    margin: 1em;
+    padding: .6em;
+}
+div.standout ul {
+    margin: 0;
+}
+
 div.message {
     background: #DDDDDD linear-gradient(#FFFFFF, #CCCCCC);
     font-size: 1em;

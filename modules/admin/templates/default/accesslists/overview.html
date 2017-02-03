@@ -14,6 +14,17 @@
 			<th>&nbsp;</th>
 			<th style="width: 50px;"></th>
 		</tr>
+	{foreach from=$accesslists key=i item=list}
+		<tr class="{if $i%2==0}even{else}odd{/if}">
+			<td onclick="document.location='/admin/accesslist/edit/{$list->id}'">
+				{$list->title}
+			</td>
+			<td style="text-align:center;">
+				<a href="/admin/accesslist/edit/{$list->id}"><img src="/images/default/ui/edit.png"></a>
+				<a href="#" onclick="if (confirm('Delete this access list?')) { document.location='/admin/accesslist/delete/{$list->id}' }"><img src="/images/default/cross.png"></a>
+			</td>
+		</tr>
+	{/foreach}
 	</table>
 {/if}
 </div>

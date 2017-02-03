@@ -1373,6 +1373,12 @@ namespace users\model
                                                       union
                                                          select a.*
                                                          from   user_accesslist a
+                                                            inner join user_accesslist_characters ac on ac.accesslistid = a.id
+                                                            inner join characters c on c.id = ac.characterid
+                                                         where  c.userid = ?
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
                                                             inner join user_accesslist_corporation ac on ac.accesslistid = a.id
                                                             inner join characters c on c.id = ac.corporationid
                                                         where  c.userid = ?
@@ -1388,8 +1394,8 @@ namespace users\model
                                                         from    user_accesslist a
                                                         where   a.ownerid = ?
                                                     group by id
-                                                    order by title"
-                                    , [$this->id, $this->id, $this->id, $this->id]))
+                                                    order by title, id"
+                                    , [$this->id, $this->id, $this->id, $this->id, $this->id]))
                 {
                     foreach ($results as $result)
                     {
@@ -1401,6 +1407,20 @@ namespace users\model
             }
 
             return $this->_accessLists;
+        }
+
+        /**
+         * Get access lists that this user can admin
+         * @return \admin\model\AccessList[]
+         */
+        public function getAdminAccessLiss()
+        {
+            $lists = [];
+            foreach ($this->getAccessLists() as $list) {
+                if ($list->canAdmin($this->id))
+                    $lists[] = $list;
+            }
+            return $lists;
         }
 
 		public function getVisibleUserIDs()
