@@ -1,11 +1,32 @@
 <div class="content">
 	<h1>Access Lists</h1>
-	<div style="text-align: right;">
+	<div class="standout" style="margin-top: 0;">
+		<div class="col5">
+			<strong>You can create access-lists to grant access to your map(s) for:</strong>
+			<ul>
+				<li>Alliances or corporations not in your access-control-group</li>
+				<li>Any character with a VIPPY account (<i>instead of just corporations/alliances</i>)</li>
+			</ul>
+		</div>
+		<div class="col7 right last">
+			<div>
+				Anyone granted access to your map via access-lists, and <b>not</b> in your access-control-group will
+				<span style='color: #ffffff;'><b>not</b></span> be able to see your online pilots and shiptypes!!
+				They will only see pilots and shiptypes from their own access-control-group.
+			</div>
+			<div>
+				All other intel, such as known systems, notes, etc, is shown from <b>your</b> database!!
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="text-align: right; margin-top: 1em;">
 		<button type="button" onclick="document.location='/admin/accesslist/new'">
 			<img src="/images/default/ui/plus.png" align="left">
 			New Access List
 		</button>
 	</div>
+	<div style="clear:both;"></div>
 </div>
 <div class="content">
 {if $accesslists|@count > 0}
@@ -27,4 +48,5 @@
 	{/foreach}
 	</table>
 {/if}
+	<div style="clear:both;"></div>
 </div>

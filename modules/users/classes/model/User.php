@@ -1144,15 +1144,13 @@ namespace users\model
 			if ($this->chains === null || !$fromCache)
 			{
 				$this->chains = array();
-				if (count($this->getAuthorizedCharacters()) == 0)
-				{
+				if (count($this->getAuthorizedCharacters()) == 0) {
 					\AppRoot::debug("<span style='color:red;'>No authorized characters found</span>");
 					return $this->chains;
 				}
 
                 $results = null;
                 $cacheFilename = $this->getCacheDirectory() . "chains.json";
-
                 if ($fromCache) {
                     if ($cache = \Cache::file()->get($cacheFilename))
                         $results = json_decode($cache, true);
@@ -1165,25 +1163,38 @@ namespace users\model
 						$characterIDs[] = $character->id;
 					}
 
-					$queries = array();
-					$queries[] = "c.deleted = 0";
-					$queries[] = "chr.id IN (".implode(",",$characterIDs).")";
+                    $queries = [];
 
-					if ($results = \MySQL::getDB()->getRows("SELECT	c.*
-															FROM	mapwormholechains c
-																INNER JOIN mapwormholechains_corporations cc ON cc.chainid = c.id
-																INNER JOIN characters chr ON chr.corpid = cc.corpid
-															WHERE	".implode(" AND ", $queries)."
-														UNION
-															SELECT	c.*
-															FROM	mapwormholechains c
-																INNER JOIN mapwormholechains_alliances ca ON ca.chainid = c.id
-																INNER JOIN corporations corp ON corp.allianceid = ca.allianceid
-																INNER JOIN characters chr ON chr.corpid = corp.id
-															WHERE	".implode(" AND ", $queries)."
-														GROUP BY id
-														ORDER BY prio, id"))
-					{
+                    // Corporation
+                    $queries[] = "select  c.*, c.prio as sort
+                                  from	mapwormholechains c
+                                      inner join mapwormholechains_corporations cc ON cc.chainid = c.id
+                                      inner join characters chr ON chr.corpid = cc.corpid
+                                  where	  c.deleted = 0
+                                  and     c.authgroupid in (".implode(",",$this->getAuthGroupsIDs()).")
+                                  and     chr.id IN (".implode(",",$characterIDs).")";
+                    // Alliance
+                    $queries[] = "select  c.*, c.prio as sort
+                                  from	  mapwormholechains c
+                                      inner join mapwormholechains_alliances ca ON ca.chainid = c.id
+                                      inner join corporations corp ON corp.allianceid = ca.allianceid
+                                      inner join characters chr ON chr.corpid = corp.id
+                                  where	  c.deleted = 0
+                                  and     c.authgroupid in (".implode(",",$this->getAuthGroupsIDs()).")
+                                  and     chr.id IN (".implode(",",$characterIDs).")";
+                    // Accesslist
+                    $accessListIDs = [];
+                    foreach ($this->getAccessLists() as $accessList) {
+                        $accessListIDs[] = $accessList->id;
+                    }
+                    if (count($accessListIDs) > 0) {
+                        $queries[] = "select  c.*, c.prio+1000 as sort
+                                      from    mapwormholechains c
+                                          inner join mapwormholechains_accesslists al on al.chainid = c.id
+                                      where   al.accesslistid in (".implode(",",$accessListIDs).")";
+                    }
+
+                    if ($results = \MySQL::getDB()->getRows(implode(" union ", $queries)." group by id order by sort,id")) {
                         \Cache::file()->set($cacheFilename, json_encode($results));
 					}
 				}
@@ -1193,17 +1204,16 @@ namespace users\model
 					$chain = new \map\model\Map();
 					$chain->load($result);
 
-					if ($chain->directorsOnly && !$this->hasRight("admin","sysadmin")) {
+					if ($chain->directorsOnly && !$this->getIsSysAdmin()) {
 						if (!$this->isAdmin())
 							continue;
 					}
 
-					if (in_array($chain->authgroupID, $this->getAuthGroupsIDs()))
-						$this->chains[] = $chain;
+                    $this->chains[] = $chain;
 				}
 			}
-            \AppRoot::debug("/User->getAvailibleChains($fromCache)");
 
+            \AppRoot::debug("/User->getAvailibleChains($fromCache)");
 			return $this->chains;
 		}
 

@@ -8,7 +8,7 @@ $config["sortorder"] = 2;
 
 // Haal beschikbare chains
 if (\User::getUSER()) {
-    foreach (\User::getUSER()->getAvailibleChains() as $chain) {
+    foreach (\User::getUSER()->getAvailibleChains(false) as $chain) {
         $config["submenu"][] = array(
             "type" => "link",
             "name"	=> $chain->name,

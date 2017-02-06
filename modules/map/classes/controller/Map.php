@@ -45,7 +45,7 @@ class Map
     {
         \AppRoot::debug("getWormholes(".$map->id.")");
         $wormholes = array();
-        $characters = $this->getCharacterLocations($map);
+        $characters = $this->getCharacterLocations();
 
         $myCurrentSystems = array();
         foreach ($characters as $systemID => $chars) {
@@ -55,23 +55,22 @@ class Map
             }
         }
 
-        if ($results = \MySQL::getDB()->getRows("SELECT wh.id, wh.fullyscanned, s.solarsystemid, r.regionname,
-                                                        s.solarsystemname, wh.name AS solarsystemtitle,
-                                                        c2.homesystemname, k.name AS knownname,
-                                                        IF(k.status IS NOT NULL, k.status, 0) AS known,
-                                                        s.security, s.regionid, wh.x, wh.y, wh.status, wh.permanent
-                                                FROM 	mapwormholes wh
-                                                    INNER JOIN mapwormholechains c1 ON c1.id = wh.chainid
-                                                    LEFT JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = wh.solarsystemid
-                                                    LEFT JOIN ".\eve\Module::eveDB().".mapregions r ON r.regionid = s.regionid
-                                                    LEFT JOIN map_knownwormhole k 	ON k.solarsystemid = s.solarsystemid
-                                                                                    AND	k.authgroupid = c1.authgroupid
-                                                    LEFT JOIN mapwormholechains c2 	ON c2.deleted = 0
-                                                                                    AND c2.authgroupid = c1.authgroupid
-                                                                                    AND c2.homesystemid = wh.solarsystemid
-                                                WHERE	wh.chainid = ?
-                                                GROUP BY wh.id"
-                                    , array($map->id)))
+        if ($results = \MySQL::getDB()->getRows("
+                    SELECT  wh.id, wh.fullyscanned, s.solarsystemid, r.regionname, s.solarsystemname, wh.status,
+                            wh.name AS solarsystemtitle, c2.homesystemname, k.name AS knownname, wh.permanent,
+                            IF(k.status IS NOT NULL, k.status, 0) AS known, s.security, s.regionid, wh.x, wh.y
+                    FROM 	mapwormholes wh
+                        INNER JOIN mapwormholechains c1 ON c1.id = wh.chainid
+                        LEFT JOIN ".\eve\Module::eveDB().".mapsolarsystems s ON s.solarsystemid = wh.solarsystemid
+                        LEFT JOIN ".\eve\Module::eveDB().".mapregions r ON r.regionid = s.regionid
+                        LEFT JOIN map_knownwormhole k 	ON k.solarsystemid = s.solarsystemid
+                                                        AND	k.authgroupid = c1.authgroupid
+                        LEFT JOIN mapwormholechains c2 	ON c2.deleted = 0
+                                                        AND c2.authgroupid = c1.authgroupid
+                                                        AND c2.homesystemid = wh.solarsystemid
+                    WHERE	wh.chainid = ?
+                    GROUP BY wh.id"
+            , [$map->id]))
         {
             foreach ($results as $result)
             {
@@ -252,26 +251,25 @@ class Map
         return $connections;
     }
 
-    function getCharacterLocations(\map\model\Map $map)
+    function getCharacterLocations()
     {
-        \AppRoot::debug("getCharacterLocations(".$map->id.")");
         $characters = array();
         if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
         {
             if ($results = \MySQL::getDB()->getRows("select	c.id, c.name, c.userid, l.solarsystemid
                                                      from   map_character_locations l
                                                         inner join characters c ON c.id = l.characterid
-                                                     where  l.authgroupid = ?
+                                                     where  l.authgroupid in (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
                                                      and    l.lastdate >= ?
                                                      order by c.name"
-                    , [$map->authgroupID, date("Y-m-d H:i:s", strtotime("now")-(60*5))]))
+                                    , [date("Y-m-d H:i:s", strtotime("now")-(60*5))]))
             {
-                foreach ($results as $result)
-                {
-                    $characters[$result["solarsystemid"]][] = array(
+                foreach ($results as $result) {
+                    $characters[$result["solarsystemid"]][] = [
                         "id" 	=> $result["id"],
                         "name" 	=> $result["name"],
-                        "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0);
+                        "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0
+                    ];
                 }
             }
         }
