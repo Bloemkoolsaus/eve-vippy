@@ -77,6 +77,7 @@ class Location
             {
                 if (isset($crest->getResult()->solarSystem))
                 {
+                    \User::setUSER($character->getUser());
                     $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
                     $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
@@ -90,6 +91,10 @@ class Location
                             "name" => $character->name
                         ]
                     ];
+
+                    $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
+                    $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
+                    \User::unsetUser();
                 }
                 else
                 {

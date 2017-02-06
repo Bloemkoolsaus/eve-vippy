@@ -6,7 +6,7 @@ class System
     function getEdit(\map\model\Map $map, $arguments=[])
     {
         $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
-        $map = \map\model\Map::findByName(array_shift($arguments));
+        //$map = \map\model\Map::findByName(array_shift($arguments));
         $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
 
         $wormhole->name = \Tools::POST("whname");

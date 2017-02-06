@@ -261,7 +261,7 @@ namespace scanning\model
 				}
 
 				$this->addDate = date("Y-m-d H:i:s");
-				$this->addBy = \User::getUSER()->id;
+				$this->addBy = (\User::getUSER())?\User::getUSER()->id:null;
 				$data["adddate"] = $this->addDate;
 				$data["addedby"] = $this->addBy;
 

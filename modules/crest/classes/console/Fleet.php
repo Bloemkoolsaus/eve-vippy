@@ -88,23 +88,29 @@ class Fleet
                         $controller = new \eve\controller\Character();
                         $character = $controller->importCharacter($fleetMember->character->id);
                     }
-
                     \AppRoot::doCliOutput(" - ".$character->name);
-                    if ($character->getUser())
+
+                    // Fleet kan laggy zijn. Alleen bijwerken als het al even geleden is
+                    $result = \MySQL::getDB()->getRow("select * from crest_character_location
+                                                       where characterid = ? and lastupdate < ?"
+                                            , [$character->id, strtotime("now")-20]);
+                    if (!$result)
                     {
-                        \User::setUSER($character->getUser());
-
                         // Log entry
-                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id."-".date("Ymd"));
-                    }
+                        if ($character->getUser()) {
+                            \User::setUSER($character->getUser());
+                            $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id . "-" . date("Ymd"));
+                        }
 
-                    $locationTracker->setCharacterLocation(
-                        $fleet->authGroupID,
-                        $fleetMember->character->id,
-                        $fleetMember->solarSystem->id,
-                        $fleetMember->ship->id
-                    );
-                    \User::unsetUser();
+                        // Location tracker
+                        $locationTracker->setCharacterLocation(
+                            $fleet->authGroupID,
+                            $fleetMember->character->id,
+                            $fleetMember->solarSystem->id,
+                            $fleetMember->ship->id
+                        );
+                        \User::unsetUser();
+                    }
                 }
 
                 $fleet->active = 1;

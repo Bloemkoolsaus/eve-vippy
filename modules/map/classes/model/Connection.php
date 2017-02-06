@@ -32,11 +32,14 @@ class Connection extends \scanning\model\Connection
      * Add jump
      * @param integer $shiptypeID
      * @param integer $pilotID |null
-     * @param bool    $copy
+     * @param bool $copy
+     * @return bool
      */
     function addJump($shiptypeID, $pilotID=null, $copy=false)
     {
         \AppRoot::debug("addJump($shiptypeID, $pilotID, $copy)");
+        if (!$this->getFromSystem() || !$this->getToSystem())
+            return false;
 
         $ship = new \eve\model\Ship($shiptypeID);
         \MySQL::getDB()->insert("mapwormholejumplog", [
@@ -61,6 +64,7 @@ class Connection extends \scanning\model\Connection
                     $connection->addJump($shiptypeID, $pilotID, false);
             }
         }
+        return true;
     }
 
     function addMass($amount, $copy=false)
