@@ -1,3 +1,10 @@
+<h3>February 07, 2017</h3>
+<b><u>ADMIN</u></b>
+ - If you are admin, you can now add <a href="/admin/accesslist" target="_blank">Access Lists</a> to (temporarily) share your map to others, even outside your access-control-group.
+
+<b><u>MAP</u></b>
+ - Added an icon on a system that has a notification.
+ - Fixed the bug that sometimes frigate wormhole could not be unchecked.
 
 <b><u>CREST</u></b>
  - Location tracking has now been running for some time, it had some problems at first but I managed to tweak and fix the tracker and it should now be running smoothly!
@@ -6,10 +13,6 @@
 	  This would result in your characters bouncing back and forth systems (more jump log entries then what was actually jumped anyone?)
   Ofcourse, I will continue to monitor how it is running and make adjustments when needed.
   Help pages will be updated as soon as everything has been running well for atleast a few weeks.
-
-<b><u>MAP</u></b>
- - Added an icon on a system that has a notification.
- - If you are admin, you can now add <a href="/admin/accesslist" target="_blank">Access Lists</a> to (temporarily) share your map to others, even outside your access-control-group.
 
 
 

@@ -105,6 +105,7 @@ namespace scanning\model
 
 		function store($doCopy=true)
 		{
+            \AppRoot::debug("Connection->store($doCopy)");
 			// Kopie's even uit. Dit gaat niet helemaal goed...
 			$doCopy = false;
 
@@ -143,6 +144,7 @@ namespace scanning\model
             // WH Type bekend? Probeer te achterhalen of dit een frigate / capital hole is.
 			if ($this->fromWHTypeID || $this->toWHTypeID)
 			{
+                \AppRoot::debug("WH Type known");
                 if (!$this->frigateHole)
 				    $this->frigateHole = false;
 
@@ -177,6 +179,7 @@ namespace scanning\model
 			}
 			else
 			{
+                \AppRoot::debug("WH Type unknown");
 				// WH Type niet bekend. Gokken!
 				if ($this->frigateHole ||
 					(($this->getFromSystem() != null && $this->getFromSystem()->isFrigateOnly()) ||

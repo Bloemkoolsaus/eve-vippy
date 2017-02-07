@@ -168,9 +168,8 @@ class Signature extends \Model
     {
         if ($result = \MySQL::getDB()->getRow("select *
                                                from   map_signature
-                                               where  solarsystemid = ?
-                                               and    authgroupid = ?
-                                               and    siginfo like ?"
+                                               where  solarsystemid = ? and authgroupid = ?
+                                               and    siginfo like ? and deleted = 0"
                                 , [$solarSystemID, $authGroupID, $name."%"]))
         {
             $sig = new \map\model\Signature();

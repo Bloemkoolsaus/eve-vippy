@@ -27,12 +27,12 @@ namespace map\view
 
             if (\Tools::POST("connectionid"))
             {
-                $connection->eol = (\Tools::REQUEST("eol"))?1:0;
-                $connection->mass = (\Tools::REQUEST("mass"))?\Tools::REQUEST("mass"):0;
-                $connection->normalgates = (\Tools::REQUEST("normalgates"))?1:0;
-                $connection->frigateHole = (\Tools::REQUEST("frigatehole"))?1:0;
-                $connection->fromWHTypeID = (\Tools::REQUEST("fromtype"))?\Tools::REQUEST("fromtype"):0;
-                $connection->toWHTypeID = (\Tools::REQUEST("totype"))?\Tools::REQUEST("totype"):0;
+                $connection->eol = (\Tools::REQUEST("eol"))?true:false;
+                $connection->mass = (\Tools::REQUEST("mass"))?\Tools::REQUEST("mass"):false;
+                $connection->normalgates = (\Tools::REQUEST("normalgates"))?true:false;
+                $connection->frigateHole = (\Tools::REQUEST("frigatehole"))?true:false;
+                $connection->fromWHTypeID = (\Tools::REQUEST("fromtype"))?\Tools::REQUEST("fromtype"):false;
+                $connection->toWHTypeID = (\Tools::REQUEST("totype"))?\Tools::REQUEST("totype"):false;
                 $connection->store();
                 \AppRoot::redidrectToReferer();
             }

@@ -44,7 +44,7 @@ create table mapwormholechains_accesslists (
   primary key (chainid, accesslistid),
   key `Map` (chainid),
   key `AccessList` (accesslistid)
-)
+);
 
 alter table mapwormholechains_corporations drop column readonly;
 alter table mapwormholechains_corporations drop column canadmin;
