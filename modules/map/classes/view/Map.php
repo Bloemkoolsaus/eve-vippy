@@ -181,40 +181,43 @@ class Map
 
         if (\Tools::POST("addwormhole"))
         {
-            $fromSystem = null;
-            $fromSystemName = "";
-            $toSystem = null;
-            $toSystemName = "";
+            if ($map->isAllowedAction("move"))
+            {
+                $fromSystem = null;
+                $fromSystemName = "";
+                $toSystem = null;
+                $toSystemName = "";
 
-            if (isset($_POST["from"]["name"]) && strlen(trim($_POST["from"]["name"])) > 0) {
-                $names = explode("(", $_POST["from"]["name"]);
-                $fromSystemName = $names[0];
-                $fromSystem = \eve\model\SolarSystem::getSolarsystemByName($fromSystemName);
-            }
-            if (!$fromSystem) {
-                if (isset($_POST["from"]["id"]) && strlen(trim($_POST["from"]["id"])) > 0)
-                    $fromSystem = new \eve\model\SolarSystem($_POST["from"]["id"]);
-            }
+                if (isset($_POST["from"]["name"]) && strlen(trim($_POST["from"]["name"])) > 0) {
+                    $names = explode("(", $_POST["from"]["name"]);
+                    $fromSystemName = $names[0];
+                    $fromSystem = \eve\model\SolarSystem::getSolarsystemByName($fromSystemName);
+                }
+                if (!$fromSystem) {
+                    if (isset($_POST["from"]["id"]) && strlen(trim($_POST["from"]["id"])) > 0)
+                        $fromSystem = new \eve\model\SolarSystem($_POST["from"]["id"]);
+                }
 
-            if (isset($_POST["to"]["name"]) && strlen(trim($_POST["to"]["name"])) > 0) {
-                $names = explode("(", $_POST["to"]["name"]);
-                $toSystemName = $names[0];
-                $toSystem = \eve\model\SolarSystem::getSolarsystemByName($toSystemName);
-            }
-            if (!$toSystem) {
-                if (isset($_POST["to"]["id"]) && strlen(trim($_POST["to"]["id"])) > 0)
-                    $toSystem = new \eve\model\SolarSystem($_POST["to"]["id"]);
-            }
+                if (isset($_POST["to"]["name"]) && strlen(trim($_POST["to"]["name"])) > 0) {
+                    $names = explode("(", $_POST["to"]["name"]);
+                    $toSystemName = $names[0];
+                    $toSystem = \eve\model\SolarSystem::getSolarsystemByName($toSystemName);
+                }
+                if (!$toSystem) {
+                    if (isset($_POST["to"]["id"]) && strlen(trim($_POST["to"]["id"])) > 0)
+                        $toSystem = new \eve\model\SolarSystem($_POST["to"]["id"]);
+                }
 
-            if ($fromSystem && $toSystem) {
-                $controller = new \map\controller\Wormhole();
-                if (!$controller->addWormhole($map, $fromSystem->id, $toSystem->id))
-                    $errors[] = "Something went wrong while adding the wormhole";
-            } else {
-                if (!$fromSystem)
-                    $errors[] = "From system `".$fromSystemName."` not be found";
-                if (!$toSystem)
-                    $errors[] = "From system `".$toSystemName."` not be found";
+                if ($fromSystem && $toSystem) {
+                    $controller = new \map\controller\Wormhole();
+                    if (!$controller->addWormhole($map, $fromSystem->id, $toSystem->id))
+                        $errors[] = "Something went wrong while adding the wormhole";
+                } else {
+                    if (!$fromSystem)
+                        $errors[] = "From system `" . $fromSystemName . "` not be found";
+                    if (!$toSystem)
+                        $errors[] = "From system `" . $toSystemName . "` not be found";
+                }
             }
 
             if (count($errors) == 0)
@@ -235,38 +238,45 @@ class Map
 
     function getMove(\map\model\Map $map, $arguments=[])
     {
-        $wormhole = new \map\model\Wormhole(\Tools::REQUEST("system"));
-        $wormhole->move(\Tools::REQUEST("x"), \Tools::REQUEST("y"));
+        if ($map->isAllowedAction("move")) {
+            $wormhole = new \map\model\Wormhole(\Tools::REQUEST("system"));
+            $wormhole->move(\Tools::REQUEST("x"), \Tools::REQUEST("y"));
+        }
         return $this->getMap($map, ["nocache"]);
     }
 
     function getRemove(\map\model\Map $map, $arguments=[])
     {
-        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+        if ($map->isAllowedAction("delete"))
+        {
+            $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
 
-        $removeConnected = false;
-        if (count($arguments) > 0) {
-            if ($arguments[0] == "connected")
-                $removeConnected = true;
-        }
-
-        if ($wormhole) {
-            if ($removeConnected)
-                $map->removeConnectedWormholes($wormhole->id);
-            else
-                $wormhole->delete();
+            $removeConnected = false;
+            if (count($arguments) > 0) {
+                if ($arguments[0] == "connected")
+                    $removeConnected = true;
+            }
+            if ($wormhole) {
+                if ($removeConnected)
+                    $map->removeConnectedWormholes($wormhole->id);
+                else
+                    $wormhole->delete();
+            }
         }
         return "done";
     }
 
     function getPermanent(\map\model\Map $map, $arguments=[])
     {
-        $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
-        if ($system) {
-            $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
-            if ($wormhole) {
-                $wormhole->permanent = !$wormhole->isPermenant();
-                $wormhole->store();
+        if ($map->isAllowedAction("delete"))
+        {
+            $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+            if ($system) {
+                $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
+                if ($wormhole) {
+                    $wormhole->permanent = !$wormhole->isPermenant();
+                    $wormhole->store();
+                }
             }
         }
         return "done";
@@ -274,9 +284,11 @@ class Map
 
     function getClear(\map\model\Map $map, $arguments=[])
     {
-        if (\Tools::POST("delete") == "all") {
-            $map->clearChain();
-            \AppRoot::redirect("map/".$map->name);
+        if ($map->isAllowedAction("delete")) {
+            if (\Tools::POST("delete") == "all") {
+                $map->clearChain();
+                \AppRoot::redirect("map/" . $map->name);
+            }
         }
 
         $tpl = \SmartyTools::getSmarty();

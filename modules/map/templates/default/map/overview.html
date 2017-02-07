@@ -31,17 +31,19 @@
 			<h3 style="padding: 0; margin: 0; color: #AAAAAA;">Map: &nbsp; {$map->name}</h3>
 		</div>
 		<div id="mapControls" style="float: right; width: 300px;">
-			<div style="float: right;">
+			<div style="float: right; margin-left: 1em;">
 				<a href="/help/map" target="_blank">
 					<img src="/images/default/info.png" style="cursor:pointer;" align="left"/>
 					Help
 				</a>
 			</div>
-{if !$App->user->isAllowedChainAction($map, 'move') || !$App->user->isAllowedChainAction($map, 'add') || !$App->user->isAllowedChainAction($map, 'delete')}
-			<span style="cursor: pointer;" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200);">
-				<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
-				You have restricted controls on this map.
-			</span>
+{if !$map->isAllowedAction('move') || !$map->isAllowedAction('add') || !$map->isAllowedAction('delete')}
+			<div style="float: right; margin-left: 1em;">
+				<a href="#" onclick="showPopup(Mustache.to_html($('#restrictionsTPL').html()),500,200); return false;">
+					<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+					You have restricted controls on this map
+				</a>
+			</div>
 {/if}
 		</div>
 	</div>
@@ -62,13 +64,13 @@
 
 	<!-- CONTROLS -->
 	<div id="mapButtons">
-    {if $App->user->isAllowedChainAction($map, 'add')}
+    {if $map->isAllowedAction('add')}
 		<button id="addWormholeButton" onclick="addWormhole('{eveCurrentSolarSystem}','');">
 			<img src="/images/default/ui/plus.png" align="left">
 			Add Wormhole
 		</button>
     {/if}
-    {if $App->user->isAllowedChainAction($map, 'delete')}
+    {if $map->isAllowedAction('delete')}
 		<button id="clearChainButton" onclick="clearChain();" style="margin-right: 2em;">
 			<img src="/images/default/ui/cross.png" align="left">
 			Delete ALL
@@ -413,35 +415,6 @@
 {/literal}
 </script>
 
-<script id="restrictionsTPL" type="text/template">
-	<div style="text-align: left; padding: 20px;">
-		<div style="font-size: 1.1em; font-weight: bold;">
-			<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
-			<span style="padding: 2px; display: inline-block; color: #ffdd00;">You have restricted controls on this map:</span>
-		</div>
-		<ul>
-		{if !$App->user->isAllowedChainAction($map, 'move')}
-			<li>You are not allowed to re-position systems on the map.</li>
-		{/if}
-		{if !$App->user->isAllowedChainAction($map, 'add')}
-			<li>You are not allowed to manually add systems to the map.</li>
-		{/if}
-		{if !$App->user->isAllowedChainAction($map, 'delete')}
-			<li>You are not allowed to remove systems from the map.</li>
-		{/if}
-		{if !$App->user->isAllowedChainAction($map, 'mass')}
-			<li>You are not allowed to manually add mass to a wormhole connection.</li>
-		{/if}
-		{if !$App->user->isAllowedChainAction($map, 'known')}
-			<li>You are not allowed to add/remove systems to the known-systems list.</li>
-		{/if}
-		{if !$App->user->isAllowedChainAction($map, 'notice')}
-			<li>You are not allowed to add a system notice.</li>
-		{/if}
-		</ul>
-	</div>
-</script>
-
 <script id="notificationTPL" type="text/template">
 {literal}
 	<div class="notification {{type}}" data-notification="{{id}}">
@@ -449,4 +422,33 @@
 		<div class="body">{{content}}</div>
 	</div>
 {/literal}
+</script>
+
+<script id="restrictionsTPL" type="text/template">
+	<div style="text-align: left; padding: 20px;">
+		<div style="font-size: 1.1em; font-weight: bold;">
+			<img src="/images/default/alert.png" style="cursor:pointer;" align="left" />
+			<span style="padding: 2px; display: inline-block; color: #ffdd00;">You have restricted controls on this map:</span>
+		</div>
+		<ul>
+		{if !$map->isAllowedAction('move')}
+			<li>You can not re-position systems on the map.</li>
+		{/if}
+		{if !$map->isAllowedAction('add')}
+			<li>You can not manually add systems to the map.</li>
+		{/if}
+		{if !$map->isAllowedAction('delete')}
+			<li>You can not remove systems from the map.</li>
+		{/if}
+		{if !$map->isAllowedAction('mass')}
+			<li>You can not manually add mass to a wormhole connection.</li>
+		{/if}
+		{if !$map->isAllowedAction('known')}
+			<li>You can not add/remove systems to the known-systems list.</li>
+		{/if}
+		{if !$map->isAllowedAction('notice')}
+			<li>You can not add a system notice.</li>
+		{/if}
+		</ul>
+	</div>
 </script>

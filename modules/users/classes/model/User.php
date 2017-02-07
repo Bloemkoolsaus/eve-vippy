@@ -876,6 +876,12 @@ namespace users\model
 			return false;
 		}
 
+        /**
+         * DEPRICATED
+         * @param \scanning\model\Chain $chain
+         * @param $action
+         * @return mixed
+         */
         public function isAllowedChainAction(\scanning\model\Chain $chain, $action)
         {
             \AppRoot::debug("User()->isAllowedChainAction($action)");
@@ -1194,7 +1200,7 @@ namespace users\model
                                       where   al.accesslistid in (".implode(",",$accessListIDs).")";
                     }
 
-                    if ($results = \MySQL::getDB()->getRows(implode(" union ", $queries)." group by id order by sort,id")) {
+                    if ($results = \MySQL::getDB()->getRows("select * from (".implode(" union ", $queries).") map group by id order by sort,id")) {
                         \Cache::file()->set($cacheFilename, json_encode($results));
 					}
 				}

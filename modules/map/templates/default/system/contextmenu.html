@@ -32,7 +32,7 @@
 		Set system as active
 	</div>
 {/if}
-{if $App->user->isAllowedChainAction($wormhole->getChain(), 'delete')}
+{if $wormhole->getChain()->isAllowedAction('delete')}
 	<div onclick="deleteWormhole('{$wormhole->id}'); closeContextMenu();">
 		<img src="/images/eve/cross.png" align="left" />
 		Remove {$wormhole->name}
@@ -43,13 +43,13 @@
 	</div>
 {/if}
 {if $wormhole->getSolarsystem() != null}
-    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'notice')}
+    {if $wormhole->getChain()->isAllowedAction('notice')}
         <div onclick="createSystemNotice('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
             <img src="/images/eve/info.png" align="left" />
             Add system notice
         </div>
     {/if}
-    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'known')}
+    {if $wormhole->getChain()->isAllowedAction('known')}
         {if $wormhole->getSolarsystem()->isKnownSystem()}
             <div onclick="removeFromKnownSystems('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
                 <img src="/images/eve/note-apply.png" align="left" />
@@ -62,7 +62,7 @@
             </div>
         {/if}
     {/if}
-    {if $App->user->isAllowedChainAction($wormhole->getChain(), 'move')}
+    {if $wormhole->getChain()->isAllowedAction('move')}
         {if $wormhole->permanent == 0}
             <div onclick="setSystemPermanent('{$wormhole->getSolarsystem()->name}'); closeContextMenu();" style="border: 0px;">
                 <img src="/images/eve/pin.png" align="left" />

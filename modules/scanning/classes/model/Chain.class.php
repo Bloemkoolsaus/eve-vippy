@@ -271,6 +271,30 @@ namespace scanning\model
 			return false;
 		}
 
+        /**
+         * is allowed to do action?
+         * @param $action
+         * @param \users\model\User|null $user
+         * @return bool
+         */
+        function isAllowedAction($action, \users\model\User $user=null)
+        {
+            if (!$user)
+                $user = \User::getUSER();
+            if (!$user)
+                return false;
+
+            if (!$user->isAdmin()) {
+                if ($this->getSetting('control-'.$action)) {
+                    // Restricted! Check usergroups
+                    if (!$user->inGroup($this->getSetting('control-'.$action)))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
 		/**
 		 * Get homeystem
 		 * @return \scanning\model\System
