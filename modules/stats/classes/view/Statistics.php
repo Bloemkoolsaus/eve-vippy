@@ -30,7 +30,7 @@ class Statistics
                                                 where   authgroupid = ?
                                                 and     year = ? and month = ?
                                                 order by ".$sortStatsBy." desc"
-                                , [$authGroup->id, $y, $m]))
+                                , [$authGroup->id, date("Y", strtotime($sdate)), date("m", strtotime($sdate))]))
         {
             foreach ($results as $result)
             {

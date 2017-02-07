@@ -18,6 +18,9 @@ class Leaderboard
 
         $y = (count($arguments) > 0) ? array_shift($arguments) : date("Y");
         $m = (count($arguments) > 0) ? array_shift($arguments) : date("m");
+        $sdate = date("Y-m-d", mktime(0, 0, 0, $m, 1, $y));
+        $edate = date("Y-m-d", mktime(0, 0, 0, $m+1, 0, $y));
+        \AppRoot::doCliOutput("sdate: ".$sdate." || edate: ".$edate);
 
         $sort = (count($arguments) > 0) ? array_shift($arguments) : null;
         if (!$sort) {
@@ -28,10 +31,6 @@ class Leaderboard
             else
                 $sort = "sigs";
         }
-
-        $sdate = date("Y-m-d", mktime(0, 0, 0, $m, 1, $y));
-        $edate = date("Y-m-d", mktime(0, 0, 0, $m+1, 0, $y));
-        \AppRoot::doCliOutput("sdate: ".$sdate." || edate: ".$edate);
 
         /** @var \stats\model\User[] $stats */
         $stats = array();
