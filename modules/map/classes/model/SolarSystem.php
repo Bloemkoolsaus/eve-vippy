@@ -3,6 +3,49 @@ namespace map\model;
 
 class SolarSystem extends \scanning\model\System
 {
+    private $_notifications;
+
+    /**
+     * Get notifications
+     * @param \map\model\Map $map
+     * @return \notices\model\Notice[]
+     */
+    function getNotifications(\scanning\model\Chain $map)
+    {
+        if ($this->_notifications === null)
+        {
+            $this->_notifications = [];
+
+            // Build query
+            $queryParts = [
+                "n.deleted = 0",
+                "n.solarsystemid = ".$this->id,
+                "n.expiredate > '".date("Y-m-d H:i:s")."'",
+                "n.authgroupid = ".$map->authgroupID,
+                "(r.userid is null or n.persistant > 0)"
+            ];
+
+            // Exec query
+            if ($results = \MySQL::getDB()->getRows("SELECT	n.*
+                                                    FROM	notices n
+                                                        LEFT JOIN notices_read r ON r.noticeid = n.id AND r.userid = ?
+                                                    WHERE 	".implode(" AND ", $queryParts)."
+                                                    GROUP BY n.id"
+                                            , [\User::getUSER()->id]))
+            {
+                foreach ($results as $result)
+                {
+                    $notice = new \notices\model\Notice();
+                    $notice->load($result);
+                    $this->_notifications[] = $notice;
+                }
+            }
+        }
+
+        return $this->_notifications;
+    }
+
+
     /**
      * Find by id
      * @param $id

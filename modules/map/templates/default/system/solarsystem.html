@@ -1,5 +1,15 @@
-{assign var=system value=$wormhole->getSolarsystem()}
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
+
+{literal}
+{foreach from=$system->getNotifications($wormhole->getChain()) item=notice}
+	<div style="padding: 0; padding-right: 2em;">
+		<div class="{$notice->getTypeName()}" style="margin: 0;">
+			<div>{$notice->body}</div>
+		</div>
+	</div>
+{/foreach}
+{/literal}
+
 	<div style="float: left; width: 160px; padding: 5px;">
 		<h3 style="margin-bottom: 10px;">
 			<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>

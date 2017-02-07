@@ -4,6 +4,19 @@ namespace map\model;
 class Wormhole extends \scanning\model\Wormhole
 {
     private $_solarsystem;
+    private $_map;
+
+    /**
+     * Get map
+     * @return \map\model\Map|null
+     */
+    function getMap()
+    {
+        if ($this->_map === null)
+            $this->_map = new \map\model\Map($this->chainID);
+
+        return $this->getMap();
+    }
 
 
     /**
