@@ -7,7 +7,7 @@ class SolarSystem extends \scanning\model\System
 
     /**
      * Get notifications
-     * @param \map\model\Map $map
+     * @param \scanning\model\Chain $map
      * @return \notices\model\Notice[]
      */
     function getNotifications(\scanning\model\Chain $map)
