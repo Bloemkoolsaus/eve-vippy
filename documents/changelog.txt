@@ -1,5 +1,9 @@
+<h3>March 01, 2017</h3>
 <b><u>VIPPY</u></b>
  - Sometimes, if you've manually set your main character Vippy would reset it every once in a while for no apparent reason. This has been fixed.
+
+<b><u>CREST</u></b>
+ - Made change that (hopefully) improves the issue of your character jumping back and forth and thus creating fake jumps in the jumplog.
 
 
 
