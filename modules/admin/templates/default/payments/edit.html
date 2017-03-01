@@ -1,0 +1,79 @@
+<div class="content">
+	<h1>Payment</h1>
+	<form method="post" action="/admin/payments/approve/{$payment->id}">
+		<div class="col6">
+			<div class="form" style="padding:.2em;">
+				<div class="field"><b>Status:</b></div>
+				<div class="value">
+					{if $payment->deleted}
+						<span style="color: #cc2222;">Deleted</span>
+					{elseif $payment->approved}
+						<span style="color: #22cc22;">Approved</span>
+					{else}
+						Pending
+					{/if}
+				</div>
+			</div>
+			<div class="form">
+				<div class="field"><b>Authgroup:</b></div>
+				<div class="value">
+					<select name="authgroup">
+						<option value=""></option>
+						{foreach from=$authgroups item=group}
+							<option value="{$group->id}" {if $group->id == $payment->authgroupID}selected{/if}>
+								{$group->name}
+							</option>
+						{/foreach}
+					</select>
+				</div>
+			</div>
+			<div class="form" style="padding:.2em;">
+				<div class="field"><b>From:</b></div>
+				<div class="value">
+					<a href="/users/user/edit?&id={$payment->getFromCharacter()->userID}" target="_blank">{$payment->getFromCharacter()->name}</a>
+					&nbsp; - &nbsp;
+					{$payment->getFromCharacter()->getCorporation()->name}
+					{if $payment->getFromCharacter()->getCorporation()->getAlliance()}
+						&nbsp; - &nbsp;
+						<i>{$payment->getFromCharacter()->getCorporation()->getAlliance()->name}</i>
+					{/if}
+				</div>
+			</div>
+			<div class="form" style="padding:.2em;">
+				<div class="field"><b>Date:</b></div>
+				<div class="value">
+					{$payment->date|date_full} - {$payment->date|date_time}
+				</div>
+			</div>
+			<div class="form" style="padding:.2em;">
+				<div class="field"><b>Description:</b></div>
+				<div class="value">
+					{$payment->description}
+				</div>
+			</div>
+			<div class="form" style="padding:.2em;">
+				<div class="field"><b>Amount:</b></div>
+				<div class="value">
+					{$payment->amount|valuta}
+				</div>
+			</div>
+		</div>
+		<div class="col6 right last">
+			<div style="text-align: right;">
+				<div style="margin: .2em;">
+					<button type="submit" style="width: 200px;">
+						<img src="/images/default/apply.png" align="left">
+						Approve Payment
+					</button>
+				</div>
+				<div style="margin: .2em;">
+					<button type="button" style="width: 200px;" onclick="document.location='/admin/payments/delete/{$payment->id}'">
+						<img src="/images/default/cross.png" align="left">
+						Delete Payment
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+	<div style="clear:both;"></div>
+</div>

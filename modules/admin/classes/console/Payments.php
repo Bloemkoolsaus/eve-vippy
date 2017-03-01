@@ -45,20 +45,6 @@ class Payments
                     $transaction->description = trim(str_replace("\n","",$transaction->description));
                     $transaction->date = date("Y-m-d H:i:s", strtotime((string)$row["date"]));
 
-                    \AppRoot::doCliOutput("(".$transaction->date.") ".$transaction->amount." - ".$transaction->description);
-
-                    // Check of vippy in de omschrijving voor komt.
-                    $registerTransaction = false;
-                    if (strpos(strtolower($transaction->description), "vippy") !== false)
-                        $registerTransaction = true;
-                    if (strpos(strtolower($transaction->description), "atlas") !== false)
-                        $registerTransaction = true;
-
-                    if (!$registerTransaction) {
-                        \AppRoot::doCliOutput(" - No vippy/atlas in description");
-                        continue;
-                    }
-
                     if ((int)$row["refTypeID"] == 10) {
                         $transaction->toCharacterID = (string)$row["ownerID2"];
                         $transaction->fromCharacterID = (string)$row["ownerID1"];
@@ -81,6 +67,14 @@ class Payments
                         $transaction->fromCharacterID = $to;
                         $transaction->toCharacterID = $from;
                     }
+
+                    \AppRoot::doCliOutput("[".$transaction->date."] ".$transaction->getFromCharacter()->name.": ".$transaction->amount." - ".$transaction->description);
+
+                    // Check of vippy in de omschrijving voor komt.
+                    if (strpos(strtolower($transaction->description), "vippy") !== false)
+                        $transaction->approved = true;
+                    if (strpos(strtolower($transaction->description), "atlas") !== false)
+                        $transaction->approved = true;
 
                     if (!$transaction->exists()) {
                         $authgroup = $transaction->findAuthgroup();

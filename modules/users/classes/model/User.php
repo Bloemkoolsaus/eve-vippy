@@ -800,7 +800,7 @@ namespace users\model
 
 		public function getIsSysAdmin()
 		{
-			return \User::getUSER()->hasRight("admin","sysadmin");
+			return $this->hasRight("admin", "sysadmin");
 		}
 
         /**

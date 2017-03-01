@@ -641,8 +641,10 @@ namespace admin\model
 		 */
 		function getPayments()
 		{
-			if ($this->payments === null)
-				$this->payments = \admin\model\SubscriptionTransaction::getTransactionsByAuthgroup($this->id);
+			if ($this->payments === null) {
+                $conditions = ["authgroupid" => $this->id, "approved" => 1, "deleted" => 0];
+                $this->payments = \admin\model\SubscriptionTransaction::findAll($conditions, ["transactiondate desc"]);
+            }
 
 			return $this->payments;
 		}

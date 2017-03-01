@@ -1,6 +1,6 @@
 <b><u>VIPPY</u></b>
  - Sometimes, if you've manually set your main character Vippy would reset it every once in a while for no apparent reason. This has been fixed.
- 
+
 
 
 

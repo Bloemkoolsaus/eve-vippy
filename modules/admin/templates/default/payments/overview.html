@@ -1,0 +1,42 @@
+<div class="content">
+	<h1>{$payments|@count} Pending Payments</h1>
+	<table class="sectionoverview">
+		<tr>
+			<th>From</th>
+			<th>Authgroup</th>
+			<th>Amount</th>
+			<th>Description</th>
+			<th>Date</th>
+			<th style="width: 50px;">&nbsp;</th>
+		</tr>
+	{foreach from=$payments key=i item=payment}
+		<tr class="{if $i%2==0}even{else}odd{/if}">
+			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
+				{if $payment->getFromCharacter()}
+					<img src="http://image.eveonline.com/Corporation/{$payment->getFromCharacter()->corporationID}_32.png" style="height: 18px;" align="left">
+					{$payment->getFromCharacter()->name}
+				{/if}
+			</td>
+			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
+				{if $payment->getAuthgroup()}
+					{$payment->getAuthgroup()->name}
+				{else}
+					<i>unknown</i>
+				{/if}
+			</td>
+			<td onclick="document.location='/admin/payments/edit/{$payment->id}'" style="text-align: right;">
+				{$payment->amount|valuta} &nbsp;
+			</td>
+			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
+				{$payment->description}
+			</td>
+			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
+				{$payment->date|date_full} - {$payment->date|date_time}
+			</td>
+			<td style="text-align: center;">
+				<a href="/admin/payments/edit/{$payment->id}"><img src="/images/default/ui/view.png"></a>
+			</td>
+		</tr>
+	{/foreach}
+	</table>
+</div>
