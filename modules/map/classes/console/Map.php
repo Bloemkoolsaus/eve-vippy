@@ -35,6 +35,12 @@ class Map
                                   WHERE updatedate < ? AND deleted > 0
                                   and sigtypeid not in (select id from map_signature_type where name in ('pos','citadel'))"
                             , array($cleanupDate));
+
+        \AppRoot::doCliOutput("Cleanup old anomalies");
+        \MySQL::getDB()->doQuery("delete from map_anomaly where solarsystemid not in (
+                                          select solarsystemid from mapwormholes
+                                          where solarsystemid is not null and solarsystemid != 0
+                                  )");
         return true;
     }
 

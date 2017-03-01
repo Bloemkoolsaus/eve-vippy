@@ -29,7 +29,7 @@ class Location
                                                     where   l.characterid is null
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
                                                 order by online desc, lastupdate asc, updatedate desc
-                                                limit 50"
+                                                limit 15"
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-10,date("s"),date("m"),date("d"),date("Y")))]))
             {
@@ -43,7 +43,6 @@ class Location
                     $i++;
                 }
             }
-
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);

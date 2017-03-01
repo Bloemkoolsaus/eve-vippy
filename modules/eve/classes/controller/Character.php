@@ -60,7 +60,8 @@ namespace eve\controller
             if ($user) {
                 $user->resetCache();
                 $user->resetAuthGroups();
-                $user->resetMainCharacter();
+                if (!$user->getMainCharacter()->isAuthorized())
+                    $user->resetMainCharacter();
             }
 
 			return $character;
