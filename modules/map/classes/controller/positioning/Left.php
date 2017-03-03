@@ -8,7 +8,7 @@ class Left extends \map\controller\positioning\Center
 
     function getPositions($position=array())
     {
-        $position = array();
+        $position = [];
 
         // Recht naar links
         $position["x"][] = $this->modifierWidth * -1;
@@ -30,15 +30,13 @@ class Left extends \map\controller\positioning\Center
         $position["x"][] = 0;
         $position["y"][] = $this->modifierHeight * -1;
 
-        // Recht naar links en beneden
+        // Recht naar links en beneden beneden
         $position["x"][] = $this->modifierWidth * -1;
         $position["y"][] = $this->modifierHeight * 2;
 
-        // Recht naar links en boven
+        // Recht naar links en boven boven
         $position["x"][] = $this->modifierWidth * -1;
         $position["y"][] = ($this->modifierHeight * 2) * -1;
-
-
 
 
         return parent::getPositions($position);

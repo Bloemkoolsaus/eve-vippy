@@ -153,7 +153,6 @@ class Wormhole
             }
         }
 
-        $map->setMapUpdateDate();
         return $addingHole;
     }
 

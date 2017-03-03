@@ -14,8 +14,8 @@ class Center
     function __construct(\map\model\Map $map)
     {
         $this->setMap($map);
-        $this->modifierWidth = \scanning\Wormhole::$defaultWidth + (\scanning\Wormhole::$defaultOffset*2);
-        $this->modifierHeight = \scanning\Wormhole::$defaultHeight + (\scanning\Wormhole::$defaultOffset*2);
+        $this->modifierWidth = \Config::getCONFIG()->get("map_wormhole_width") + (\Config::getCONFIG()->get("map_wormhole_offset_x")*2);
+        $this->modifierHeight = \Config::getCONFIG()->get("map_wormhole_height") + (\Config::getCONFIG()->get("map_wormhole_offset_y")*2);
     }
 
     /**
@@ -51,6 +51,9 @@ class Center
      */
     function getOrigin()
     {
+        if (!$this->origin)
+            $this->setOrigin($this->getMap()->getHomeWormhole());
+
         return $this->origin;
     }
 
@@ -61,72 +64,66 @@ class Center
     function getNextPosition()
     {
         \AppRoot::debug("getNextPosition()");
-        $originX = ($this->getOrigin() !== null) ? $this->getOrigin()->x : 50;
-        $originY = ($this->getOrigin() !== null) ? $this->getOrigin()->y : 50;
+        $originX = ($this->getOrigin()) ? $this->getOrigin()->x : \Config::getCONFIG()->get("map_wormhole_offset_x");
+        $originY = ($this->getOrigin()) ? $this->getOrigin()->y : \Config::getCONFIG()->get("map_wormhole_offset_y");
 
-        $direction = "right";
-        $pos = array("x" => 50, "y" => 50);
-
+        $direction = "center";
+        $pos = [
+            "x" => \Config::getCONFIG()->get("map_wormhole_offset_x"),
+            "y" => \Config::getCONFIG()->get("map_wormhole_offset_y")
+        ];
 
         // Probeer systeem voor origin te achterhalen. Die bepaald de richting.
-        /**
-        if ($this->origin != null)
-        {
-            if (!$this->getOrigin()->isHomeSystem())
+        if ($this->getOrigin() && !$this->getOrigin()->isHomeSystem()) {
+            // Fetch terug naar home system
+            $route = $this->getOrigin()->getRouteToSystem();
+            \AppRoot::debug("route");
+            \AppRoot::debug($route);
+
+            if (count($route) >= 2)
             {
-                // Fetch terug naar home system
-                $route = $this->getOrigin()->getRouteToSystem();
-                \AppRoot::debug("route");
-                \AppRoot::debug($route);
+                $system1 = $route[0];
+                $system2 = $route[1];
 
-                if (count($route) >= 2)
-                {
-                    $system1 = \scanning\model\Wormhole::getWormholeBySystemID($route[0], $this->getChain()->id);
-                    $system2 = \scanning\model\Wormhole::getWormholeBySystemID($route[1], $this->getChain()->id);
+                \AppRoot::debug("system1");
+                \AppRoot::debug($system1);
+                \AppRoot::debug("system2");
+                \AppRoot::debug($system2);
 
-                    \AppRoot::debug("system1");
-                    \AppRoot::debug($system1);
-                    \AppRoot::debug("system2");
-                    \AppRoot::debug($system2);
+                // Bepaal plot richting
+                $offsetX = $system1->x - $system2->x;
+                $offsetY = $system1->y - $system2->y;
 
-                    // Bepaal plot richting
-                    $offsetX = $system1->x - $system2->x;
-                    $offsetY = $system1->y - $system2->y;
-
-                    if ($offsetY > 0)
-                        $direction = "down";
-                    if ($offsetY < 0)
-                        $direction = "up";
-                    if ($offsetX > 0)
-                        $direction = "right";
-                    if ($offsetX < 0)
-                        $direction = "left";
-                }
+                if ($offsetY > 0)
+                    $direction = "down";
+                if ($offsetY < 0)
+                    $direction = "up";
+                if ($offsetX > 0)
+                    $direction = "right";
+                if ($offsetX < 0)
+                    $direction = "left";
             }
         }
-         * */
 
         $directionObject = null;
-        if ($direction !== null)
-        {
-            $directionClass = '\\scanning\\controller\\map\\positioning\\'.ucfirst($direction);
+        if ($direction !== null) {
+            $directionClass = '\\map\\controller\\positioning\\'.ucfirst($direction);
             if (class_exists($directionClass))
-                $directionObject = new $directionClass();
+                $directionObject = new $directionClass($this->getMap());
         }
         if ($directionObject == null)
             $directionObject = $this;
 
         $positions = $directionObject->getPositions();
         $i = 0;
+        $positionTaken = null;
         do
         {
-            if (isset($positions["x"][$i]))
-            {
+            if (isset($positions["x"][$i])) {
                 $pos["x"] = $originX + $positions["x"][$i];
                 $pos["y"] = $originY + $positions["y"][$i];
-            }
-            else
-            {
+                \AppRoot::debug("setPosition: ".$pos["x"]." = ".$originX." + ".$positions["x"][$i]);
+            } else {
                 // Whatever.. doe wat leuks..
                 if ($i%2==0)
                     $pos["x"] += $this->modifierWidth;
@@ -134,9 +131,14 @@ class Center
                 $pos["y"] += $this->modifierHeight;
             }
             $i++;
+            $positionTaken = \map\model\Wormhole::findByCoordinates($pos["x"], $pos["y"], $this->getMap());
+            \AppRoot::debug("Positie: ".$pos["x"]."x".$pos["y"]);
+            if ($positionTaken)
+                \AppRoot::debug("<span style='color:red;'>Positie bezet door:</span> ".$positionTaken->name);
         }
-        while (\scanning\Wormhole::getWormholeByCoordinates($pos["x"], $pos["y"], $this->getMap()->id) !== false);
+        while ($positionTaken !== null);
 
+        // Return positie
         return $pos;
     }
 

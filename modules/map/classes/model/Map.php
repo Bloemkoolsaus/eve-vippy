@@ -27,6 +27,18 @@ class Map extends \scanning\model\Chain
         return $url;
     }
 
+    /**
+     * Get home wormhole
+     * @return \map\model\Wormhole|null
+     */
+    function getHomeWormhole()
+    {
+        if ($this->getHomeSystem())
+            return \map\model\Wormhole::getWormholeBySystemID($this->getHomeSystem()->id, $this->id);
+
+        return null;
+    }
+
 
 
 

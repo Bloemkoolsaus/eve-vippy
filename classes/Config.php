@@ -11,7 +11,6 @@ class Config
 	 */
 	function get($var)
 	{
-		\AppRoot::debug("Config->get([string]".$var."[/string])");
 		if ($this->config == null)
 			$this->fetch();
 
@@ -20,15 +19,13 @@ class Config
 				$this->config[$var] = $result["val"];
 		}
 
-		if (isset($this->config[$var]))
-		{
+		if (isset($this->config[$var])) {
 			$value = trim($this->config[$var]);
             if (strlen(trim($value)) > 0) {
                 // Check of het misschien json is, zo ja, parsen!
                 if ($value[0] == "{" && $value[strlen($value) - 1] == "}")
                     $value = json_decode($value);
             }
-            \AppRoot::debug($value);
 			return $value;
 		}
 

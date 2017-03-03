@@ -510,7 +510,8 @@ namespace scanning\model
 			if ($this->homesystemID == 0)
 				$this->load();
 
-			if (!\scanning\Wormhole::getWormholeIdBySystem($this->homesystemID, $this->id))
+            $homesystem = \map\model\Wormhole::getWormholeBySystemID($this->homesystemID, $this->id);
+			if (!$homesystem)
 			{
 				$wh = new \scanning\Wormhole();
 				$wh->chainID = $this->id;
@@ -643,12 +644,16 @@ namespace scanning\model
 
 		function setMapUpdateDate($datetime=false)
 		{
+            \AppRoot::debug("setMapUpdateDate($datetime)");
+            \AppRoot::debug(\AppRoot::getStackTrace());
+
             /**
              * Check minimale positie.
              */
             if ($result = \MySQL::getDB()->getRow("select min(x) as x, min(y) as y from mapwormholes where chainid = ?", [$this->id]))
             {
-                $minX = \Config::getCONFIG()->get("map_wormhole_offset_y");
+                \AppRoot::debug($result);
+                $minX = \Config::getCONFIG()->get("map_wormhole_offset_x");
                 $minY = \Config::getCONFIG()->get("map_wormhole_offset_y");
 
                 /** Check voor negatieve posities (die vallen van de map) **/

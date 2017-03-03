@@ -137,6 +137,7 @@ namespace scanning\model
             // Remove cache so that it resets
             \Cache::file()->remove("wormhole/".$this->id.".json");
             $this->getChain()->setMapUpdateDate();
+            $this->load(); // Re-load (setMapUpdate kan coordinaten gewijzigd hebben)!
 		}
 
 		function delete()
@@ -303,7 +304,6 @@ namespace scanning\model
 			$this->fullScanDate = date("Y-m-d H:i:s");
 			$this->fullScanDateBy = \User::getUSER()->id;
 			$this->store();
-			$this->getChain()->setMapUpdateDate();
 		}
 
 
@@ -354,7 +354,7 @@ namespace scanning\model
             if ($chainID)
             {
                 if ($result = \MySQL::getDB()->getRow("select * from mapwormholes where solarsystemid = ? AND chainid = ?", [$solarSystemID, $chainID])) {
-                    $system = new \scanning\model\Wormhole();
+                    $system = new static();
                     $system->load($result);
                     return $system;
                 }
@@ -376,7 +376,7 @@ namespace scanning\model
 
 			if ($result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE name = ? AND chainid = ?", [$name, $chainID]))
 			{
-				$system = new \scanning\model\Wormhole();
+				$system = new static();
 				$system->load($result);
 				return $system;
 			}

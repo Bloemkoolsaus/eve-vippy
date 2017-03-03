@@ -282,12 +282,18 @@ class Map
         return "done";
     }
 
+    /**
+     * Clear all wormholes from the map
+     * @param \map\model\Map $map
+     * @param array $arguments
+     * @return string
+     */
     function getClear(\map\model\Map $map, $arguments=[])
     {
         if ($map->isAllowedAction("delete")) {
             if (\Tools::POST("delete") == "all") {
                 $map->clearChain();
-                \AppRoot::redirect("map/" . $map->name);
+                \AppRoot::redirect("map/".$map->getURL());
             }
         }
 

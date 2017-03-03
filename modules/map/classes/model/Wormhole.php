@@ -88,4 +88,41 @@ class Wormhole extends \scanning\model\Wormhole
         }
         return $entities;
     }
+
+    /**
+     * Find wormhole by coordinates
+     * @param $x
+     * @param $y
+     * @param \map\model\Map $map
+     * @return \map\model\Wormhole|null
+     */
+    public static function findByCoordinates($x, $y, \map\model\Map $map)
+    {
+        \AppRoot::debug("findWormholeByCoordinates($x,$y,$map->id)");
+        $leftX = $x;
+        $topY = $y;
+
+        $rightX = $x + \Config::getCONFIG()->get("map_wormhole_width");
+        $botY = $y + \Config::getCONFIG()->get("map_wormhole_height");
+
+        if ($result = \MySQL::getDB()->getRow("	SELECT 	*
+                                                FROM 	mapwormholes
+                                                WHERE	chainid = ".$map->id."
+                                                AND		((x = ".$leftX." AND y = ".$topY.")
+                                                    OR		(x BETWEEN ".$leftX." AND ".$rightX."
+                                                        AND	y BETWEEN ".$topY." AND ".$botY.")
+                                                    OR		(".$leftX." BETWEEN x AND (x+".\Config::getCONFIG()->get("map_wormhole_width").")
+                                                        AND	".$botY." BETWEEN y AND (y+".\Config::getCONFIG()->get("map_wormhole_height")."))
+                                                    OR		(".$topY." BETWEEN y AND (y+".\Config::getCONFIG()->get("map_wormhole_height").")
+                                                        AND	(x+".\Config::getCONFIG()->get("map_wormhole_width").") BETWEEN ".$leftX." AND ".$rightX.")
+                                                    OR		(".$topY." BETWEEN y AND (y+".\Config::getCONFIG()->get("map_wormhole_height").")
+                                                        AND	x BETWEEN ".$leftX." AND ".$rightX."))"))
+        {
+            $wormhole = new \map\model\Wormhole();
+            $wormhole->load($result);
+            return $wormhole;
+        }
+
+        return null;
+    }
 }
