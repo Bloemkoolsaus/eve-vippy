@@ -20,8 +20,7 @@ class Logs
         \AppRoot::doCliOutput($debugPrefix." - ".$dir);
         if (is_file($dir)) {
             $time = filemtime($dir);
-            if ($time < mktime(0,0,0,date("m"),date("d")-2,date("Y")))
-            {
+            if ($time < mktime(0,0,0,date("m"),date("d")-2,date("Y"))) {
                 \AppRoot::doCliOutput($debugPrefix." * Removing ".$dir);
                 \Tools::deleteFile($dir);
             }

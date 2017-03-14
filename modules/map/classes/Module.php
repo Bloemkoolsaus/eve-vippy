@@ -57,9 +57,8 @@ class Module extends \Module
 
     function doMaintenance()
     {
-        $console = new \map\console\Map();
-        $console->cleanupSignatures();
-        $console->cleanupWormholes();
+        $console = new \admin\console\Authgroup();
+        $console->doCleanup();
         return true;
     }
 }

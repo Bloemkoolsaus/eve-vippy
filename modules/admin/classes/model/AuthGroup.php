@@ -7,6 +7,7 @@ namespace admin\model
 		public $name;
 		public $mainChainID;
         public $contactID;
+        public $deleted = false;
 
         private $config = null;
 		private $corporations = null;
@@ -117,22 +118,20 @@ namespace admin\model
 
 		function load($result=false)
 		{
-            if (!$result)
-            {
+            if (!$result) {
                 // Eerst in cache kijken
-                if (!$this->loadFromCache())
-                {
+                if (!$this->loadFromCache()) {
                     $result = \MySQL::getDB()->getRow("SELECT * FROM user_auth_groups WHERE id = ?", array($this->id));
                     $this->saveToCache($result);
                 }
             }
 
-			if ($result)
-			{
+			if ($result) {
 				$this->id = $result["id"];
 				$this->name = $result["name"];
 				$this->mainChainID = $result["mainchain"];
                 $this->contactID = $result["contactuserid"];
+                $this->deleted = ($result["deleted"]>0)?true:false;
 			}
 		}
 
@@ -141,40 +140,39 @@ namespace admin\model
 			$data = [
                 "name"	=> $this->name,
                 "mainchain"	=> $this->mainChainID,
-                "contactuserid" => $this->contactID
+                "contactuserid" => $this->contactID,
+                "deleted" => ($this->deleted)?1:0
             ];
 			if ($this->id > 0)
 				$data["id"] = $this->id;
 
-			$result = \MySQL::getDB()->updateinsert("user_auth_groups", $data, array("id" => $this->id));
+			$result = \MySQL::getDB()->updateinsert("user_auth_groups", $data, ["id" => $this->id]);
 			if ($this->id == 0)
 				$this->id = $result;
 
 
-			if ($this->alliances !== null)
-			{
-				\MySQL::getDB()->delete("user_auth_groups_alliances", array("authgroupid" => $this->id));
+			if ($this->alliances !== null) {
+				\MySQL::getDB()->delete("user_auth_groups_alliances", ["authgroupid" => $this->id]);
 				foreach ($this->getAlliances() as $alliance) {
-					\MySQL::getDB()->insert("user_auth_groups_alliances", array("authgroupid" => $this->id, "allianceid" => $alliance->id));
+					\MySQL::getDB()->insert("user_auth_groups_alliances", ["authgroupid" => $this->id, "allianceid" => $alliance->id]);
 				}
 			}
 
-			if ($this->corporations !== null)
-			{
-				\MySQL::getDB()->delete("user_auth_groups_corporations", array("authgroupid" => $this->id));
+			if ($this->corporations !== null) {
+				\MySQL::getDB()->delete("user_auth_groups_corporations", ["authgroupid" => $this->id]);
 				foreach ($this->getCorporations() as $corp) {
-					\MySQL::getDB()->insert("user_auth_groups_corporations", array("authgroupid" => $this->id, "corporationid" => $corp->id));
+					\MySQL::getDB()->insert("user_auth_groups_corporations", ["authgroupid" => $this->id, "corporationid" => $corp->id]);
 				}
 			}
 
-            if ($this->config !== null)
-            {
+            if ($this->config !== null) {
                 \MySQL::getDB()->delete("user_auth_group_config", ["authgroupid" => $this->id]);
-                foreach ($this->config as $var => $val)
-                {
-                    \MySQL::getDB()->insert("user_auth_group_config", ["authgroupid" => $this->id,
-                                                                       "var" => $var,
-                                                                       "val" => $val]);
+                foreach ($this->config as $var => $val) {
+                    \MySQL::getDB()->insert("user_auth_group_config", [
+                        "authgroupid" => $this->id,
+                        "var" => $var,
+                        "val" => $val
+                    ]);
                 }
             }
 
@@ -186,6 +184,12 @@ namespace admin\model
                 }
             }
 		}
+
+        function delete()
+        {
+            $this->deleted = true;
+            $this->store();
+        }
 
         /**
          * Get contact user
@@ -239,10 +243,9 @@ namespace admin\model
 		 */
 		function getAllowedCorporations()
 		{
-            if ($this->allowedCorporations == null)
+            if ($this->allowedCorporations === null)
             {
-                \AppRoot::doCliOutput("AuthGroup(".$this->name.")->getAllowedCorporations()");
-                $this->allowedCorporations = array();
+                $this->allowedCorporations = [];
                 foreach ($this->getCorporations() as $corp) {
                     if ($corp->isNPC())
                         continue;
@@ -269,8 +272,7 @@ namespace admin\model
 		{
 			if ($this->corporations === null)
 			{
-                \AppRoot::debug("AuthGroup()->getCorporations()", true);
-				$this->corporations = array();
+				$this->corporations = [];
 				if ($results = \MySQL::getDB()->getRows("SELECT	c.*
 														FROM	corporations c
 															INNER JOIN user_auth_groups_corporations a ON a.corporationid = c.id
@@ -436,7 +438,7 @@ namespace admin\model
             if (count($this->getAllowedUsers()) == 0)
                 return false;
 
-            if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)
+            if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)   // 2 maanden
                 return false;
 
             return true;
@@ -676,11 +678,9 @@ namespace admin\model
 		 */
 		public static function getAuthGroups()
 		{
-			$authgroups = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_auth_groups ORDER BY name"))
-			{
-				foreach ($results as $result)
-				{
+			$authgroups = [];
+			if ($results = \MySQL::getDB()->getRows("select * from user_auth_groups order by name")) {
+				foreach ($results as $result) {
 					$group = new \admin\model\AuthGroup();
 					$group->load($result);
 					$authgroups[] = $group;

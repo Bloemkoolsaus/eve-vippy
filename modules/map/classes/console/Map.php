@@ -3,14 +3,19 @@ namespace map\console;
 
 class Map
 {
+    function doDefault($arguments=[])
+    {
+
+    }
+
     /**
      * Oude signatures opruimen.
      * @return bool
      */
     function cleanupSignatures()
     {
-        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-14,date("Y")));
-        \AppRoot::doCliOutput("Cleanup signatures older then ".$cleanupDate);
+        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m")-2,date("d"),date("Y")));
+        \AppRoot::doCliOutput("Delete signatures older then ".$cleanupDate);
         if ($results = \MySQL::getDB()->getRows("select *
                                                  from   map_signature
                                                  where  deleted = 0
@@ -18,7 +23,7 @@ class Map
                                                  and    sigtypeid not in (
                                                    select id from map_signature_type where name in ('pos','citadel')
                                                  )"
-                                    , array($cleanupDate)))
+                                    , [$cleanupDate]))
         {
             \AppRoot::doCliOutput(" - ".count($results)." signatures to clean up");
             foreach ($results as $result)
@@ -31,16 +36,11 @@ class Map
         }
 
         $cleanupDate = date("Y-m-d H:i:s", mktime(0,0,0,date("m")-2,date("d"),date("Y")));
-        \MySQL::getDB()->doQuery("DELETE FROM map_signature
-                                  WHERE updatedate < ? AND deleted > 0
-                                  and sigtypeid not in (select id from map_signature_type where name in ('pos','citadel'))"
-                            , array($cleanupDate));
-
-        \AppRoot::doCliOutput("Cleanup old anomalies");
-        \MySQL::getDB()->doQuery("delete from map_anomaly where solarsystemid not in (
-                                          select solarsystemid from mapwormholes
-                                          where solarsystemid is not null and solarsystemid != 0
-                                  )");
+        \AppRoot::doCliOutput("Purge really old signatures");
+        \MySQL::getDB()->doQuery("delete from map_signature where updatedate < ? and deleted > 0", [$cleanupDate]);
+        \MySQL::getDB()->doQuery("delete from map_anomaly where solarsystemid not in (select solarsystemid from mapwormholes where solarsystemid is not null and solarsystemid != 0)");
+        \MySQL::getDB()->doQuery("delete from map_signature where authgroupid in (select id from user_auth_groups where deleted > 0)");
+        \MySQL::getDB()->doQuery("delete from map_anomaly where authgroupid in (select id from user_auth_groups where deleted > 0)");
         return true;
     }
 
@@ -50,13 +50,11 @@ class Map
      */
     function cleanupWormholes()
     {
-        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-2,date("Y")));
+        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-7,date("Y")));
         \AppRoot::doCliOutput("Cleanup wormholes older then ".$cleanupDate);
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE adddate < ?", array($cleanupDate)))
-        {
+        if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where adddate < ?", [$cleanupDate])) {
             \AppRoot::doCliOutput(" - ".count($results)." wormholes to clean up");
-            foreach ($results as $result)
-            {
+            foreach ($results as $result) {
                 $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
                 if (!$wormhole->isPermenant())
@@ -66,19 +64,7 @@ class Map
 
         // Oude connections opruimen
         \AppRoot::doCliOutput("Cleanup connections with missing wormholes");
-        if ($results = \MySQL::getDB()->getRows("select  *
-                                                from    mapwormholeconnections
-                                                where   fromwormholeid not in (select id from mapwormholes)
-                                                or      towormholeid not in (select id from mapwormholes)"))
-        {
-            \AppRoot::doCliOutput(" - ".count($results)." connections to clean up");
-            foreach ($results as $result) {
-                $connection = new \scanning\model\Connection();
-                $connection->load($result);
-                $connection->delete();
-            }
-        }
-
+        \MySQL::getDB()->doQuery("delete from mapwormholeconnections where fromwormholeid not in (select id from mapwormholes) or towormholeid not in (select id from mapwormholes)");
         return true;
     }
 

@@ -1,0 +1,1 @@
+alter table user_auth_groups add column deleted tinyint(1) default 0;
