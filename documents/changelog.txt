@@ -1,4 +1,9 @@
+<h3>March 15, 2017</h3>
+<b><u>VIPPY</u></b>
+ - Made some adjustments to try and fix the lag that Vippy is having issues with lately.
+
 <b><u>MAP</u></b>
+ - Fixed a bug with system positioning that was introduced a while ago. People with OCD will be at ease again.
  - Added the requested option for auto-expiry on a map.
    <span style='color:#ffffff;font-weight:bold;text-transform:uppercase;'>This has been enabled by default on all active maps!!!</span>
  	Automatically remove wormhole connections when they are over their lifetime and should have also despawned ingame.

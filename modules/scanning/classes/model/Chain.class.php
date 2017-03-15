@@ -513,12 +513,12 @@ namespace scanning\model
             $homesystem = \map\model\Wormhole::getWormholeBySystemID($this->homesystemID, $this->id);
 			if (!$homesystem)
 			{
-				$wh = new \scanning\Wormhole();
+				$wh = new \scanning\model\Wormhole();
 				$wh->chainID = $this->id;
 				$wh->solarSystemID = $this->homesystemID;
 				$wh->name = $this->systemName;
-				$wh->x = 50;
-				$wh->y = 50;
+				$wh->x = \Config::getCONFIG()->get("map_wormhole_offset_x");
+				$wh->y = \Config::getCONFIG()->get("map_wormhole_offset_y");
 				$wh->store();
 			}
 
@@ -620,10 +620,8 @@ namespace scanning\model
 
 		function clearChain($updateCacheTimer=true)
 		{
-            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this, "delete"))
-            {
-                if (\User::getUSER())
-                {
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this, "delete")) {
+                if (\User::getUSER()) {
                     \User::getUSER()->addLog("delete-wormhole", $this->id, [
                         "delete-all"=> true,
                         "chain" => [
@@ -631,11 +629,15 @@ namespace scanning\model
                             "name"	=> $this->name]
                     ]);
                 }
-
                 foreach (\scanning\model\Wormhole::getWormholesByChain($this->id) as $wormhole) {
                     if (!$wormhole->isPermenant())
                         $wormhole->delete();
                 }
+
+                // Check home system
+                $homesystem = \map\model\Wormhole::getWormholeBySystemID($this->homesystemID, $this->id);
+                if (!$homesystem)
+                    $this->addHomeSystemToMap();
             }
 
 			if ($updateCacheTimer)
