@@ -91,17 +91,20 @@ class Center
                 \AppRoot::debug($system2);
 
                 // Bepaal plot richting
-                $offsetX = $system1->x - $system2->x;
-                $offsetY = $system1->y - $system2->y;
+                if (isset($system1->x) && isset($system1->y) && isset($system2->x) && isset($system2->y))
+                {
+                    $offsetX = $system1->x - $system2->x;
+                    $offsetY = $system1->y - $system2->y;
 
-                if ($offsetY > 0)
-                    $direction = "down";
-                if ($offsetY < 0)
-                    $direction = "up";
-                if ($offsetX > 0)
-                    $direction = "right";
-                if ($offsetX < 0)
-                    $direction = "left";
+                    if ($offsetY > 0)
+                        $direction = "down";
+                    if ($offsetY < 0)
+                        $direction = "up";
+                    if ($offsetX > 0)
+                        $direction = "right";
+                    if ($offsetX < 0)
+                        $direction = "left";
+                }
             }
         }
 
