@@ -83,19 +83,27 @@
 				</label>
 			</div>
 			<div class="form">
-				<label class="field">&nbsp;</label>
+				<div class="field">&nbsp;</div>
 				<input type="checkbox" id="create-unmapped" name="settings[create-unmapped]" {if $chain->getSetting('create-unmapped')}checked{/if} value="1" />
 				<label for="create-unmapped" style="float: none;">Create an unmapped system when a wh signature is added</label>
 			</div>
 			<div class="form">
-				<label class="field">&nbsp;</label>
+				<div class="field">&nbsp;</div>
+				<input type="checkbox" id="auto-expiry" name="settings[create-unmapped]" {if $chain->getSetting('auto-expiry')}checked{/if} value="1" />
+				<label for="auto-expiry" style="float: none;">
+					Enable auto-expiry of wormholes
+					<img src="/images/default/ui/info.png" style="margin-left: .5em;" data-tooltip="<div><b>Enable auto-expiry of wormholes</b></div><div style='margin-top: .5em;'>Automatically remove wormhole connections when they are over their lifetime and should have also despawned ingame.</div><div style='margin-top: .5em;'>Systems marked as persistant will not be automatically removed.</div>">
+				</label>
+			</div>
+			<div class="form">
+				<div class="field">&nbsp;</div>
 				<input type="checkbox" id="count-statistics" name="settings[count-statistics]" {if $chain->getSetting('count-statistics')}checked{/if} value="1" />
 				<label for="count-statistics" style="float: none;">Count in statistics / leaderboard</label>
 			</div>
 			<div class="form">
-				<label class="field">&nbsp;</label>
+				<div class="field">&nbsp;</div>
 				<input type="checkbox" id="directors-only" name="settings[directors-only]" {if $chain->getSetting('directors-only')}checked{/if} value="1" />
-				<label for="directors-only" style="float: none;"><u><b>Only</b></u> visible for CEO and Directors</label>
+				<label for="directors-only" style="float: none;"><u><b>Only</b></u> available for Admins</label>
 			</div>
         </div>
         <div style="float: right; width: 45%; min-width: 450px;">
@@ -117,7 +125,6 @@
                 <label class="value">
                     <select name="control[move]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-move') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-move') == $group->id}selected{/if}>
@@ -133,7 +140,6 @@
                 <label class="value">
                     <select name="control[delete]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-delete') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
 					{foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
 						<option value="{$group->id}" {if $chain->getSetting('control-delete') == $group->id}selected{/if}>
@@ -149,7 +155,6 @@
                 <label class="value">
                     <select name="control[add]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-add') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-add') == $group->id}selected{/if}>
@@ -165,7 +170,6 @@
                 <label class="value">
                     <select name="control[mass]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-mass') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-mass') == $group->id}selected{/if}>
@@ -181,7 +185,6 @@
                 <label class="value">
                     <select name="control[known]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-known') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-known') == $group->id}selected{/if}>
@@ -197,7 +200,6 @@
                 <label class="value">
                     <select name="control[notice]">
                         <option value="0">All users</option>
-                        <option value="dir" {if $chain->getSetting('control-notice') == 'dir'}selected{/if}>CEO & Directors</option>
 				{if $chain->getAuthgroup() != null}
                     {foreach from=$chain->getAuthgroup()->getUsergroups() item=group}
                         <option value="{$group->id}" {if $chain->getSetting('control-notice') == $group->id}selected{/if}>

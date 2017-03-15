@@ -116,13 +116,13 @@ namespace scanning\model
 
 			// Mass gewijzigd
 			if ($this->mass > 0 && $oldConnection->mass !== $this->mass) {
-				$this->massUpdateBy = \User::getUSER()->id;
+				$this->massUpdateBy = (\User::getUSER())?\User::getUSER()->id:null;
 				$this->massUpdateDate = date("Y-m-d H:i:s");
 			}
 
 			// Lifetime gewijzigd
 			if ($oldConnection->eol !== $this->eol) {
-				$this->lifetimeUpdateBy = \User::getUSER()->id;
+				$this->lifetimeUpdateBy = (\User::getUSER())?\User::getUSER()->id:null;
 				$this->lifetimeUpdateDate = date("Y-m-d H:i:s");
 			}
 
@@ -225,7 +225,7 @@ namespace scanning\model
 							"towhtypeid"	=> $this->toWHTypeID,
 							"kspacejumps"	=> $this->kspaceJumps,
 							"updatedate"	=> date("Y-m-d H:i:s"),
-							"updateby"		=> \User::getUSER()->id);
+							"updateby"		=> (\User::getUSER())?\User::getUSER()->id:null);
 
 			if ($this->exists())
 			{

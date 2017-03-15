@@ -23,7 +23,7 @@ class Connection extends \scanning\model\Connection
     {
         if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getMap(), "delete"))
         {
-            \MySQL::getDB()->delete("mapwormholeconnections", array("id" => $this->id));
+            \MySQL::getDB()->delete("mapwormholeconnections", ["id" => $this->id]);
             $this->getMap()->setMapUpdateDate(); // Update chain cache timer
         }
     }
@@ -95,7 +95,121 @@ class Connection extends \scanning\model\Connection
         }
     }
 
+    /**
+     * Get expiredate of this connection
+     * @return string datetime
+     */
+    function getExpireDate()
+    {
+        $lifetime = 24;
+        if ($this->getWormholeType() && $this->getWormholeType()->lifetime)
+            $lifetime = $this->getWormholeType()->lifetime;
 
+        if ($this->eol) {
+            return date("Y-m-d H:i:s", mktime(
+                date("H", strtotime($this->lifetimeUpdateDate))+4,
+                date("i", strtotime($this->lifetimeUpdateDate)),
+                date("s", strtotime($this->lifetimeUpdateDate)),
+                date("m", strtotime($this->lifetimeUpdateDate)),
+                date("d", strtotime($this->lifetimeUpdateDate)),
+                date("Y", strtotime($this->lifetimeUpdateDate))
+            ));
+        }
+
+        return date("Y-m-d H:i:s", mktime(
+            date("H", strtotime($this->addDate))+$lifetime,
+            date("i", strtotime($this->addDate)),
+            date("s", strtotime($this->addDate)),
+            date("m", strtotime($this->addDate)),
+            date("d", strtotime($this->addDate)),
+            date("Y", strtotime($this->addDate))
+        ));
+    }
+
+    /**
+     * Get expire status
+     * @return string expired|eol|null
+     */
+    function getExpireStatus()
+    {
+        $expireDate = $this->getExpireDate();
+        if (strtotime($expireDate) < strtotime("now"))
+            return "expired";
+
+        $eolDate = date("Y-m-d H:i:s", mktime(
+            date("H", strtotime($expireDate))-4,
+            date("i", strtotime($expireDate)),
+            date("s", strtotime($expireDate)),
+            date("m", strtotime($expireDate)),
+            date("d", strtotime($expireDate)),
+            date("Y", strtotime($expireDate))
+        ));
+        if (strtotime($eolDate) < strtotime("now"))
+            return "eol";
+
+        return null;
+    }
+
+    /**
+     * Connection expired?
+     * @return bool
+     */
+    function isExpired()
+    {
+        if (strtotime($this->getExpireDate()) < strtotime("now"))
+            return true;
+
+        return false;
+    }
+
+
+
+
+    /**
+     * Find one instances
+     * @param array $conditions
+     * @param array $orderby
+     * @return \map\model\Connection|null
+     */
+    public static function findOne($conditions=[], $orderby=["name"])
+    {
+        $objects = self::findAll($conditions, $orderby);
+        if (count($objects) > 0)
+            return $objects[0];
+
+        return null;
+    }
+
+    /**
+     * Find all instances
+     * @param array $conditions
+     * @param array $orderby
+     * @return \map\model\Connection[]
+     */
+    public static function findAll($conditions=[], $orderby=["adddate"])
+    {
+        $where = [];
+        $params = [];
+        foreach ($conditions as $var => $val) {
+            $where[] = $var." = ?";
+            $params[] = $val;
+        }
+
+        $entities = array();
+        if ($results = \MySQL::getDB()->getRows("SELECT *
+                                                FROM    mapwormholeconnections
+                                                ".((count($where)>0)?"WHERE ".implode(" AND ", $where):"")."
+                                                ".((count($orderby)>0)?"ORDER BY ".implode(",", $orderby):"")
+                                            , $params))
+        {
+            foreach ($results as $result) {
+                $entity = new \map\model\Connection();
+                $entity->load($result);
+                $entities[] = $entity;
+            }
+        }
+        return $entities;
+    }
 
 
     /**

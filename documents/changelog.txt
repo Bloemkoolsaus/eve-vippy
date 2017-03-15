@@ -1,3 +1,12 @@
+<b><u>MAP</u></b>
+ - Added the requested option for auto-expiry on a map.
+   <span style='color:#ffffff;font-weight:bold;text-transform:uppercase;'>This has been enabled by default on all active maps!!!</span>
+ 	Automatically remove wormhole connections when they are over their lifetime and should have also despawned ingame.
+ 	Systems marked as persistant will not be automatically removed.
+
+
+
+
 <h3>March 01, 2017</h3>
 <b><u>VIPPY</u></b>
  - Sometimes, if you've manually set your main character Vippy would reset it every once in a while for no apparent reason. This has been fixed.

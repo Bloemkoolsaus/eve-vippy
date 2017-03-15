@@ -52,3 +52,17 @@ function closeTooltip(tooltipID)
 {
     $("#tooltip"+tooltipID).remove();
 }
+
+var tooltipNr = 0;
+$(document).ready(function() {
+    $("[data-tooltip]").mouseover(function() {
+        tooltipNr++;
+        $(this).attr("data-tooltip-id", tooltipNr);
+        var tip = new Tooltip(tooltipNr);
+        tip.render($(this).attr("data-tooltip"));
+        tip.show();
+    });
+    $("[data-tooltip]").mouseout(function() {
+        closeTooltip($(this).attr("data-tooltip-id"));
+    });
+});

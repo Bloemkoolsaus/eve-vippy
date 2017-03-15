@@ -3,31 +3,22 @@ namespace map\console;
 
 class Map
 {
-    function doDefault($arguments=[])
-    {
-
-    }
-
     /**
      * Oude signatures opruimen.
      * @return bool
      */
     function cleanupSignatures()
     {
-        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m")-2,date("d"),date("Y")));
+        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m")-1,date("d"),date("Y")));
         \AppRoot::doCliOutput("Delete signatures older then ".$cleanupDate);
         if ($results = \MySQL::getDB()->getRows("select *
                                                  from   map_signature
-                                                 where  deleted = 0
-                                                 and    updatedate < ?
-                                                 and    sigtypeid not in (
-                                                   select id from map_signature_type where name in ('pos','citadel')
-                                                 )"
+                                                 where  deleted = 0 and updatedate < ?
+                                                 and    sigtypeid not in (select id from map_signature_type where name in ('pos','citadel'))"
                                     , [$cleanupDate]))
         {
             \AppRoot::doCliOutput(" - ".count($results)." signatures to clean up");
-            foreach ($results as $result)
-            {
+            foreach ($results as $result) {
                 $signature = new \map\model\Signature();
                 $signature->load($result);
                 if ($signature->getSignatureType()->mayCleanup())
@@ -50,7 +41,7 @@ class Map
      */
     function cleanupWormholes()
     {
-        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H")-1,date("i"),date("s"),date("m"),date("d")-7,date("Y")));
+        $cleanupDate = date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s"),date("m"),date("d")-2,date("Y")));
         \AppRoot::doCliOutput("Cleanup wormholes older then ".$cleanupDate);
         if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where adddate < ?", [$cleanupDate])) {
             \AppRoot::doCliOutput(" - ".count($results)." wormholes to clean up");

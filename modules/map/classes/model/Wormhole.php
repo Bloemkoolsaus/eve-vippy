@@ -32,6 +32,8 @@ class Wormhole extends \scanning\model\Wormhole
     }
 
 
+
+
     /**
      * Find by id
      * @param $id
