@@ -26,11 +26,11 @@ class Signatures
                 iF (isset($_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id]))
                 {
                     $cacheDate = $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id];
-                    if ($result = \MySQL::getDB()->getRow("select max(s.updatedate) as lastdate
-                                                           from   map_signature s
-                                                              inner join mapwormholechains c on c.authgroupid = s.authgroupid
-                                                           where  c.id = ?"
-                                                , [$map->id]))
+                    if ($result = \MySQL::getDB()->getRow("select max(updatedate) as lastdate
+                                                           from   map_signature
+                                                           where  authgroupid = ?
+                                                           and    solarsystemid = ?"
+                                                , [$map->authgroupID, $solarSystem->id]))
                     {
                         \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
                         \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
