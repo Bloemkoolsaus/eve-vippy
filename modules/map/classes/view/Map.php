@@ -247,23 +247,31 @@ class Map
 
     function getRemove(\map\model\Map $map, $arguments=[])
     {
-        if ($map->isAllowedAction("delete"))
-        {
-            $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
 
-            $removeConnected = false;
-            if (count($arguments) > 0) {
-                if ($arguments[0] == "connected")
-                    $removeConnected = true;
+        if (\Tools::POST("confirmed")) {
+            if ($map->isAllowedAction("delete")) {
+                if ($wormhole) {
+                    if (\Tools::POST("connected"))
+                        $map->removeConnectedWormholes($wormhole->id);
+                    else
+                        $wormhole->delete();
+                }
             }
-            if ($wormhole) {
-                if ($removeConnected)
-                    $map->removeConnectedWormholes($wormhole->id);
-                else
-                    $wormhole->delete();
+            \AppRoot::redirect("map/".$map->getURL());
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("wormhole", $wormhole);
+
+        if (count($arguments) > 0) {
+            foreach ($arguments as $arg) {
+                if ($arg == "connected")
+                    $tpl->assign("removeConnected", 1);
             }
         }
-        return "done";
+        return $tpl->fetch("map/map/delete");
     }
 
     function getPermanent(\map\model\Map $map, $arguments=[])

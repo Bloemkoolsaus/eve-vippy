@@ -7,20 +7,12 @@
 		<div id="divSystemTitle">
 			<h1>
 				<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
-				{$system->name}
-			{if $wormhole->name|strlen > 0}
-				-
-				{$wormhole->name}
-			{/if}
+				{$system->name} {if $wormhole->name|strlen > 0} - {$wormhole->name}{/if}
 			</h1>
 		</div>
 		<div id="divRefreshTimer">
 			<div>
-				Last update:
-				&nbsp;
-				<span id="lastupdatetime"></span>
-				&nbsp;
-				(<i>Local time</i>)
+				Last update: &nbsp; <span id="lastupdatetime"></span> &nbsp; (<i>Local time</i>)
 			</div>
 		</div>
 		<div style="clear:both;"></div>

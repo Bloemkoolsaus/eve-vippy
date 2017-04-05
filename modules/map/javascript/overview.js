@@ -152,8 +152,8 @@ function deleteWormhole(systemName, removeConnected)
     $.ajax({
         url: "/map/"+$("#mapName").val()+"/remove/"+systemName+"/"+((removeConnected)?"connected":""),
         data: { ajax: 1 },
-        complete: function() {
-            loadSignatureMap(false, false, true);
+        success: function(data) {
+            showPopup(data, 450, 200);
         }
     });
 }

@@ -1,5 +1,6 @@
 <b><u>MAP</u></b>
  - Fixed a bug where sometimes a system would not be marked as fully scanned, even though all sigs are known.
+ - Added confirmation dialogs for deleting a system from the map. FINALLY!
 
 
 

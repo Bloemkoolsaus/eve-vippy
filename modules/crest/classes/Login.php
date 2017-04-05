@@ -109,7 +109,6 @@ class Login extends \api\Client
                             // Check voor een login sessie. Login als er nog geen sessie is.
                             if (!\User::getUSER()) {
                                 $rememberLogin = (\Tools::COOKIE("remember-after-sso")) ? true : false;
-                                $character = new \eve\model\Character($result->CharacterID);
                                 if ($character->getUser())
                                     $character->getUser()->setLoginStatus(true, $rememberLogin);
                             }

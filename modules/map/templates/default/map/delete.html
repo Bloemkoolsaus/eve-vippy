@@ -1,0 +1,27 @@
+<div style="padding: 1em;">
+	<form method="post" action="/map/{$map->getURL()}/remove/{$wormhole->id}/">
+	{if $removeConnected}
+		<input type="hidden" name="connected" value="1">
+	{/if}
+		<input type="hidden" name="confirmed" value="1">
+		<h2>
+			<img src="/images/default/ui/map.png" align="left">
+			Delete {if $removeConnected}Connected{/if} System
+		</h2>
+		<div style="padding: 1em; text-align: left;">
+			Are you sure you want to remove <strong>{$wormhole->getSolarsystem()->name}</strong> ({$wormhole->name})
+			{if $removeConnected}and it's connecting systems{/if}?
+		</div>
+		<div style="margin-top: 1em; text-align: right;">
+			<button type="submit">
+				<img src="/images/default/apply.png" align="left">
+				YES
+			</button>
+			&nbsp;
+			<button type="button" onclick="destroyPopup();">
+				<img src="/images/default/cross.png" align="left">
+				NO
+			</button>
+		</div>
+	</form>
+</div>
