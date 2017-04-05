@@ -110,6 +110,8 @@ class Signature
 
         $openSignatures = array();
         foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "authgroupid" => $map->authgroupID]) as $signature) {
+            if ($signature->deleted)
+                continue;
             if (!$signature->getSignatureType())
                 $openSignatures[] = $signature;
         }

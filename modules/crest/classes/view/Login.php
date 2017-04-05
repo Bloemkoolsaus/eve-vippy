@@ -6,6 +6,9 @@ class Login
     function getOverview($arguments=[])
     {
         if (\Tools::POST("login") == "sso") {
+            if (\Tools::POST("remember")) {
+                \Tools::setCOOKIE("remember-after-sso", 1);
+            }
             $crest = new \crest\Login();
             $crest->loginSSO("/");
         }
