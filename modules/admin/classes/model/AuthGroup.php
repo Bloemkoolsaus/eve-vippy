@@ -731,7 +731,7 @@ namespace admin\model
             if ($results = \MySQL::getDB()->getRows("SELECT	g.*
 													FROM    user_auth_groups g
 													    INNER JOIN user_auth_groups_alliances a ON a.authgroupid = g.id
-													WHERE   a.id = ?
+													WHERE   a.allianceid = ?
 												    GROUP BY g.id"
                                     , array($allianceID)))
             {

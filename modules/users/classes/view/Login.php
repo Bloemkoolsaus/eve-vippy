@@ -19,7 +19,7 @@ class Login
         if (count($arguments) > 0) {
             $action = array_shift($arguments);
             if ($action == "no-account") {
-                $noAccount = array_shift($arguments);
+                $noAccount = new \eve\model\Character(array_shift($arguments));
             }
         }
 

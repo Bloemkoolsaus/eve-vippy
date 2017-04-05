@@ -31,6 +31,9 @@ div.standout {
 div.standout ul {
     margin: 0;
 }
+div.standout strong {
+    color: #eeeeee;
+}
 
 div.message {
     background: #DDDDDD linear-gradient(#FFFFFF, #CCCCCC);

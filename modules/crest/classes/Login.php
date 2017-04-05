@@ -77,59 +77,64 @@ class Login extends \api\Client
                         $result = $this->getResult();
                         if (isset($result->CharacterID))
                         {
-                            \AppRoot::doCliOutput(" * [".$result->CharacterID."] ".$result->CharacterName." verified");
+                            \AppRoot::doCliOutput(" * [" . $result->CharacterID . "] " . $result->CharacterName . " verified");
+
+                            // Character importeren
+                            $character = new \crest\model\Character($result->CharacterID);
+                            $character->id = $result->CharacterID;
+                            $character->name = $result->CharacterName;
+                            $character->store();
+
+                            $token = $character->getToken();
+                            if (!$token)
+                                $token = new \crest\model\Token();
+
+                            // Token opslaan
+                            $token->tokenid = $character->id;
+                            $token->tokentype = strtolower($result->TokenType);
+                            $token->ownerHash = $result->CharacterOwnerHash;
+                            $token->state = $state;
+                            $token->accessToken = $accessToken;
+                            $token->refreshToken = $refreshToken;
+                            $token->scopes = json_encode(explode(" ", $result->Scopes));
+                            $expireDate = new \DateTime($result->ExpiresOn);
+                            $token->expires = $expireDate->format("Y-m-d H:i:s");
+                            $token->store();
+
+                            // Detect owner change
+                            if ($token->ownerHash != null && $token->ownerHash != $result->CharacterOwnerHash)
+                                \AppRoot::doCliOutput('The known ownerhash is different then the verifydata hash. Character has a different owner!');
+
 
                             // Check voor een login sessie. Login als er nog geen sessie is.
                             if (!\User::getUSER()) {
+                                $rememberLogin = (\Tools::COOKIE("remember-after-sso")) ? true : false;
                                 $character = new \eve\model\Character($result->CharacterID);
                                 if ($character->getUser())
-                                    $character->getUser()->setLoginStatus(true);
+                                    $character->getUser()->setLoginStatus(true, $rememberLogin);
                             }
 
                             if (\User::getUSER())
                             {
-                                // Character toevoegen aan user
-                                $character = new \crest\model\Character($result->CharacterID);
-                                $token = $character->getToken();
-                                if (!$token)
-                                    $token = new \crest\model\Token();
-
-                                // Detect owner change
-                                if ($token->ownerHash != null && $token->ownerHash != $result->CharacterOwnerHash) {
-                                    \AppRoot::doCliOutput('The known ownerhash is different then the verifydata hash. Character has a different owner!');
-                                }
-
                                 // Check user
                                 if ($character->getUser()) {
-                                    \AppRoot::doCliOutput("Character user: ".$character->getUser()->displayname);
-                                    \AppRoot::doCliOutput("Selected user: ".\User::getUSER()->displayname);
+                                    \AppRoot::doCliOutput("Character user: " . $character->getUser()->displayname);
+                                    \AppRoot::doCliOutput("Selected user: " . \User::getUSER()->displayname);
                                     if ($character->getUser()->id != \User::getUSER()->id)
                                         \AppRoot::doCliOutput("USER MISMATCH!");
                                 }
 
-                                $character->id = $result->CharacterID;
-                                $character->name = $result->CharacterName;
                                 $character->userID = \User::getUSER()->id;
                                 $character->store();
                                 $character->importData();
 
-                                $token->tokenid = $character->id;
-                                $token->tokentype = strtolower($result->TokenType);
-                                $token->ownerHash = $result->CharacterOwnerHash;
-                                $token->state = $state;
-                                $token->accessToken = $accessToken;
-                                $token->refreshToken = $refreshToken;
-                                $token->scopes = json_encode(explode(" ",$result->Scopes));
-                                $expireDate = new \DateTime($result->ExpiresOn);
-                                $token->expires = $expireDate->format("Y-m-d H:i:s");
-                                $token->store();
-
+                                \Tools::unsetCOOKIE("remember-after-sso");
                                 \AppRoot::redirect($stateData->url);
                             }
                             else
                             {
                                 \AppRoot::doCliOutput("No user found");
-                                \AppRoot::redirect("users/login/no-account/".$result->CharacterName);
+                                \AppRoot::redirect("users/login/no-account/" . $character->id);
                             }
                         }
                     }

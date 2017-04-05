@@ -11,6 +11,28 @@
 				<img src="/images/default/login.png" align="left">
 				Login
 			</h1>
+		{if $noAccount}
+			<div class="standout" style="margin: 0; margin-bottom: 2em;">
+				<div style="text-align: left;">
+					<div style="font-size: 1.1em; color: #ffcc00;">
+						<b>No VIPPY account found for `{$noAccount->name}`</b>
+					</div>
+					<div>
+						If you already have an account, please login using a character on that account and add {$noAccount->name} via `Profile`
+					</div>
+				</div>
+				<div style="text-align: right; margin-top: 1em;">
+					<form method="post" action="/users/register">
+						No account yet?
+						<input type="hidden" name="character" value="{$noAccount->id}">
+						<button class="small" style="width: 175px; margin-left: 1em;">
+							<img src="/images/default/register.png" align="left">
+							<b>Create new account</b>
+						</button>
+					</form>
+				</div>
+			</div>
+		{/if}
 			<div>
 				<div style="margin-bottom: 1em;">
 					<h3>Login using CREST</h3>
@@ -18,9 +40,9 @@
 				</div>
 				<div style="text-align: right;">
 					<form method="post" action="/crest/login">
-						<div>
-							<input type="checkbox" id="remember" name="remember" style="width: 20px;" />
-							Remember me
+						<div style="margin-bottom: .5em;">
+							<input type="checkbox" id="remember" name="remember" checked />
+							<label for="remember">Remember me</label>
 						</div>
 						<input type="hidden" name="login" value="sso"/>
 						<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
