@@ -85,11 +85,11 @@ function loadSignatureMap(action, params, force)
         url: "/map/"+$("#mapName").val()+"/"+action+"/"+$("#mapSystem").val(),
         data: params,
         success: function(data) {
-            var data = $.parseJSON(data);
+            data = $.parseJSON(data);
 
             // Notifications
             $("#notificationContainter>.notification").remove();
-            if (data.notifications != undefined && data.notifications.length > 0) {
+            if (data.notifications !== undefined && data.notifications.length > 0) {
                 for (var n=0; n<data.notifications.length; n++) {
                     var notification = {
                         id: data.notifications[n].id,
@@ -100,6 +100,12 @@ function loadSignatureMap(action, params, force)
                     $("#notificationContainter").append(Mustache.to_html($('#notificationTPL').html(), notification));
                 }
             }
+            $("#notificationContainter>.notification").each(function() {
+                var notificationID = $(this).attr("data-notification");
+                if (isNaN(notificationID)) {
+                    $("div.notification[data-notification="+notificationID+"]>img").remove();
+                }
+            });
 
             if (force)
                 allowMapLoadingFinish = true;

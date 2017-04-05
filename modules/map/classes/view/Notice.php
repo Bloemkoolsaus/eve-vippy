@@ -37,4 +37,21 @@ class Notice
         $tpl->assign("types", $types);
         return $tpl->fetch("map/system/notice/add");
     }
+
+    function getRemove($arguments=[])
+    {
+        $notice = new \notices\model\Notice(array_shift($arguments));
+        $map = new \map\model\Map(array_shift($arguments));
+
+        if (\Tools::POST("confirmed"))
+        {
+            $notice->delete();
+            \AppRoot::redirect("map/".$map->getURL());
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("notice", $notice);
+        $tpl->assign("map", $map);
+        return $tpl->fetch("map/system/notice/remove");
+    }
 }

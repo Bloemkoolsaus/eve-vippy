@@ -8,35 +8,14 @@ class System
         $wormhole = new \map\model\Wormhole(array_shift($arguments));
         $system = $wormhole->getSolarsystem();
 
-        $cacheFile = "documents/statistics/systeminfo/".$system->id.".html";
-        if (!file_exists($cacheFile) || \AppRoot::doDebug())
-        {
-            $tpl = \SmartyTools::getSmarty();
-            $tpl->assign("system", $system);
-            $tpl->assign("wormhole", $wormhole);
-
-            if ($system->isWSpace())
-                $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
-
-            $cache = $tpl->fetch("map/system/solarsystem");
-
-            // Goede map aanmaken
-            if (!file_exists("documents"))
-                mkdir("documents",0777);
-            if (!file_exists("documents/statistics"))
-                mkdir("documents/statistics",0777);
-            if (!file_exists("documents/statistics/systeminfo"))
-                mkdir("documents/statistics/systeminfo",0777);
-
-            $file = fopen($cacheFile,"w");
-            fwrite($file,$cache);
-            fclose($file);
-        }
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
-        $tpl->assign("wormhole",  \scanning\model\Wormhole::getWormholeBySystemID($system->id, $wormhole->chainID));
-        return $tpl->fetch($cacheFile);
+        $tpl->assign("wormhole", $wormhole);
+
+        if ($system->isWSpace())
+            $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
+
+        return $tpl->fetch("map/system/solarsystem");
     }
 
     function getActivity($arguments=[])
@@ -79,7 +58,7 @@ class System
 
     /**
      * Get wormhole effects data
-     * @param \map\model\System $system
+     * @param \map\model\SolarSystem $system
      * @return string
      */
     private function getWhEffectsData($system)

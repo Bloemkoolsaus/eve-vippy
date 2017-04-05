@@ -40,3 +40,14 @@ function createSystemNotice(systemID)
 		}
 	});
 }
+
+function removeSystemNotice(noticeID)
+{
+	$.ajax({
+		url: "/map/notice/remove/"+noticeID+"/"+$("#mapID").val(),
+        data: { ajax: 1 },
+		success: function(data) {
+			showPopup(data, 450, 200);
+		}
+	});
+}

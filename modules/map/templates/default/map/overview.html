@@ -410,6 +410,13 @@
 <script id="notificationTPL" type="text/template">
 {literal}
 	<div class="notification {{type}}" data-notification="{{id}}">
+	{/literal}
+    {if $wormhole->getChain()->isAllowedAction('notice')}
+	{literal}
+		<img src="/images/default/ui/cross.png" align="right" onclick="removeSystemNotice('{{id}}')" style="cursor: pointer;">
+	{/literal}
+	{/if}
+	{literal}
 		<div class="title">{{title}}</div>
 		<div class="body">{{content}}</div>
 	</div>

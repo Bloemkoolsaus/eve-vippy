@@ -1,26 +1,23 @@
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
 
-{literal}
 {foreach from=$system->getNotifications($wormhole->getChain()) item=notice}
 	<div style="padding: 0; padding-right: 2em;">
-		<div class="{$notice->getTypeName()}" style="margin: 0;">
+		<div class="{$notice->getTypeName()}" style="margin: 0; text-align: left;">
+			<div><strong>{$notice->title}</strong></div>
 			<div>{$notice->body}</div>
 		</div>
 	</div>
 {/foreach}
-{/literal}
 
 	<div style="float: left; width: 160px; padding: 5px;">
 		<h3 style="margin-bottom: 10px;">
 			<span style="color: {$system->getClassColor()};">{$system->getClass(1)}</span>
 			{$system->name}
-{literal}
 			{if $wormhole->name|strlen > 0}
 				- {$wormhole->name}
 			{/if}
-{/literal}
 		</h3>
-{literal}
+
 		{if $system->getNotes()}
 			{assign var=notes value=$system->getNotes()}
 			{if $notes.notes|strlen > 0}
@@ -34,7 +31,7 @@
 			</div>
 			{/if}
 		{/if}
-{/literal}
+
 		<div>
 			{if $system->isWSpace()}
 				<div class="form">
@@ -99,7 +96,7 @@
 				{/if}
 				<div class="form">&nbsp;</div>
 			{/if}
-{literal}
+
 		{if $wormhole}
 				<div class="form">
 			{if $wormhole->fullScanDate != null && $wormhole->fullScanDate|strtotime > 0}
@@ -118,7 +115,6 @@
 			{/if}
 				</div>
 		{/if}
-{/literal}
 			<div style="clear:both;"></div>
 		</div>
 	</div>
@@ -144,8 +140,7 @@
 	<div style="clear:both;"></div>
 	<br />
 
-{literal}
-	{if !$system->isWSpace() && $system->getCapitalRange()|@count > 0}
+{if !$system->isWSpace() && $system->getCapitalRange()|@count > 0}
 		<div class="systemPopupTitle">
 			My Capitals
 		</div>
@@ -168,12 +163,10 @@
 {/foreach}
 		<div style="clear:both;"></div>
 		<br />
-	{/if}
-{/literal}
+{/if}
 
-{literal}
-	{if $system && $wormhole}
-		{if $system->getActivePilots($wormhole->chainID)|@count > 0}
+{if $system && $wormhole}
+	{if $system->getActivePilots($wormhole->chainID)|@count > 0}
 		<div class="systemPopupTitle">
 			<div style="float: left; width: 200px; overflow: hidden;">
 				<u>Active Pilots</u>
@@ -197,11 +190,10 @@
 
 		<div style="clear:both;"></div>
 		<br />
-		{/if}
 	{/if}
-{/literal}
+{/if}
 
-	{if !$system->isWSpace()}
+{if !$system->isWSpace()}
 		<div id="whActivityTitle" class="systemPopupTitle">
 			Activity Report
 		</div>
@@ -212,5 +204,5 @@
 			<div id="whActivityDate"></div>
 		</div>
 		<div style="clear:both;"></div>
-	{/if}
+{/if}
 </div>

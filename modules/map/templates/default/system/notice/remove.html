@@ -1,0 +1,23 @@
+<div style="padding: 1em;">
+	<form method="post" action="/map/notice/remove/{$notice->id}/{$map->id}">
+		<input type="hidden" name="confirmed" value="1">
+		<h2>
+			<img src="/images/default/notifications/{$notice->getTypeName()}.png" align="left">
+			Delete Notification
+		</h2>
+		<div style="padding: 1em; text-align: left;">
+			Are you sure you want to delete this notification?
+		</div>
+		<div style="margin-top: 1em; text-align: right;">
+			<button type="submit">
+				<img src="/images/default/apply.png" align="left">
+				YES
+			</button>
+			&nbsp;
+			<button type="button" onclick="destroyPopup();">
+				<img src="/images/default/cross.png" align="left">
+				NO
+			</button>
+		</div>
+	</form>
+</div>
