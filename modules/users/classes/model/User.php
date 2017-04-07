@@ -1584,7 +1584,19 @@ class User
         }
 
         if ($this->notifications === null)
+        {
             $this->notifications = \users\model\Notification::getNotificationsByUser($this->id);
+
+            if ($this->getIsSysAdmin()) {
+                $pendingPayments = \admin\model\SubscriptionTransaction::findAll(["approved" => 0, "deleted" => 0]);
+                if (count($pendingPayments) > 0) {
+                    $note = new \users\model\Notification();
+                    $note->type = "notice";
+                    $note->content = "There are <b>".count($pendingPayments)."</b> pending payments: <a href='/admin/payments'>overview</a>";
+                    $this->notifications[] = $note;
+                }
+            }
+        }
 
         return $this->notifications;
     }

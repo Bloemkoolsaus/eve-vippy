@@ -12,23 +12,26 @@
 	{foreach from=$payments key=i item=payment}
 		<tr class="{if $i%2==0}even{else}odd{/if}">
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
-				{if $payment->getFromCharacter()}
-					<img src="http://image.eveonline.com/Corporation/{$payment->getFromCharacter()->corporationID}_32.png" style="height: 18px;" align="left">
-					{$payment->getFromCharacter()->name}
-				{/if}
+		{if $payment->getFromCharacter()}
+				<img src="http://image.eveonline.com/Corporation/{$payment->getFromCharacter()->corporationID}_32.png" style="height: 18px; margin-right: .5em;" align="left">
+				{$payment->getFromCharacter()->name}
+			{if $payment->getFromCharacter()->getCorporation()}
+				&nbsp; - &nbsp; <i>{$payment->getFromCharacter()->getCorporation()->name}</i>
+			{/if}
+		{/if}
 			</td>
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
-				{if $payment->getAuthgroup()}
-					{$payment->getAuthgroup()->name}
-				{else}
-					<i>unknown</i>
-				{/if}
+			{if $payment->getAuthgroup()}
+				{$payment->getAuthgroup()->name}
+			{else}
+				<i>unknown</i>
+			{/if}
 			</td>
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'" style="text-align: right;">
 				{$payment->amount|valuta} &nbsp;
 			</td>
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
-				{$payment->description}
+				{if $payment->description}{$payment->description}{else}<i>No description</i>{/if}
 			</td>
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
 				{$payment->date|date_full} - {$payment->date|date_time}
