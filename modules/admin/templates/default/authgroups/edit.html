@@ -41,12 +41,6 @@
 		</div>
 		<div class="form">
 			<label class="field">&nbsp;</label>
-			<input type="checkbox" id="dir_admin_disabled" name="config[dir_admin_disabled]" {if $authgroup->getConfig('dir_admin_disabled')}checked{/if} value="1">
-			<label for="dir_admin_disabled" style="float: none;">Disable default admin roles for Directors</label>
-			<img src="/images/eve/info.png" onclick="helpPopupAdmin();" style="cursor: pointer;">
-		</div>
-		<div class="form">
-			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="access_control" name="config[access_control]" {if $authgroup->getConfig('access_control') == "manual"}checked{/if} value="manual">
 			<label for="access_control" style="float: none;">Members require authorization by an admin.</label>
 			<img src="/images/eve/info.png" onclick="helpPopupAuthorization();" style="cursor: pointer;">
@@ -221,59 +215,19 @@
 		<ul>
 			<li><a href="#" onclick="showTabs('subscriptions'); return false;">Subscription</a></li>
 			<li><a href="#" onclick="showTabs('users'); return false;">{$authgroup->getAllowedUsers()|@count} Users</a></li>
+			<li><a href="#" onclick="showTabs('usergroups'); return false;">Usergroups</a></li>
 		</ul>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>
 </div>
 
-<div id="detailtab-subscriptions" class="content" rel="detailtab">
-	<h2>
-		Subscription
-	{if $App->user->getIsSysAdmin()}
-		<div style="text-align: right; float: right; margin-top: -.5em;">
-			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
-				New Subscription
-			</button>
-		</div>
-	{/if}
-	</h2>
-
-	<div style="float: left; width: 35%;">
-		<div style="padding: 10px;">{include "admin/authgroups/balance"}</div>
-	</div>
-	<div style="float: right; width: 60%;">
-		<div style="padding: 10px;">{include "admin/authgroups/subscriptions"}</div>
-		<div style="padding: 10px;">{include "admin/authgroups/payments"}</div>
-	</div>
-	<div style="clear:both;"></div>
-</div>
-
-<div id="detailtab-users" class="content" rel="detailtab" style="display: none;">
-	<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
-	<div>
-	{foreach from=$authgroup->getAllowedUsers() item=user}
-		<div style="float: left; width: 200px; padding: 2px;">
-			<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
-			<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
-			<div style="clear:both;"></div>
-		</div>
-	{/foreach}
-	</div>
-	<div style="clear:both;"></div>
-</div>
-
-
+<div id="detailtab-subscriptions" class="content" rel="detailtab">{include "admin/authgroups/subscription"}</div>
+<div id="detailtab-users" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/users"}</div>
+<div id="detailtab-usergroups" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/usergroups"}</div>
 
 
 <script type="text/javascript">
-function helpPopupAdmin()
-{
-	html = "<h3>Disable dfeault admin roles for Directors</h3>" +
-			"<p>By default, CEO and Directors are the VIPPY administrators (pulled via the API).</p>" +
-			"<p>Check this option to not make CEO / Directors admins by default, and be able to assign admin to other users</p>";
-	showHelp(html);
-}
 function helpPopupAuthorization()
 {
 	html = "<h3>Members require authorization by an admin</h3>" +

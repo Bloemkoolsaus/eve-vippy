@@ -1,4 +1,22 @@
 <div class="content">
 	<h1>User Groups</h1>
-	{$section->getOverviewTable()}
+	<div style="text-align: right; margin-top: -1em; margin-bottom: .5em;">
+		<button type="button" onclick="document.location='/users/groups/new'">
+			New Usergroup
+		</button>
+	</div>
+	<table class="sectionoverview">
+		<tr>
+			<th>Group</th>
+			<th style="width: 50px;"></th>
+		</tr>
+	{foreach from=$groups key=i item=group}
+		<tr class="{if $i%2==0}even{else}odd{/if}" onclick="document.location='/users/groups/edit/{$group->id}'">
+			<td>{$group->name}</td>
+			<td style="text-align: center;">
+				<a href=""><img src="/images/default/ui/edit.png"></a>
+			</td>
+		</tr>
+	{/foreach}
+	</table>
 </div>

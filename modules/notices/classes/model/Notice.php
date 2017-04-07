@@ -56,6 +56,16 @@ class Notice extends \Model
             return "";
     }
 
+    function isExpired()
+    {
+        if ($this->expireDate) {
+            if (strtotime($this->expireDate) < strtotime("now"))
+                return true;
+        }
+
+        return false;
+    }
+
     function markRead($userID=false)
     {
         if (!$userID)

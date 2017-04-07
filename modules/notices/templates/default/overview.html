@@ -9,14 +9,15 @@
 	<div>
 		<table class="sectionoverview">
 			<tr>
-				<th>SolarSystem</th>
-				<th>Type</th>
+				<th style="width: 100px;">SolarSystem</th>
+				<th style="width: 100px;">Type</th>
 				<th>Details</th>
-				<th>Expires</th>
-				<th>Added By</th>
+				<th style="width: 120px;">Expires</th>
+				<th style="width: 120px;">Added By</th>
 				<th style="width: 50px;"></th>
 			</tr>
-		{foreach from=$notices key=n item=notice}
+	{foreach from=$notices key=n item=notice}
+		{if !$notice->isExpired()}
 			<tr class="{if $n%2==0}even{else}odd{/if}">
 				<td onclick="document.location='/notices/notes/edit/{$notice->id}'">
 					{$notice->getSystem()->getFullname()}
@@ -45,7 +46,7 @@
 				</td>
 				<td onclick="document.location='/notices/notes/edit/{$notice->id}'">
 				{if $notice->getUser()}
-					{$notice->getUser()->getFullname()}
+					<div style="max-width: 120px; overflow: hidden; white-space: nowrap">{$notice->getUser()->getFullname()}</div>
 				{/if}
 				</td>
 				<td style="text-align: center;">
@@ -53,7 +54,8 @@
 					<img src="/images/default/cross.png" onclick="if (confirm('Remove notification?')) { document.location='/notices/notes/delete/{$notice->id}' }">
 				</td>
 			</tr>
-		{/foreach}
+		{/if}
+	{/foreach}
 		</table>
 	</div>
 </div>

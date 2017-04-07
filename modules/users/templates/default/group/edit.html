@@ -15,38 +15,38 @@
             <input type="hidden" name="save" value="true" />
             <input type="hidden" name="id" value="{$usergroup->id}"/>
             <div class="form">
-                <label class="field">Access group:</label>
-                <label class="value">
-                    {if $App->user->getIsSysAdmin()}
-                        <select name="authgroupid">
-                            <option value="0">- none -</option>
-                        {foreach from=$accessgroups item=accessgroup}
-                            <option value="{$accessgroup->id}" {if $accessgroup->id == $usergroup->authGroupID}selected{/if}>
-                                {$accessgroup->name}
-                            </option>
-                        {/foreach}
-                        </select>
-                    {else}
-                        {if $usergroup->getAuthgroup() != null}
-                            {$usergroup->getAuthgroup()->name}
-                        {/if}
-                    {/if}
-                </label>
+                <div class="field">Access Control Group:</div>
+                <div class="value">
+				{if $App->user->getIsSysAdmin()}
+					<select name="authgroupid">
+						<option value="0">- none -</option>
+					{foreach from=$accessgroups item=accessgroup}
+						<option value="{$accessgroup->id}" {if $accessgroup->id == $usergroup->authGroupID}selected{/if}>
+							{$accessgroup->name}
+						</option>
+					{/foreach}
+					</select>
+				{else}
+					{if $usergroup->getAuthgroup() != null}
+						{$usergroup->getAuthgroup()->name}
+					{/if}
+				{/if}
+                </div>
             </div>
             <div class="form">
-                <label class="field">Name:</label>
-                <label class="value"><input type="text" name="name" value="{$usergroup->name}" /></label>
+                <div class="field">Name:</div>
+                <div class="value"><input type="text" name="name" value="{$usergroup->name}" /></div>
             </div>
             <div style="clear:both;"></div>
             <br />
             <div class="form">
-                <label class="field">&nbsp;</label>
+                <div class="field">&nbsp;</div>
                 <h3>Group Roles</h3>
             </div>
             <div class="form">
-                <label class="field">&nbsp;</label>
+                <div class="field">&nbsp;</div>
                 <input type="checkbox" name="roles[admin]" id="roles-admin" {if $usergroup->hasRight('admin','admin')}checked{/if}>
-                <label for="roles-admin" style="float: none;">VIPPY Admin</label>
+                <div for="roles-admin" style="float: none;">VIPPY Admin</div>
             </div>
             <div class="form" style="text-align: right;">
                 <div class="buttons">
@@ -57,14 +57,14 @@
         <div style="clear:both;"></div>
     </div>
     <div class="col5 right last">
-        <h2>Members</h2>
+        <h3>Members</h3>
     {if $usergroup->getUsers()|@count > 0}
         <ul>
         {foreach from=$usergroup->getUsers() item=user}
             <li style="margin-bottom: 5px;">
                 <a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
                 &nbsp;
-                <a href="/users/groups/edit?id={$usergroup->id}&deleteuser={$user->id}">
+                <a href="/users/groups/edit/{$usergroup->id}?deleteuser={$user->id}">
                     <img src="/images/default/cross.small.png" style="top: 3px;">
                 </a>
             </li>

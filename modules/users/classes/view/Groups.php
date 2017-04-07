@@ -8,14 +8,16 @@ class Groups
         if (!\User::getUSER()->isAdmin())
             \AppRoot::redirect("");
 
-        $section = $this->getOverviewSection();
-        $section->urlOverview = "/users/groups?";
-        $section->urlEdit = "/users/groups/edit?";
-        $section->urlNew = "/users/groups/edit?id=new";
+        $groups = \users\model\UserGroup::findAll(["authgroupid" => \User::getUSER()->getCurrentAuthGroupID()]);
 
         $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("section", $section);
+        $tpl->assign("groups", $groups);
         return $tpl->fetch("users/group/overview");
+    }
+
+    function getNew($arguments=[])
+    {
+        return $this->getEdit($arguments);
     }
 
     function getEdit($arguments=[])
@@ -23,8 +25,8 @@ class Groups
         if (!\User::getUSER()->isAdmin())
             \AppRoot::redirect("");
 
-        $usergroup = new \users\model\UserGroup(\Tools::REQUEST("id"));
-        $permissions = array();
+        $usergroup = new \users\model\UserGroup(array_shift($arguments));
+        $permissions = [];
         foreach (\Modules::getModules() as $module) {
             if ($module == "admin")
                 continue;
@@ -39,8 +41,7 @@ class Groups
 
             if (\Tools::POST("authgroupid"))
                 $usergroup->authGroupID = \Tools::POST("authgroupid");
-            else
-            {
+            else {
                 $usergroup->authGroupID = null;
                 $authgroups = \User::getUSER()->getAuthGroupsIDs();
                 if (!\User::getUSER()->getIsSysAdmin())
@@ -48,8 +49,7 @@ class Groups
             }
 
             $usergroup->clearRights();
-            if (\Tools::POST("roles"))
-            {
+            if (\Tools::POST("roles")) {
                 foreach ($_POST["roles"] as $role => $value) {
                     if ($role == "admin")
                         $usergroup->addRight("admin", "admin", "Vippy Admin");
@@ -65,7 +65,7 @@ class Groups
             $user = new \users\model\User(\Tools::REQUEST("deleteuser"));
             $user->removeUserGroup($usergroup->id);
             $user->store();
-            \AppRoot::redirect("/users/groups/edit?id=".$usergroup->id);
+            \AppRoot::redirect("/users/groups/edit/".$usergroup->id);
         }
 
         if (\Tools::POST("adduser"))
@@ -73,14 +73,12 @@ class Groups
             $user = new \users\model\User(\Tools::POST("adduser"));
             $user->addUserGroup($usergroup->id);
             $user->store();
-            \AppRoot::redirect("/users/groups/edit?id=".$usergroup->id);
+            \AppRoot::redirect("/users/groups/edit/".$usergroup->id);
         }
 
-        if ($usergroup->getAuthgroup() == null)
-        {
+        if (!$usergroup->getAuthgroup()) {
             $authgroups = \User::getUSER()->getAuthGroups();
             $usergroup->authGroupID = current($authgroups)->id;
-
         }
 
         $tpl = \SmartyTools::getSmarty();

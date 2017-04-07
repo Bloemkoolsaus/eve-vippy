@@ -1,0 +1,11 @@
+<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
+<div>
+{foreach from=$authgroup->getAllowedUsers() item=user}
+	<div style="float: left; width: 200px; padding: 2px;">
+		<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+		<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
+		<div style="clear:both;"></div>
+	</div>
+{/foreach}
+</div>
+<div style="clear:both;"></div>

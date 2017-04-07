@@ -1,0 +1,19 @@
+<h2>
+	Subscription
+{if $App->user->getIsSysAdmin()}
+	<div style="text-align: right; float: right; margin-top: -.5em;">
+		<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
+			New Subscription
+		</button>
+	</div>
+{/if}
+</h2>
+
+<div style="float: left; width: 35%;">
+	<div style="padding: 10px;">{include "admin/authgroups/subscription/balance"}</div>
+</div>
+<div style="float: right; width: 60%;">
+	<div style="padding: 10px;">{include "admin/authgroups/subscription/subscriptions"}</div>
+	<div style="padding: 10px;">{include "admin/authgroups/subscription/payments"}</div>
+</div>
+<div style="clear:both;"></div>

@@ -1,0 +1,25 @@
+<h2>
+	Usergroups
+	<div style="text-align: right; float: right; margin-top: -.5em;">
+		<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="window.open('/users/groups/new');">
+			New Usergroup
+		</button>
+	</div>
+</h2>
+<div>
+	<table class="sectionoverview">
+		<tr>
+			<th>Group</th>
+			<th style="width: 50px;"></th>
+		</tr>
+	{foreach from=$authgroup->getUsergroups() key=i item=group}
+		<tr class="{if $i%2==0}even{else}odd{/if}" onclick="window.open('/users/groups/edit/{$group->id}')">
+			<td>{$group->name}</td>
+			<td style="text-align: center;">
+				<a href="/users/groups/edit/{$group->id}" target="_blank"><img src="/images/default/ui/edit.png"></a>
+			</td>
+		</tr>
+	{/foreach}
+	</table>
+</div>
+<div style="clear:both;"></div>
