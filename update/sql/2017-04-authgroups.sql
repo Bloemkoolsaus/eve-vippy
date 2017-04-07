@@ -1,0 +1,1 @@
+alter table user_auth_groups drop column mainchain;

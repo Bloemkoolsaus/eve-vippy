@@ -34,9 +34,7 @@ if (\User::getUSER())
     if (\User::getUSER()->getIsSysAdmin()) {
         $config["submenu"][] = ["type" => "seperator"];
         $config["submenu"][] = ["type" => "link", "name" => "Authorization Groups", "url" => "admin/authgroup/"];
-        $config["submenu"][] = ["type" => "link", "name" => "Subscriptions",        "section" => "subscriptions"];
         $config["submenu"][] = ["type" => "link", "name" => "Pending Payments",     "url" => "admin/payments/"];
-        $config["submenu"][] = ["type" => "link", "name" => "Clear Cache",          "section" => "clearcache"];
     }
 
     /*

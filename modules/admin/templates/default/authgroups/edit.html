@@ -30,19 +30,6 @@
 			{/if}
 			</label>
 		</div>
-	{if $authgroup->id > 0}
-		<div class="form">
-			<label class="field">Main chain:</label>
-			<label class="value">
-				<select name="mainchain">
-					<option value="null">-- none --</option>
-				{foreach from=$authgroup->getChains() item=chain}
-					<option value="{$chain->id}" {if $chain->id == $authgroup->mainChainID}selected{/if}>{$chain->name}</option>
-				{/foreach}
-				</select>
-			</label>
-		</div>
-	{/if}
 		<div class="form">
 			<label class="field">Rank leaderboard by:</label>
 			<label class="value">
@@ -144,21 +131,6 @@
 				</div>
 			</div>
 			<div style="clear:both;"></div>
-			<br />
-	{if $App->user->getIsSysAdmin()}
-			<div class="form">
-				<div class="field"><b><u>Allowed (non public) Modules:</u></b></div>
-				<div class="value">
-					<ul>
-					{foreach from=$authgroup->getModules() item=mod}
-						<li>{$mod|ucfirst}</li>
-					{/foreach}
-					</ul>
-				</div>
-			</div>
-			<div style="clear:both;"></div>
-			<br />
-	{/if}
 		</div>
 		<div class="col4 last right">
 			<div>
@@ -205,8 +177,10 @@
 		</div>
 	{/if}
 		<div style="clear:both;"></div>
-		<div>
-			<i>When you add an alliance, <u>all</u> corporations in that alliance will be authorized!</i>
+		<div class="standout">
+			<div>
+				When you add an alliance, <strong>all</strong> corporations in that alliance will be authorized!
+			</div>
 		</div>
 	</div>
 
@@ -245,7 +219,7 @@
 <div class="content">
 	<div class="tabs">
 		<ul>
-			<li><a href="#" onclick="showTabs('subscriptions'); return false;">Subscriptions</a></li>
+			<li><a href="#" onclick="showTabs('subscriptions'); return false;">Subscription</a></li>
 			<li><a href="#" onclick="showTabs('users'); return false;">{$authgroup->getAllowedUsers()|@count} Users</a></li>
 		</ul>
 		<div style="clear:both;"></div>
@@ -254,141 +228,23 @@
 </div>
 
 <div id="detailtab-subscriptions" class="content" rel="detailtab">
-	<h2>Subscription</h2>
+	<h2>
+		Subscription
+	{if $App->user->getIsSysAdmin()}
+		<div style="text-align: right; float: right; margin-top: -.5em;">
+			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
+				New Subscription
+			</button>
+		</div>
+	{/if}
+	</h2>
 
 	<div style="float: left; width: 35%;">
-		<div style="padding: 10px;">
-			<h3>BALANCE</h3>
-			<div style="padding: 5px;">
-		{if $monthsdue|@count > 0}
-				{assign var=totaldue value=0}
-				<table class="sectionoverview">
-					<tr>
-						<th>Month</th>
-						<th style="width: 70px;">Cost</th>
-						<th style="width: 70px;">Received</th>
-						<th style="width: 70px;">Due</th>
-					</tr>
-			{foreach from=$monthsdue key=i item=due}
-					<tr class="{if $i%2==0}even{else}odd{/if}">
-						<td><b>{$due.month}</b></td>
-						<td style="width: 100px; text-align: right;">{$due.due|valuta:1}</td>
-						<td style="text-align: right;">{$due.amount|valuta:1}</td>
-						<td style="text-align: right;">{($due.due-$due.amount)|valuta:1}</td>
-					</tr>
-				{assign var=totaldue value=$totaldue+($due.due-$due.amount)}
-			{/foreach}
-					<tr>
-						<td colspan="3" style="text-align: right;">
-						{if $totaldue < 0}
-							<b>TOTAL ADVANCE</b>
-						{else}
-							<b>TOTAL DUE</b>
-						{/if}
-							 &nbsp;
-						</td>
-						<th style="text-align: right;">
-							<h3>
-						{if $totaldue < 0}
-								<span style="color: #00ff00;"> + {($totaldue*-1)|valuta:1}</span>
-						{else}
-							{if $totaldue == 0}
-								<span style="color: #00ff00;">{$totaldue|valuta:1}</span>
-							{else}
-								{$totaldue|valuta:1}
-							{/if}
-						{/if}
-							</h3>
-						</th>
-					</tr>
-				</table>
-		{/if}
-			</div>
-		</div>
+		<div style="padding: 10px;">{include "admin/authgroups/balance"}</div>
 	</div>
 	<div style="float: right; width: 60%;">
-		<div style="padding: 10px;">
-			<h3>
-				Subscriptions
-			{if $App->user->getIsSysAdmin()}
-				<div style="text-align: right; float: right;">
-					<button type="button" class="small" style="width: 150px;" onclick="document.location='/index.php?module=admin&section=subscriptions&action=new&authgroup={$authgroup->id}'">
-						New Subscription
-					</button>
-				</div>
-			{/if}
-			</h3>
-			<table class="sectionoverview">
-				<tr>
-					<th>Description</th>
-					<th>Amount</th>
-					<th>Start</th>
-					<th>End</th>
-				</tr>
-			{foreach from=$authgroup->getSubscriptions() key=s item=subscription}
-				<tr class="{if $s%2==0}even{else}odd{/if}"
-					{if $App->user->getIsSysAdmin()}onclick="document.location='/index.php?module=admin&section=subscriptions&action=edit&id={$subscription->id}'"{/if}>
-					<td>
-						{$subscription->description}
-					{if $subscription->isActive()}
-						<img src="/images/default/accept.png" align="right">
-					{/if}
-					</td>
-					<td style="text-align: right;">
-					{if $subscription->amount <= 0}
-						Free
-					{else}
-						{$subscription->amount}m &nbsp; (<i>per month</i>)
-					{/if}
-					 	&nbsp;
-					</td>
-					<td>
-						{$subscription->fromdate|date_full}
-					</td>
-					<td>
-					{if $subscription->tilldate != null}
-						{$subscription->tilldate|date_full}
-					{else}
-						<i>No end date</i>
-					{/if}
-					</td>
-				</tr>
-			{/foreach}
-			</table>
-		</div>
-		<div style="padding: 10px;">
-			<h3>Payments</h3>
-			<table class="sectionoverview">
-				<tr>
-					<th>Date</th>
-					<th>Amount</th>
-					<th>By</th>
-					<th>Description</th>
-				</tr>
-		{if $authgroup->getPayments()|@count > 0}
-			{foreach from=$authgroup->getPayments() key=i item=transaction}
-				<tr class="{if $i%2==0}even{else}odd{/if}">
-					<td>
-						{$transaction->date|date_full}
-						-
-						{$transaction->date|date_time}
-					</td>
-					<td style="text-align: right; {if $transaction->amount > 0}color: #00ff00;{/if}">
-						{$transaction->amount|valuta} &nbsp;
-					</td>
-					<td>{$transaction->getFromCharacter()->name}</td>
-					<td>{$transaction->description}</td>
-				</tr>
-			{/foreach}
-		{else}
-				<tr class="even">
-					<td colspan="4">
-						<i>No payments detected</i>
-					</td>
-				</tr>
-		{/if}
-			</table>
-		</div>
+		<div style="padding: 10px;">{include "admin/authgroups/subscriptions"}</div>
+		<div style="padding: 10px;">{include "admin/authgroups/payments"}</div>
 	</div>
 	<div style="clear:both;"></div>
 </div>
@@ -396,13 +252,13 @@
 <div id="detailtab-users" class="content" rel="detailtab" style="display: none;">
 	<h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
 	<div>
-		{foreach from=$authgroup->getAllowedUsers() item=user}
-			<div style="float: left; width: 200px; padding: 2px;">
-				<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
-				<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
-				<div style="clear:both;"></div>
-			</div>
-		{/foreach}
+	{foreach from=$authgroup->getAllowedUsers() item=user}
+		<div style="float: left; width: 200px; padding: 2px;">
+			<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+			<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
+			<div style="clear:both;"></div>
+		</div>
+	{/foreach}
 	</div>
 	<div style="clear:both;"></div>
 </div>

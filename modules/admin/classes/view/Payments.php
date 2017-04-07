@@ -46,8 +46,7 @@ class Payments
             \AppRoot::redirect("");
 
         $payment = new \admin\model\SubscriptionTransaction(array_shift($arguments));
-        $payment->approved = true;
-        $payment->store();
+        $payment->delete();
         \AppRoot::redirect("admin/payments");
     }
 }

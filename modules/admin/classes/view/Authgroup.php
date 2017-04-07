@@ -74,8 +74,6 @@ class Authgroup
             if (\Tools::POST("name"))
                 $authgroup->name = \Tools::POST("name");
 
-            $authgroup->mainChainID = \Tools::POST("mainchain");
-
             if (\Tools::POST("corporation")) {
                 $corporation = new \eve\model\Corporation(\Tools::POST("corporation"));
                 if ($corporation->isNPC())

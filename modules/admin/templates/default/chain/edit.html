@@ -89,7 +89,7 @@
 			</div>
 			<div class="form">
 				<div class="field">&nbsp;</div>
-				<input type="checkbox" id="auto-expiry" name="settings[create-unmapped]" {if $chain->getSetting('auto-expiry')}checked{/if} value="1" />
+				<input type="checkbox" id="auto-expiry" name="settings[auto-expiry]" {if $chain->getSetting('auto-expiry')}checked{/if} value="1" />
 				<label for="auto-expiry" style="float: none;">
 					Enable auto-expiry of wormholes
 					<img src="/images/default/ui/info.png" style="margin-left: .5em;" data-tooltip="<div><b>Enable auto-expiry of wormholes</b></div><div style='margin-top: .5em;'>Automatically remove wormhole connections when they are over their lifetime and should have also despawned ingame.</div><div style='margin-top: .5em;'>Systems marked as persistant will not be automatically removed.</div>">

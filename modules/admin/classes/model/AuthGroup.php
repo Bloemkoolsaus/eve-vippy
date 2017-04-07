@@ -5,7 +5,6 @@ class AuthGroup
 {
     public $id = 0;
     public $name;
-    public $mainChainID;
     public $contactID;
     public $deleted = false;
 
@@ -42,33 +41,27 @@ class AuthGroup
             $result = json_decode($cache, true);
             $this->load($result);
 
-            if (isset($result["corporations"]))
-            {
+            if (isset($result["corporations"])) {
                 $this->corporations = array();
-                foreach ($result["corporations"] as $corpData)
-                {
+                foreach ($result["corporations"] as $corpData) {
                     $corporation = new \eve\model\Corporation();
                     $corporation->load($corpData);
                     $this->corporations[] = $corporation;
                 }
             }
 
-            if (isset($result["alliances"]))
-            {
+            if (isset($result["alliances"])) {
                 $this->alliances = array();
-                foreach ($result["alliances"] as $allyData)
-                {
+                foreach ($result["alliances"] as $allyData) {
                     $alliance = new \eve\model\Alliance();
                     $alliance->load($allyData);
                     $this->alliances[] = $alliance;
                 }
             }
 
-            if (isset($result["allowed"]))
-            {
+            if (isset($result["allowed"])) {
                 $this->allowedCorporations = array();
-                foreach ($result["allowed"] as $corpData)
-                {
+                foreach ($result["allowed"] as $corpData) {
                     $corporation = new \eve\model\Corporation();
                     $corporation->load($corpData);
                     $this->allowedCorporations[] = $corporation;
@@ -84,33 +77,37 @@ class AuthGroup
     private function saveToCache($data)
     {
         $data["corporations"] = array();
-        foreach ($this->getCorporations() as $corp)
-        {
-            $data["corporations"][] = array("id" => $corp->id,
-                                            "ticker" => $corp->ticker,
-                                            "name" => $corp->name,
-                                            "ceo" => $corp->ceoID,
-                                            "allianceid" => $corp->allianceID,
-                                            "updatedate" => $corp->updateDate);
+        foreach ($this->getCorporations() as $corp) {
+            $data["corporations"][] = [
+                "id" => $corp->id,
+                "ticker" => $corp->ticker,
+                "name" => $corp->name,
+                "ceo" => $corp->ceoID,
+                "allianceid" => $corp->allianceID,
+                "updatedate" => $corp->updateDate
+            ];
         }
 
         $data["alliances"] = array();
-        foreach ($this->getAlliances() as $ally)
-        {
-            $data["alliances"][] = array(   "id" => $ally->id,
-                                            "ticker" => $ally->ticker,
-                                            "name" => $ally->name);
+        foreach ($this->getAlliances() as $ally) {
+            $data["alliances"][] = [
+                "id" => $ally->id,
+                "ticker" => $ally->ticker,
+                "name" => $ally->name
+            ];
         }
 
         $data["allowed"] = array();
         foreach ($this->getAllowedCorporations() as $corp)
         {
-            $data["allowed"][] = array( "id" => $corp->id,
-                                        "ticker" => $corp->ticker,
-                                        "name" => $corp->name,
-                                        "ceo" => $corp->ceoID,
-                                        "allianceid" => $corp->allianceID,
-                                        "updatedate" => $corp->updateDate);
+            $data["allowed"][] = [
+                "id" => $corp->id,
+                "ticker" => $corp->ticker,
+                "name" => $corp->name,
+                "ceo" => $corp->ceoID,
+                "allianceid" => $corp->allianceID,
+                "updatedate" => $corp->updateDate
+            ];
         }
 
         \Cache::file()->set($this->getCacheFilename(), json_encode($data));
@@ -129,7 +126,6 @@ class AuthGroup
         if ($result) {
             $this->id = $result["id"];
             $this->name = $result["name"];
-            $this->mainChainID = $result["mainchain"];
             $this->contactID = $result["contactuserid"];
             $this->deleted = ($result["deleted"]>0)?true:false;
         }
@@ -139,7 +135,6 @@ class AuthGroup
     {
         $data = [
             "name"	=> $this->name,
-            "mainchain"	=> $this->mainChainID,
             "contactuserid" => $this->contactID,
             "deleted" => ($this->deleted)?1:0
         ];

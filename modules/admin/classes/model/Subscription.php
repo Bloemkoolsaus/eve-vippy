@@ -41,11 +41,13 @@ namespace admin\model
 
 		function store()
 		{
-			$data = array(	"authgroupid"	=> $this->authgroupID,
-							"description"	=> $this->description,
-							"amount"		=> $this->amount,
-							"fromdate"		=> $this->fromdate,
-							"tilldate"		=> $this->tilldate);
+			$data = [
+			    "authgroupid"	=> $this->authgroupID,
+                "description"	=> $this->description,
+                "amount"		=> $this->amount,
+                "fromdate"		=> $this->fromdate,
+                "tilldate"		=> $this->tilldate
+            ];
 			if ($this->id > 0)
 				$data["id"] = $this->id;
 
@@ -53,14 +55,10 @@ namespace admin\model
 			if ($this->id == 0)
 			{
 				$this->id = $result;
-
 				// Deze was nieuw. Check of er nog lopende zijn, zo ja, laat die aflopen!
-				foreach (self::getSubscriptionsByAuthgroup($this->authgroupID) as $subscription)
-				{
-					if (strtotime($subscription->fromdate) < strtotime($this->fromdate))
-					{
-						if ($subscription->tilldate == null)
-						{
+				foreach (self::getSubscriptionsByAuthgroup($this->authgroupID) as $subscription) {
+					if (strtotime($subscription->fromdate) < strtotime($this->fromdate)) {
+						if (!$subscription->tilldate) {
 							$subscription->tilldate = $this->fromdate;
 							$subscription->store();
 						}

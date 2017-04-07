@@ -1,0 +1,46 @@
+<h3>BALANCE</h3>
+<div style="padding: 5px;">
+{if isset($monthsdue) && $monthsdue|@count > 0}
+	{assign var=totaldue value=0}
+	<table class="sectionoverview">
+		<tr>
+			<th>Month</th>
+			<th style="width: 70px;">Cost</th>
+			<th style="width: 70px;">Received</th>
+			<th style="width: 70px;">Due</th>
+		</tr>
+{foreach from=$monthsdue key=i item=due}
+		<tr class="{if $i%2==0}even{else}odd{/if}">
+			<td><b>{$due.month}</b></td>
+			<td style="width: 100px; text-align: right;">{$due.due|valuta:1}</td>
+			<td style="text-align: right;">{$due.amount|valuta:1}</td>
+			<td style="text-align: right;">{($due.due-$due.amount)|valuta:1}</td>
+		</tr>
+	{assign var=totaldue value=$totaldue+($due.due-$due.amount)}
+{/foreach}
+		<tr>
+			<td colspan="3" style="text-align: right;">
+			{if $totaldue < 0}
+				<b>TOTAL ADVANCE</b>
+			{else}
+				<b>TOTAL DUE</b>
+			{/if}
+				 &nbsp;
+			</td>
+			<th style="text-align: right;">
+				<h3>
+			{if $totaldue < 0}
+					<span style="color: #00ff00;"> + {($totaldue*-1)|valuta:1}</span>
+			{else}
+				{if $totaldue == 0}
+					<span style="color: #00ff00;">{$totaldue|valuta:1}</span>
+				{else}
+					{$totaldue|valuta:1}
+				{/if}
+			{/if}
+				</h3>
+			</th>
+		</tr>
+	</table>
+{/if}
+</div>
