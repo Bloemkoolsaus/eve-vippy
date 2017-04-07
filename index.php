@@ -18,7 +18,6 @@ $mainMenu = null;
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
 // Koningsdag
-    \SmartyTools::setTemplate("kingsday");
 if (date("Y-m-d") == date("Y")."-04-27") {
     \SmartyTools::setTemplate("kingsday");
 }
