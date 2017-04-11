@@ -30,7 +30,7 @@ class Location
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
                                                 order by online desc, lastupdate asc, updatedate desc
                                                 limit 15"
-                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-11,date("m"),date("d"),date("Y"))),
+                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-20,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-10,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
