@@ -39,8 +39,7 @@
 			{/foreach}
 			<tr class="even">
 				<td>
-					<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" align="left"
-						 style="height: 20px; margin: -2px; margin-right: .4em;" />
+					<img src="http://image.eveonline.com/Corporation/{$corp.corp->id}_32.png" align="left" style="height: 20px; margin: -2px; margin-right: .4em;" />
 					{$corp.corp->name}
 				</td>
 				<td style="text-align: center;">{$members}</td>
@@ -54,7 +53,7 @@
 		</table>
 	</div>
 	<div class="col6 right last">
-		<div class="message">
+		<div class="standout" style="margin: 0;">
 			<ul>
 				<li><strong>These statistics are only availible for Admins!</strong></li>
 				<li>
@@ -97,9 +96,10 @@
 <div class="content">
 	<h2>Corporation details</h2>
 
+{assign var=i value=0}
 {foreach from=$corporations item=corp}
 {if $corp.stats|@count > 0}
-	<div style="float: left; padding: .5em;">
+	<div class="col4 {if $i%3==2}last{/if}">
 		<table class="sectionoverview">
 			<tr>
 				<th colspan="2" class="large">
@@ -134,11 +134,12 @@
 			<tr class="{if $i%2==0}even{else}odd{/if}"
 				onclick="window.open('/index.php?module=users&action=edit&id={$stat->userID}')">
 				<td style="width: 20px; height: 20px; text-align: center; padding: 1px; {if $authGroup->getConfig('stats_kills')}background-color: #{$stat->getScoreColor()};{/if}">
-					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg"
-						 style="height: 20px; margin: 0;" >
+					<img src="http://image.eveonline.com/Character/{$stat->getUser()->getMainCharacter()->id}_32.jpg" style="height: 20px; margin: 0;" >
 				</td>
-				<td style="width: 120px;">
-					{$stat->getUser()->getMainCharacter()->name}
+				<td>
+					<div style="width: 99%; overflow: hidden; white-space: nowrap;">
+						{$stat->getUser()->getMainCharacter()->name}
+					</div>
 				</td>
 				<td style="text-align: center; color: #ffffff;">
 				{if $stat->nrWormholes > 0}
@@ -198,6 +199,7 @@
 		</table>
 		<div style="clear:both;"></div>
 	</div>
+	{assign var=i value=$i+1}
 {/if}
 {/foreach}
 	<div style="clear:both;"></div>

@@ -528,35 +528,66 @@ class AuthGroup
 
     /**
      * Get active and allowed users
+     * @param null $date
      * @return \users\model\User[]
      */
-    function getActiveUsers()
+    function getActiveUsers($date=null)
     {
-        $ids = [];
-        foreach ($this->getAllowedUsers() as $user) {
-            $ids[] = $user->id;
-        }
-
         $users = [];
-        if (count($ids) > 0) {
-            if ($results = \MySQL::getDB()->getRows("select u.*
-                                                from    users u
-                                                  inner join user_log l on l.userid = u.id
-                                                where   l.what = 'login'
-                                                and     l.logdate between ? and ?
-                                                and     u.id in (".implode(",", $ids).")
-                                                group by u.id"
-                                , [date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y"))),
-                                   date("Y-m-d", mktime(0,0,0,date("m"), date("d"), date("Y")))]))
-            {
-                foreach ($results as $result)
+
+        if (!$date)
+        {
+            /**
+             * Huidige actieve users
+             */
+
+            // Alle toegestane users
+            $ids = [];
+            foreach ($this->getAllowedUsers() as $user) {
+                $ids[] = $user->id;
+            }
+
+            // Wie daarvan zijn ingelogd geweest?
+            if (count($ids) > 0) {
+                if ($results = \MySQL::getDB()->getRows("select u.*
+                                                        from    users u
+                                                          inner join user_log l on l.userid = u.id
+                                                        where   l.what = 'login'
+                                                        and     l.logdate between ? and ?
+                                                        and     u.id in (".implode(",", $ids).")
+                                                        group by u.id"
+                                    , [date("Y-m-d", mktime(0,0,0,date("m"), date("d")-30, date("Y"))),
+                                       date("Y-m-d", mktime(0,0,0,date("m"), date("d"), date("Y")))]))
                 {
+                    foreach ($results as $result) {
+                        $user = new \users\model\User();
+                        $user->load($result);
+                        $users[] = $user;
+                    }
+                }
+            }
+        }
+        else
+        {
+            /**
+             * Actieve users in periode
+             */
+            if ($results = \MySQL::getDB()->getRows("select u.*
+                                                     from   users u
+                                                        inner join stats_users s on u.id = s.userid
+                                                     where  s.authgroupid = ?
+                                                     and    s.year = ? and s.month = ?
+                                                     group by u.id"
+                                , [$this->id, date("Y", strtotime($date)), date("m", strtotime($date))]))
+            {
+                foreach ($results as $result) {
                     $user = new \users\model\User();
                     $user->load($result);
                     $users[] = $user;
                 }
             }
         }
+
         return $users;
     }
 
@@ -620,13 +651,13 @@ class AuthGroup
 
     /**
      * Get active subscription
-     * @return \admin\model\Subscription|NULL
+     * @param null $onDate
+     * @return Subscription|NULL
      */
-    function getSubscription()
+    function getSubscription($onDate=null)
     {
-        foreach ($this->getSubscriptions() as $sub)
-        {
-            if ($sub->isActive())
+        foreach ($this->getSubscriptions() as $sub) {
+            if ($sub->isActive($onDate))
                 return $sub;
         }
         return null;
