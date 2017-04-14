@@ -1,19 +1,95 @@
-<h2>
-	Subscription
-{if $App->user->getIsSysAdmin()}
-	<div style="text-align: right; float: right; margin-top: -.5em;">
-		<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
-			New Subscription
-		</button>
-	</div>
-{/if}
-</h2>
 
-<div style="float: left; width: 35%;">
-	<div style="padding: 10px;">{include "admin/authgroups/subscription/balance"}</div>
-</div>
-<div style="float: right; width: 60%;">
-	<div style="padding: 10px;">{include "admin/authgroups/subscription/subscriptions"}</div>
-	<div style="padding: 10px;">{include "admin/authgroups/subscription/payments"}</div>
+{assign var=i value=0}
+{assign var=totalDue value=0}
+{assign var=totalPayed value=0}
+{foreach from=$subscriptions key=year item=months}
+	{foreach from=$months key=month item=data}
+		{assign var=payed value=0}
+		{foreach from=$data.payments item=payment}
+			{assign var=payed value=$payed+($payment->amount/100000000)}
+		{/foreach}
+		{assign var=totalDue value=$totalDue+($data.subscription->amount)}
+		{assign var=totalPayed value=$totalPayed+$payed}
+	{/foreach}
+{/foreach}
+<div class="col6">
+	<div class="form">
+		<div class="field"><b>Current Subscription:</b></div>
+		<div class="value" style="white-space: nowrap; overflow: visible;">
+		{if $authgroup->getSubscription()}
+			{$authgroup->getSubscription()->description}
+			&nbsp; :: &nbsp;
+			{$authgroup->getSubscription()->fromdate|date_full}
+			{if $authgroup->getSubscription()->tilldate} &nbsp; - &nbsp; {$authgroup->getSubscription()->tilldate|date_full}{/if}
+		{else}
+			<i>None</i>
+		{/if}
+		</div>
+	</div>
+	<div class="form">
+		{assign var=balance value=($totalPayed-$totalDue)}
+		<div class="field"><b>Current Balance:</b></div>
+		<div class="value" style="{if $balance<0}color: #ff0000;{/if}{if $balance>0}color: #00ff00;{/if}">
+			{if $balance>0}+{/if}{$balance}m &nbsp;
+		</div>
+	</div>
 </div>
 <div style="clear:both;"></div>
+<br />
+
+<table class="sectionoverview">
+	<tr>
+		<th>Month</th>
+		<th>Subscription</th>
+		<th style="width: 80px;">Price</th>
+		<th style="width: 80px;">Payed</th>
+		<th style="width: 80px;">Balance</th>
+	</tr>
+{assign var=i value=0}
+{assign var=totalDue value=0}
+{assign var=totalPayed value=0}
+{foreach from=$subscriptions key=year item=months}
+	{foreach from=$months key=month item=data}
+		{assign var=payed value=0}
+		{foreach from=$data.payments item=payment}
+			{assign var=payed value=$payed+($payment->amount/100000000)}
+		{/foreach}
+		{assign var=totalDue value=$totalDue+($data.subscription->amount)}
+		{assign var=totalPayed value=$totalPayed+$payed}
+		<tr class="{if $i%2==0}even{else}odd{/if}">
+			<td>
+				<strong>{$data.title} {$year}</strong>
+			</td>
+			<td>
+				{$data.subscription->description}
+				<div style="float: right; font-style: italic;">
+					{$data.subscription->fromdate|date_full}
+					&nbsp; - &nbsp;
+					{if $data.subscription->tilldate}
+						{$data.subscription->tilldate|date_full}
+					{else}
+						no end date
+					{/if} &nbsp;
+				</div>
+			</td>
+			<td style="text-align: right;">
+			{if $data.subscription->amount != 0}
+				{$data.subscription->amount}m &nbsp;
+			{else}
+				<i>Free</i> &nbsp;
+			{/if}
+			</td>
+			<td style="text-align: right;">
+			{if $payed != 0}
+				{$payed}m &nbsp;
+			{/if}
+			</td>
+			<td style="text-align: right; font-weight: bold;">
+				{assign var=balance value=($totalPayed-$totalDue)}
+				{if $balance>0}+{/if}{$balance}m &nbsp;
+			</td>
+		</tr>
+		{assign var=i value=$i+1}
+	{/foreach}
+{/foreach}
+</table>

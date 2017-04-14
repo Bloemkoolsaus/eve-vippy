@@ -187,4 +187,39 @@ class Authgroup
 
         return $tpl->fetch("admin/authgroups/edit");
     }
+
+    function getSubscription($arguments=[])
+    {
+        $authgroup = new \admin\model\AuthGroup(array_shift($arguments));
+
+        $data = [];
+        foreach ($authgroup->getSubscriptions() as $subscription) {
+            $curdate = strtotime($subscription->fromdate);
+            $tilldate = ($subscription->tilldate) ? strtotime($subscription->tilldate) : strtotime("now");
+            while ($curdate <= $tilldate and $curdate <= strtotime("now")) {
+                $data[date("Y", $curdate)][date("m", $curdate)] = [
+                    "title" => \Tools::getFullMonth(date("m", $curdate)),
+                    "subscription" => $subscription,
+                    "payments" => []
+                ];
+                $curdate = mktime(0, 0, 0, date("m", $curdate)+1, date("d", $curdate), date("Y", $curdate));
+            }
+        }
+
+        foreach ($authgroup->getPayments() as $payment) {
+            $data[date("Y", strtotime($payment->date))][date("m", strtotime($payment->date))]["payments"][] = $payment;
+        }
+
+
+        // Sorteren
+        ksort($data);
+        foreach ($data as $year => $months) {
+            ksort($data[$year]);
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("authgroup", $authgroup);
+        $tpl->assign("subscriptions", $data);
+        return $tpl->fetch("admin/authgroups/subscription");
+    }
 }

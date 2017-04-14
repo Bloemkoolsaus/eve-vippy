@@ -222,12 +222,38 @@
 	<div style="clear:both;"></div>
 </div>
 
-<div id="detailtab-subscriptions" class="content" rel="detailtab">{include "admin/authgroups/subscription"}</div>
+<div id="detailtab-subscriptions" class="content" rel="detailtab">
+	<h2>
+		Subscription
+	{if $App->user->getIsSysAdmin()}
+		<div style="text-align: right; float: right; margin-top: -.5em;">
+			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
+				New Subscription
+			</button>
+		</div>
+	{/if}
+	</h2>
+
+	<div id="subscription-content">
+		<div style="text-align: center;">
+			<img src="/images/loading.gif"> &nbsp; Loading..
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+	<br />
+
+	<div class="col6">{include "admin/authgroups/subscription/subscriptions"}</div>
+	<div class="col6 right last">{include "admin/authgroups/subscription/payments"}</div>
+	<div style="clear:both;"></div>
+</div>
 <div id="detailtab-users" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/users"}</div>
 <div id="detailtab-usergroups" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/usergroups"}</div>
 
 
 <script type="text/javascript">
+$(document).ready(function() {
+	loadSubscription('{$authgroup->id}');
+});
 function helpPopupAuthorization()
 {
 	html = "<h3>Members require authorization by an admin</h3>" +
