@@ -4,6 +4,7 @@ namespace admin\model;
 class SubscriptionTransaction extends \Model
 {
     protected $_table = "vippy_subscriptions_journal";
+    protected $_deletedField = "deleted";
 
     public $id;
     public $authgroupID;

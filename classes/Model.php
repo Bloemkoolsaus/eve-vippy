@@ -4,6 +4,7 @@ class Model
     protected $_dbProperties = null;
     protected $_table = null;
     protected $_keyfield = "id";
+    protected $_deletedField = null;
 
     function __construct($id=false)
     {
@@ -56,15 +57,27 @@ class Model
 
     function delete()
     {
-        $data = array();
-        $where = array();
-        foreach ($this->getDBProperties() as $property => $field) {
-            $data[$field] = $this->$property;
+        if (!$this->_deletedField)
+        {
+            $data = array();
+            $where = array();
+            foreach ($this->getDBProperties() as $property => $field) {
+                $data[$field] = $this->$property;
+            }
+            foreach ($this->getDBKeyFields() as $field) {
+                $where[$field] = $data[$field];
+            }
+            \MySQL::getDB()->delete($this->getDBTable(),$where);
         }
-        foreach ($this->getDBKeyFields() as $field) {
-            $where[$field] = $data[$field];
+        else
+        {
+            $data = [$this->_deletedField => 1];
+            $where = [];
+            foreach ($this->getDBKeyFields() as $field) {
+                $where[$field] = $this->$field;
+            }
+            \MySQL::getDB()->update($this->getDBTable(), $data, $where);
         }
-        \MySQL::getDB()->delete($this->getDBTable(),$where);
     }
 
     /**
