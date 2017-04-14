@@ -80,10 +80,11 @@ class Payments
                         $authgroup = $transaction->findAuthgroup();
                         if ($authgroup !== null) {
                             $transaction->authgroupID = $authgroup->id;
-                            $transaction->store();
                             \AppRoot::doCliOutput(" + Stored");
                         } else
                             \AppRoot::doCliOutput(" ! No authgroup");
+
+                        $transaction->store();
                     }
                     else
                         \AppRoot::doCliOutput(" - Already registered!");
