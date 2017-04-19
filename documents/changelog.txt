@@ -1,3 +1,10 @@
+<h3>April 19, 2017</h3>
+<b><u>ACCESS LIST</u></b>
+ - Fixed a bug where adding a corporation to an access-list didn't give that corp access.
+
+
+
+
 <h3>April 05, 2017</h3>
 <b><u>MAP</u></b>
  - Fixed a bug where sometimes a system would not be marked as fully scanned, even though all sigs are known.
