@@ -200,22 +200,48 @@ class Authgroup
                 $data[date("Y", $curdate)][date("m", $curdate)] = [
                     "title" => \Tools::getFullMonth(date("m", $curdate)),
                     "subscription" => $subscription,
-                    "payments" => []
+                    "payments" => [],
+                    "totals" => ["due" => 0, "payed" => 0, "balance" => 0]
                 ];
                 $curdate = mktime(0, 0, 0, date("m", $curdate)+1, date("d", $curdate), date("Y", $curdate));
             }
         }
-
         foreach ($authgroup->getPayments() as $payment) {
-            $data[date("Y", strtotime($payment->date))][date("m", strtotime($payment->date))]["payments"][] = $payment;
+            $y = date("Y", strtotime($payment->date));
+            $m = date("m", strtotime($payment->date));
+            $data[$y][$m]["payments"][] = $payment;
         }
 
-
         // Sorteren
-        ksort($data);
         foreach ($data as $year => $months) {
             ksort($data[$year]);
         }
+        ksort($data);
+
+        $totalDue = 0;
+        $totalPayed = 0;
+        foreach ($data as $y => $months) {
+            foreach ($months as $m => $month) {
+                $due = $month["subscription"]->amount;
+                $payed = 0;
+                foreach ($month["payments"] as $payment) {
+                    $payed += round($payment->amount/100000000);
+                }
+                $totalDue += $due;
+                $totalPayed += $payed;
+                $data[$y][$m]["totals"] = [
+                    "due" => $due,
+                    "payed" => $payed,
+                    "balance" => $totalPayed-$totalDue
+                ];
+            }
+        }
+
+        // Sortering omdraaien. Nieuwste eerst.
+        foreach ($data as $year => $months) {
+            $data[$year] = array_reverse($data[$year], true);
+        }
+        $data = array_reverse($data, true);
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("authgroup", $authgroup);

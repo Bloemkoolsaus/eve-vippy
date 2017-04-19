@@ -34,29 +34,34 @@
 		</div>
 	</div>
 </div>
+<div class="col6 right last" style="text-align: right;">
+{if $App->user->getIsSysAdmin()}
+	<div style="text-align: right;">
+		<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
+			New Subscription
+		</button>
+	</div>
+{/if}
+</div>
 <div style="clear:both;"></div>
 <br />
+
+<h2>Balance</h2>
 
 <table class="sectionoverview">
 	<tr>
 		<th>Month</th>
 		<th>Subscription</th>
-		<th style="width: 80px;">Price</th>
-		<th style="width: 80px;">Payed</th>
-		<th style="width: 80px;">Balance</th>
+		<th style="width: 80px; text-align: center;">Price</th>
+		<th style="width: 80px; text-align: center;">Payed</th>
+		<th style="width: 80px; text-align: center;">Balance</th>
 	</tr>
 {assign var=i value=0}
-{assign var=totalDue value=0}
-{assign var=totalPayed value=0}
 {foreach from=$subscriptions key=year item=months}
 	{foreach from=$months key=month item=data}
-		{assign var=payed value=0}
-		{foreach from=$data.payments item=payment}
-			{assign var=payed value=$payed+($payment->amount/100000000)}
-		{/foreach}
-		{assign var=totalDue value=$totalDue+($data.subscription->amount)}
-		{assign var=totalPayed value=$totalPayed+$payed}
-		<tr class="{if $i%2==0}even{else}odd{/if}">
+		{assign var=payed value=$data.totals.payed}
+		{assign var=balance value=$data.totals.balance}
+		<tr class="balance-month {if $i>=12}hidden{/if} {if $i%2==0}even{else}odd{/if}" {if $i>=12}style="display:none;"{/if}>
 			<td>
 				<strong>{$data.title} {$year}</strong>
 			</td>
@@ -80,16 +85,31 @@
 			{/if}
 			</td>
 			<td style="text-align: right;">
-			{if $payed != 0}
+		{if $payed != 0}
+			{if $payed >= 1000}
+				{$payed/1000}b &nbsp;
+			{else}
 				{$payed}m &nbsp;
 			{/if}
+		{/if}
 			</td>
-			<td style="text-align: right; font-weight: bold;">
-				{assign var=balance value=($totalPayed-$totalDue)}
-				{if $balance>0}+{/if}{$balance}m &nbsp;
+			<td style="text-align: right; color: {if $balance < 0}#ff0000{else}#00cc00{/if};">
+			{if $balance > 0}
+				{if $balance >= 1000}+{$balance/1000}b{else}+{$balance}m{/if} &nbsp;
+			{else}
+				{if $balance <= -1000}{$balance/1000}b{else}{$balance}m{/if} &nbsp;
+			{/if}
 			</td>
 		</tr>
 		{assign var=i value=$i+1}
 	{/foreach}
 {/foreach}
 </table>
+{if $i >= 12}
+<div id="show-all-balance">
+	<div style="float: right;">
+		<img src="/images/default/tree.open.png" align="left">
+		<a href="#" onclick="$('#show-all-balance').hide(); $('.balance-month.hidden').slideDown(); return false;">Show {($i-12)} more rows</a>
+	</div>
+</div>
+{/if}

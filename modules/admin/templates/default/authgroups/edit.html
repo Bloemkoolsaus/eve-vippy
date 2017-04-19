@@ -223,17 +223,7 @@
 </div>
 
 <div id="detailtab-subscriptions" class="content" rel="detailtab">
-	<h2>
-		Subscription
-	{if $App->user->getIsSysAdmin()}
-		<div style="text-align: right; float: right; margin-top: -.5em;">
-			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
-				New Subscription
-			</button>
-		</div>
-	{/if}
-	</h2>
-
+	<h2>Subscription</h2>
 	<div id="subscription-content">
 		<div style="text-align: center;">
 			<img src="/images/loading.gif"> &nbsp; Loading..
