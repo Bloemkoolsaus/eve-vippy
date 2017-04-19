@@ -4,6 +4,7 @@ class Model
     protected $_dbProperties = null;
     protected $_table = null;
     protected $_keyfield = "id";
+    protected $_deletedField = null;
 
     function __construct($id=false)
     {
@@ -56,15 +57,21 @@ class Model
 
     function delete()
     {
-        $data = array();
-        $where = array();
-        foreach ($this->getDBProperties() as $property => $field) {
-            $data[$field] = $this->$property;
+        if ($this->_deletedField) {
+            $field = $this->_deletedField;
+            $this->$field = true;
+            static::store();
+        } else {
+            $data = array();
+            $where = array();
+            foreach ($this->getDBProperties() as $property => $field) {
+                $data[$field] = $this->$property;
+            }
+            foreach ($this->getDBKeyFields() as $field) {
+                $where[$field] = $data[$field];
+            }
+            \MySQL::getDB()->delete($this->getDBTable(),$where);
         }
-        foreach ($this->getDBKeyFields() as $field) {
-            $where[$field] = $data[$field];
-        }
-        \MySQL::getDB()->delete($this->getDBTable(),$where);
     }
 
     /**
@@ -121,6 +128,9 @@ class Model
                     $dbField = trim($parameters[1]);
                     if ($dbField == "null")
                         continue;
+                }
+                if (preg_match('/\\s@deleted(\\s[\\w\\\\]+)?\\s/', $property->getDocComment(), $parameters)) {
+                    $this->_deletedField = $property->getName();
                 }
 
                 $this->_dbProperties[$property->getName()] = $dbField;

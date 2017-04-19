@@ -14,6 +14,7 @@ class SubscriptionTransaction extends \Model
     /** @dbField transactiondate */
     public $date;
     public $approved = false;
+    /** @deleted */
     public $deleted = false;
 
     private $_authgroup = null;
