@@ -1381,6 +1381,11 @@ class User
         \AppRoot::debug("User->getAccessLists()");
         if ($this->_accessLists === null)
         {
+            $charIDs = [];
+            foreach ($this->getAuthorizedCharacters() as $char) {
+                $charIDs[] = $char->id;
+            }
+
             $this->_accessLists = [];
             if ($results = \MySQL::getDB()->getRows("select a.*
                                                      from   user_accesslist a
@@ -1391,27 +1396,27 @@ class User
                                                      from   user_accesslist a
                                                         inner join user_accesslist_characters ac on ac.accesslistid = a.id
                                                         inner join characters c on c.id = ac.characterid
-                                                     where  c.userid = ?
+                                                     where  ac.characterid in (".implode(",", $charIDs).")
                                                   union
                                                      select a.*
                                                      from   user_accesslist a
                                                         inner join user_accesslist_corporation ac on ac.accesslistid = a.id
-                                                        inner join characters c on c.id = ac.corporationid
-                                                    where  c.userid = ?
+                                                        inner join characters c on c.corpid = ac.corporationid
+                                                     where  c.id in (".implode(",", $charIDs).")
                                                   union
                                                      select a.*
                                                      from   user_accesslist a
                                                         inner join user_accesslist_alliance aa on aa.accesslistid = a.id
                                                         inner join corporations cc on cc.allianceid = aa.allianceid
                                                         inner join characters c on c.corpid = cc.id
-                                                    where  c.userid = ?
+                                                     where  c.id in (".implode(",", $charIDs).")
                                                   union
                                                     select  a.*
                                                     from    user_accesslist a
                                                     where   a.ownerid = ?
                                                 group by id
                                                 order by title, id"
-                                , [$this->id, $this->id, $this->id, $this->id, $this->id]))
+                                    , [$this->id, $this->id]))
             {
                 foreach ($results as $result)
                 {
