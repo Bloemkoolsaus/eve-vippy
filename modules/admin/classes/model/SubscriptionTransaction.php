@@ -23,6 +23,16 @@ class SubscriptionTransaction extends \Model
     private $_toCharacter = null;
 
 
+    function approve()
+    {
+        $this->approved = true;
+        $this->store();
+
+        $console = new \admin\console\Authgroup();
+        $console->doBalance([$this->id]);
+    }
+
+
     /**
      * Get authgroup
      * @return \admin\model\AuthGroup

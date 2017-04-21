@@ -143,14 +143,17 @@ class Subscription extends \Model
     /**
      * Get subscriptions by authgroup
      * @param integer $authgroupID
-     * @return \admin\model\Subscription[]
+     * @param string $orderByDir
+     * @return Subscription[]
      */
-    public static function getSubscriptionsByAuthgroup($authgroupID)
+    public static function getSubscriptionsByAuthgroup($authgroupID, $orderByDir="desc")
     {
-        $subscriptions = array();
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions WHERE authgroupid = ?
-                                                ORDER BY fromdate DESC, tilldate DESC"
-                                , array($authgroupID)))
+        $subscriptions = [];
+        if ($results = \MySQL::getDB()->getRows("select * 
+                                                 from   vippy_subscriptions 
+                                                 where  authgroupid = ?
+                                                 order by fromdate $orderByDir, tilldate $orderByDir"
+                                        , [$authgroupID]))
         {
             foreach ($results as $result) {
                 $sub = new \admin\model\Subscription();

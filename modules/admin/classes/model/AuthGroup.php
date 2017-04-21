@@ -5,7 +5,6 @@ class AuthGroup
 {
     public $id = 0;
     public $name;
-    public $contactID;
     public $deleted = false;
 
     private $config = null;
@@ -20,6 +19,7 @@ class AuthGroup
     private $usergroups = null;
     private $contactUser = null;
     private $_allowedUsers;
+    private $_balanceStartDate;
 
     function __construct($id=false)
     {
@@ -29,104 +29,11 @@ class AuthGroup
         }
     }
 
-    private function getCacheFilename()
-    {
-        return "authgroups/".$this->id.".json";
-    }
-
-    private function loadFromCache()
-    {
-        if ($cache = \Cache::file()->get($this->getCacheFilename()))
-        {
-            $result = json_decode($cache, true);
-            $this->load($result);
-
-            if (isset($result["corporations"])) {
-                $this->corporations = array();
-                foreach ($result["corporations"] as $corpData) {
-                    $corporation = new \eve\model\Corporation();
-                    $corporation->load($corpData);
-                    $this->corporations[] = $corporation;
-                }
-            }
-
-            if (isset($result["alliances"])) {
-                $this->alliances = array();
-                foreach ($result["alliances"] as $allyData) {
-                    $alliance = new \eve\model\Alliance();
-                    $alliance->load($allyData);
-                    $this->alliances[] = $alliance;
-                }
-            }
-
-            if (isset($result["allowed"])) {
-                $this->allowedCorporations = array();
-                foreach ($result["allowed"] as $corpData) {
-                    $corporation = new \eve\model\Corporation();
-                    $corporation->load($corpData);
-                    $this->allowedCorporations[] = $corporation;
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private function saveToCache($data)
-    {
-        $data["corporations"] = array();
-        foreach ($this->getCorporations() as $corp) {
-            $data["corporations"][] = [
-                "id" => $corp->id,
-                "ticker" => $corp->ticker,
-                "name" => $corp->name,
-                "ceo" => $corp->ceoID,
-                "allianceid" => $corp->allianceID,
-                "updatedate" => $corp->updateDate
-            ];
-        }
-
-        $data["alliances"] = array();
-        foreach ($this->getAlliances() as $ally) {
-            $data["alliances"][] = [
-                "id" => $ally->id,
-                "ticker" => $ally->ticker,
-                "name" => $ally->name
-            ];
-        }
-
-        $data["allowed"] = array();
-        foreach ($this->getAllowedCorporations() as $corp)
-        {
-            $data["allowed"][] = [
-                "id" => $corp->id,
-                "ticker" => $corp->ticker,
-                "name" => $corp->name,
-                "ceo" => $corp->ceoID,
-                "allianceid" => $corp->allianceID,
-                "updatedate" => $corp->updateDate
-            ];
-        }
-
-        \Cache::file()->set($this->getCacheFilename(), json_encode($data));
-    }
-
     function load($result=false)
     {
-        if (!$result) {
-            // Eerst in cache kijken
-            if (!$this->loadFromCache()) {
-                $result = \MySQL::getDB()->getRow("SELECT * FROM user_auth_groups WHERE id = ?", array($this->id));
-                $this->saveToCache($result);
-            }
-        }
-
         if ($result) {
             $this->id = $result["id"];
             $this->name = $result["name"];
-            $this->contactID = $result["contactuserid"];
             $this->deleted = ($result["deleted"]>0)?true:false;
         }
     }
@@ -135,7 +42,6 @@ class AuthGroup
     {
         $data = [
             "name"	=> $this->name,
-            "contactuserid" => $this->contactID,
             "deleted" => ($this->deleted)?1:0
         ];
         if ($this->id > 0)
@@ -144,7 +50,6 @@ class AuthGroup
         $result = \MySQL::getDB()->updateinsert("user_auth_groups", $data, ["id" => $this->id]);
         if ($this->id == 0)
             $this->id = $result;
-
 
         if ($this->alliances !== null) {
             \MySQL::getDB()->delete("user_auth_groups_alliances", ["authgroupid" => $this->id]);
@@ -172,7 +77,6 @@ class AuthGroup
         }
 
         // Reset cache
-        \Cache::file()->remove($this->getCacheFilename());
         foreach ($this->getAllowedCorporations() as $corp) {
             foreach (\users\model\User::getUsersByCorporation($corp->id) as $user) {
                 $user->resetCache();
@@ -184,30 +88,6 @@ class AuthGroup
     {
         $this->deleted = true;
         $this->store();
-    }
-
-    /**
-     * Get contact user
-     * @return \users\model\User|null
-     */
-    function getContactUser()
-    {
-        if ($this->contactUser === null)
-        {
-            if (!$this->contactID) {
-                foreach ($this->getAllowedUsers() as $user) {
-                    if ($user->isAdmin()) {
-                        if (!$this->contactID || $this->contactID > $user->id)
-                            $this->contactID = $user->id;
-                    }
-                }
-                $this->store();
-            }
-
-            $this->contactUser = new \users\model\User($this->contactID);
-        }
-
-        return $this->contactUser;
     }
 
     function getLastActiveDate()
@@ -537,16 +417,11 @@ class AuthGroup
 
         if (!$date)
         {
-            /**
-             * Huidige actieve users
-             */
-
-            // Alle toegestane users
+            // Huidige actieve users
             $ids = [];
             foreach ($this->getAllowedUsers() as $user) {
                 $ids[] = $user->id;
             }
-
             // Wie daarvan zijn ingelogd geweest?
             if (count($ids) > 0) {
                 if ($results = \MySQL::getDB()->getRows("select u.*
@@ -569,9 +444,7 @@ class AuthGroup
         }
         else
         {
-            /**
-             * Actieve users in periode
-             */
+            // Actieve users in periode
             if ($results = \MySQL::getDB()->getRows("select u.*
                                                      from   users u
                                                         inner join stats_users s on u.id = s.userid
@@ -628,8 +501,7 @@ class AuthGroup
         if ($user->getIsSysAdmin())
             return true;
 
-        foreach ($user->getAuthGroupsAdmins() as $group)
-        {
+        foreach ($user->getAuthGroupsAdmins() as $group) {
             if ($group->id == $this->id)
                 return true;
         }
@@ -637,14 +509,34 @@ class AuthGroup
         return false;
     }
 
+    function getBalanceStartDate()
+    {
+        if (!$this->_balanceStartDate) {
+            foreach (\admin\model\Subscription::getSubscriptionsByAuthgroup($this->id, "asc") as $subscription) {
+                if (strtotime($subscription->fromdate) >= strtotime("now"))
+                    continue;
+                if (!$this->_balanceStartDate || $subscription->resetBalance)
+                    $this->_balanceStartDate = $subscription->fromdate;
+            }
+        }
+
+        return $this->_balanceStartDate;
+    }
+
     /**
      * Get subscriptions
-     * @return \admin\model\Subscription[]
+     * @param bool $all
+     * @return Subscription[]
      */
-    function getSubscriptions()
+    function getSubscriptions($all=false)
     {
-        if ($this->subscriptions === null)
-            $this->subscriptions = \admin\model\Subscription::getSubscriptionsByAuthgroup($this->id);
+        if ($this->subscriptions === null) {
+            $this->subscriptions = [];
+            foreach (\admin\model\Subscription::getSubscriptionsByAuthgroup($this->id) as $subscription) {
+                if ($all || strtotime($subscription->fromdate) >= strtotime($this->getBalanceStartDate()))
+                    $this->subscriptions[] = $subscription;
+            }
+        }
 
         return $this->subscriptions;
     }
@@ -665,13 +557,18 @@ class AuthGroup
 
     /**
      * Get payments
-     * @return \admin\model\SubscriptionTransaction[]
+     * @param bool $all
+     * @return SubscriptionTransaction[]
      */
-    function getPayments()
+    function getPayments($all=false)
     {
         if ($this->payments === null) {
+            $this->payments = [];
             $conditions = ["authgroupid" => $this->id, "approved" => 1, "deleted" => 0];
-            $this->payments = \admin\model\SubscriptionTransaction::findAll($conditions, ["transactiondate desc"]);
+            foreach (\admin\model\SubscriptionTransaction::findAll($conditions, ["transactiondate desc"]) as $payment) {
+                if ($all || strtotime($payment->date) >= strtotime($this->getBalanceStartDate()))
+                    $this->payments[] = $payment;
+            }
         }
 
         return $this->payments;

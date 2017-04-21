@@ -11,8 +11,8 @@
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
-				<th>Contact</th>
 				<th style="width: 200px; text-align: center;">License</th>
+				<th style="width: 100px; text-align: center;">Balance</th>
 				<th style="width: 80px; text-align: center;">Active Users</th>
 				<th style="width: 80px; text-align: center;">Allowed Users</th>
 				<th style="width: 200px; text-align: center;">Last Active</th>
@@ -24,11 +24,6 @@
 				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->name}
 				</td>
-				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-				{if $group->getContactUser()}
-					{$group->getContactUser()->getFullname()}
-				{/if}
-				</td>
 				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
 			{if $group->getSubscription() != null}
@@ -38,6 +33,9 @@
 					<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
 				{/if}
 			{/if}
+				</td>
+				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
+					BALANSDAG
 				</td>
 				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->getActiveUsers()|@count}
@@ -73,7 +71,6 @@
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
-				<th>Contact</th>
 				<th style="width: 200px; text-align: center;">License</th>
 				<th style="width: 80px; text-align: center;">Active Users</th>
 				<th style="width: 80px; text-align: center;">Allowed Users</th>
@@ -85,9 +82,6 @@
 			<tr class="{if $i%2==0}even{else}odd{/if}">
 				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->name}
-				</td>
-				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					{$group->getContactUser()->getFullname()}
 				</td>
 				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">

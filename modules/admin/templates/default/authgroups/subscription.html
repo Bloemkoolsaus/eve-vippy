@@ -30,7 +30,11 @@
 		{assign var=balance value=($totalPayed-$totalDue)}
 		<div class="field"><b>Current Balance:</b></div>
 		<div class="value" style="{if $balance<0}color: #ff0000;{/if}{if $balance>0}color: #00ff00;{/if}">
-			{if $balance>0}+{/if}{$balance}m &nbsp;
+		{if $balance > 0}
+			{if $balance >= 1000}+{$balance/1000}b{else}+{$balance}m{/if} &nbsp;
+		{else}
+			{if $balance <= -1000}{$balance/1000}b{else}{$balance}m{/if} &nbsp;
+		{/if}
 		</div>
 	</div>
 </div>

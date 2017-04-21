@@ -5,8 +5,19 @@ class Authgroup
 {
     function doCleanup($arguments=[])
     {
-        \Approot::doCliOutput("Check for and delete inactive authorization groups");
-        foreach (\admin\model\AuthGroup::getAuthGroups() as $group) {
+        \Approot::doCliOutput("Clean-up authorization groups");
+
+        /** @var \admin\model\AuthGroup[] $authGroups */
+        $authGroups = [];
+        while (count($arguments) > 0) {
+            $authGroups[] = new \admin\model\AuthGroup(array_shift($arguments));
+        }
+        if (count($authGroups) == 0)
+            $authGroups = \admin\model\AuthGroup::getAuthGroups();
+
+        foreach ($authGroups as $group)
+        {
+            \AppRoot::doCliOutput(" > ".$group->name);
             if ($group->deleted) {
                 if ($group->isActive()) {
                     $group->deleted = false;
@@ -20,6 +31,25 @@ class Authgroup
         }
     }
 
+    function doBalance($arguments=[])
+    {
+        \AppRoot::doCliOutput("Check authorization groups balance");
+
+        /** @var \admin\model\AuthGroup[] $authGroups */
+        $authGroups = [];
+        while (count($arguments) > 0) {
+            $authGroups[] = new \admin\model\AuthGroup(array_shift($arguments));
+        }
+        if (count($authGroups) == 0)
+            $authGroups = \admin\model\AuthGroup::getAuthGroups();
+
+        foreach ($authGroups as $group)
+        {
+            \AppRoot::doCliOutput(" > ".$group->name);
+
+        }
+    }
+
     function doSubscriptions($arguments=[])
     {
         // Alleen op de laatste dag van de maand uitrekenen!
@@ -27,14 +57,24 @@ class Authgroup
         {
             \Approot::doCliOutput("Calculate new subscriptions");
             $nextMonth = date("Y-m-d", mktime(0,0,0,date("m")+1,5,date("Y")));
-            foreach (\admin\model\AuthGroup::getAuthGroups() as $group)
+
+            /** @var \admin\model\AuthGroup[] $authGroups */
+            $authGroups = [];
+            while (count($arguments) > 0) {
+                $authGroups[] = new \admin\model\AuthGroup(array_shift($arguments));
+            }
+            if (count($authGroups) == 0)
+                $authGroups = \admin\model\AuthGroup::getAuthGroups();
+
+            foreach ($authGroups as $group)
             {
+                \AppRoot::doCliOutput(" > ".$group->name);
                 // Alleen als er voor die maand nog geen subscription is
                 if ($group->getSubscription($nextMonth))
                     continue;
 
                 // Alleen als er nog wel actieve mensen zijn
-                $activeUsers = $group->getActiveUsers("now");
+                $activeUsers = $group->getActiveUsers();
                 if (count($activeUsers) == 0)
                     continue;
 
@@ -47,7 +87,7 @@ class Authgroup
 
                 $subscription = new \admin\model\Subscription();
                 $subscription->authgroupID = $group->id;
-                $subscription->description = count($activeUsers)." Active users in the previous month";
+                $subscription->description = count($activeUsers)." Active users in ".date("F");
                 $subscription->fromdate = date("Y-m-d", mktime(0,0,0,date("m")+1,1,date("Y")));
                 $subscription->tilldate = date("Y-m-d", mktime(0,0,0,date("m")+2,0,date("Y")));
                 $subscription->amount = $amount;
