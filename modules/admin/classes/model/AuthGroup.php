@@ -19,6 +19,7 @@ class AuthGroup
     private $usergroups = null;
     private $contactUser = null;
     private $_allowedUsers;
+    private $_balance;
     private $_balanceStartDate;
 
     function __construct($id=false)
@@ -312,7 +313,6 @@ class AuthGroup
     {
         if (count($this->getAllowedUsers()) == 0)
             return false;
-
         if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)   // 2 maanden
             return false;
 
@@ -507,6 +507,28 @@ class AuthGroup
         }
 
         return false;
+    }
+
+    function getBalance()
+    {
+        if ($this->_balance === null)
+        {
+            $totalDue = 0;
+            foreach ($this->getSubscriptions() as $subscription) {
+                if (strtotime($subscription->fromdate) >= strtotime("now"))
+                    continue;
+                $totalDue += $subscription->getTotalAmount();
+            }
+
+            $totalPay = 0;
+            foreach ($this->getPayments() as $payment) {
+                $totalPay += $payment->amount;
+            }
+
+            $this->_balance = ($totalPay-$totalDue);
+        }
+
+        return $this->_balance;
     }
 
     function getBalanceStartDate()

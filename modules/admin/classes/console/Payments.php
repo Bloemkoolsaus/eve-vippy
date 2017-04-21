@@ -72,7 +72,7 @@ class Payments
 
                     // Check of vippy in de omschrijving voor komt.
                     if (strpos(strtolower($transaction->description), "vippy") !== false)
-                        $transaction->approve();
+                        $transaction->approved = true;
 
                     if (!$transaction->exists()) {
                         $authgroup = $transaction->findAuthgroup();

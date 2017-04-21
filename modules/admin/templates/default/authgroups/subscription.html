@@ -1,17 +1,3 @@
-
-{assign var=i value=0}
-{assign var=totalDue value=0}
-{assign var=totalPayed value=0}
-{foreach from=$subscriptions key=year item=months}
-	{foreach from=$months key=month item=data}
-		{assign var=payed value=0}
-		{foreach from=$data.payments item=payment}
-			{assign var=payed value=$payed+($payment->amount/100000000)}
-		{/foreach}
-		{assign var=totalDue value=$totalDue+($data.subscription->amount)}
-		{assign var=totalPayed value=$totalPayed+$payed}
-	{/foreach}
-{/foreach}
 <div class="col6">
 	<div class="form">
 		<div class="field"><b>Current Subscription:</b></div>
@@ -27,7 +13,7 @@
 		</div>
 	</div>
 	<div class="form">
-		{assign var=balance value=($totalPayed-$totalDue)}
+		{assign var=balance value=$authgroup->getBalance()/100000000}
 		<div class="field"><b>Current Balance:</b></div>
 		<div class="value" style="{if $balance<0}color: #ff0000;{/if}{if $balance>0}color: #00ff00;{/if}">
 		{if $balance > 0}

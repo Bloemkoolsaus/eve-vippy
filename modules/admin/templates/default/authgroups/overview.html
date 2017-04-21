@@ -19,7 +19,7 @@
 				<th style="width: 50px;"></th>
 			</tr>
 	{foreach from=$authgroups key=i item=group}
-		{if $group->isActive()}
+		{if !$group->deleted}
 			<tr class="{if $i%2==0}even{else}odd{/if}">
 				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->name}
@@ -35,7 +35,14 @@
 			{/if}
 				</td>
 				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					BALANSDAG
+				{assign var=balance value=$group->getBalance()/100000000}
+					<div class="value" style="{if $balance<0}color: #ff0000;{/if}{if $balance>0}color: #00ff00;{/if}">
+					{if $balance > 0}
+						{if $balance >= 1000}+{$balance/1000}b{else}+{$balance}m{/if} &nbsp;
+					{else}
+						{if $balance <= -1000}{$balance/1000}b{else}{$balance}m{/if} &nbsp;
+					{/if}
+					</div>
 				</td>
 				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
 					{$group->getActiveUsers()|@count}
@@ -64,52 +71,6 @@
 				<th style="text-align: center;">{$totalUsers}</th>
 				<td></td>
 			</tr>
-		</table>
-	</div>
-	<div style="padding-top: 2em;">
-		<h2>In-Active groups</h2>
-		<table class="sectionoverview">
-			<tr>
-				<th>Name</th>
-				<th style="width: 200px; text-align: center;">License</th>
-				<th style="width: 80px; text-align: center;">Active Users</th>
-				<th style="width: 80px; text-align: center;">Allowed Users</th>
-				<th style="width: 200px; text-align: center;">Last Active</th>
-				<th style="width: 50px;"></th>
-			</tr>
-	{foreach from=$authgroups key=i item=group}
-		{if !$group->isActive()}
-			<tr class="{if $i%2==0}even{else}odd{/if}">
-				<td onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					{$group->name}
-				</td>
-				<td style="text-align: right;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					<img src="/images/eve/{if $group->isAllowed()}apply{else}cross{/if}.png" align="left">
-					{if $group->getSubscription() != null}
-						{if $group->getSubscription()->getAmount() == 0}
-							<div style='text-align: center;'><i>free license</i></div>
-						{else}
-							<b>{$group->getSubscription()->getAmount()/100/1000000}m</b> &nbsp; p/month &nbsp;
-						{/if}
-					{/if}
-				</td>
-				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					{$group->getActiveUsers()|@count}
-				</td>
-				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					{$group->getAllowedUsers()|@count}
-				</td>
-				<td style="text-align: center;" onclick="document.location='/admin/authgroup/edit/{$group->id}/'">
-					{if $group->getLastActiveDate()}
-						{$group->getLastActiveDate()|date_age} ago
-					{/if}
-				</td>
-				<td style="text-align: center;">
-					<a href="/admin/authgroup/edit/{$group->id}/"><img src="/images/default/ui/edit.png"></a>
-				</td>
-			</tr>
-		{/if}
-	{/foreach}
 		</table>
 	</div>
 </div>

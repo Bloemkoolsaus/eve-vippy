@@ -31,25 +31,6 @@ class Authgroup
         }
     }
 
-    function doBalance($arguments=[])
-    {
-        \AppRoot::doCliOutput("Check authorization groups balance");
-
-        /** @var \admin\model\AuthGroup[] $authGroups */
-        $authGroups = [];
-        while (count($arguments) > 0) {
-            $authGroups[] = new \admin\model\AuthGroup(array_shift($arguments));
-        }
-        if (count($authGroups) == 0)
-            $authGroups = \admin\model\AuthGroup::getAuthGroups();
-
-        foreach ($authGroups as $group)
-        {
-            \AppRoot::doCliOutput(" > ".$group->name);
-
-        }
-    }
-
     function doSubscriptions($arguments=[])
     {
         // Alleen op de laatste dag van de maand uitrekenen!

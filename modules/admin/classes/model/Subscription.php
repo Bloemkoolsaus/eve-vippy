@@ -78,6 +78,18 @@ class Subscription extends \Model
         return $this->amount * 100000000;
     }
 
+    function getTotalAmount()
+    {
+        $amount = 0;
+        $curdate = strtotime($this->fromdate);
+        $endate = strtotime($this->tilldate);
+        while ($curdate < $endate) {
+            $amount += $this->getAmount();
+            $curdate = mktime(0,0,0,date("m",$curdate)+1,1,date("Y",$curdate));
+        }
+        return $amount;
+    }
+
     /**
      * How many has been payed this month
      * @param null $date
