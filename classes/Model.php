@@ -57,8 +57,11 @@ class Model
 
     function delete()
     {
-        if (!$this->_deletedField)
-        {
+        if ($this->_deletedField) {
+            $field = $this->_deletedField;
+            $this->$field = true;
+            static::store();
+        } else {
             $data = array();
             $where = array();
             foreach ($this->getDBProperties() as $property => $field) {
@@ -68,15 +71,6 @@ class Model
                 $where[$field] = $data[$field];
             }
             \MySQL::getDB()->delete($this->getDBTable(),$where);
-        }
-        else
-        {
-            $data = [$this->_deletedField => 1];
-            $where = [];
-            foreach ($this->getDBKeyFields() as $field) {
-                $where[$field] = $this->$field;
-            }
-            \MySQL::getDB()->update($this->getDBTable(), $data, $where);
         }
     }
 
@@ -134,6 +128,9 @@ class Model
                     $dbField = trim($parameters[1]);
                     if ($dbField == "null")
                         continue;
+                }
+                if (preg_match('/\\s@deleted(\\s[\\w\\\\]+)?\\s/', $property->getDocComment(), $parameters)) {
+                    $this->_deletedField = $property->getName();
                 }
 
                 $this->_dbProperties[$property->getName()] = $dbField;

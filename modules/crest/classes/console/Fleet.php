@@ -90,27 +90,20 @@ class Fleet
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
 
-                    // Fleet kan laggy zijn. Alleen bijwerken als het al even geleden is
-                    $result = \MySQL::getDB()->getRow("select * from crest_character_location
-                                                       where characterid = ? and lastupdate < ?"
-                                            , [$character->id, strtotime("now")-20]);
-                    if (!$result)
-                    {
-                        // Log entry
-                        if ($character->getUser()) {
-                            \User::setUSER($character->getUser());
-                            $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id . "-" . date("Ymd"));
-                        }
-
-                        // Location tracker
-                        $locationTracker->setCharacterLocation(
-                            $fleet->authGroupID,
-                            $fleetMember->character->id,
-                            $fleetMember->solarSystem->id,
-                            $fleetMember->ship->id
-                        );
-                        \User::unsetUser();
+                    // Log entry
+                    if ($character->getUser()) {
+                        \User::setUSER($character->getUser());
+                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id . "-" . date("Ymd"));
                     }
+
+                    // Location tracker
+                    $locationTracker->setCharacterLocation(
+                        $fleet->authGroupID,
+                        $fleetMember->character->id,
+                        $fleetMember->solarSystem->id,
+                        $fleetMember->ship->id
+                    );
+                    \User::unsetUser();
                 }
 
                 $fleet->active = 1;

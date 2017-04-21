@@ -43,7 +43,8 @@ class Api extends \api\Client
         }
 
         $result = parent::get($url, $params);
-        $this->log("get", $url, $params);
+        if (!$this->success())
+            $this->log("get", $url, $params);
         return $result;
     }
 
@@ -59,7 +60,8 @@ class Api extends \api\Client
         }
 
         $result = parent::post($url, $params);
-        $this->log("post", $url, $params);
+        if (!$this->success())
+            $this->log("post", $url, $params);
         return $result;
     }
 
