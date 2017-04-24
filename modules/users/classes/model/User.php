@@ -331,18 +331,18 @@ class User
             $this->rights = json_decode($cache,true);
         else {
             \AppRoot::debug("User()->fetchRights()");
+            $query = ["ug.userid = ".$this->id];
+            if (count($this->getAuthGroupsIDs()) > 0) {
+                $query[] = "(g.authgroupid in (".implode(",",$this->getAuthGroupsIDs()).") or g.authgroupid is null)";
+            }
             $this->rights = [];
-            $authGroupIDs = $this->getAuthGroupsIDs();
             if ($rights = \MySQL::getDB()->getRows("
                                   select  r.id, r.module, r.name, r.title
                                   from    user_rights r
                                       inner join user_group_rights rg on rg.rightid = r.id
                                       inner join user_user_group ug on ug.groupid = rg.groupid
                                       inner join user_groups g on g.id = rg.groupid
-                                  where   ug.userid = ?
-                                  ".((count($authGroupIDs)>0)?"and g.authgroupid in (".implode(",",$authGroupIDs).")":"")."
-                                  group by r.id"
-                            , [$this->id]))
+                                  where   ".implode(" and ", $query)))
             {
                 foreach ($rights as $right) {
                     $this->rights[$right["module"]][$right["name"]] = true;

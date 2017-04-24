@@ -153,17 +153,14 @@ class User
         $section->addElement("Username", "username");
         $section->addElement("E-mail", "email");
         $section->addElement("Status", "status", "id", '\\users\\elements\\User\\Status');
-        // $section->addElement("Last Login", "uid", "id", '\\users\\elements\\User\\LastLogin');
 
         $section->orderBy = "displayname";
         $section->updatefield = "updatedate";
 
-        $queryParams = array();
-
-
-        if (!\User::getUSER()->hasRight("users", "manageusers"))
+        $queryParams = [];
+        if (!\User::getUSER()->getIsSysAdmin())
         {
-            $allowedCorporationIDs = array();
+            $allowedCorporationIDs = [];
             foreach (\User::getUSER()->getAuthGroups() as $group) {
                 foreach ($group->getAllowedCorporations() as $corp) {
                     if (\User::getUSER()->getIsCEO($corp->id)) {
@@ -181,9 +178,12 @@ class User
                 }
             }
 
-            if (count($allowedCorporationIDs) > 0)
-                $queryParams[] = "id IN (SELECT userid FROM characters WHERE corpid IN (".implode(",",$allowedCorporationIDs)."))";
-            else
+            if (count($allowedCorporationIDs) > 0) {
+                $queryParams[] = "id IN (select userid 
+                                         from   characters 
+                                         where  corpid IN (".implode(",",$allowedCorporationIDs).")
+                                         and    authstatus > 0)";
+            } else
                 return false;
         }
 

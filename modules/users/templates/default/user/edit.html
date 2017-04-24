@@ -19,16 +19,6 @@
 	<input type="hidden" id="userid" name="save" value="{$user->id}"/>
 
 	<div style="float: left; width: 400px;">
-		{*
-		<div class="form">
-			<label class="field"><b>Username:</b></label>
-			{$user->username}
-		</div>
-		<div class="form">
-			<label class="field"><b>E-mail:</b></label>
-			{$user->email}
-		</div>
-		*}
 		<div class="form">
 			<label class="field"><b>Main Character:</b></label>
 		{if $user->getMainCharacter()}
@@ -86,32 +76,32 @@
 {/if}
 *}
 	<div style="float: right; width: 250px; text-align: right;">
+{*
 		<div style="margin-bottom: 2px;">
 			<button type="button" style="width: 200px;" onclick="resetPassword('{$user->id}')">
 				<img src="/images/eve/refresh.png" align="left" />
 				Reset Password
 			</button>
 		</div>
-	<!--
 		<div style="margin-bottom: 5px;">
 			<button type="button" style="width: 200px;" onclick="validateAPI('{$user->id}')">
 				<img src="/images/eve/aura.png" style="height: 16px;" align="left" />
 				Run API validation
 			</button>
 		</div>
-	-->
+*}
 		<div style="margin-bottom: 2px;">
-			{if $user->deleted > 0}
-				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
-					<img src="/images/eve/apply.png" align="left" />
-					Re-Activate User
-				</button>
-			{else}
-				<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
-					<img src="/images/eve/stop.png" align="left" />
-					BAN User
-				</button>
-			{/if}
+		{if $user->deleted > 0}
+			<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
+				<img src="/images/eve/apply.png" align="left" />
+				Re-Activate User
+			</button>
+		{else}
+			<button type="button" style="width: 200px;" onclick="banUser('{$user->id}')">
+				<img src="/images/eve/stop.png" align="left" />
+				BAN User
+			</button>
+		{/if}
 		</div>
 {foreach from=$App->user->getAuthGroups() item=authgroup}
 	{if $authgroup->getMayAdmin($App->user) && $authgroup->getConfig('access_control') == "manual"}
@@ -136,7 +126,12 @@
 		<div style="margin-bottom: 1px;">
 			<button type="button" style="width: 200px;" onclick="document.location='index.php?module=users&loginas={$user->id}'">
 				<img src="/images/eve/undock.small.png" align="left" />
-				Login as {$user->username}
+				Login as
+				{if $user->getMainCharacter()}
+					{$user->getMainCharacter()->name}
+				{else}
+					{$user->username}
+				{/if}
 			</button>
 		</div>
 	{/if}
@@ -184,6 +179,7 @@
 		</div>
 		<div style="clear:both;"></div>
 
+{if $App->user->getIsSysAdmin()}
 		<h1 style="margin-bottom: .3em;">
 			<img src="/images/default/ui/charactersheet.png" align="left">
 			Other Characters
@@ -201,6 +197,7 @@
 		</div>
 		<div style="clear:both;"></div>
 	</div>
+{/if}
 
 	{* LOGS *}
 	<div id="detailtab-logs" rel="detailtab" style="display:none;">

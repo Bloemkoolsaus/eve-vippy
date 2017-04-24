@@ -12,9 +12,9 @@ namespace eve\model
 		public $titles = array();
 		public $updatedate;
         public $lastonline;
+        public $isAuthorized = null;
+        public $authMessage = null;
 
-		private $isAuthorized = null;
-        private $authMessage = null;
 		private $corporation = null;
 		private $user = null;
 
@@ -41,6 +41,8 @@ namespace eve\model
 				$this->isCEO = ($result["isceo"]>0)?true:false;
                 $this->updatedate = $result["updatedate"];
                 $this->lastonline = $result["lastonline"];
+                $this->isAuthorized = ($result["authstatus"]>0)?true:false;
+                $this->authMessage = $result["authmessage"];
 			}
 		}
 
@@ -63,6 +65,8 @@ namespace eve\model
                 "corpid"		=> $this->corporationID,
                 "isdirector"	=> ($this->isDirector())?1:0,
                 "isceo"			=> ($this->isCEO())?1:0,
+                "authstatus"    => ($this->isAuthorized)?1:0,
+                "authmessage"   => $this->authMessage,
                 "updatedate"	=> date("Y-m-d H:i:s"),
                 "lastonline"	=> date("Y-m-d H:i:s", strtotime($this->lastonline))
             ];
@@ -124,6 +128,8 @@ namespace eve\model
                         $this->authMessage = "Not a member of an allowed Corporation or Alliance";
                 } else
                     $this->authMessage = "No valid CREST authentication token";
+
+                $this->store();
             }
 
             return $this->authMessage;
