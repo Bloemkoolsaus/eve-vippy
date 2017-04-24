@@ -74,7 +74,6 @@ class User
 
     public function resetCache()
     {
-        \AppRoot::debug($this->getFullName()."->resetCache()", true);
         \Tools::deleteDir($this->getCacheDirectory(true));
     }
 
