@@ -42,7 +42,7 @@ class Login extends \api\Client
     }
 
     /**
-     * Succesvolle SSO Login. Haal een accesstoken.
+     * Succesvolle SSO Login. Haal een access-token.
      * @param $state
      * @param $code
      */

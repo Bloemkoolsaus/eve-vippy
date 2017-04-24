@@ -610,6 +610,15 @@ class AppRoot
 					$systemvars[$key]["vars"][$var] = Tools::getVariableContentString($value);
 				}
 			}
+			if (\User::getUSER())
+            {
+                $key = count($systemvars);
+                $systemvars[$key]["name"] = "USER";
+                foreach (\User::getUSER() as $var => $value) {
+                    $systemvars[$key]["vars"][$var] = Tools::getVariableContentString($value);
+                }
+                $systemvars[$key]["vars"]["permissions"] = Tools::getVariableContentString(\User::getUSER()->getPermissions());
+            }
 
 			$debugTPL->assign("systemvars", $systemvars);
 			return $debugTPL->fetch("debug");

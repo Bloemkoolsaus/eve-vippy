@@ -321,30 +321,32 @@ class User
      */
     private function fetchRights()
     {
-        if ($this->id == 0)
-        {
-            $this->rights = array();
+        if ($this->id == 0) {
+            $this->rights = [];
             return null;
         }
 
         $cacheFilename = $this->getCacheDirectory()."rights.json";
         if ($cache = \Cache::file()->get($cacheFilename))
             $this->rights = json_decode($cache,true);
-        else
-        {
+        else {
             \AppRoot::debug("User()->fetchRights()");
-            $this->rights = array();
-            $rights = \MySQL::getDB()->getRows("SELECT  r.id, r.module, r.name, r.title
-                                                FROM    user_rights r
-                                                    INNER JOIN user_group_rights rg ON rg.rightid = r.id
-                                                    INNER JOIN user_user_group ug ON ug.groupid = rg.groupid
-                                                    INNER JOIN user_groups g ON g.id = rg.groupid
-                                                WHERE   ug.userid = ?
-                                                AND		rg.level > 0
-                                                GROUP BY r.id"
-                                    , array($this->id));
-            foreach ($rights as $right) {
-                $this->rights[$right["module"]][$right["name"]] = true;
+            $this->rights = [];
+            $authGroupIDs = $this->getAuthGroupsIDs();
+            if ($rights = \MySQL::getDB()->getRows("
+                                  select  r.id, r.module, r.name, r.title
+                                  from    user_rights r
+                                      inner join user_group_rights rg on rg.rightid = r.id
+                                      inner join user_user_group ug on ug.groupid = rg.groupid
+                                      inner join user_groups g on g.id = rg.groupid
+                                  where   ug.userid = ?
+                                  ".((count($authGroupIDs)>0)?"and g.authgroupid in (".implode(",",$authGroupIDs).")":"")."
+                                  group by r.id"
+                            , [$this->id]))
+            {
+                foreach ($rights as $right) {
+                    $this->rights[$right["module"]][$right["name"]] = true;
+                }
             }
             \Cache::file()->set($cacheFilename, json_encode($this->rights));
         }
@@ -362,10 +364,8 @@ class User
         \AppRoot::debug("hasRight($module, $right)");
         $cacheFilename = $this->getCacheDirectory()."permissionss.json";
 
-        if ($this->permissions == null)
-        {
-            $this->permissions = array();
-
+        if ($this->permissions === null) {
+            $this->permissions = [];
             // Check de cache
             $cache = \Cache::file()->get($cacheFilename);
             if ($cache) {
@@ -373,14 +373,18 @@ class User
             }
         }
 
-        if (!isset($this->permissions[$module][$right]))
-        {
+        if (!isset($this->permissions[$module][$right])) {
             $this->permissions[$module][$right] = $this->calcHasRight($module, $right);
             \Cache::file()->set($cacheFilename, json_encode($this->permissions));
         }
 
         \AppRoot::debug("/hasRight($module, $right): ".(($this->permissions[$module][$right])?"<span style='color:green;'>true</span>":"<span style='color:red;'>false</span>"));
         return $this->permissions[$module][$right];
+    }
+
+    public function getPermissions()
+    {
+        return $this->permissions;
     }
 
     private function calcHasRight($module, $right)
@@ -810,23 +814,28 @@ class User
      */
     public function getIsDirector($corpid=false)
     {
-        if ($this->getIsSysAdmin())
+        \AppRoot::debug($this->displayname."->isDirector($corpid)");
+        if ($this->getIsSysAdmin()) {
+            \AppRoot::debug("YES => system administrator");
             return true;
+        }
 
-        foreach ($this->getAuthorizedCharacters() as $char)
-        {
-            if ($corpid)
-            {
+        foreach ($this->getAuthorizedCharacters() as $char) {
+            if ($corpid) {
                 if ($char->corporationID != $corpid)
                     continue;
             }
-
-            if ($char->isDirector)
+            if ($char->isDirector) {
+                \AppRoot::debug("YES => ".$char->name." is director");
                 return true;
-            if ($char->isCEO)
+            }
+            if ($char->isCEO) {
+                \AppRoot::debug("YES => ".$char->name." is ceo");
                 return true;
+            }
         }
 
+        \AppRoot::debug("NO");
         return false;
     }
 
