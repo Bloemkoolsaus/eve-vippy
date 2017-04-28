@@ -56,6 +56,19 @@ namespace eve\controller
             $character->corporationID = (string)$result->result->corporationID;
             $character->store();
 
+            $corporation = new \eve\model\Corporation($character->corporationID);
+            $corporation->id = (string)$result->result->corporationID;
+            $corporation->name = (string)$result->result->corporationName;
+            $corporation->allianceID = (int)$result->result->allianceID;
+            $corporation->store();
+
+            if ((int)$corporation->allianceID) {
+                $alliance = new \eve\model\Alliance((string)$corporation->allianceID);
+                $alliance->id = (string)$result->result->allianceID;
+                $alliance->name = (string)$result->result->alliance;
+                $alliance->store();
+            }
+
             $user = $character->getUser();
             if ($user) {
                 $user->resetCache();
