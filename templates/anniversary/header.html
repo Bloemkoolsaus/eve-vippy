@@ -1,0 +1,61 @@
+{include file="templates/default/header.html"}
+
+<div id="anniversary" class="content">
+	<div class="col2">
+		&nbsp;
+	</div>
+	<div class="col8">
+		<div class="col5" style="padding-top: .5em;">
+			<h1>5 year anniversary</h1>
+			<h3>This month, VIPPY is 5 years old!!</h3>
+		</div>
+		<div class="col2">
+			<img src="/images/anniversary/5years.png" style="max-width: 95%; max-height: 60px;">
+		</div>
+		<div class="col5 right last" style="padding-top: .5em;">
+			<div>
+				Thank you everyone who has used and supported VIPPY.
+				Without you, it could not be what it is today!
+			</div>
+			<div>
+				<a href="/system/anniversary"><b>READ MORE</b></a>
+			</div>
+		</div>
+	</div>
+	<div class="col2 right last">
+		&nbsp;
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<div id="anniversary-banner-left">
+	<img src="/images/anniversary/balloon-corner-left.png">
+</div>
+<div id="anniversary-banner-right">
+	<img src="/images/anniversary/balloon-corner-right.png">
+</div>
+
+<script type="text/javascript">
+$(window).ready(function() {
+	positionBalloons();
+	$("#anniversary-banner-left").fadeIn();
+	$("#anniversary-banner-right").fadeIn();
+});
+$(window).resize(function() {
+	positionBalloons();
+});
+function positionBalloons()
+{
+    var top = $("#anniversary").position().top;
+	var left = $("#anniversary").position().left-60;
+	if (left < 0)
+	    left = 0;
+	var right = $("#anniversary").position().left+$("#anniversary").width()-170;
+
+
+	$("#anniversary-banner-left").css("top", top);
+	$("#anniversary-banner-left").css("left", left);
+
+	$("#anniversary-banner-right").css("top", top);
+	$("#anniversary-banner-right").css("left", right);
+}
+</script>

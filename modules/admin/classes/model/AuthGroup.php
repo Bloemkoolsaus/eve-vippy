@@ -382,6 +382,20 @@ class AuthGroup
     }
 
     /**
+     * Get admin users
+     * @return \users\model\User[]
+     */
+    function getAdminUsers()
+    {
+        $users = [];
+        foreach ($this->getAllowedUsers() as $user) {
+            if ($user->isAdmin())
+                $users[] = $user;
+        }
+        return $users;
+    }
+
+    /**
      * Get allowed users
      * @return \users\model\User[]
      */

@@ -1,0 +1,38 @@
+#anniversary {
+    width: 95%;
+   	max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    font-size: 1.1em;
+    color: #ffdd55;
+    border: solid 1px #bb9922;
+    text-align: center;
+    background: url(/images/anniversary/background.png) center bottom;
+}
+
+#anniversary h1,
+#anniversary h2,
+#anniversary h3 {
+    border: none;
+    margin: 0;
+    padding: 0;
+    color: #ffdd55;
+}
+
+#anniversary h1 {
+    text-shadow: 1px 1px 1px #ffeeaa;
+}
+#anniversary h3 {
+    color: #ffffff !important;
+}
+
+#anniversary-banner-left {
+    position: absolute;
+    display: none;
+}
+#anniversary-banner-right {
+    position: absolute;
+    display: none;
+}

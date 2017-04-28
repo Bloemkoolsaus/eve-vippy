@@ -845,10 +845,8 @@ class User
      */
     public function isAdmin($corpid=false)
     {
-        if ($this->isAdmin === null)
-        {
+        if ($this->isAdmin === null) {
             $this->isAdmin = false;
-
             if ($this->getCurrentAuthGroup()) {
                 if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
                     if ($this->getIsDirector($corpid))
@@ -1610,8 +1608,6 @@ class User
 
         return $this->notifications;
     }
-
-
 
 
 

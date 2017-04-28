@@ -33,6 +33,10 @@ if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" |
 if (date("Y-m-d") == date("Y")."-01-01") {
     \SmartyTools::setTemplate("newyear");
 }
+// Anniversary
+if (strtotime("2017-05-01 00:00:00") >= strtotime("now") && strtotime("now") <= strtotime("2017-05-31:23:59:59")) {
+    \SmartyTools::setTemplate("anniversary");
+}
 
 // Logout
 if (Tools::GET("action") == "logout") {
