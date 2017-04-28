@@ -11,41 +11,33 @@ class LocationTracker
      * @param $shipTypeID
      * @return bool
      */
-    function setCharacterLocation($authGroupID, $characterID, $locationID, $shipTypeID=0)
+    function setCharacterLocation($authGroupID, $characterID, $locationID=null, $shipTypeID=null)
     {
         \AppRoot::doCliOutput("setCharacterLocation($authGroupID, $characterID, $locationID, $shipTypeID)");
-        if (!is_numeric($locationID))
-            return false;
 
+        // Vorige locatie?
         $previousLocationID = null;
-        $previousShipTypeID = null;
-
-        if ($previousLocation = \MySQL::getDB()->getRow("select * from map_character_locations where characterid = ? and lastdate > ?"
-                                                , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
+        if ($result = \MySQL::getDB()->getRow("select * from map_character_locations
+                                               where characterid = ? and lastdate > ?"
+                                , [$characterID, date("Y-m-d H:i:s", strtotime("now")-60)]))
         {
-            $previousLocationID = $previousLocation["solarsystemid"];
-            $previousShipTypeID = $previousLocation["shiptypeid"];
+            $previousLocationID = $result["solarsystemid"];
         }
-        if (!$shipTypeID)
-            $shipTypeID = $previousShipTypeID;
 
         // Huidige locatie opslaan.
-        \MySQL::getDB()->updateinsert("map_character_locations", [
+        $data = [
             "characterid" => $characterID,
-            "solarsystemid" => $locationID,
-            "shiptypeid" => ($shipTypeID)?:0,
             "authgroupid" => $authGroupID,
             "lastdate" => date("Y-m-d H:i:s")
-        ],[
-            "characterid" => $characterID
-        ]);
+        ];
+        if ($locationID && is_numeric($locationID))
+            $data["solarsystemid"] = $locationID;
+        if ($shipTypeID && is_numeric($shipTypeID))
+            $data["shiptypeid"] = $shipTypeID;
 
-        // Update character last-online
-        \MySQL::getDB()->update("characters", ["lastonline" => date("Y-m-d H:i:s")], ["id" => $characterID]);
+        \MySQL::getDB()->updateinsert("map_character_locations", $data, ["characterid" => $characterID]);
 
-
-
-        if ($previousLocationID)
+        if ($locationID && $previousLocationID)
         {
             if (!is_numeric($previousLocationID))
                 return false;

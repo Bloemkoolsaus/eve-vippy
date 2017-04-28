@@ -400,15 +400,11 @@ class AppRoot
 		\AppRoot::debug("<div style='background-color: #222222; color: #EEEEEE; padding: 1px;'>".$command."</div>");
 		$output = shell_exec($command);
 
-		if ($output === null)
-		{
+		if ($output === null) {
             if ($expectOutput)
 			    \AppRoot::error($command);
-
 			return false;
-		}
-		else
-		{
+		} else {
 			\ApPRoot::debug($command.":<pre>".$output."</pre>");
 			return $output;
 		}

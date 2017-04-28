@@ -83,24 +83,41 @@ class Fleet
                 foreach ($crest->getResult()->items as $fleetMember)
                 {
                     // Check character exists
-                    $character = \eve\model\Character::findByID($fleetMember->character->id);
+                    /** @var \crest\model\Character $character */
+                    $character = \crest\model\Character::findByID($fleetMember->character->id);
                     if (!$character) {
                         $controller = new \eve\controller\Character();
-                        $character = $controller->importCharacter($fleetMember->character->id);
+                        $controller->importCharacter($fleetMember->character->id);
+                        $character = new \crest\model\Character($fleetMember->character->id);
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
+
+                    /**
+                     * Moeten we de locatie van deze character updaten?
+                     *  - wanneer was de laatste locatie update?
+                     */
+                    $doLocationUpdate = false;
+                    if ($update = \MySQL::getDB()->getRow("select lastdate from map_character_locations where characterid = ".$character->id)) {
+                        if (strtotime($update["lastdate"]) < mktime(date("H"),date("i"),date("s")-30,date("m"),date("d"),date("Y")))
+                            $doLocationUpdate = true;
+                    }
+
+                    $solarSystemID = null;
+                    if ($doLocationUpdate)
+                        $solarSystemID = $fleetMember->solarSystem->id;
 
                     // Log entry
                     if ($character->getUser()) {
                         \User::setUSER($character->getUser());
-                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $fleet->id . "-" . date("Ymd"));
+                        $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
+                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
                     }
 
                     // Location tracker
                     $locationTracker->setCharacterLocation(
                         $fleet->authGroupID,
                         $fleetMember->character->id,
-                        $fleetMember->solarSystem->id,
+                        $solarSystemID,
                         $fleetMember->ship->id
                     );
                     \User::unsetUser();
