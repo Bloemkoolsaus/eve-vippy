@@ -1559,13 +1559,10 @@ class User
         $edate = ($edate != null) ? date("Y-m-d", strtotime($edate)) : date("Y-m-d", mktime(0,0,0,date("m")+1, 0,date("Y")));
 
         // Zoek naar ingame log entries.
-        foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate, "ingame") as $log)
-        {
-            if ($log->pilotID)
-            {
+        foreach (\users\model\Log::getLogByUserOnDate($this->id, $sdate, $edate, "ingame") as $log) {
+            if ($log->pilotID) {
                 if (!isset($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))]))
                     $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = 0;
-
                 $seconds = (strtotime($log->lastDate)-strtotime($log->logDate));
                 if ($nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] < $seconds)
                     $nrSecondsOnline[date("Y-m-d", strtotime($log->logDate))] = $seconds;

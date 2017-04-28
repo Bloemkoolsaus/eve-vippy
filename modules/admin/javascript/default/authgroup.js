@@ -19,3 +19,14 @@ function editSubscription(subscriptionID)
         }
     });
 }
+
+function loadSubscription(authGroupID)
+{
+    $.ajax({
+        url: "/admin/authgroup/subscription/"+authGroupID,
+        data: { ajax: 1 },
+        success: function(data) {
+            $("#subscription-content").html(data);
+        }
+    });
+}

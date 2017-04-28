@@ -1,199 +1,178 @@
 <?php
-namespace admin\model
+namespace admin\model;
+
+class Subscription extends \Model
 {
-	class Subscription
-	{
-		public $id = 0;
-		public $authgroupID;
-		public $description;
-		public $amount;
-		public $fromdate;
-		public $tilldate;
+    protected $_table = "vippy_subscriptions";
 
-        public $totalDue;
-        public $totalPayed;
+    public $id = 0;
+    public $authgroupID = 0;
+    public $description;
+    public $amount = 0;
+    public $fromdate;
+    public $tilldate;
+    public $resetBalance = false;
 
-		private $authGroup = null;
+    private $_authGroup = null;
 
-		function __construct($id=false)
-		{
-			if ($id) {
-				$this->id = $id;
-				$this->load();
-			}
-		}
+    function store()
+    {
+        if ($this->fromdate)
+            $this->fromdate = date("Y-m-d", strtotime($this->fromdate))." 00:00:00";
+        if ($this->tilldate)
+            $this->tilldate = date("Y-m-d", strtotime($this->tilldate))." 23:59:59";
 
-		function load($result=false)
-		{
-			if (!$result)
-				$result = \MySQL::getDB()->getRow("SELECT * FROM vippy_subscriptions WHERE id = ?", array($this->id));
+        $new = (!$this->id)?true:false;
+        parent::store();
 
-			if ($result)
-			{
-				$this->id = $result["id"];
-				$this->authgroupID = $result["authgroupid"];
-				$this->description = $result["description"];
-				$this->amount = $result["amount"];
-				$this->fromdate = $result["fromdate"];
-				$this->tilldate = $result["tilldate"];
-			}
-		}
-
-		function store()
-		{
-			$data = [
-			    "authgroupid"	=> $this->authgroupID,
-                "description"	=> $this->description,
-                "amount"		=> $this->amount,
-                "fromdate"		=> $this->fromdate,
-                "tilldate"		=> $this->tilldate
-            ];
-			if ($this->id > 0)
-				$data["id"] = $this->id;
-
-			$result = \MySQL::getDB()->updateinsert("vippy_subscriptions", $data, array("id" => $this->id));
-			if ($this->id == 0)
-			{
-				$this->id = $result;
-				// Deze was nieuw. Check of er nog lopende zijn, zo ja, laat die aflopen!
-				foreach (self::getSubscriptionsByAuthgroup($this->authgroupID) as $subscription) {
-					if (strtotime($subscription->fromdate) < strtotime($this->fromdate)) {
-						if (!$subscription->tilldate) {
-							$subscription->tilldate = $this->fromdate;
-							$subscription->store();
-						}
-					}
-				}
-			}
-		}
-
-		function isActive()
-		{
-            \AppRoot::debug("Subscription->isActive($this->fromdate,$this->tilldate)");
-
-			if ($this->fromdate != null) {
-				if (strtotime($this->fromdate) > 0 && strtotime($this->fromdate) > strtotime("now")) {
-                    \AppRoot::debug("subscription not yet started");
-                    return false;
+        if ($new)
+        {
+            // Deze was nieuw. Check of er nog lopende zijn, zo ja, laat die aflopen!
+            foreach (self::getSubscriptionsByAuthgroup($this->authgroupID) as $subscription) {
+                if (strtotime($subscription->fromdate) < strtotime($this->fromdate)) {
+                    if (!$subscription->tilldate) {
+                        $subscription->tilldate = $this->fromdate;
+                        $subscription->store();
+                    }
                 }
-			}
+            }
+        }
+    }
 
-			if ($this->tilldate != null) {
-				if (strtotime($this->tilldate) > 0 && strtotime($this->tilldate) < strtotime("now")) {
-                    \AppRoot::debug("subscription expired");
-                    return false;
-                }
-			}
+    function isActive($onDate=null)
+    {
+        $onDate = ($onDate) ? strtotime($onDate) : strtotime("now");
+        \AppRoot::debug("Subscription->isActive($this->fromdate,$this->tilldate)");
 
-            \AppRoot::debug("Active!");
-			return true;
-		}
+        if ($this->fromdate != null) {
+            if (strtotime($this->fromdate) > 0 && strtotime($this->fromdate) >= $onDate) {
+                \AppRoot::debug("subscription not yet started");
+                return false;
+            }
+        }
+        if ($this->tilldate != null) {
+            if (strtotime($this->tilldate) > 0 && strtotime($this->tilldate) <= $onDate) {
+                \AppRoot::debug("subscription expired");
+                return false;
+            }
+        }
 
-		/**
-		 * Get authgroup
-		 * @return \admin\model\AuthGroup|null
-		 */
-		function getAuthgroup()
-		{
-			if ($this->authGroup === null && $this->authgroupID > 0)
-				$this->authGroup = new \admin\model\AuthGroup($this->authgroupID);
+        \AppRoot::debug("Active!");
+        return true;
+    }
 
-			return $this->authGroup;
-		}
+    /**
+     * Get authgroup
+     * @return \admin\model\AuthGroup|null
+     */
+    function getAuthgroup()
+    {
+        if ($this->_authGroup === null && $this->authgroupID > 0)
+            $this->_authGroup = new \admin\model\AuthGroup($this->authgroupID);
 
-		function getAmount()
-		{
-			return $this->amount * 100000000;
-		}
+        return $this->_authGroup;
+    }
 
-		/**
-		 * How many has been payed this month
-		 * @return number
-		 */
-		function getPayed($date=null)
-		{
-			$totalPayed = 0;
-			if ($date == null)
-				$date = date("Y-m-d");
+    function getAmount()
+    {
+        return $this->amount * 100000000;
+    }
 
-			if ($this->getAuthgroup() != null)
-			{
-				$payments = array();
+    function getTotalAmount()
+    {
+        $amount = 0;
+        $curdate = strtotime($this->fromdate);
+        $endate = strtotime($this->tilldate);
+        while ($curdate < $endate) {
+            $amount += $this->getAmount();
+            $curdate = mktime(0,0,0,date("m",$curdate)+1,1,date("Y",$curdate));
+        }
+        return $amount;
+    }
 
-				foreach ($this->getAuthgroup()->getPayments() as $payment)
-				{
-					// Alle payments in dezelfde maand als $date
-					if (date("Ym", strtotime($payment->date)) == date("Ym", strtotime($date)))
-						$payments[] = $payment;
-				}
+    /**
+     * How many has been payed this month
+     * @param null $date
+     * @return number
+     */
+    function getPayed($date=null)
+    {
+        $totalPayed = 0;
+        if ($date == null)
+            $date = date("Y-m-d");
 
-				foreach ($payments as $payment) {
-					$totalPayed += $payment->amount;
-				}
-			}
+        if ($this->getAuthgroup() != null) {
+            $payments = array();
+            foreach ($this->getAuthgroup()->getPayments() as $payment) {
+                // Alle payments in dezelfde maand als $date
+                if (date("Ym", strtotime($payment->date)) == date("Ym", strtotime($date)))
+                    $payments[] = $payment;
+            }
+            foreach ($payments as $payment) {
+                $totalPayed += $payment->amount;
+            }
+        }
 
-			return $totalPayed;
-		}
+        return $totalPayed;
+    }
 
-		/**
-		 * Has been payed?
-		 * @param string $date
-		 * @return boolean
-		 */
-		function hasPayed($date=null)
-		{
-			if ($this->amount <= $this->getPayed($date))
-				return true;
+    /**
+     * Has been payed?
+     * @param string $date
+     * @return boolean
+     */
+    function hasPayed($date=null)
+    {
+        if ($this->amount <= $this->getPayed($date))
+            return true;
 
-			return false;
-		}
-
-
+        return false;
+    }
 
 
 
 
 
-		/**
-		 * Get subscriptions
-		 * @return \admin\model\Subscription[]
-		 */
-		public static function getSubscriptions()
-		{
-			$subscriptions = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions ORDER BY tilldate desc, fromdate desc"))
-			{
-				foreach ($results as $result)
-				{
-					$sub = new \admin\model\Subscription();
-					$sub->load($result);
-					$subscriptions[] = $sub;
-				}
-			}
-			return $subscriptions;
-		}
 
-		/**
-		 * Get subscriptions by authgroup
-		 * @param integer $authgroupID
-		 * @return \admin\model\Subscription[]
-		 */
-		public static function getSubscriptionsByAuthgroup($authgroupID)
-		{
-			$subscriptions = array();
-			if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions WHERE authgroupid = ?
-													ORDER BY fromdate DESC, tilldate DESC"
-									, array($authgroupID)))
-			{
-				foreach ($results as $result)
-				{
-					$sub = new \admin\model\Subscription();
-					$sub->load($result);
-					$subscriptions[] = $sub;
-				}
-			}
-			return $subscriptions;
-		}
-	}
+
+    /**
+     * Get subscriptions
+     * @return \admin\model\Subscription[]
+     */
+    public static function getSubscriptions()
+    {
+        $subscriptions = array();
+        if ($results = \MySQL::getDB()->getRows("SELECT * FROM vippy_subscriptions ORDER BY tilldate desc, fromdate desc")) {
+            foreach ($results as $result) {
+                $sub = new \admin\model\Subscription();
+                $sub->load($result);
+                $subscriptions[] = $sub;
+            }
+        }
+        return $subscriptions;
+    }
+
+    /**
+     * Get subscriptions by authgroup
+     * @param integer $authgroupID
+     * @param string $orderByDir
+     * @return Subscription[]
+     */
+    public static function getSubscriptionsByAuthgroup($authgroupID, $orderByDir="desc")
+    {
+        $subscriptions = [];
+        if ($results = \MySQL::getDB()->getRows("select * 
+                                                 from   vippy_subscriptions 
+                                                 where  authgroupid = ?
+                                                 order by fromdate $orderByDir, tilldate $orderByDir"
+                                        , [$authgroupID]))
+        {
+            foreach ($results as $result) {
+                $sub = new \admin\model\Subscription();
+                $sub->load($result);
+                $subscriptions[] = $sub;
+            }
+        }
+        return $subscriptions;
+    }
 }
-?>

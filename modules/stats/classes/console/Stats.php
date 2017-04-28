@@ -49,7 +49,7 @@ class Stats
                     $stat->userID = $user->id;
                     $stat->corporationID = $user->getMainCharacter()->corporationID;
                     $stat->authgroupID = $group->id;
-                    $stat->hoursOnline = $online;
+                    $stat->hoursOnline = ceil($online);
                     $stat->store();
                 }
             }

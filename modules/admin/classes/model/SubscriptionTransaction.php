@@ -4,6 +4,7 @@ namespace admin\model;
 class SubscriptionTransaction extends \Model
 {
     protected $_table = "vippy_subscriptions_journal";
+    protected $_deletedField = "deleted";
 
     public $id;
     public $authgroupID;
@@ -41,16 +42,21 @@ class SubscriptionTransaction extends \Model
     function findAuthgroup()
     {
         \AppRoot::debug("findAuthGroup()");
-        $paytocharacter = new \eve\model\Character(\AppRoot::getDBConfig("wallet_api_charid"));
+        $paytocharacter = \eve\model\Character::findByID(\AppRoot::getDBConfig("wallet_api_charid"));
+        $payUser = $paytocharacter->getUser();
+        if (!$payUser)
+            return null;
+
+        $fromUser = ($this->getFromCharacter())?$this->getFromCharacter()->getUser():null;
+        $toUser = ($this->getToCharacter())?$this->getToCharacter()->getUser():null;
 
         $character = null;
-        if ($this->getFromCharacter()->getUser() != $paytocharacter->getUser())
+        if ($fromUser && $fromUser->id != $payUser->id)
             $character = $this->getFromCharacter();
-        else if ($this->getToCharacter()->getUser() != $paytocharacter->getUser())
+        else if ($toUser && $toUser->id != $payUser->id)
             $character = $this->getToCharacter();
 
         if ($character != null && $character->getUser() != null) {
-            \AppRoot::debug($character->name);
             if (count($character->getUser()->getAuthGroups()) == 1) {
                 foreach ($character->getUser()->getAuthGroups() as $group) {
                     return $group;
@@ -68,7 +74,7 @@ class SubscriptionTransaction extends \Model
     function getFromCharacter()
     {
         if ($this->_fromCharacter === null)
-            $this->_fromCharacter = new \eve\model\Character($this->fromCharacterID);
+            $this->_fromCharacter = \eve\model\Character::findByID($this->fromCharacterID);
 
         return $this->_fromCharacter;
     }
@@ -80,7 +86,7 @@ class SubscriptionTransaction extends \Model
     function getToCharacter()
     {
         if ($this->_toCharacter === null)
-            $this->_toCharacter = new \eve\model\Character($this->toCharacterID);
+            $this->_toCharacter = \eve\model\Character::findByID($this->toCharacterID);
 
         return $this->_toCharacter;
     }
@@ -91,16 +97,14 @@ class SubscriptionTransaction extends \Model
      */
     function exists()
     {
-        if ($results = \MySQL::getDB()->getRows("SELECT	*
-                                                FROM	vippy_subscriptions_journal
-                                                WHERE	fromcharacterid = ?
-                                                AND		tocharacterid = ?
-                                                AND		amount = ?
-                                                AND		transactiondate = ?"
-                            , array($this->fromCharacterID, $this->toCharacterID, $this->amount, $this->date)))
-        {
+        $transaction = \admin\model\SubscriptionTransaction::findAll([
+            "fromcharacterid" => $this->fromCharacterID,
+            "tocharacterid"   => $this->toCharacterID,
+            "amount"          => $this->amount,
+            "transactiondate" => $this->date
+        ]);
+        if (count($transaction) > 0)
             return true;
-        }
 
         return false;
     }

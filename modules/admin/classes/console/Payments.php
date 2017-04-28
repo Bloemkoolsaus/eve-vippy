@@ -73,17 +73,16 @@ class Payments
                     // Check of vippy in de omschrijving voor komt.
                     if (strpos(strtolower($transaction->description), "vippy") !== false)
                         $transaction->approved = true;
-                    if (strpos(strtolower($transaction->description), "atlas") !== false)
-                        $transaction->approved = true;
 
                     if (!$transaction->exists()) {
                         $authgroup = $transaction->findAuthgroup();
                         if ($authgroup !== null) {
                             $transaction->authgroupID = $authgroup->id;
-                            $transaction->store();
                             \AppRoot::doCliOutput(" + Stored");
                         } else
                             \AppRoot::doCliOutput(" ! No authgroup");
+
+                        $transaction->store();
                     }
                     else
                         \AppRoot::doCliOutput(" - Already registered!");

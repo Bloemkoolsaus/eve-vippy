@@ -232,9 +232,9 @@
 		</div>
 	</div>
 	<div class="col6 right last">
-		<div class="message">
+		<div class="standout" style="margin: 0;">
 			<ul>
-				<li style="color: #0088ff;"><b>Please contact (corp) leadership for any questions / concerns.</b></li>
+				<li><strong>Please contact (corp) leadership for any questions / concerns.</strong></li>
 				<li><b>Statistics are cached every 30 minutes!</b></li>
 				<li>Signatures:</li>
 				<ul>
@@ -269,14 +269,16 @@
 			<table class="sectionoverview">
 				<tr>
 					<th class="large">Total Signatures scanned</th>
-					<th style="width: 70px; text-align: center;">Signatures</th>
-					<th style="width: 70px; text-align: center;">Wormholes</th>
+					<th style="width: 60px; text-align: center;">Active Members</th>
+					<th style="width: 60px; text-align: center;">Signatures</th>
+					<th style="width: 60px; text-align: center;">Wormholes</th>
 				</tr>
 			{assign var=i value=0}
 			{foreach from=$totalSignatures key=s item=data}
 				<tr class="{if $i%2==0}even{else}odd{/if}" style="{if $data.selected}color: #ffffff; font-weight: bold;{/if}"
 					onclick="reloadLeaderboard('{$data.year}','{$data.month}');">
 					<td>{$data.date}</td>
+					<td style="text-align: center;">{$data.members}</td>
 					<td style="text-align: center;">{$data.sigs}</td>
 					<td style="text-align: center;">{$data.whs}</td>
 				</tr>

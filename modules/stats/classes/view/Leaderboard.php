@@ -59,12 +59,15 @@ class Leaderboard
         }
 
         $totalSignatures = array();
-        if ($results = \MySQL::getDB()->getRows("select year, month, sum(nrsigs) as sigs, sum(nrwormholes) as wormholes
+        if ($results = \MySQL::getDB()->getRows("select year, month, 
+                                                        count(distinct userid) as members,
+                                                        sum(nrsigs) as sigs, 
+                                                        sum(nrwormholes) as wormholes
                                                 from    stats_users
                                                 where   authgroupid = ?
                                                 group by year, month
                                                 order by year desc, month desc"
-            , [$authGroup->id]))
+                                        , [$authGroup->id]))
         {
             foreach ($results as $result)
             {
@@ -73,6 +76,7 @@ class Leaderboard
                     "month" => $result["month"],
                     "year" => $result["year"],
                     "sigs" => $result["sigs"],
+                    "members" => $result["members"],
                     "whs" => $result["wormholes"],
                     "selected" => ($result["year"].$result["month"] == date("Ym", strtotime($sdate)))?true:false
                 ];
