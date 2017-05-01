@@ -212,7 +212,7 @@ class AppRoot
             return false;
 
         // Screenies
-        if (\Tools::GET("module") == "screenshots")
+        if (\Tools::GET("module") == "vippy")
             return false;
 
         // Register
