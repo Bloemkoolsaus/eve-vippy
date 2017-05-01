@@ -88,7 +88,7 @@ class Fleet
                     if (!$character) {
                         $controller = new \eve\controller\Character();
                         $controller->importCharacter($fleetMember->character->id);
-                        $character = new \crest\model\Character($fleetMember->character->id);
+                        $character = new \crest\model\Character((int)$fleetMember->character->id);
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
 

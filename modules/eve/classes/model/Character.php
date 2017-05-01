@@ -197,6 +197,7 @@ class Character
         }
         return $characters;
     }
+
     /**
      * Find character by ID
      * @param $characterID

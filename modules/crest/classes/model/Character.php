@@ -28,4 +28,20 @@ class Character extends \eve\model\Character
 
         return $this->_token;
     }
+
+    
+    /**
+     * Find character by ID
+     * @param $characterID
+     * @return \crest\model\Character|null
+     */
+    public static function findByID($characterID)
+    {
+        if ($result = \MySQL::getDB()->getRow("select * from characters where id = ?", [$characterID])) {
+            $char = new \crest\model\Character($characterID);
+            $char->load($result);
+            return $char;
+        }
+        return null;
+    }
 }
