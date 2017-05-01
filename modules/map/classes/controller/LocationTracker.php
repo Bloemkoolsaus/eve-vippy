@@ -52,7 +52,7 @@ class LocationTracker
                 \MySQL::getDB()->update("mapwormholechains", ["lastmapupdatedate" => date("Y-m-d H:i:s")], ["authgroupid" => $authGroupID]);
 
                 // Pods tellen niet mee.
-                if ($shipTypeID && !in_array($shipTypeID, [0, 670, 33328]))
+                if (!$shipTypeID || !in_array($shipTypeID, [0, 670, 33328]))
                 {
                     /** @var \map\model\Wormhole[] $addedWormholes */
                     $addedWormholes = [];

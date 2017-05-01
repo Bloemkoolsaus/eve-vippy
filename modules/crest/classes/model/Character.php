@@ -29,7 +29,7 @@ class Character extends \eve\model\Character
         return $this->_token;
     }
 
-    
+
     /**
      * Find character by ID
      * @param $characterID
