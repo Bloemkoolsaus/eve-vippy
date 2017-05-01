@@ -20,7 +20,6 @@ class Location
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ?
-                                                    and     id != 91061658
                                                 union
                                                     select  0 as online, c.*, cl.lastupdate
                                                     from    characters c
@@ -29,7 +28,6 @@ class Location
                                                         left join crest_character_location cl on cl.characterid = c.id
                                                     where   l.characterid is null
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
-                                                    and     id != 91061658
                                                 order by online desc, lastupdate asc, updatedate desc
                                                 limit 20"
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-10,date("m"),date("d"),date("Y"))),
