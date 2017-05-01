@@ -34,7 +34,7 @@ if (date("Y-m-d") == date("Y")."-01-01") {
     \SmartyTools::setTemplate("newyear");
 }
 // Anniversary
-if (strtotime("2017-05-01 00:00:00") >= strtotime("now") && strtotime("now") <= strtotime("2017-05-31:23:59:59")) {
+if (strtotime("now") >= strtotime("2017-05-01 00:00:00") && strtotime("2017-05-31:23:59:59") <= strtotime("now")) {
     \SmartyTools::setTemplate("anniversary");
 }
 
