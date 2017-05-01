@@ -101,6 +101,7 @@ class Fleet
                         if (strtotime($update["lastdate"]) > mktime(date("H"),date("i"),date("s")-30,date("m"),date("d"),date("Y")))
                             $doLocationUpdate = false;
                     }
+                    $doLocationUpdate = true;
 
                     $solarSystemID = null;
                     if ($doLocationUpdate)
