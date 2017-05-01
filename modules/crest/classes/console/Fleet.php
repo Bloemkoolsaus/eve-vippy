@@ -96,12 +96,11 @@ class Fleet
                      * Moeten we de locatie van deze character updaten?
                      *  - wanneer was de laatste locatie update?
                      */
-                    $doLocationUpdate = true;
+                    $doLocationUpdate = false;
                     if ($update = \MySQL::getDB()->getRow("select lastdate from map_character_locations where characterid = ".$character->id)) {
-                        if (strtotime($update["lastdate"]) > mktime(date("H"),date("i"),date("s")-30,date("m"),date("d"),date("Y")))
-                            $doLocationUpdate = false;
+                        if (strtotime($update["lastdate"]) < mktime(date("H"),date("i"),date("s")-30,date("m"),date("d"),date("Y")))
+                            $doLocationUpdate = true;
                     }
-                    $doLocationUpdate = true;
 
                     $solarSystemID = null;
                     if ($doLocationUpdate)
