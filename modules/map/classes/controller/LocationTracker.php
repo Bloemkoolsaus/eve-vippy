@@ -27,11 +27,12 @@ class LocationTracker
         // Huidige locatie opslaan.
         $data = [
             "characterid" => $characterID,
-            "authgroupid" => $authGroupID,
-            "lastdate" => date("Y-m-d H:i:s")
+            "authgroupid" => $authGroupID
         ];
-        if ($locationID && is_numeric($locationID))
+        if ($locationID && is_numeric($locationID)) {
             $data["solarsystemid"] = $locationID;
+            $data["lastdate"] = date("Y-m-d H:i:s");
+        }
         if ($shipTypeID && is_numeric($shipTypeID))
             $data["shiptypeid"] = $shipTypeID;
 
