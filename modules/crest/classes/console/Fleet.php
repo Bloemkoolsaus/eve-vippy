@@ -105,7 +105,7 @@ class Fleet
 
                     $solarSystemID = null;
                     if ($doLocationUpdate)
-                        $solarSystemID = $fleetMember->solarSystem->id;
+                        $solarSystemID = (int)$fleetMember->solarSystem->id;
 
                     // Log entry
                     if ($character->getUser()) {

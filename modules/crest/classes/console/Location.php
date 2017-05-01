@@ -81,7 +81,7 @@ class Location
                 if (isset($crest->getResult()->solarSystem))
                 {
                     \User::setUSER($character->getUser());
-                    $solarSystem = \map\model\SolarSystem::findById($crest->getResult()->solarSystem->id);
+                    $solarSystem = \map\model\SolarSystem::findById((int)$crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
                     $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
                     $results = [
