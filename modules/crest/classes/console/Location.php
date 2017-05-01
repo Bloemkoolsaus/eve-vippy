@@ -29,8 +29,8 @@ class Location
                                                     where   l.characterid is null
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
                                                 order by online desc, lastupdate asc, updatedate desc
-                                                limit 20"
-                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-10,date("m"),date("d"),date("Y"))),
+                                                limit 50"
+                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-8,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
