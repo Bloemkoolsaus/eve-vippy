@@ -47,6 +47,8 @@ class LocationTracker
             if ($previousLocationID != $locationID)
             {
                 // Map update
+                \AppRoot::debug("LocationID: ".$locationID);
+                \AppRoot::debug("PreviousID: ".$previousLocationID);
                 \MySQL::getDB()->update("mapwormholechains", ["lastmapupdatedate" => date("Y-m-d H:i:s")], ["authgroupid" => $authGroupID]);
 
                 // Pods tellen niet mee.
@@ -58,6 +60,7 @@ class LocationTracker
                     // Check alle maps van deze authgroup
                     foreach (\map\model\Map::findAll(["authgroupid" => $authGroupID]) as $map)
                     {
+                        \AppRoot::debug("check map: ".$map->name);
                         $addNewWormhole = true;
                         $wormholeFrom = null;
                         $wormholeTo = null;
@@ -80,11 +83,15 @@ class LocationTracker
                         }
 
                         // Beide systemen zijn al bekend.
-                        if ($wormholeTo != null && $wormholeFrom != null)
+                        if ($wormholeTo != null && $wormholeFrom != null) {
+                            \AppRoot::debug("Both system known. Do not add!");
                             $addNewWormhole = false;
+                        }
                         // Beide systemen zijn niet bekend.
-                        if ($wormholeTo == null && $wormholeFrom == null)
+                        if ($wormholeTo == null && $wormholeFrom == null) {
+                            \AppRoot::debug("Neither systems known. Do not add!");
                             $addNewWormhole = false;
+                        }
 
                         $fromSystem = new \map\model\SolarSystem($previousLocationID);
                         $toSystem = new \map\model\SolarSystem($locationID);
@@ -99,6 +106,7 @@ class LocationTracker
 
                         // Magic!
                         if ($addNewWormhole) {
+                            \AppRoot::debug("Add new wormhole!");
                             $controller = new \map\controller\Wormhole();
                             $addedWH = $controller->addWormhole($map, $previousLocationID, $locationID);
                             if ($addedWH)
