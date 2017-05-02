@@ -8,13 +8,19 @@ class Character extends \eve\model\Character
 
     function importData()
     {
-        /** Gebruikt reguliere xml api. Scheelt weer crest-requests, rate-limits enzo */
-        $charController = new \eve\controller\Character();
-        $character = $charController->importCharacter($this->id);
+        try {
+            /** Gebruikt reguliere xml api. Scheelt weer crest-requests, rate-limits enzo */
+            $charController = new \eve\controller\Character();
+            $character = $charController->importCharacter($this->id);
 
-        // Check corp
-        $corpController = new \eve\controller\Corporation();
-        $corpController->importCorporation($character->corporationID);
+            // Check corp
+            $corpController = new \eve\controller\Corporation();
+            $corpController->importCorporation($character->corporationID);
+        }
+        catch (\Exception $e)
+        {
+            echo "An error occured while importing data from the xml api..<br />".$e->getMessage();
+        }
     }
 
     /**

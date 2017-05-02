@@ -10,6 +10,8 @@ class Expiry
         foreach (\map\model\Map::findAll() as $map) {
             if ($map->getSetting("auto-expiry")) {
                 foreach (\map\model\Connection::findAll(["chainid" => $map->id]) as $connection) {
+                    if ($connection->normalgates)
+                        continue;
                     if ($connection->isExpired())
                         $connection->delete();
                     elseif (!$connection->eol) {

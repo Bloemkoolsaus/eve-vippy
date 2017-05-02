@@ -24,11 +24,14 @@ class Login
         if (count($arguments) > 0)
             $code = array_shift($arguments);
 
-        if ($state && $code) {
-            $crest = new \crest\Login();
-            $crest->getToken($state, $code);
+        try {
+            if ($state && $code) {
+                $crest = new \crest\Login();
+                $crest->getToken($state, $code);
+            }
+        } finally {
+            \AppRoot::debug("no state/code. exit");
+            \AppRoot::redirect("/");
         }
-        \AppRoot::debug("no state/code. exit");
-        \AppRoot::redirect("/");
     }
 }
