@@ -100,14 +100,6 @@ class Fleet
                     if ($character->getToken())
                         $doLocationUpdate = false;
 
-                    /*
-                    $doLocationUpdate = false;
-                    if ($update = \MySQL::getDB()->getRow("select lastdate from map_character_locations where characterid = ".$character->id)) {
-                        if (strtotime($update["lastdate"]) < mktime(date("H"),date("i"),date("s")-30,date("m"),date("d"),date("Y")))
-                            $doLocationUpdate = true;
-                    }
-                    */
-
                     $solarSystemID = null;
                     if ($doLocationUpdate)
                         $solarSystemID = (int)$fleetMember->solarSystem->id;

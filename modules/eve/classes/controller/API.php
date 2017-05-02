@@ -75,6 +75,7 @@ class API
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 200);
+        curl_setopt($ch, CURLOPT_USERAGENT, \Config::getCONFIG()->get("system_title"));
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
