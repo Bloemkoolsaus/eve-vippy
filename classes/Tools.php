@@ -808,14 +808,14 @@ Class Tools
 		    if ($min == $b)
 		    	break;
 
-		    foreach($routes[$min] as $key=>$val)
-		    {
-		    	if(!empty($Q[$key]) && $Q[$min] + $val < $Q[$key])
-		    	{
-		        	$Q[$key] = $Q[$min] + $val;
-		        	$S[$key] = array($min, $Q[$key]);
-		    	}
-		    }
+		    if (isset($routes[$min])) {
+                foreach ($routes[$min] as $key => $val) {
+                    if(!empty($Q[$key]) && $Q[$min] + $val < $Q[$key]) {
+                        $Q[$key] = $Q[$min] + $val;
+                        $S[$key] = array($min, $Q[$key]);
+                    }
+                }
+            }
 
 		    unset($Q[$min]);
 		}

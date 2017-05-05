@@ -38,7 +38,7 @@ class Location
                     \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
 
                     // Update datum bijwerken om dubbele execution te voorkomen
-                    \MySQL::getDB()->update("map_character_locations", ["lastupdate" => date("Y-m-d H:i:s")], ["characterid" => $result["id"]]);
+                    \MySQL::getDB()->update("map_character_locations", ["lastdate" => date("Y-m-d H:i:s")], ["characterid" => $result["id"]]);
 
                     // Asynchroon uitvoeren
                     $command = "php ".getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &";
