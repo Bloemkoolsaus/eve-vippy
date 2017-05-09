@@ -75,7 +75,7 @@ class API
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 200);
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.81 Safari/537.36");
+        curl_setopt($ch, CURLOPT_USERAGENT, \Config::getCONFIG()->get("system_title"));
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
         curl_close($ch);
