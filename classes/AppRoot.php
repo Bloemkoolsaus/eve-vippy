@@ -528,6 +528,11 @@ class AppRoot
 		}
 	}
 
+	public static function getAppUserAgent()
+    {
+        return \Config::getCONFIG()->get("system_title")." (".\Config::getCONFIG()->get("system_email").")/1";
+    }
+
 	public static function getDebug()
 	{
 		return self::$debug;

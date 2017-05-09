@@ -72,7 +72,7 @@ class API
         // Niet gecached. Ophalen!
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_USERAGENT, \Config::getCONFIG()->get("system_title")." (".\Config::getCONFIG()->get("system_email").")");
+        curl_setopt($ch, CURLOPT_USERAGENT, \AppRoot::getAppUserAgent());
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 200);
