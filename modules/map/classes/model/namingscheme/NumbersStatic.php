@@ -55,7 +55,23 @@ class NumbersStatic extends \map\model\NamingScheme
 
             do
             {
-                $title = $startingName.(($wormhole->getSolarsystem()->isWSpace())?$index:$letters[$index]);
+                $title = $startingName;
+                if ($wormhole->getSolarsystem()->isWSpace())
+                    $title .= $index;
+                else {
+                    $loop = 0;
+                    if (!isset($letters[$index])) {
+                        $n = $index;
+                        for ($r=""; $n>=0; $n=intval($n/26)-1) {
+                            $r = chr($n%26 + 0x41) . $r;
+                            $loop++;
+                            if ($loop>10)
+                                break;
+                        }
+                        $title .= $r;
+                    } else
+                        $title .= $letters[$index];
+                }
                 $title = $this->parseTitle($title);
 
                 $exists = false;

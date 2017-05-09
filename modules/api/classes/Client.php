@@ -24,7 +24,7 @@ namespace api
 		function __construct($baseURL="")
 		{
 			$this->baseURL = $baseURL;
-            $this->userAgent = \Config::getCONFIG()->get("system_title")."/1";
+            $this->userAgent = \Config::getCONFIG()->get("system_title")." (".\Config::getCONFIG()->get("system_email").")";
 		}
 
 		function setConnectionTimeout($seconds)
