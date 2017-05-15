@@ -97,16 +97,9 @@ class Fleet
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
 
-                    /**
-                     * Moeten we de locatie van deze character updaten?
-                     *  - wanneer was de laatste locatie update?
-                     */
-                    $doLocationUpdate = true;
-                    if ($character->getToken())
-                        $doLocationUpdate = false;
-
+                    //Moeten we de locatie van deze character updaten?
                     $solarSystemID = null;
-                    if ($doLocationUpdate)
+                    if ($character->getToken())
                         $solarSystemID = (int)$fleetMember->solarSystem->id;
 
                     // Log entry
@@ -117,12 +110,7 @@ class Fleet
                     }
 
                     // Location tracker
-                    $locationTracker->setCharacterLocation(
-                        $fleet->authGroupID,
-                        $fleetMember->character->id,
-                        $solarSystemID,
-                        $fleetMember->ship->id
-                    );
+                    $locationTracker->setCharacterLocation($fleet->authGroupID, $fleetMember->character->id, $solarSystemID, $fleetMember->ship->id);
                     \User::unsetUser();
                 }
 

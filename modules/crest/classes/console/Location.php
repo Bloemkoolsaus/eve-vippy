@@ -63,10 +63,13 @@ class Location
         $results = [];
         $authGroup = null;
         $character = new \crest\model\Character(array_shift($arguments));
+        \AppRoot::doCliOutput("Location->doCharacter($character->name)");
         if ($character->getUser())
             $authGroup = $character->getUser()->getCurrentAuthGroup();
-        if (!$authGroup)
+        if (!$authGroup) {
+            \AppRoot::doCliOutput("No authgroup for ".$character->name);
             return "No authgroup for ".$character->name;
+        }
 
         $solarSystem = null;
         if (count($errors) == 0)
@@ -102,10 +105,13 @@ class Location
                 else
                 {
                     // Offline..?
+                    \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
                     $errors[] = "No result from CREST. Is ".$character->name." logged in?";
                 }
-            } else
+            } else {
+                \AppRoot::doCliOutput("CREST call failed. Returned ".$crest->httpStatus);
                 $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
+            }
         }
 
         // Last location check date bijwerken.
