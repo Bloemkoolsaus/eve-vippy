@@ -11,7 +11,7 @@ class Module extends \Module
     {
         $console = new \admin\console\Authgroup();
         $console->doCleanup();
-        $console->doBalance();
+        //$console->doBalance();
         $console->doSubscriptions();
         return true;
     }
