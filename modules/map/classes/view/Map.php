@@ -47,11 +47,11 @@ class Map
         $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
         if (!$wormhole) {
             $system = $map->getHomeSystem();
-            if (!$system) {
-                $map->addHomeSystemToMap();
-                $system = $map->getHomeSystem();
-            }
             $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
+            if (!$wormhole) {
+                $map->addHomeSystemToMap();
+                $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
+            }
         }
 
         \AppRoot::title($wormhole->name);
