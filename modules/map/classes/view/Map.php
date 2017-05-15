@@ -45,8 +45,12 @@ class Map
             $system = $map->getHomeSystem();
 
         $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
-        if (!isset($wormhole)) {
+        if (!$wormhole) {
             $system = $map->getHomeSystem();
+            if (!$system) {
+                $map->addHomeSystemToMap();
+                $system = $map->getHomeSystem();
+            }
             $wormhole = \map\model\Wormhole::getWormholeBySystemID($system->id, $map->id);
         }
 
