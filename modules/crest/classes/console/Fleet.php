@@ -3,6 +3,11 @@ namespace crest\console;
 
 class Fleet
 {
+    function doDefault($arguments=[])
+    {
+        $this->doFleets($arguments);
+    }
+
     function doFleets($arguments=[])
     {
         \AppRoot::setMaxExecTime(60);
@@ -14,7 +19,7 @@ class Fleet
                     , [date("Y-m-d H:i:s", mktime(date("H")-6,date("i"),date("s"),date("m"),date("d"),date("Y")))]);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (!\AppRoot::approachingMaxExecTime(5))
+        while (\AppRoot::getExecTime() < 55)
         {
             \AppRoot::doCliOutput("Find fleets");
             if ($results = \MySQL::getDB()->getRows(" select  *
@@ -36,7 +41,7 @@ class Fleet
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
         }
-        \AppRoot::doCliOutput("Timeout!");
+        \AppRoot::doCliOutput("Finished run!");
     }
 
     function getFleetMembers(\fleets\model\Fleet $fleet)
@@ -46,7 +51,7 @@ class Fleet
             $fleet->active = 0;
             $fleet->statusMessage = "Cannot call CREST, no fleet ID.";
             $fleet->store();
-            return $fleet;
+            return;
         }
 
         // Zet update date alvast, zodat we geen dubbele executies krijgen voor deze fleet.
@@ -57,14 +62,14 @@ class Fleet
             $fleet->active = 0;
             $fleet->statusMessage = "Fleet boss not found";
             \AppRoot::doCliOutput("Fleet boss not found");
-            return $fleet;
+            return;
         }
 
         if (!$fleet->getBoss()->getToken()) {
             $fleet->active = 0;
             $fleet->statusMessage = "Fleet boss does not have a valid CREST token";
             \AppRoot::doCliOutput("Fleet boss does not have a valid CREST token");
-            return $fleet;
+            return;
         }
 
         $fleet->active = false;
@@ -152,7 +157,9 @@ class Fleet
             }
         }
 
-        return $fleet;
+        unset($fleet);
+        unset($crest);
+        return;
     }
 
     /**

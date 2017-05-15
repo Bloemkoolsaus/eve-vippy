@@ -5,12 +5,12 @@ class Location
 {
     function doDefault($arguments=[])
     {
-//        \AppRoot::setMaxExecTime(60);
+        \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (!\AppRoot::approachingMaxExecTime(5))
+        while (\AppRoot::getExecTime() < 55)
         {
             \AppRoot::doCliOutput("Find characters");
 
@@ -51,7 +51,7 @@ class Location
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
         }
-        \AppRoot::doCliOutput("Timeout!");
+        \AppRoot::doCliOutput("Finished run!");
 
         // Offline characters opruimen
         \MySQL::getDB()->doQuery("delete from map_character_locations where lastdate < ?", [date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]);
@@ -66,7 +66,7 @@ class Location
         if ($character->getUser())
             $authGroup = $character->getUser()->getCurrentAuthGroup();
         if (!$authGroup)
-            $errors[] = "No authgroup for ".$character->name;
+            return "No authgroup for ".$character->name;
 
         $solarSystem = null;
         if (count($errors) == 0)
