@@ -97,8 +97,8 @@ class Fleet
                      *  - wanneer was de laatste locatie update?
                      */
                     $doLocationUpdate = true;
-                    if ($character->getToken())
-                        $doLocationUpdate = false;
+                    //if ($character->getToken())
+                        //$doLocationUpdate = false;
 
                     $solarSystemID = null;
                     if ($doLocationUpdate)

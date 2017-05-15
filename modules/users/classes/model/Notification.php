@@ -43,7 +43,7 @@ class Notification extends \Model
     {
         $query = ["(expiredate is null or expiredate < '".date("Y-m-d H:i:s")."')"];
         if ($activeOnly)
-            $query[] = "(readdate is null or persistant = 0)";
+            $query[] = "(readdate is null or persistant = 1)";
 
         $notifications = [];
         if ($results = \MySQL::getDB()->getRows("select *

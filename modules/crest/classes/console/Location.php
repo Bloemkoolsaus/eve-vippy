@@ -5,7 +5,7 @@ class Location
 {
     function doDefault($arguments=[])
     {
-        \AppRoot::setMaxExecTime(60);
+//        \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
 
@@ -29,7 +29,7 @@ class Location
                                                     where   l.characterid is null
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
                                                 order by online desc, lastupdate asc, updatedate desc
-                                                limit 15"
+                                                limit 5"
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-10,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
