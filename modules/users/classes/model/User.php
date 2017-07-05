@@ -38,6 +38,9 @@ class User
     private $currentAuthGroup = null;
     private $_accessLists = null;
 
+    private $_adminCorporations = null;
+    private $_adminAlliances = null;
+
     /** @var \eve\model\Character */
     private $character = null;
 
@@ -861,6 +864,64 @@ class User
     }
 
     /**
+     * Get alliances user can admin
+     * @return \eve\model\Alliance[]
+     */
+    public function getAdminAlliances()
+    {
+        if ($this->_adminAlliances === null)
+        {
+            $this->_adminAlliances = [];
+            $allianceIDs = [];
+            foreach ($this->getUserGroups() as $group) {
+                if ($group->hasRight("admin", "admin")) {
+                    foreach ($group->getAuthgroup()->getAlliances() as $alliance) {
+                        if (!in_array($alliance->id, $allianceIDs)) {
+                            $this->_adminAlliances[] = $alliance;
+                            $allianceIDs[] = $alliance->id;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->_adminAlliances;
+    }
+
+    /**
+     * Get corporations user can admin
+     * @return \eve\model\Corporation[]
+     */
+    public function getAdminCorporations()
+    {
+        foreach ($this->getUserGroups() as $usergroup)
+        {
+            $this->_adminCorporations = [];
+            $corporationIDs = [];
+            foreach ($this->getAdminAlliances() as $alliance) {
+                foreach ($alliance->getCorporations() as $corporation) {
+                    if (!in_array($corporation->id, $corporationIDs)) {
+                        $this->_adminCorporations[] = $corporation;
+                        $corporationIDs[] = $corporation->id;
+                    }
+                }
+            }
+            foreach ($this->getUserGroups() as $group) {
+                if ($group->hasRight("admin", "admin")) {
+                    foreach ($group->getAuthgroup()->getCorporations() as $corporation) {
+                        if (!in_array($corporation->id, $corporationIDs)) {
+                            $this->_adminCorporations[] = $corporation;
+                            $corporationIDs[] = $corporation->id;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->_adminCorporations;
+    }
+
+    /**
      * Is ceo?
      * @param bool|string $corpid
      * @return bool
@@ -1320,6 +1381,7 @@ class User
             }
         }
 
+        \AppRoot::debug($this->authGroupIDs);
         return $this->authGroupIDs;
     }
 
@@ -1337,9 +1399,10 @@ class User
         if ($this->authGroups === null)
         {
             \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
-            $this->authGroups = array();
+            $this->authGroups = [];
             foreach ($this->getAuthGroupsIDs() as $id)
             {
+                \AppRoot::debug($id);
                 // dubbele?
                 $exists = false;
                 foreach ($this->authGroups as $group) {

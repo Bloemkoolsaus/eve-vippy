@@ -158,33 +158,15 @@ class User
         $section->updatefield = "updatedate";
 
         $queryParams = [];
-        if (!\User::getUSER()->getIsSysAdmin())
-        {
-            $allowedCorporationIDs = [];
-            foreach (\User::getUSER()->getAuthGroups() as $group) {
-                foreach ($group->getAllowedCorporations() as $corp) {
-                    if (\User::getUSER()->getIsCEO($corp->id)) {
-                        // Mag heel de alliance zien.
-                        if ($corp->getAlliance() != null) {
-                            foreach ($corp->getAlliance()->getCorporations() as $acorp) {
-                                $allowedCorporationIDs[] = $acorp->id;
-                            }
-                        } else
-                            $allowedCorporationIDs[] = $corp->id;
-                    } else if (\User::getUSER()->isAdmin()) {
-                        // Mag deze corp zien
-                        $allowedCorporationIDs[] = $corp->id;
-                    }
-                }
+        if (!\User::getUSER()->getIsSysAdmin()) {
+            $adminCorpIDs = [];
+            foreach (\User::getUSER()->getAdminCorporations() as $corp) {
+                $adminCorpIDs[] = $corp->id;
             }
-
-            if (count($allowedCorporationIDs) > 0) {
-                $queryParams[] = "id IN (select userid 
-                                         from   characters 
-                                         where  corpid IN (".implode(",",$allowedCorporationIDs).")
-                                         and    authstatus > 0)";
-            } else
-                return false;
+            if (count($adminCorpIDs) > 0)
+                $queryParams[] = "id IN (select userid from characters where corpid IN (" . implode(",", $adminCorpIDs) . ") and authstatus > 0)";
+            else
+                $queryParams[] = "id IN (" . \User::getUSER()->id . ")";
         }
 
         $section->allowEdit = true;

@@ -1,6 +1,9 @@
 <b><u>CREST</u></b>
  - Fixed the error when adding a fleet.
 
+<b><u>VIPPY</u></b>
+ - Fixed a potential security hole for people in multiple vippy groups <strong>and</strong> with admin roles in one of those groups.
+
 
 
 <h3>May, 2017</h3>

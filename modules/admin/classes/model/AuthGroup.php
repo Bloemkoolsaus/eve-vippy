@@ -17,7 +17,7 @@ class AuthGroup
     private $subscriptions = null;
     private $payments = null;
     private $usergroups = null;
-    private $contactUser = null;
+
     private $_allowedUsers;
     private $_balance;
     private $_balanceStartDate;
@@ -32,6 +32,9 @@ class AuthGroup
 
     function load($result=false)
     {
+        if (!$result)
+            $result = \MySQL::getDB()->getRow("select * from user_auth_groups where id = ?", [$this->id]);
+
         if ($result) {
             $this->id = $result["id"];
             $this->name = $result["name"];
