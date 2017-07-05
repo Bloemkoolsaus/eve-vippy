@@ -120,9 +120,9 @@ class Fleet
             }
             else
             {
-                \AppRoot::doCliOutput("Could not parse anwser received from CREST. HELP....", "red");
+                \AppRoot::doCliOutput("Could not parse result received from CREST. HELP....", "red");
                 $fleet->active = false;
-                $fleet->statusMessage = "Could not parse anwser received from CREST. HELP....";
+                $fleet->statusMessage = "Could not parse result received from CREST. HELP....";
                 $fleet->store();
             }
         }

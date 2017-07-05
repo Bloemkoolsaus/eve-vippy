@@ -34,7 +34,7 @@ if (date("Y-m-d") == date("Y")."-01-01")
     \SmartyTools::setTemplate("newyear");
 
 // Anniversary
-if (date("Y-m")-0 == "2017-05")
+if (date("Y-m") == "2017-05")
     \SmartyTools::setTemplate("anniversary");
 
 

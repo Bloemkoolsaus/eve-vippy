@@ -41,8 +41,19 @@ class AuthGroup
 
     function store()
     {
+        if (strlen(trim($this->name)) == 0) {
+            $alliances = $this->getAlliances();
+            if (count($alliances) > 0)
+                $this->name = array_shift($alliances)->name;
+            else {
+                $corporations = $this->getCorporations();
+                if (count($corporations) > 0)
+                    $this->name = array_shift($corporations)->name;
+            }
+        }
+
         $data = [
-            "name"	=> $this->name,
+            "name" => $this->name,
             "deleted" => ($this->deleted)?1:0
         ];
         if ($this->id > 0)
