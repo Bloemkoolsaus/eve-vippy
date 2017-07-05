@@ -18,25 +18,25 @@ $mainMenu = null;
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
 // Koningsdag
-if (date("Y-m-d") == date("Y")."-04-27") {
+if (date("Y-m-d") == date("Y")."-04-27")
     \SmartyTools::setTemplate("kingsday");
-}
+
 // Sinterklaas
-if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06") {
+if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06")
 	\SmartyTools::setTemplate("sinterklaas");
-}
+
 // Kerst
-if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-26") {
+if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-26")
 	\SmartyTools::setTemplate("kerst");
-}
+
 // Nieuw-jaar
-if (date("Y-m-d") == date("Y")."-01-01") {
+if (date("Y-m-d") == date("Y")."-01-01")
     \SmartyTools::setTemplate("newyear");
-}
+
 // Anniversary
-if (strtotime("now") >= strtotime("2017-05-01 00:00:00") && strtotime("2017-05-31:23:59:59") <= strtotime("now")) {
+if (date("Y-m")-0 == "2017-05")
     \SmartyTools::setTemplate("anniversary");
-}
+
 
 // Logout
 if (Tools::GET("action") == "logout") {
