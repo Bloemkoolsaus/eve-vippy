@@ -608,14 +608,14 @@ class AuthGroup
     /**
      * Get payments
      * @param bool $all
-     * @return SubscriptionTransaction[]
+     * @return Payment[]
      */
     function getPayments($all=false)
     {
         if ($this->payments === null) {
             $this->payments = [];
             $conditions = ["authgroupid" => $this->id, "approved" => 1, "deleted" => 0];
-            foreach (\admin\model\SubscriptionTransaction::findAll($conditions, ["transactiondate desc"]) as $payment) {
+            foreach (\admin\model\Payment::findAll($conditions, ["transactiondate desc"]) as $payment) {
                 if ($all || strtotime($payment->date) >= strtotime($this->getBalanceStartDate()))
                     $this->payments[] = $payment;
             }

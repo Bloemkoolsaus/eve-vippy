@@ -1659,7 +1659,7 @@ class User
             $this->notifications = \users\model\Notification::getNotificationsByUser($this->id);
 
             if ($this->getIsSysAdmin()) {
-                $pendingPayments = \admin\model\SubscriptionTransaction::findAll(["approved" => 0, "deleted" => 0]);
+                $pendingPayments = \admin\model\Payment::findAll(["approved" => 0, "deleted" => 0]);
                 if (count($pendingPayments) > 0) {
                     $note = new \users\model\Notification();
                     $note->type = "notice";

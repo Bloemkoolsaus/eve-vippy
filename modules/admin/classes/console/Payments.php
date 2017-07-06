@@ -7,10 +7,13 @@ class Payments
     {
         $limit = 2000;
 
+        $walletApiKey = \admin\model\Payment::getWalletApiKey();
+        $walletCharID = \admin\model\Payment::getWalletCharacterID();
+
         $api = new \eve\controller\API();
-        $api->setKeyID(\AppRoot::getDBConfig("wallet_api_keyid"));
-        $api->setvCode(\AppRoot::getDBConfig("wallet_api_vcode"));
-        $api->setCharacterID(\AppRoot::getDBConfig("wallet_api_charid"));
+        $api->setKeyID($walletApiKey["keyid"]);
+        $api->setvCode($walletApiKey["vcode"]);
+        $api->setCharacterID($walletCharID);
 
         $api->setParam("rowCount", $limit);
         if (count($arguments) > 0)
@@ -39,7 +42,7 @@ class Payments
 
                 if ((int)$row["refTypeID"] == 10 || (int)$row["refTypeID"] == 37)
                 {
-                    $transaction = new \admin\model\SubscriptionTransaction();
+                    $transaction = new \admin\model\Payment();
                     $transaction->amount = ((string)$row["amount"])*100;
                     $transaction->description = str_replace("DESC:","",(string)$row["reason"]);
                     $transaction->description = trim(str_replace("\n","",$transaction->description));
@@ -49,7 +52,7 @@ class Payments
                         $transaction->toCharacterID = (string)$row["ownerID2"];
                         $transaction->fromCharacterID = (string)$row["ownerID1"];
                     } else {
-                        if ((string)$row["ownerID1"] == \AppRoot::getDBConfig("wallet_api_charid")) {
+                        if ((string)$row["ownerID1"] == $walletCharID) {
                             $transaction->fromCharacterID = (string)$row["ownerID1"];
                             $transaction->toCharacterID = (string)$row["argID1"];
                             $transaction->description = (string)$row["ownerName2"]." - ".$transaction->description;
@@ -68,7 +71,13 @@ class Payments
                         $transaction->toCharacterID = $from;
                     }
 
-                    \AppRoot::doCliOutput("[".$transaction->date."] ".$transaction->getFromCharacter()->name.": ".$transaction->amount." - ".$transaction->description);
+                    // Komt het van een corp wallet?
+                    if ((string)$row["transactionFor"] == "corporate") {
+                        $transaction->fromCorporationID = $transaction->fromCharacterID;
+                        $transaction->fromCharacterID = null;
+                    }
+
+                    \AppRoot::doCliOutput("[".$transaction->date."] ".(($transaction->getFromCorporation())?$transaction->getFromCorporation()->name:"unknown").": ".$transaction->amount." - ".$transaction->description);
 
                     // Check of vippy in de omschrijving voor komt.
                     if (strpos(strtolower($transaction->description), "vippy") !== false)
