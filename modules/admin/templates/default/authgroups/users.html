@@ -1,11 +1,76 @@
 <h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
 <div>
-{foreach from=$authgroup->getAllowedUsers() item=user}
-	<div style="float: left; width: 200px; padding: 2px;">
-		<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
-		<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getFullname()}</a>
+	<div class="col3">
+		<div class="form">
+			<div class="field" style="width: 120px;"><b>Active users:</b></div>
+			{$authgroup->getActiveUsers()|@count}
+		</div>
+		<div class="form">
+			<div class="field" style="width: 120px;"><b>Authorized users:</b></div>
+			{$authgroup->getAllowedUsers()|@count}
+		</div>
+	</div>
+	<div class="col4">
+	{foreach from=$authgroup->getAllowedCorporations() item=corp}
+		{assign var=total value=0}
+		{assign var=active value=0}
+		{foreach from=$authgroup->getAllowedUsers() item=user}
+			{if $corp->id == $user->getMaincharacter()->getCorporation()->id}
+				{assign var=total value=$total+1}
+			{/if}
+		{/foreach}
+		{foreach from=$authgroup->getActiveUsers() item=user}
+			{if $corp->id == $user->getMaincharacter()->getCorporation()->id}
+				{assign var=active value=$active+1}
+			{/if}
+		{/foreach}
+		<div class="form">
+			<div class="field" style="white-space: nowrap; overflow: hidden;"><b>{$corp->name}:</b></div>
+			<div class="value">
+				&nbsp;
+			{if $total > 0}
+				{$active} active, {$total} authorized users.
+			{else}
+				<i>No users</i>
+			{/if}
+			</div>
+		</div>
+	{/foreach}
+	</div>
+	<div class="col5 right last">
+		<div class="standout" style="margin: 0;">
+			<div><strong>Active users:</strong></div>
+			<div>A user is considered active when he/she has used VIPPY within the last 30 days</div>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<div>
+{foreach from=$authgroup->getAllowedCorporations() item=corp}
+	<div style="margin-top: 2em;">
+		<div style="font-size: 1.1em; border-bottom: solid 1px #555555;">
+			<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+			<span style="color: #ffffff; font-size: 1.1em;"><strong>{$corp->name}</strong></span>
+		{if $corp->getAlliance()}
+			&nbsp; - &nbsp; <i>{$corp->getAlliance()->name}</i>
+		{/if}
+		</div>
+		<div style="padding: .5em; padding-left: 1em;">
+	{foreach from=$authgroup->getAllowedUsers() item=user}
+		{if $corp->id == $user->getMaincharacter()->getCorporation()->id}
+			<div style="float: left; width: 200px; padding: 0;">
+				<img src="http://image.eveonline.com/Character/{$user->getMaincharacter()->id}_32.jpg" align="left" style="height: 16px; border-radius: 2px; margin-right: 5px;">
+				<img src="/images/eve/{if $user->getIsActive()}apply{else}cross{/if}.png" align="left" style="margin-left: -16px; margin-top: 6px;">
+				<a href="/users/user/edit?id={$user->id}" target="_blank">{$user->getMaincharacter()->name}</a>
+			{if !$user->getIsActive()}
+				(AFK)
+			{/if}
+				<div style="clear:both;"></div>
+			</div>
+		{/if}
+	{/foreach}
+		</div>
 		<div style="clear:both;"></div>
 	</div>
 {/foreach}
 </div>
-<div style="clear:both;"></div>
