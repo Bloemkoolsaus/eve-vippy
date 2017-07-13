@@ -421,50 +421,62 @@ class MySQL
         if (!defined("MYSQL_SLAVE_HOST"))
             return self::getDB();
 
-
         if (!isset(self::$connections[MYSQL_SLAVE_HOST]))
         {
-            self::$connections[MYSQL_SLAVE_HOST] = new \MySQL(array("host"	=> MYSQL_SLAVE_HOST,
+            self::$connections[MYSQL_SLAVE_HOST] = new \MySQL([
+                "host"	=> MYSQL_SLAVE_HOST,
                 "user"	=> MYSQL_SLAVE_USER,
                 "pass"	=> MYSQL_SLAVE_PASS,
-                "dtbs"	=> MYSQL_SLAVE_DTBS));
+                "dtbs"	=> MYSQL_SLAVE_DTBS
+            ]);
         }
 
         return self::$connections[MYSQL_SLAVE_HOST];
     }
 
-    function convertToUTF8()
+    function getTables($schema=null)
     {
-        \AppRoot::debug("MySQL: Start UTF-8 conversion");
+        if (!$schema)
+            $schema = $this->dtbs;
 
-        if ($tables = $this->getRows("SELECT * FROM information_schema.tables WHERE table_schema = '".$this->dtbs."'"))
-        {
-            foreach ($tables as $table)
-            {
-                $this->doQuery("ALTER TABLE `".$table["TABLE_NAME"]."` CONVERT TO CHARACTER SET 'utf8'");
+        $tables = [];
+        if ($results = $this->getRows("select * from information_schema.tables where table_schema = '".$schema."'")) {
+            foreach ($results as $table) {
+                if (isset($table["table_name"]))
+                    $tables[] = $table["table_name"];
             }
         }
+        return $tables;
+    }
 
-        \AppRoot::debug("MySQL: Finished UTF-8 conversion");
+    function tableToLowercase()
+    {
+        \AppRoot::doCliOutput("Rename tables to lowercase");
+        foreach ($this->getTables() as $table) {
+            \AppRoot::doCliOutput("> ".$table);
+            $this->doQuery("rename table `".$table."` to `".strtolower($table)."`");
+        }
+    }
+
+    function convertToUTF8($charset="utf8")
+    {
+        \AppRoot::setMaxExecTime(0);
+        \AppRoot::doCliOutput("MySQL: Start charset conversion to ".$charset);
+
+        foreach ($this->getTables() as $table) {
+            \AppRoot::doCliOutput("> ".$table);
+            $this->doQuery("alter table `".$table."` convert to character set '".$charset."'");
+        }
     }
 
     function convertEngine($engine="InnoDB")
     {
         \AppRoot::setMaxExecTime(0);
-        \AppRoot::debug("MySQL: Start ".$engine." conversion");
+        \AppRoot::doCliOutput("MySQL: Start ".$engine." conversion");
 
-        if ($tables = $this->getRows("	SELECT 	*
-                                        FROM 	information_schema.tables
-                                        WHERE 	`table_schema` = ?
-                                        AND 	`engine` != ?"
-            , array($this->dtbs, $engine)))
-        {
-            foreach ($tables as $table)
-            {
-                $this->doQuery("ALTER TABLE `".$table["TABLE_NAME"]."` ENGINE=".$engine);
-            }
+        foreach ($this->getTables() as $table) {
+            \AppRoot::doCliOutput("> ".$table);
+            $this->doQuery("alter table `".$table."` engine=".$engine);
         }
-
-        \AppRoot::debug("MySQL: Finished ".$engine." conversion");
     }
 }
