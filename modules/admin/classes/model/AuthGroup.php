@@ -17,7 +17,7 @@ class AuthGroup
     private $subscriptions = null;
     private $payments = null;
     private $usergroups = null;
-    private $contactUser = null;
+
     private $_allowedUsers;
     private $_balance;
     private $_balanceStartDate;
@@ -32,6 +32,9 @@ class AuthGroup
 
     function load($result=false)
     {
+        if (!$result)
+            $result = \MySQL::getDB()->getRow("select * from user_auth_groups where id = ?", [$this->id]);
+
         if ($result) {
             $this->id = $result["id"];
             $this->name = $result["name"];
@@ -41,8 +44,19 @@ class AuthGroup
 
     function store()
     {
+        if (strlen(trim($this->name)) == 0) {
+            $alliances = $this->getAlliances();
+            if (count($alliances) > 0)
+                $this->name = array_shift($alliances)->name;
+            else {
+                $corporations = $this->getCorporations();
+                if (count($corporations) > 0)
+                    $this->name = array_shift($corporations)->name;
+            }
+        }
+
         $data = [
-            "name"	=> $this->name,
+            "name" => $this->name,
             "deleted" => ($this->deleted)?1:0
         ];
         if ($this->id > 0)
@@ -594,14 +608,14 @@ class AuthGroup
     /**
      * Get payments
      * @param bool $all
-     * @return SubscriptionTransaction[]
+     * @return Payment[]
      */
     function getPayments($all=false)
     {
         if ($this->payments === null) {
             $this->payments = [];
             $conditions = ["authgroupid" => $this->id, "approved" => 1, "deleted" => 0];
-            foreach (\admin\model\SubscriptionTransaction::findAll($conditions, ["transactiondate desc"]) as $payment) {
+            foreach (\admin\model\Payment::findAll($conditions, ["transactiondate desc"]) as $payment) {
                 if ($all || strtotime($payment->date) >= strtotime($this->getBalanceStartDate()))
                     $this->payments[] = $payment;
             }

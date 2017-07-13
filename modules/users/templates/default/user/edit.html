@@ -20,17 +20,17 @@
 
 	<div style="float: left; width: 400px;">
 		<div class="form">
-			<label class="field"><b>Main Character:</b></label>
+			<div class="field"><b>Main Character:</b></div>
 		{if $user->getMainCharacter()}
 			{$user->getMainCharacter()->name}
 		{/if}
 		</div>
 		<div class="form">
-			<label class="field"><b>Status:</b></label>
+			<div class="field"><b>Status:</b></div>
 			{$statusTxt}
 		</div>
 		<div class="form">
-			<label class="field"><b>Last loggedin:</b></label>
+			<div class="field"><b>Last loggedin:</b></div>
 		{if isset($lastlogindate)}
 			<div>{$lastlogindate}</div>
 			<div>
@@ -45,8 +45,8 @@
 		</div>
 	{if $App->user->getIsSysAdmin()}
 		<div class="form">
-			<label class="field"><b>Access Group:</b></label>
-			<div>
+			<div class="field"><b>Access Group:</b></div>
+			<div class="value">
 			{foreach from=$user->getAuthGroups() item=group}
 				<div><a href="/admin/authgroup/edit/{$group->id}" target="_blank">{$group->name}</a></div>
 			{/foreach}

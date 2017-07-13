@@ -1,7 +1,19 @@
+<h3>July 12, 2017</h3>
+<b><u>CREST</u></b>
+ - Fixed the error when adding a fleet.
+
+<b><u>VIPPY</u></b>
+ - Fixed a potential security hole for people in multiple vippy groups <strong>and</strong> with admin roles in one of those groups.
+
+
+
+<h3>May, 2017</h3>
+<h4><strong>!! <a href="/system/anniversary" target="_blank">VIPPY's 5 YEAR ANNIVERSARY</a> !!</strong></h4>
+
+
 <h3>April 19, 2017</h3>
 <b><u>ACCESS LIST</u></b>
  - Fixed a bug where adding a corporation to an access-list didn't give that corp access.
-
 
 
 
@@ -9,7 +21,6 @@
 <b><u>MAP</u></b>
  - Fixed a bug where sometimes a system would not be marked as fully scanned, even though all sigs are known.
  - Added confirmation dialogs for deleting a system from the map. FINALLY!
-
 
 
 
@@ -26,14 +37,12 @@
 
 
 
-
 <h3>March 01, 2017</h3>
 <b><u>VIPPY</u></b>
  - Sometimes, if you've manually set your main character Vippy would reset it every once in a while for no apparent reason. This has been fixed.
 
 <b><u>CREST</u></b>
  - Made change that (hopefully) improves the issue of your character jumping back and forth and thus creating fake jumps in the jumplog.
-
 
 
 

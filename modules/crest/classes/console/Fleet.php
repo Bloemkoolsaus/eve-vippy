@@ -48,10 +48,10 @@ class Fleet
     {
         \AppRoot::doCliOutput("getFleetMembers($fleet->id)");
         if ($fleet->id == 0) {
-            $fleet->active = 0;
+            $fleet->active = false;
             $fleet->statusMessage = "Cannot call CREST, no fleet ID.";
             $fleet->store();
-            return;
+            return $fleet;
         }
 
         // Zet update date alvast, zodat we geen dubbele executies krijgen voor deze fleet.
@@ -59,17 +59,17 @@ class Fleet
         $fleet->store();
 
         if (!$fleet->getBoss()) {
-            $fleet->active = 0;
+            $fleet->active = false;
             $fleet->statusMessage = "Fleet boss not found";
             \AppRoot::doCliOutput("Fleet boss not found");
-            return;
+            return $fleet;
         }
 
         if (!$fleet->getBoss()->getToken()) {
-            $fleet->active = 0;
+            $fleet->active = false;
             $fleet->statusMessage = "Fleet boss does not have a valid CREST token";
             \AppRoot::doCliOutput("Fleet boss does not have a valid CREST token");
-            return;
+            return $fleet;
         }
 
         $fleet->active = false;
@@ -114,15 +114,15 @@ class Fleet
                     \User::unsetUser();
                 }
 
-                $fleet->active = 1;
+                $fleet->active = true;
                 $fleet->statusMessage = "Tracking ".count($crest->getResult()->items)." fleet members.";
                 $fleet->store();
             }
             else
             {
-                \AppRoot::doCliOutput("Could not parse anwser received from CREST. HELP....", "red");
-                $fleet->active = 0;
-                $fleet->statusMessage = "Could not parse anwser received from CREST. HELP....";
+                \AppRoot::doCliOutput("Could not parse result received from CREST. HELP....", "red");
+                $fleet->active = false;
+                $fleet->statusMessage = "Could not parse result received from CREST. HELP....";
                 $fleet->store();
             }
         }
@@ -131,7 +131,7 @@ class Fleet
             if ($crest->httpStatus >= 500 and $crest->httpStatus < 600)
             {
                 \AppRoot::doCliOutput("CREST call failed, Is CREST down??  Retrying in 5 minutes.", "red");
-                $fleet->active = 1;
+                $fleet->active = false;
                 $fleet->statusMessage = "CREST call failed, Is CREST down??  Retrying in 5 minutes.";
                 $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+(60*5));
                 $fleet->store();
@@ -139,15 +139,14 @@ class Fleet
             else
             {
                 \AppRoot::doCliOutput("Failed to call CREST for fleet info. ".$crest->httpStatus." returned!", "red");
-                $fleet->active = 0;
+                $fleet->active = false;
                 $fleet->statusMessage = "Failed to call CREST for fleet info. ".$crest->httpStatus." returned!";
                 $fleet->store();
             }
         }
 
-        unset($fleet);
         unset($crest);
-        return;
+        return $fleet;
     }
 
     /**

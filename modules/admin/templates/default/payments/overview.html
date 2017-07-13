@@ -2,7 +2,7 @@
 	<h1>{$payments|@count} Pending Payments</h1>
 	<table class="sectionoverview">
 		<tr>
-			<th>From</th>
+			<th>Name</th>
 			<th>Authgroup</th>
 			<th>Amount</th>
 			<th>Description</th>
@@ -12,13 +12,13 @@
 	{foreach from=$payments key=i item=payment}
 		<tr class="{if $i%2==0}even{else}odd{/if}">
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
-		{if $payment->getFromCharacter()}
-				<img src="http://image.eveonline.com/Corporation/{$payment->getFromCharacter()->corporationID}_32.png" style="height: 18px; margin-right: .5em;" align="left">
-				{$payment->getFromCharacter()->name}
-			{if $payment->getFromCharacter()->getCorporation()}
-				&nbsp; - &nbsp; <i>{$payment->getFromCharacter()->getCorporation()->name}</i>
+			{if $payment->getFromCorporation()}
+				<img src="http://image.eveonline.com/Corporation/{$payment->getFromCorporation()->id}_32.png" style="height: 18px; margin-right: .5em;" align="left">
+				{$payment->getFromCorporation()->name}
 			{/if}
-		{/if}
+			{if $payment->getFromCharacter()}
+				&nbsp; - &nbsp; <i>{$payment->getFromCharacter()->name}</i>
+			{/if}
 			</td>
 			<td onclick="document.location='/admin/payments/edit/{$payment->id}'">
 			{if $payment->getAuthgroup()}
