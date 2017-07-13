@@ -74,10 +74,11 @@ class Module
 
     function getCron($arguments=array())
     {
-        print_r($arguments,true);
         if (count($arguments) > 0)
         {
             $action = array_shift($arguments);
+            \AppRoot::doCliOutput("> ".$this->moduleName);
+            \AppRoot::doCliOutput("> ".ucfirst($action));
             $className = '\\'.strtolower($this->moduleName).'\\console\\'.ucfirst($action);
             if (!class_exists($className))
                 $className = '\\'.strtolower($this->moduleName).'\\common\\console\\'.ucfirst($action);
