@@ -54,7 +54,7 @@ class Accessgroup
                 $subscription->amount = 0;
                 $subscription->authgroupID = $authgroup->id;
                 $subscription->fromdate = date("Y-m-d");
-                $subscription->tilldate = date("Y-m-d", mktime(0,0,0,date("m")+1,date("d"),date("Y")));
+                $subscription->tilldate = date("Y-m-d", mktime(0,0,0,date("m")+2,0,date("Y")));
                 $subscription->store();
 
                 // Admin Usergroup

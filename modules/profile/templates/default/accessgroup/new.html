@@ -13,71 +13,70 @@
 	<form method="post" action="/profile/accessgroup">
 		<div class="col6">
 			<div class="form">
-				<div class="field">Name:</div>
+				<div class="field"><strong>Name:</strong></div>
 				<div class="value">
 					<input type="text" name="name" value="{$newname}">
 				</div>
 			</div>
 			<div class="form" style="margin-top: 1em;">
-				<div class="field">Allowed Corporations:</div>
+				<div class="field"><strong>Allowed Alliances:</strong></div>
 				<div class="value">
 				{foreach from=$alliances item=alliance}
-					<div style="margin-bottom: 1em;">
+					<div>
 						<input type="checkbox" name="alliances[{$alliance->id}]" checked>
 						<img src="http://image.eveonline.com/Alliance/{$alliance->id}_32.png" style="height: 16px;">
-						{$alliance->name} Alliance
-					{foreach from=$alliance->getCorporations() item=corp}
-						<div style="padding-left: 2em;">
-							<input type="checkbox" name="corporations[{$corp->id}]" checked>
-							<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 16px;">
-							{$corp->name}
-						</div>
-					{/foreach}
+						{$alliance->name}
 					</div>
 				{/foreach}
+				</div>
+			</div>
+			<div class="form" style="margin-top: .5em;">
+				<div class="field"><strong>Allowed Corporations:</strong></div>
+				<div class="value">
+				{foreach from=$corporations item=corp}
 					<div>
-						<i>No-Alliance</i>
-					</div>
-			{foreach from=$corporations item=corp}
-				{if !$corp->getAlliance()}
-					<div style="padding-left: 2em;">
 						<input type="checkbox" name="corporations[{$corp->id}]" checked>
 						<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" style="height: 16px;">
 						{$corp->name}
 					</div>
-				{/if}
-			{/foreach}
+				{/foreach}
 				</div>
 			</div>
-			<div class="form buttons">
+			<div class="form" style="margin-top: 1em; text-align: right;">
+				<div style="font-style: italic;">If you allow an alliance, every corporation is granted access</div>
+			</div>
+			<div class="form buttons" style="margin-top: 1em;">
 				<button type="submit">
-					<img src="/images/default/ui/save.png" align="left">
+					<img src="/images/default/register.png" align="left">
 					Create Group
 				</button>
 			</div>
 		</div>
 		<div class="col6 right last">
 			<div class="standout" style="padding: 1em; margin: 0;">
-				<h3>Setting up a new access group</h3>
 				<div>
-					Vippy access is based on access groups. You can set wich corporations or alliances can see your access group.
+					<h3>Setting up a new access group</h3>
+					<div style="margin-top: .3em;">
+						Vippy access is based on access control groups.<br />
+						You can set wich corporations and/or alliances are part of your access group.
+					</div>
 				</div>
-				<br />
-				<h3>Using Vippy and subscription</h3>
-				<div>
-					You can use VIPPY for <b>free</b> for the first month! <u>This is a trial period</u> to see if you like Vippy.
+				<div style="margin-top: 1.5em;">
+					<h3>Using Vippy and subscription</h3>
+					<div style="margin-top: .3em;">
+						You can use VIPPY for <strong>free</strong> for the first month! <u>This is a trial period</u> to see if you like Vippy.
+					</div>
+					<div>
+						VIPPY does not run itself! the subscription is mostly to help pay for server costs.
+						After the trial ends, you will be expected to pay a subscription fee.
+						More information on Vippy's <a href="/help/subscription" target="_blank">subscription system</a>.
+					</div>
 				</div>
-				<div>
-					VIPPY does not run itself, the rent is mostly to help pay for server costs.
-					After the trial ends, you will be expected to pay a subscription fee.
-				</div>
-				<div style="margin-top: 1em;">
-					The subscription system is about to be refactored. <a href="/system/anniversary" target="_blank">Please read this page for more information</a>.
-				</div>
-				<br />
-				<h3>HELP</h3>
-				<div>
-					If you need help, have a problem or have a question, please contact <a href="https://gate.eveonline.com/profile/bloemkoolsaus" target="_blank">Bloemkoolsaus</a> ingame!
+				<div style="margin-top: 1.5em;">
+					<h3>HELP</h3>
+					<div style="margin-top: .3em;">
+						If you need help, have a problem or have a question, please contact <a href="https://gate.eveonline.com/profile/bloemkoolsaus" target="_blank">Bloemkoolsaus</a> ingame!
+					</div>
 				</div>
 			</div>
 		</div>

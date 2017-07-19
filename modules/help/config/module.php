@@ -17,6 +17,11 @@ $config["submenu"][] = [
     "name" => "Crest",
     "url" => "help/crest"
 ];
+$config["submenu"][] = [
+    "type" => "link",
+    "name" => "Subscription",
+    "url" => "help/subscription"
+];
 
 // SET CONFIG
 foreach ($config as $var => $val) {

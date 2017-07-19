@@ -1756,7 +1756,9 @@ class User
             $loggedIn = true;
         }
 
-        if ($user->id == 0)
+        if (!$user)
+            return false;
+        if (!$user->id)
             return false;
 
         if ($loggedIn)
