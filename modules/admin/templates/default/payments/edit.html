@@ -30,16 +30,20 @@
 			<div class="form" style="padding:.2em;">
 				<div class="field"><b>From:</b></div>
 				<div class="value">
+				{if $payment->getFromCorporation()}
 					<img src="http://image.eveonline.com/Corporation/{$payment->getFromCorporation()->id}_32.png" style="height: 18px; margin-right: .5em;" align="left">
+				{/if}
 				{if $payment->getFromCharacter()}
 					<a href="/users/user/edit?&id={$payment->getFromCharacter()->userID}" target="_blank">{$payment->getFromCharacter()->name}</a>
 					&nbsp; - &nbsp;
 				{/if}
+					{if $payment->getFromCorporation()}
 					{$payment->getFromCorporation()->name}
 					{if $payment->getFromCorporation()->getAlliance()}
 						&nbsp; - &nbsp;
 						<i>{$payment->getFromCorporation()->getAlliance()->name}</i>
 					{/if}
+				{/if}
 				</div>
 			</div>
 			<div class="form" style="padding:.2em;">

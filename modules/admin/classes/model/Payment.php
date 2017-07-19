@@ -113,8 +113,10 @@ class Payment extends \Model
         if ($this->_fromCorporation === null) {
             if ($this->fromCorporationID)
                 $this->_fromCorporation = new \eve\model\Corporation($this->fromCorporationID);
-            else
-                $this->_fromCorporation = ($this->getFromCharacter()) ? $this->getFromCharacter()->getCorporation() : null;
+            else {
+                if ($this->getFromCharacter())
+                    $this->_fromCorporation = $this->getFromCharacter()->getCorporation();
+            }
         }
 
         return $this->_fromCorporation;
