@@ -66,11 +66,9 @@ class Authgroup
                 // Maak de subscription
                 $amount = 0;
                 if (count($activeUsers) >= 5) {
-                    $amount = (floor((count($activeUsers)/10)*2)*2)*100;
+                    $amount = round(count($activeUsers)/5)*50; // 10m per actieve user, afgerond naar de dichtsbijzinde 50m
                     if ($amount > 500)
                         $amount = 500;
-                    if ($amount < 100)
-                        $amount = 100;
                 }
 
                 \AppRoot::doCliOutput("    - ".count($activeUsers)." active users. Subscription fee: ".$amount."m");

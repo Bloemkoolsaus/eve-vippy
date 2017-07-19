@@ -25,7 +25,10 @@
 			{/if}
 		{/foreach}
 		<div class="form">
-			<div class="field" style="white-space: nowrap; overflow: hidden;"><b>{$corp->name}:</b></div>
+			<div class="field" style="white-space: nowrap; overflow: hidden;">
+				<img src="http://image.eveonline.com/Corporation/{$corp->id}_32.png" align="left" style="height: 14px; border-radius: 2px; margin-right: 5px;">
+				<b>{$corp->name}:</b>
+			</div>
 			<div class="value">
 				&nbsp;
 			{if $total > 0}
