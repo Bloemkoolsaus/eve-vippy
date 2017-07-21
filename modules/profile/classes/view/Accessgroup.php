@@ -33,7 +33,6 @@ class Accessgroup
             {
                 $authgroup = new \admin\model\AuthGroup();
                 $authgroup->name = \Tools::POST("name");
-                $authgroup->contactID = \User::getUSER()->id;
                 $authgroup->store();
 
                 if (isset($_POST["alliances"])) {
@@ -50,7 +49,7 @@ class Accessgroup
 
                 // Trial subscription
                 $subscription = new \admin\model\Subscription();
-                $subscription->description = "Trial";
+                $subscription->description = "Free trial";
                 $subscription->amount = 0;
                 $subscription->authgroupID = $authgroup->id;
                 $subscription->fromdate = date("Y-m-d");

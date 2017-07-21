@@ -1,13 +1,13 @@
 <?php
 namespace vippy\view;
 
-class About
+class Features
 {
     function getOverview($arguments=[])
     {
-        \AppRoot::title("About");
+        \AppRoot::title("Features");
         \User::setUSER(null);
         $tpl = \SmartyTools::getSmarty();
-        return $tpl->fetch("vippy/about");
+        return $tpl->fetch("vippy/features");
     }
 }

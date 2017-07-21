@@ -3,7 +3,7 @@ body {
 	background-position: center top;
 	background-repeat: no-repeat;
     background-attachment: fixed;
-    
+
 	font-family: OpenSans,Helvetica,sans-serif;
 	font-size: 11px;
 	color: #CCCCCC;
@@ -43,7 +43,7 @@ hr {
 
 h1, h2 {
 	text-transform: uppercase;
-	font-family: EveSans,"Trebuchet MS",MetaBlack,sans-serif;	
+	font-family: EveSans,"Trebuchet MS",MetaBlack,sans-serif;
 	font-weight: normal;
     color: #9ecaed;
     text-shadow: 0 0 2px #9ecaed;
@@ -55,7 +55,7 @@ h1, h2 {
 h1 {
 	font-size: 26px;
 }
-h2 {	
+h2 {
 	font-size: 18px;
 }
 
