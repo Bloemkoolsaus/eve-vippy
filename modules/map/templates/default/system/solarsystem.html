@@ -40,11 +40,13 @@
 				</div>
 				<div class="form">
 					<label class="field">Static:</label>
-					{if $system->getStatics()|@count > 0}
-						{foreach from= $system->getStatics() item=static}
-							<br />
-						{/foreach}
-					{/if}
+					<label class="value">
+				{if $system->getStatics()|@count > 0}
+					{foreach from= $system->getStatics() item=static}
+						<div>{$static}</div>
+					{/foreach}
+				{/if}
+					</label>
 				</div>
 			{/if}
 			<div class="form">
@@ -52,9 +54,9 @@
 				{if $wormhole->status == 1}
 					Unknown
 				{elseif $wormhole->status == 2}
-					<span style="color:#00CC00;">Uninhabited</span>
+					<span style="color:#00CC00;">Clear</span>
 				{elseif $wormhole->status == 3}
-					<span style="color:#FFAA00;">Inhabited</span>
+					<span style="color:#FFAA00;">Be Carefull</span>
 				{elseif $wormhole->status == 4}
 					<span style="color:#CC0000;">Active</span>
 				{/if}

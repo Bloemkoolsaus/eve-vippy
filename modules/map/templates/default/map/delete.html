@@ -8,8 +8,18 @@
 			<img src="/images/default/ui/map.png" align="left">
 			Delete {if $removeConnected}Connected{/if} System
 		</h2>
+	{if $removeConnected}
+		<div class="warning">
+			<div>
+				<b>WARNING:</b> &nbsp;
+				This will remove <u>ALL</u> wormholes connected to
+				{if $wormhole->getSolarsystem()}<strong>{$wormhole->getSolarsystem()->name}</strong>{/if} ({$wormhole->name})
+			</div>
+		</div>
+	{/if}
 		<div style="padding: 1em; text-align: left;">
-			Are you sure you want to remove {if $wormhole->getSolarsystem()}<strong>{$wormhole->getSolarsystem()->name}</strong>{/if} ({$wormhole->name})
+			Are you sure you want to remove
+			{if $wormhole->getSolarsystem()}<strong>{$wormhole->getSolarsystem()->name}</strong>{/if} ({$wormhole->name})
 			{if $removeConnected}and it's connecting systems{/if}?
 		</div>
 		<div style="margin-top: 1em; text-align: right;">
