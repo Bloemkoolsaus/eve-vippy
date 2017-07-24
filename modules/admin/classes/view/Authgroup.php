@@ -26,7 +26,6 @@ class Authgroup
         if (!$authgroup->getMayAdmin(\User::getUSER()))
             return "";
 
-
         \AppRoot::title($authgroup->name);
 
         if (\Tools::REQUEST("deletealliance"))

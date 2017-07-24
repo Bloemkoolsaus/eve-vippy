@@ -95,6 +95,7 @@ class Chain
         if ($chain->id == 0) {  // new chain
             $chain->setSetting("create-unmapped", 1);
             $chain->setSetting("count-statistics", 1);
+            $chain->setSetting("auto-expiry", 1);
         }
 
         if (\Tools::REQUEST("deletealliance")) {

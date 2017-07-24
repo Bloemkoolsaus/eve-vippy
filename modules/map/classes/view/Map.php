@@ -114,13 +114,17 @@ class Map
             if ($fleet->active)
                 $fleets[] = $fleet;
         }
-        if (count($fleets) == 0) {
-            $data["notifications"][] = [
-                "id" => "no-active-fleets",
-                "type" => "error",
-                "title" => "!!! - There are currently no active fleets registered with VIPPY - !!!",
-                "content" => "Vippy cannot determine character locations, auto-map wormholes or log jumped mass without an active fleet. Please register your fleet with Vippy using the 'Add Fleet' button."
-            ];
+        $data["fleets"] = $fleets;
+
+        if ($map->getAuthGroup()->getConfig("fleet_warning")) {
+            if (count($fleets) == 0) {
+                $data["notifications"][] = [
+                    "id" => "no-active-fleets",
+                    "type" => "error",
+                    "title" => "!!! - There are currently no active fleets registered with VIPPY - !!!",
+                    "content" => "Please register your fleet with Vippy using the 'Add Fleet' button. For more information about CREST fleets, check out the help pages."
+                ];
+            }
         }
 
 

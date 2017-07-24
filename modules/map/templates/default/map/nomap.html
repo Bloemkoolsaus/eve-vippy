@@ -1,6 +1,17 @@
 <div class="content">
-    <div class="warning">
-        <div><b>No available maps</b></div>
-        <div>You have no maps available. Ask your admin for permissions, or, if you are admin, create a new map.</div>
+    <div class="warning" style="font-size: 1.2em;">
+        <div style="font-size: 1.1em; font-weight: bold;">No available maps</div>
+        <div>
+		{if $App->user->isAdmin()}
+			You currently do not have any active maps. You can see your maps at: &nbsp; 'admin' > 'manage maps'<br />
+			<button type="button" class="small" onclick="document.location='/admin/chain/new/'" style="font-size: 1em; width: 120px; margin: .4em;">
+				<img src="/images/default/ui/plus.png" align="left">
+				Create new map
+			</button>
+		{else}
+			You do not have access to any maps.
+			Ask your VIPPY admin for permissions!
+		{/if}
+		</div>
     </div>
 </div>
