@@ -1,4 +1,4 @@
-f
+
 {if $App->user->getAvailibleChains()|@count == 0}
 	{include "map/map/nomap"}
 {/if}
@@ -17,11 +17,6 @@ f
 
 	<form method="post" name="formAuthGroup" action="">
 	<input type="hidden" name="id" value="{$authgroup->id}" />
-{*
-{if $authgroup->getConfig('wh_naming_numeric')}
-	<input type="hidden" name="config[wh_naming_numeric]" value="1">
-{/if}
-*}
 {if $authgroup->getConfig('atlas_url')}
 	<input type="hidden" name="config[atlas_url]" value="{$authgroup->getConfig('atlas_url')}">
 {/if}
@@ -49,7 +44,7 @@ f
 		<div class="form">
 			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="fleet_warning" name="config[fleet_warning]" {if $authgroup->getConfig('fleet_warning')}checked{/if} value="1">
-			<label for="fleet_warning" style="float: none;">Show warning if not fleet is added via CREST.</label>
+			<label for="fleet_warning" style="float: none;">Show warning if no fleet is active.</label>
 			<img src="/images/eve/info.png" style="cursor: pointer;"
 				 data-tooltip="<div><b>Missing fleet warning</b></div><div style='margin-top: .5em;'>Show a warning when a CREST fleet is not added.<br />Check out the help pages for more information about CREST and fleets.</div>">
 		</div>
@@ -245,11 +240,6 @@ f
 			<img src="/images/loading.gif"> &nbsp; Loading..
 		</div>
 	</div>
-	<div style="clear:both;"></div>
-	<br />
-
-	<div class="col6">{include "admin/authgroups/subscription/subscriptions"}</div>
-	<div class="col6 right last">{include "admin/authgroups/subscription/payments"}</div>
 	<div style="clear:both;"></div>
 </div>
 <div id="detailtab-users" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/users"}</div>
