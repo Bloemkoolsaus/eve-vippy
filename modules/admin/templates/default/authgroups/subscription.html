@@ -75,13 +75,14 @@
 		{/if}
 	{elseif $journal->what == "payment"}
 		{if $journal->getWhatObject()}
+			{$journal->getWhatObject()->description}
+			<div style="float: right; font-style: italic;">
+			{if $journal->getWhatObject()->getFromCharacter()}
+				{$journal->getWhatObject()->getFromCharacter()->name}&nbsp; - &nbsp;
+			{/if}
 			{if $journal->getWhatObject()->getFromCorporation()}
 				{$journal->getWhatObject()->getFromCorporation()->name}
 			{/if}
-			{if $journal->getWhatObject()->getFromCharacter()}
-				&nbsp; - &nbsp; <i>{$journal->getWhatObject()->getFromCharacter()->name}</i>
-			{/if}
-			{if $journal->getWhatObject()->description}&nbsp; - &nbsp; {$journal->getWhatObject()->description}{/if}
 		{/if}
 	{else}
 			{$journal->description}

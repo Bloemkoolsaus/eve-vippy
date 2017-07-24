@@ -74,9 +74,9 @@ class Authgroup
                 \AppRoot::doCliOutput("    - ".count($activeUsers)." active users. Subscription fee: ".$amount."m");
                 $subscription = new \admin\model\Subscription();
                 $subscription->authgroupID = $group->id;
-                $subscription->description = "Subscription for ".count($activeUsers)." active users";
                 $subscription->fromdate = date("Y-m-d", mktime(0,0,0,date("m")+1,1,date("Y")));
                 $subscription->tilldate = date("Y-m-d", mktime(0,0,0,date("m")+2,0,date("Y")));
+                $subscription->description = "Vippy ".date("F, Y", strtotime($subscription->fromdate)).": ".count($activeUsers)." active users";
                 $subscription->amount = $amount;
                 $subscription->store();
             }

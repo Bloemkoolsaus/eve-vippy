@@ -4,3 +4,4 @@ config/main.php
 config/crest.conf
 config/dev.conf
 empty.php
+test.php
