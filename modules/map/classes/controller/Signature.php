@@ -49,49 +49,7 @@ class Signature
                 $controller->addWormholeBySignature($map, $signature);
             }
         }
-
-
-        /**
-         * Check wh-nummber, wormhole-types bijwerken.
-         */
-        \AppRoot::debug("Signature->whTypeID: ".$signature->whTypeID);
-        if ($signature->isWormhole())
-        {
-            // Parse signature name om de de juiste connectie te zoeken.
-            $parts = explode(" ", $signature->sigInfo);
-            $parts = explode("-", $parts[0]);
-            $wormholename = (count($parts) > 1) ? $parts[1] : $parts[0];
-            \AppRoot::doCliOutput("UPDATE Connection Type: ".$wormholename);
-
-            // Zoek dit wormhole
-            foreach (\map\model\Wormhole::getWormholesByAuthgroup($signature->authGroupID) as $wormhole)
-            {
-                \AppRoot::debug("Wormhole: ".$wormhole->name);
-                if (trim(strtolower($wormhole->name)) == trim(strtolower($wormholename)))
-                {
-                    $fromWormhole = \map\model\Wormhole::getWormholeBySystemID($signature->solarSystemID, $map->id);
-                    \AppRoot::doCliOutput("This wormhole: ".$wormhole->name);
-                    \AppRoot::doCliOutput("From wormhole: ".$fromWormhole->name);
-
-                    $connection = \map\model\Connection::getConnectionByWormhole($wormhole->id, $fromWormhole->id, $map->id);
-                    if ($connection)
-                    {
-                        $fromSignature = \map\model\Signature::findWormholeSigByName($wormhole->solarSystemID, $wormhole->getChain()->authgroupID, $wormhole->name."-".$fromWormhole->name);
-                        if ($fromSignature) {
-                            \AppRoot::debug($fromSignature);
-                            if ($fromSignature->whTypeID && $fromSignature->whTypeID != 9999) {
-                                $signature->whTypeID = 9999;
-                                $signature->store();
-                            }
-                        }
-
-                        // Reset wh-types op basis van de signatures.
-                        $connection->store();
-                    }
-                }
-            }
-        }
-
+        
         /**
          * Check open signaturs
          */

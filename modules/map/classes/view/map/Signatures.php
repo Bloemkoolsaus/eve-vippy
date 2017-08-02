@@ -108,6 +108,7 @@ class Signatures
         if (!$signature)
             $signature = new \map\model\Signature();
 
+        $signature->deleted = false;
         $signature->solarSystemID = $solarSystem->id;
         $signature->authGroupID = $map->authgroupID;
         $signature->sigID = \Tools::REQUEST("sigid");
@@ -133,9 +134,10 @@ class Signatures
         $sigid = array_shift($arguments);
         if ($sigid == "all")
         {
+            \AppRoot::debug("Delete all signatures");
             $solarSystem = \map\model\SolarSystem::getSolarsystemByName(\Tools::REQUEST("system"));
             if ($solarSystem) {
-                foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id]) as $signature) {
+                foreach (\map\model\Signature::findAll(["solarsystemid" => $solarSystem->id, "deleted" => 0]) as $signature) {
                     if (!$signature->getSignatureType() || $signature->getSignatureType()->mayCleanup())
                         $signature->delete();
                 }
