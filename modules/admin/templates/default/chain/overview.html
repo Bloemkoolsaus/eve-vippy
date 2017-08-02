@@ -3,14 +3,22 @@
 		<img src="/images/default/ui/map.png" align="left">
 		Manage Maps
 	</h1>
-	<div style="text-align: right;">
-		<button type="button" onclick="document.location='/admin/chain/new/'">
-			<img src="/images/default/ui/plus.png" align="left">
-			Add New
-		</button>
+	<div>
+		<div class="col6">
+
+		</div>
+		<div class="col6 right last">
+			<div style="text-align: right;">
+				<button type="button" onclick="document.location='/admin/chain/new/'">
+					<img src="/images/default/ui/plus.png" align="left">
+					Create new map
+				</button>
+			</div>
+		</div>
+		<div style="clear:both;"></div>
 	</div>
 {if $chains|@count > 0}
-	<table class="sectionoverview">
+	<table class="sectionoverview" style="margin-top: 1em;">
 		<tr>
 		{if $App->user->getIsSysAdmin()}
 			<th>Authorization Group</th>
@@ -75,74 +83,4 @@
 		No available chains. Create a new chain to get started!
 	</div>
 {/if}
-</div>
-
-{if $App->user->getIsSysAdmin() && $adminchains|@count > 0}
-<div class="content">
-	<br />
-	<h2>Other peoples chains &nbsp; [<span style="color:red;">Admin only</span>]</h2>
-	<table class="sectionoverview">
-		<tr>
-			<th>Authorization Group</th>
-			<th>Name</th>
-			<th>Home-system</th>
-			<th>Alliances</th>
-			<th>Corporations</th>
-			<th>Last Active</th>
-			<th style="width: 80px;">Sort Order</th>
-			<th style="width: 20px;"></th>
-			<th style="width: 40px;"></th>
-		</tr>
-	{foreach from=$adminchains key=c item=chain}
-		<tr class="{if $c%2==0}even{else}odd{/if}">
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-			{if $chain->getAuthGroup() != null}
-					{$chain->getAuthGroup()->name}
-				{if $chain->getAuthGroup()->isAllowed()}
-					<img src="/images/eve/apply.png" align="right">
-				{else}
-					<img src="/images/eve/stop.png" align="right">
-				{/if}
-			{/if}
-			</td>
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-				<b>{$chain->name}</b>
-			</td>
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-				{$chain->getHomeSystem()->getFullname()}
-			{if $chain->getHomeSystem()->name != $chain->systemName}
-				&nbsp; - &nbsp;
-				{$chain->systemName}
-			{/if}
-			</td>
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-				{foreach from=$chain->getAlliances() item=ally}
-					<div style="width: 130px; overflow: hidden; white-space: nowrap;">{$ally->name}</div>
-				{/foreach}
-			</td>
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-			{foreach from=$chain->getCorporations() item=corp}
-				<div style="width: 130px; overflow: hidden; white-space: nowrap;">{$corp->name}</div>
-			{/foreach}
-			</td>
-			<td onclick="document.location='/admin/chain/edit/{$chain->id}'">
-			{if $chain->lastActive != null}
-				{$chain->lastActive|date_full}
-			{/if}
-			</td>
-			<td style="text-align: center;" onclick="document.location='/admin/chain/edit/{$chain->id}'">
-				{$chain->prio}
-			</td>
-			<td style="text-align: center;">
-				<a href="/map/{$chain->getURL()}" target="_blank"><img src="/images/default/ui/view.png"></a>
-			</td>
-			<td style="text-align: center;">
-				<a href="/admin/chain/edit/{$chain->id}"><img src="/images/default/ui/edit.png" style="border:0px;"></a>
-				<a href="#" onclick="if(confirm('Are you sure you want to delete {$chain->name}?')) {literal}{{/literal} document.location = 'index.php?module=admin&section=chains&action=delete&id={$chain->id}'; {literal}}{/literal}"><img src="/images/default/cross.png" style="border:0px;"></a>
-			</td>
-		</tr>
-	{/foreach}
-	</table>
-	{/if}
-	<div style="clear:both;"></div>
 </div>

@@ -1,5 +1,10 @@
+<b><u>VIPPY</u></b>
+ - I am (more or less) done with the back-end rework and new subscription model.
+   <strong>Starting in September</strong> VIPPY will start automatically calculating your monthly subscription, based on the amount of your groups active users.
+   You can find a more detailed description on the <a href="/help/subscription">help pages</a>. Please get in touch if you have additional questions or concerns.
+
 <b><u>MAP</u></b>
-<b>System Context menu</b>
+<b>System Contextmenu</b>
  - Moved 'remove connected systems' futher down to (hopefully) prevent accidental clicks. Even though there is a confirmation dialog...
  - Add an option to rename a system, rather having to do it from the (cumbersome) form at the bottom right of the page.
 
