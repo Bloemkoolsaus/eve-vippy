@@ -1,37 +1,42 @@
 <div class="col6">
-	<div class="form">
-		<div class="field"><b>Current Subscription:</b></div>
-		<div class="value" style="white-space: nowrap; overflow: visible;">
-		{if $authgroup->getSubscription()}
-			{$authgroup->getSubscription()->description}
-			&nbsp; :: &nbsp;
-			{$authgroup->getSubscription()->fromdate|date_full}
-			{if $authgroup->getSubscription()->tilldate} &nbsp; - &nbsp; {$authgroup->getSubscription()->tilldate|date_full}{/if}
-		{else}
-			<i>None</i>
-		{/if}
-		</div>
-	</div>
-	<div class="form">
-		{assign var=balance value=$authgroup->getBalance()/100000000}
-		<div class="field"><b>Current Balance:</b></div>
-		<div class="value" style="{if $balance<0}color: #ff0000;{/if}{if $balance>0}color: #00ff00;{/if}">
-		{if $balance > 0}
-			{if $balance >= 1000}+{$balance/1000}b{else}+{$balance}m{/if} &nbsp;
-		{else}
-			{if $balance <= -1000}{$balance/1000}b{else}{$balance}m{/if} &nbsp;
-		{/if}
-		</div>
-	</div>
+	<table class="sectionoverview">
+		<tr class="even">
+			<th style="padding-left: .5em; padding-right: .5em;">Current Subscription:</th>
+			<td style="padding-left: .5em; padding-right: .5em;">
+			{if $authgroup->getSubscription()}
+				<div style="float: left;"><b>{$authgroup->getSubscription()->description}</b></div>
+				<div style="float: right; font-style: italic;">
+					{$authgroup->getSubscription()->fromdate|date_full}
+					{if $authgroup->getSubscription()->tilldate} &nbsp; - &nbsp; {$authgroup->getSubscription()->tilldate|date_full}{/if}
+				</div>
+			{/if}
+			</td>
+		</tr>
+		<tr class="even">
+			<th style="padding-left: .5em; padding-right: .5em;">Current Balance:</th>
+			<td style="padding-left: .5em; padding-right: .5em;">{$authgroup->balance/100/1000000}m</td>
+		</tr>
+	</table>
 </div>
 <div class="col6 right last" style="text-align: right;">
-{if $App->user->getIsSysAdmin()}
 	<div style="text-align: right;">
-		<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;" onclick="addSubscription('{$authgroup->id}');">
-			New Subscription
-		</button>
+	{if $App->user->getIsSysAdmin()}
+		<div style="padding: .2em;">
+			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;"
+					onclick="addSubscription('{$authgroup->id}');">
+				<img src="/images/default/ui/plus.png" align="left">
+				New Subscription
+			</button>
+		</div>
+	{/if}
+		<div style="padding: .2em;">
+			<button type="button" class="small" style="width: 150px; font-size: .9rem; font-weight: bold;"
+					onclick="window.open('/help/subscription');">
+				<img src="/images/default/ui/info.png" align="left">
+				Subscription Info
+			</button>
+		</div>
 	</div>
-{/if}
 </div>
 <div style="clear:both;"></div>
 <br />
@@ -40,66 +45,63 @@
 
 <table class="sectionoverview">
 	<tr>
-		<th>Month</th>
-		<th>Subscription</th>
-		<th style="width: 80px; text-align: center;">Price</th>
-		<th style="width: 80px; text-align: center;">Payed</th>
-		<th style="width: 80px; text-align: center;">Balance</th>
+		<th>Date</th>
+		<th>Type</th>
+		<th>&nbsp;</th>
+		<th style="width: 100px; text-align: center;">Amount</th>
+		<th style="width: 100px; text-align: center;">Balance</th>
 	</tr>
-{assign var=i value=0}
-{foreach from=$subscriptions key=year item=months}
-	{foreach from=$months key=month item=data}
-		{assign var=payed value=$data.totals.payed}
-		{assign var=balance value=$data.totals.balance}
-		<tr class="balance-month {if $i>=12}hidden{/if} {if $i%2==0}even{else}odd{/if}" {if $i>=12}style="display:none;"{/if}>
-			<td>
-				<strong>{$data.title} {$year}</strong>
-			</td>
-			<td>
-				{$data.subscription->description}
-				<div style="float: right; font-style: italic;">
-					{$data.subscription->fromdate|date_full}
-					&nbsp; - &nbsp;
-					{if $data.subscription->tilldate}
-						{$data.subscription->tilldate|date_full}
-					{else}
-						no end date
-					{/if} &nbsp;
-				</div>
-			</td>
-			<td style="text-align: right;">
-			{if $data.subscription->amount != 0}
-				{$data.subscription->amount}m &nbsp;
-			{else}
-				<i>Free</i> &nbsp;
+{foreach from=$authgroup->getJournal() key=i item=journal}
+	<tr class="balance-month {if $i>=20}hidden{/if} {if $i%2==0}even{else}odd{/if}" {if $i>=20}style="display:none;"{/if}>
+		<td>
+			{$journal->date|date_full}
+		</td>
+		<td>
+			{$journal->getType()}
+		</td>
+		<td>
+	{if $journal->what == "subscription"}
+		{if $journal->getWhatObject()}
+			{$journal->getWhatObject()->description}
+			<div style="float: right; font-style: italic;">
+				{$journal->getWhatObject()->fromdate|date_full}
+				&nbsp; - &nbsp;
+				{if $journal->getWhatObject()->tilldate}
+					{$journal->getWhatObject()->tilldate|date_full}
+				{else}
+					no end date
+				{/if} &nbsp;
+			</div>
+		{/if}
+	{elseif $journal->what == "payment"}
+		{if $journal->getWhatObject()}
+			{$journal->getWhatObject()->description}
+			<div style="float: right; font-style: italic;">
+			{if $journal->getWhatObject()->getFromCharacter()}
+				{$journal->getWhatObject()->getFromCharacter()->name}&nbsp; - &nbsp;
 			{/if}
-			</td>
-			<td style="text-align: right;">
-		{if $payed != 0}
-			{if $payed >= 1000}
-				{$payed/1000}b &nbsp;
-			{else}
-				{$payed}m &nbsp;
+			{if $journal->getWhatObject()->getFromCorporation()}
+				{$journal->getWhatObject()->getFromCorporation()->name}
 			{/if}
 		{/if}
-			</td>
-			<td style="text-align: right; color: {if $balance < 0}#ff0000{else}#00cc00{/if};">
-			{if $balance > 0}
-				{if $balance >= 1000}+{$balance/1000}b{else}+{$balance}m{/if} &nbsp;
-			{else}
-				{if $balance <= -1000}{$balance/1000}b{else}{$balance}m{/if} &nbsp;
-			{/if}
-			</td>
-		</tr>
-		{assign var=i value=$i+1}
-	{/foreach}
+	{else}
+			{$journal->description}
+	{/if}
+		</td>
+		<td style="text-align: right;">
+			{if $journal->amount != 0}{$journal->amount|valuta}{/if}&nbsp;
+		</td>
+		<td style="text-align: right; color: {if $journal->getBalance() < 0}#ff0000{else}#00cc00{/if};">
+			{$journal->getBalance()|valuta} &nbsp;
+		</td>
+	</tr>
 {/foreach}
 </table>
-{if $i >= 12}
+{if $i >= 20}
 <div id="show-all-balance">
 	<div style="float: right;">
 		<img src="/images/default/tree.open.png" align="left">
-		<a href="#" onclick="$('#show-all-balance').hide(); $('.balance-month.hidden').slideDown(); return false;">Show {($i-12)} more rows</a>
+		<a href="#" onclick="$('#show-all-balance').hide(); $('.balance-month.hidden').slideDown(); return false;">Show {($i-20)} more rows</a>
 	</div>
 </div>
 {/if}

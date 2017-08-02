@@ -5,6 +5,7 @@ class AuthGroup
 {
     public $id = 0;
     public $name;
+    public $balance = 0;
     public $deleted = false;
 
     private $config = null;
@@ -21,6 +22,7 @@ class AuthGroup
     private $_allowedUsers;
     private $_balance;
     private $_balanceStartDate;
+    private $_journal;
 
     function __construct($id=false)
     {
@@ -38,6 +40,7 @@ class AuthGroup
         if ($result) {
             $this->id = $result["id"];
             $this->name = $result["name"];
+            $this->balance = $result["balance"];
             $this->deleted = ($result["deleted"]>0)?true:false;
         }
     }
@@ -57,6 +60,7 @@ class AuthGroup
 
         $data = [
             "name" => $this->name,
+            "balance" => $this->balance,
             "deleted" => ($this->deleted)?1:0
         ];
         if ($this->id > 0)
@@ -97,6 +101,18 @@ class AuthGroup
                 $user->resetCache();
             }
         }
+    }
+
+    /**
+     * Get journal
+     * @return \admin\model\Journal[]
+     */
+    function getJournal()
+    {
+        if (!$this->_journal)
+            $this->_journal = \admin\model\Journal::findAll(["authgroupid" => $this->id], ["transactiondate desc"]);
+
+        return $this->_journal;
     }
 
     function delete()

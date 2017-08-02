@@ -50,7 +50,7 @@ div.threequarter {
 #wormholeContext #wormholeContextMenu .contextMenu {
     margin: 15px 2px 2px;
 }
-#wormholeContext #wormholeContextMenu .contextMenu div {
+#wormholeContext #wormholeContextMenu .contextMenu div.menuitem {
     border-radius: none;
     padding: 2px;
     border-bottom: solid 1px #222222;

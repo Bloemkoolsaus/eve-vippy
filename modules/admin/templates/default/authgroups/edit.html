@@ -1,3 +1,8 @@
+
+{if $App->user->getAvailibleChains()|@count == 0}
+	{include "map/map/nomap"}
+{/if}
+
 <div class="content">
 	<h1>Access Control Group - {$authgroup->name}</h1>
 
@@ -12,9 +17,6 @@
 
 	<form method="post" name="formAuthGroup" action="">
 	<input type="hidden" name="id" value="{$authgroup->id}" />
-{if $authgroup->getConfig('wh_naming_numeric')}
-	<input type="hidden" name="config[wh_naming_numeric]" value="1">
-{/if}
 {if $authgroup->getConfig('atlas_url')}
 	<input type="hidden" name="config[atlas_url]" value="{$authgroup->getConfig('atlas_url')}">
 {/if}
@@ -41,16 +43,25 @@
 		</div>
 		<div class="form">
 			<label class="field">&nbsp;</label>
+			<input type="checkbox" id="fleet_warning" name="config[fleet_warning]" {if $authgroup->getConfig('fleet_warning')}checked{/if} value="1">
+			<label for="fleet_warning" style="float: none;">Show warning if no fleet is active.</label>
+			<img src="/images/eve/info.png" style="cursor: pointer;"
+				 data-tooltip="<div><b>Missing fleet warning</b></div><div style='margin-top: .5em;'>Show a warning when a CREST fleet is not added.<br />Check out the help pages for more information about CREST and fleets.</div>">
+		</div>
+		<div class="form">
+			<label class="field">&nbsp;</label>
 			<input type="checkbox" id="access_control" name="config[access_control]" {if $authgroup->getConfig('access_control') == "manual"}checked{/if} value="manual">
 			<label for="access_control" style="float: none;">Members require authorization by an admin.</label>
-			<img src="/images/eve/info.png" onclick="helpPopupAuthorization();" style="cursor: pointer;">
+			<img src="/images/eve/info.png" style="cursor: pointer;"
+				 data-tooltip="<div><b>Authorization required</b></div><div style='margin-top: .5em;'>Users characters are pulled from CREST. If they have a toon that<br />is in an authorized corp/alliance, the user will get access.</div><div style='margin-top: .5em;'>If you enable this option, each user will also need to be manually authorized by an admin.</div><div style='margin-top: .5em; color:red;'>Ticking this box may revoke access for existing users!</div>">
 		</div>
 	</div>
 
 	<div class="col2">
 		<h3>
 			Systems of interest
-			<img src="/images/eve/info.png" onclick="helpPopupTradehubs();" style="cursor: pointer;" align="right">
+			<img src="/images/eve/info.png" style="cursor: pointer;" align="right"
+				 data-tooltip="<div><b>Systems of interest</b></div> <div style='margin-top: .5em;'>These are the systems that VIPPY will show the distance (in nr jumps) to on the map.</div> <div style='margin-top: .5em;'>The 'On Map' parameter sets wether or not to use for the closest system on the map. When off, the system is only shown on the mouse over details of a system.</div> <div style='margin-top: .5em;'>*<i>The default trade hubs cannot be removed, but can be hidden on the map.</i></div>">
 		</h3>
 		<input type="hidden" name="removeSystem" value="">
 		<table class="sectionoverview">
@@ -230,34 +241,12 @@
 		</div>
 	</div>
 	<div style="clear:both;"></div>
-	<br />
-
-	<div class="col6">{include "admin/authgroups/subscription/subscriptions"}</div>
-	<div class="col6 right last">{include "admin/authgroups/subscription/payments"}</div>
-	<div style="clear:both;"></div>
 </div>
 <div id="detailtab-users" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/users"}</div>
 <div id="detailtab-usergroups" class="content" rel="detailtab" style="display: none;">{include "admin/authgroups/usergroups"}</div>
-
 
 <script type="text/javascript">
 $(document).ready(function() {
 	loadSubscription('{$authgroup->id}');
 });
-function helpPopupAuthorization()
-{
-	html = "<h3>Members require authorization by an admin</h3>" +
-			"<p>A users characters is pulled via the API. If they have a toon that is in an allowed corp/alliance, the user will get access.</p>" +
-			"<p>If you check this option, a user will also need to be manually authorized by an admin.<br />" +
-			"<span style='color:red;'><b>WARNING:</b> Toggling this option can potentially disable access for a lot of users!</span></p>";
-	showHelp(html);
-}
-function helpPopupTradehubs()
-{
-	html = "<h3>Systems of interest</h3>" +
-			"<p>These are the systems that VIPPY will show the distance (in nr jumps) to on the map.</p>" +
-			"<p>The 'On Map' parameter sets wether or not to use for the closest system on the map. When off, the system is only shown on the mouse over details of a system.</p>" +
-			"<p>*<i>The default trade hubs cannot be removed, but can be hidden on the map.</i></p>";
-	showHelp(html);
-}
 </script>

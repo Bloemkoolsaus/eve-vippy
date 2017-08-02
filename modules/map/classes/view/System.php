@@ -18,6 +18,18 @@ class System
         return $tpl->fetch("map/system/solarsystem");
     }
 
+    function getRename($arguments=[])
+    {
+        $wormhole = new \map\model\Wormhole(array_shift($arguments));
+        $system = $wormhole->getSolarsystem();
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("system", $system);
+        $tpl->assign("wormhole", $wormhole);
+
+        return $tpl->fetch("map/system/rename");
+    }
+
     function getActivity($arguments=[])
     {
         $wormhole = new \map\model\Wormhole(array_shift($arguments));

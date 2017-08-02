@@ -273,6 +273,7 @@ class Wormhole
         if ($newConnection == null) {
             $newConnection = new \map\model\Connection();
             $newConnection->fromWormholeID = $originWormhole->id;
+            $newConnection->fromWHTypeID = $signature->whTypeID;
             $newConnection->toWormholeID = $newWormhole->id;
             $newConnection->chainID = $map->id;
             $newConnection->store();

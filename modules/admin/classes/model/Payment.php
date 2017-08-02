@@ -27,6 +27,28 @@ class Payment extends \Model
     private $_toUser = null;
 
 
+
+    function store()
+    {
+        parent::store();
+
+        // Check journal entry
+        if ($this->getAuthgroup() && $this->approved) {
+            $journal = \admin\model\Journal::findOne(["what" => "payment", "whatid" => $this->id]);
+            if (!$journal) {
+                $journal = new \admin\model\Journal();
+                $journal->authgroupID = $this->authgroupID;
+                $journal->what = "payment";
+                $journal->whatID = $this->id;
+                $journal->amount = $this->amount;
+                $journal->date = $this->date;
+                $journal->description = $this->description;
+                $journal->store();
+            }
+        }
+    }
+
+
     /**
      * Get authgroup
      * @return \admin\model\AuthGroup
@@ -113,8 +135,10 @@ class Payment extends \Model
         if ($this->_fromCorporation === null) {
             if ($this->fromCorporationID)
                 $this->_fromCorporation = new \eve\model\Corporation($this->fromCorporationID);
-            else
-                $this->_fromCorporation = ($this->getFromCharacter()) ? $this->getFromCharacter()->getCorporation() : null;
+            else {
+                if ($this->getFromCharacter())
+                    $this->_fromCorporation = $this->getFromCharacter()->getCorporation();
+            }
         }
 
         return $this->_fromCorporation;

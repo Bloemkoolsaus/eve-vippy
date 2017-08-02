@@ -114,13 +114,17 @@ class Map
             if ($fleet->active)
                 $fleets[] = $fleet;
         }
-        if (count($fleets) == 0) {
-            $data["notifications"][] = [
-                "id" => "no-active-fleets",
-                "type" => "error",
-                "title" => "!!! - There are currently no active fleets registered with VIPPY - !!!",
-                "content" => "Vippy cannot determine character locations, auto-map wormholes or log jumped mass without an active fleet. Please register your fleet with Vippy using the 'Add Fleet' button."
-            ];
+        $data["fleets"] = $fleets;
+
+        if ($map->getAuthGroup()->getConfig("fleet_warning")) {
+            if (count($fleets) == 0) {
+                $data["notifications"][] = [
+                    "id" => "no-active-fleets",
+                    "type" => "error",
+                    "title" => "!!! - There are currently no active fleets registered with VIPPY - !!!",
+                    "content" => "Please register your fleet with Vippy using the 'Add Fleet' button. For more information about CREST fleets, check out the help pages."
+                ];
+            }
         }
 
 
@@ -249,6 +253,23 @@ class Map
         return $this->getMap($map, ["nocache"]);
     }
 
+    function getRename(\map\model\map $map, $arguments=[])
+    {
+        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+
+        if (\Tools::POST("name")) {
+            $wormhole->name = \Tools::POST("name");
+            $wormhole->store();
+            $map->setMapUpdateDate();
+            exit;
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("wormhole", $wormhole);
+        return $tpl->fetch("map/system/rename");
+    }
+
     function getRemove(\map\model\Map $map, $arguments=[])
     {
         $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
@@ -260,9 +281,10 @@ class Map
                         $map->removeConnectedWormholes($wormhole->id);
                     else
                         $wormhole->delete();
+                    $map->setMapUpdateDate();
+                    exit;
                 }
             }
-            \AppRoot::redirect("map/".$map->getURL());
         }
 
         $tpl = \SmartyTools::getSmarty();

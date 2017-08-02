@@ -9,16 +9,11 @@ class Chain
         if (!\User::getUSER()->isAdmin())
             \AppRoot::redirect("");
 
-        $chains = array();
-        $adminChains = array();
-
-        $chains = array();
-        foreach (\User::getUSER()->getAvailibleChains(false) as $chain)
-        {
+        $chains = [];
+        foreach (\User::getUSER()->getAvailibleChains(false) as $chain) {
             if ($chain->getAllowedAdmin())
                 $chains[] = $chain;
         }
-
         // Chains toevoegen die GEEN alliances/corporations hebben.
         if ($results = \MySQL::getDB()->getRows("SELECT *
                                                 FROM    mapwormholechains
@@ -27,42 +22,15 @@ class Chain
                                                 AND     id NOT IN (select chainid from mapwormholechains_alliances)
                                                 AND     id NOT IN (select chainid from mapwormholechains_corporations)"))
         {
-            foreach ($results as $result)
-            {
+            foreach ($results as $result) {
                 $chain = new \map\model\Map();
                 $chain->load($result);
                 $chains[] = $chain;
             }
         }
 
-
-
-        if (\User::getUSER()->getIsSysAdmin())
-        {
-            if ($results = \MySQL::getDB()->getRows("SELECT *
-                                                    FROM 	mapwormholechains
-                                                    WHERE 	deleted = 0
-                                                    AND 	id NOT IN (".implode(",", \User::getUSER()->getAvailibleChainIDs()).")
-                                                    and     deleted = 0
-                                                    ORDER BY authgroupid, prio, id, name ASC"))
-            {
-                foreach ($results as $result)
-                {
-                    $chain = new \map\model\Map();
-                    $chain->load($result);
-                    $adminChains[] = $chain;
-                }
-            }
-        }
-
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("chains", $chains);
-        $tpl->assign("adminchains", $adminChains);
-
-        if (\User::getUSER()->getIsSysAdmin())
-            $tpl->assign("sysadmin",1);
-
         return $tpl->fetch("admin/chain/overview");
     }
 
@@ -95,6 +63,7 @@ class Chain
         if ($chain->id == 0) {  // new chain
             $chain->setSetting("create-unmapped", 1);
             $chain->setSetting("count-statistics", 1);
+            $chain->setSetting("auto-expiry", 1);
         }
 
         if (\Tools::REQUEST("deletealliance")) {

@@ -46,6 +46,15 @@ function generateMap(data)
     generateConnections(data.connections);
     generateSystems(data.wormholes);
 
+    console.log("Check fleets");
+    if (data.fleets != undefined) {
+        if (data.fleets.length > 0)
+            $("button#addFleet>img").attr("src", "/images/default/ui/fleet.png");
+        else
+            $("button#addFleet>img").attr("src", "/images/default/alert-error.png");
+    } else
+        $("button#addFleet>img").attr("src", "/images/default/alert-error.png");
+
     if (stage != null)
     {
         console.log("clear stage");

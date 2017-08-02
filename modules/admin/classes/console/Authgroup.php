@@ -51,26 +51,32 @@ class Authgroup
             {
                 \AppRoot::doCliOutput(" > ".$group->name);
                 // Alleen als er voor die maand nog geen subscription is
-                if ($group->getSubscription($nextMonth))
+                if ($group->getSubscription($nextMonth)) {
+                    \AppRoot::doCliOutput("    - has active subscription. Skip");
                     continue;
+                }
 
                 // Alleen als er nog wel actieve mensen zijn
                 $activeUsers = $group->getActiveUsers();
-                if (count($activeUsers) == 0)
+                if (count($activeUsers) == 0) {
+                    \AppRoot::doCliOutput("    - no active users. Skip");
                     continue;
+                }
 
                 // Maak de subscription
-                $amount = (floor((count($activeUsers)/10)*2)*2)*100;
-                if ($amount > 500)
-                    $amount = 500;
-                if ($amount < 100)
-                    $amount = 100;
+                $amount = 0;
+                if (count($activeUsers) >= 5) {
+                    $amount = round(count($activeUsers)/5)*50; // 10m per actieve user, afgerond naar de dichtsbijzinde 50m
+                    if ($amount > 500)
+                        $amount = 500;
+                }
 
+                \AppRoot::doCliOutput("    - ".count($activeUsers)." active users. Subscription fee: ".$amount."m");
                 $subscription = new \admin\model\Subscription();
                 $subscription->authgroupID = $group->id;
-                $subscription->description = count($activeUsers)." Active users in ".date("F");
                 $subscription->fromdate = date("Y-m-d", mktime(0,0,0,date("m")+1,1,date("Y")));
                 $subscription->tilldate = date("Y-m-d", mktime(0,0,0,date("m")+2,0,date("Y")));
+                $subscription->description = "Vippy ".date("F, Y", strtotime($subscription->fromdate)).": ".count($activeUsers)." active users";
                 $subscription->amount = $amount;
                 $subscription->store();
             }

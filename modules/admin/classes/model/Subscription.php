@@ -37,6 +37,19 @@ class Subscription extends \Model
                 }
             }
         }
+
+        // Check journal entry
+        $journal = \admin\model\Journal::findOne(["what" => "subscription", "whatid" => $this->id]);
+        if (!$journal) {
+            $journal = new \admin\model\Journal();
+            $journal->authgroupID = $this->authgroupID;
+            $journal->what = "subscription";
+            $journal->whatID = $this->id;
+            $journal->amount = ($this->amount*100000000)*-1;
+            $journal->date = $this->fromdate;
+            $journal->description = $this->description;
+            $journal->store();
+        }
     }
 
     function isActive($onDate=null)

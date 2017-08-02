@@ -26,7 +26,6 @@ class Authgroup
         if (!$authgroup->getMayAdmin(\User::getUSER()))
             return "";
 
-
         \AppRoot::title($authgroup->name);
 
         if (\Tools::REQUEST("deletealliance"))
@@ -149,42 +148,16 @@ class Authgroup
                 \AppRoot::redirect("/admin/authgroup/edit/".$authgroup->id);
         }
 
+        $allianceEdit = new \eve\elements\Alliance("Alliance", "alliance");
+        $corporationEdit = new \eve\elements\Corporation("Corporation", "corporation");
+        $systemEdit = new \eve\elements\SolarSystem("Solarsystem", "addclosesystem");
+
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("errors", $errors);
         $tpl->assign("authgroup", $authgroup);
-
-        $allianceEdit = new \eve\elements\Alliance("Alliance", "alliance");
         $tpl->assign("addAllianceElement", $allianceEdit);
-
-        $corporationEdit = new \eve\elements\Corporation("Corporation", "corporation");
         $tpl->assign("addCorporationElement", $corporationEdit);
-
-
-        $systemEdit = new \eve\elements\SolarSystem("Solarsystem", "addclosesystem");
         $tpl->assign("addSolarsystemElement", $systemEdit);
-
-        if ($authgroup->getSubscription() != null)
-        {
-            // Get payment months
-            $months = array();
-            $curdate = $authgroup->getSubscription()->fromdate;
-            while (date("Ym", strtotime($curdate)) <= date("Ym"))
-            {
-                $amountDue = $authgroup->getSubscription()->getAmount();
-                if ($amountDue != 0)
-                {
-                    $months[] = [
-                        "month" => \Tools::getFullMonth(date("m", strtotime($curdate))) . " " . date("Y", strtotime($curdate)),
-                        "due" => $amountDue,
-                        "amount" => $authgroup->getSubscription()->getPayed($curdate)
-                    ];
-                }
-
-                $curdate = date("Y-m-d", mktime(0,0,0,date("m",strtotime($curdate))+1,date("d",strtotime($curdate)),date("Y",strtotime($curdate))));
-            }
-            $tpl->assign("monthsdue", array_reverse($months));
-        }
-
         return $tpl->fetch("admin/authgroups/edit");
     }
 
@@ -192,60 +165,8 @@ class Authgroup
     {
         $authgroup = new \admin\model\AuthGroup(array_shift($arguments));
 
-        $data = [];
-        foreach ($authgroup->getSubscriptions() as $subscription) {
-            $curdate = strtotime($subscription->fromdate);
-            $tilldate = ($subscription->tilldate) ? strtotime($subscription->tilldate) : strtotime("now");
-            while ($curdate <= $tilldate and $curdate <= strtotime("now")) {
-                $data[date("Y", $curdate)][date("m", $curdate)] = [
-                    "title" => \Tools::getFullMonth(date("m", $curdate)),
-                    "subscription" => $subscription,
-                    "payments" => [],
-                    "totals" => ["due" => 0, "payed" => 0, "balance" => 0]
-                ];
-                $curdate = mktime(0, 0, 0, date("m", $curdate)+1, date("d", $curdate), date("Y", $curdate));
-            }
-        }
-        foreach ($authgroup->getPayments() as $payment) {
-            $y = date("Y", strtotime($payment->date));
-            $m = date("m", strtotime($payment->date));
-            $data[$y][$m]["payments"][] = $payment;
-        }
-
-        // Sorteren
-        foreach ($data as $year => $months) {
-            ksort($data[$year]);
-        }
-        ksort($data);
-
-        $totalDue = 0;
-        $totalPayed = 0;
-        foreach ($data as $y => $months) {
-            foreach ($months as $m => $month) {
-                $due = $month["subscription"]->amount;
-                $payed = 0;
-                foreach ($month["payments"] as $payment) {
-                    $payed += round($payment->amount/100000000);
-                }
-                $totalDue += $due;
-                $totalPayed += $payed;
-                $data[$y][$m]["totals"] = [
-                    "due" => $due,
-                    "payed" => $payed,
-                    "balance" => $totalPayed-$totalDue
-                ];
-            }
-        }
-
-        // Sortering omdraaien. Nieuwste eerst.
-        foreach ($data as $year => $months) {
-            $data[$year] = array_reverse($data[$year], true);
-        }
-        $data = array_reverse($data, true);
-
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("authgroup", $authgroup);
-        $tpl->assign("subscriptions", $data);
         return $tpl->fetch("admin/authgroups/subscription");
     }
 }
