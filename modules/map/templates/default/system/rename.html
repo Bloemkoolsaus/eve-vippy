@@ -1,0 +1,21 @@
+<div style="padding: 1em;">
+	<form action="Javascript: renameWormhole()">
+		<input type="hidden" name="rename-wormhole-id" value="{$wormhole->id}">
+		<h2>
+			<img src="/images/default/ui/map.png" align="left">
+			Rename System
+		</h2>
+		<div class="form">
+			<div class="field">New name:</div>
+			<div class="valule">
+				<input type="text" name="rename-wormhole-name" value="{$wormhole->name}">
+			</div>
+		</div>
+		<div style="margin-top: 1em; text-align: right;">
+			<button type="submit" id="rename-wormhole-submit">
+				<img src="/images/default/ui/save.png" align="left">
+				Save
+			</button>
+		</div>
+	</form>
+</div>

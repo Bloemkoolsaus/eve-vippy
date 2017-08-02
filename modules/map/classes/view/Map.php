@@ -253,6 +253,23 @@ class Map
         return $this->getMap($map, ["nocache"]);
     }
 
+    function getRename(\map\model\map $map, $arguments=[])
+    {
+        $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
+
+        if (\Tools::POST("name")) {
+            $wormhole->name = \Tools::POST("name");
+            $wormhole->store();
+            $map->setMapUpdateDate();
+            exit;
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("wormhole", $wormhole);
+        return $tpl->fetch("map/system/rename");
+    }
+
     function getRemove(\map\model\Map $map, $arguments=[])
     {
         $wormhole = \map\model\Wormhole::findById(array_shift($arguments));
@@ -264,9 +281,10 @@ class Map
                         $map->removeConnectedWormholes($wormhole->id);
                     else
                         $wormhole->delete();
+                    $map->setMapUpdateDate();
+                    exit;
                 }
             }
-            \AppRoot::redirect("map/".$map->getURL());
         }
 
         $tpl = \SmartyTools::getSmarty();

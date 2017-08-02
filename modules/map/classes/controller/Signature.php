@@ -49,7 +49,7 @@ class Signature
                 $controller->addWormholeBySignature($map, $signature);
             }
         }
-        
+
         /**
          * Check open signaturs
          */

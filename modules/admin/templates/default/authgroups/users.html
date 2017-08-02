@@ -1,9 +1,9 @@
 <h2>{$authgroup->getAllowedUsers()|@count} Authorized Users</h2>
 <div>
 	<div class="col3">
-		<div class="form">
+		<div class="form" style="color: #ffffff;">
 			<div class="field" style="width: 120px;"><b>Active users:</b></div>
-			{$authgroup->getActiveUsers()|@count}
+			<strong>{$authgroup->getActiveUsers()|@count}</strong>
 		</div>
 		<div class="form">
 			<div class="field" style="width: 120px;"><b>Authorized users:</b></div>

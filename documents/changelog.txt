@@ -1,3 +1,10 @@
+<b><u>MAP</u></b>
+<b>System Context menu</b>
+ - Moved 'remove connected systems' futher down to (hopefully) prevent accidental clicks. Even though there is a confirmation dialog...
+ - Add an option to rename a system, rather having to do it from the (cumbersome) form at the bottom right of the page.
+
+
+
 <h3>July 12, 2017</h3>
 <b><u>CREST</u></b>
  - Fixed the error when adding a fleet.

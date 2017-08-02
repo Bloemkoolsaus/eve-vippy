@@ -62,7 +62,7 @@ function allowMapRefresh()
 
 function loadSignatureMap(action, params, force)
 {
-    if (!allowMapRefresh())
+    if (!allowMapRefresh() && !force)
         return false;
 
     if (!action)
@@ -153,15 +153,62 @@ function addWormhole()
 	});
 }
 
+function renameWormhole(wormholeID)
+{
+    if (wormholeID) {
+        // Open de popup
+        $.ajax({
+            url: "/map/"+$("#mapName").val()+"/rename/"+wormholeID,
+            data: { ajax: 1 },
+            success: function(data) {
+                showPopup(data, 450, 200);
+            }
+        });
+    } else {
+        // Nieuwe naam opslaan
+        $("button#rename-wormhole-submit>img").attr("src","/images/loading.gif");
+        $.ajax({
+            type: "POST",
+            url: "/map/"+$("#mapName").val()+"/rename/"+$("input[name=rename-wormhole-id]").val(),
+            data: {
+                name: $("input[name=rename-wormhole-name]").val(),
+                ajax: 1
+            },
+            complete: function() {
+                destroyPopup();
+            }
+        });
+    }
+}
+
 function deleteWormhole(systemName, removeConnected)
 {
-    $.ajax({
-        url: "/map/"+$("#mapName").val()+"/remove/"+systemName+"/"+((removeConnected)?"connected":""),
-        data: { ajax: 1 },
-        success: function(data) {
-            showPopup(data, 450, 200);
-        }
-    });
+    if (systemName) {
+        // Open de popup
+        $.ajax({
+            url: "/map/"+$("#mapName").val()+"/remove/"+systemName+"/"+((removeConnected)?"connected":""),
+            data: { ajax: 1 },
+            success: function(data) {
+                showPopup(data, 450, 200);
+            }
+        });
+    } else {
+        // Verwijder systeem
+        $("button#remove-wormhole-submit>img").attr("src","/images/loading.gif");
+        $.ajax({
+            type: "POST",
+            url: "/map/"+$("#mapName").val()+"/remove/"+$("input[name=remove-wormhole-id]").val(),
+            data: {
+                connected: $("input[name=remove-wormhole-connected]").val(),
+                confirmed: $("input[name=remove-wormhole-confirmed]").val(),
+                ajax: 1
+            },
+            complete: function() {
+                loadSignatureMap(null, null, true);
+                destroyPopup();
+            }
+        });
+    }
 }
 
 function setSystemPermanent(systemName)
