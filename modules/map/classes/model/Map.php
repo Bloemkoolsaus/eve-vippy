@@ -13,18 +13,25 @@ class Map extends \scanning\model\Chain
         if (!$user)
             $user = \User::getUSER();
 
+        // Check sessie
+        if ($user->getSession("map_".$this->id."_allowed") !== null)
+            return $user->getSession("map_".$this->id."_allowed");
+
+        // Geen sessie. Berekenen.
+        $allowed = false;
         foreach ($user->getAvailibleChains() as $chain) {
-            if ($chain->id == $this->id)
-                return true;
+            if ($chain->id == $this->id) {
+                $allowed = true;
+                break;
+            }
         }
-        return false;
+        $user->setSession("map_".$this->id."_allowed", $allowed);
+        return $allowed;
     }
 
     function getURL()
     {
-        $url = \Tools::formatURL($this->name);
-        $url = $this->id."-".$url;
-        return $url;
+        return $this->id."-".\Tools::formatURL($this->name);
     }
 
     /**
