@@ -842,22 +842,68 @@ class User
     }
 
     /**
+     * Get session var
+     * @param $var
+     * @return mixed|null
+     */
+    public function getSession($var)
+    {
+        // Alleen als dit ook de user is die ingelogd is
+        if (\User::getUSER() && \User::getUSER()->id == $this->id) {
+            \AppRoot::debug("User->getSession($var)");
+            if (isset($_SESSION["vippy"]["user"][$var]["value"])) {
+                if ($_SESSION["vippy"]["user"][$var]["timestamp"] >= strtotime("now")-(60*15))
+                    return $_SESSION["vippy"]["user"][$var]["value"];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Set session var
+     * @param $var
+     * @param $value
+     */
+    public function setSession($var, $value)
+    {
+        // Alleen als dit ook de user is die ingelogd is
+        if (\User::getUSER() && \User::getUSER()->id == $this->id) {
+            \AppRoot::debug("User->setSession($var, $value)");
+            $_SESSION["vippy"]["user"][$var] = [
+                "value" => $value,
+                "timestamp" => strtotime("now")
+            ];
+        }
+    }
+
+    public function clearSession()
+    {
+        $_SESSION["vippy"]["user"] = null;
+    }
+
+    /**
      * Is user vippy admin?
      * @param bool $corpid
      * @return bool
      */
     public function isAdmin($corpid=false)
     {
-        if ($this->isAdmin === null) {
-            $this->isAdmin = false;
-            if ($this->getCurrentAuthGroup()) {
-                if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
-                    if ($this->getIsDirector($corpid))
-                        $this->isAdmin = true;
+        if ($this->isAdmin === null)
+        {
+            if ($this->getSession("isadmin") !== null)
+                $this->isAdmin = $this->getSession("isadmin");
+            else {
+                $this->isAdmin = false;
+                if ($this->getCurrentAuthGroup()) {
+                    if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
+                        if ($this->getIsDirector($corpid))
+                            $this->isAdmin = true;
+                    }
                 }
+                if ($this->hasRight("admin", "admin"))
+                    $this->isAdmin = true;
+                \User::getUSER()->setSession("isadmin", $this->isAdmin);
             }
-            if ($this->hasRight("admin", "admin"))
-                $this->isAdmin = true;
         }
 
         return $this->isAdmin;
@@ -1174,10 +1220,16 @@ class User
      */
     public function isAuthorized()
     {
-        \AppRoot::debug("User($this->displayname)->isAuthorized(): ".(($this->isValid===null)?"null":$this->isValid), true);
+        \AppRoot::doCliOutput("User($this->displayname)->isAuthorized()");
+
+        // Check session
+        if ($this->getSession("authorized") !== null)
+            return $this->getSession("authorized");
+
         if ($this->isValid === null)
             $this->fetchIsAuthorized();
 
+        $this->setSession("authorized", $this->isValid);
         return $this->isValid;
     }
 
@@ -1331,7 +1383,10 @@ class User
         {
             $cacheFilename = $this->getCacheDirectory()."authgroups.json";
             if ($fromCache && $cache = \Cache::file()->get($cacheFilename))
+            {
+                \AppRoot::debug("Cached!");
                 $this->authGroupIDs = json_decode($cache,true);
+            }
             else
             {
                 $this->authGroupIDs = [];
@@ -1381,7 +1436,7 @@ class User
             }
         }
 
-        \AppRoot::debug($this->authGroupIDs);
+        \AppRoot::debug("AuthgroupIDs: ".implode(",",$this->authGroupIDs));
         return $this->authGroupIDs;
     }
 
@@ -1396,26 +1451,18 @@ class User
      */
     public function getAuthGroups()
     {
-        if ($this->authGroups === null)
-        {
-            \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
+        \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
+        if ($this->authGroups === null) {
             $this->authGroups = [];
-            foreach ($this->getAuthGroupsIDs() as $id)
-            {
-                \AppRoot::debug($id);
-                // dubbele?
-                $exists = false;
-                foreach ($this->authGroups as $group) {
-                    if ($group->id == $id)
-                        $exists = true;
-                }
-                if (!$exists) {
-                    $group = new \admin\model\AuthGroup($id);
+            if ($results = \MySQL::getDB()->getRows("select * from user_auth_groups where id in (".implode(",",$this->getAuthGroupsIDs()).")")) {
+                foreach ($results as $result) {
+                    $group = new \admin\model\AuthGroup();
+                    $group->load($result);
                     $this->authGroups[] = $group;
-                    \AppRoot::debug(" * ".$group->name);
                 }
             }
         }
+        \AppRoot::debug(count($this->authGroups)." authgroups selected");
         return $this->authGroups;
     }
 
@@ -1426,13 +1473,10 @@ class User
     public function getAuthGroupsAdmins()
     {
         $authGroups = array();
-        foreach ($this->getAuthGroups() as $group)
-        {
+        foreach ($this->getAuthGroups() as $group) {
             // Heb ik directors in deze groep?
-            foreach ($group->getAllowedCorporations() as $corp)
-            {
-                if (\User::getUSER()->isAdmin($corp->id))
-                {
+            foreach ($group->getAllowedCorporations() as $corp) {
+                if (\User::getUSER()->isAdmin($corp->id)) {
                     $authGroups[] = $group;
                     continue;
                 }
@@ -1456,42 +1500,59 @@ class User
             }
 
             $this->_accessLists = [];
-            if ($results = \MySQL::getDB()->getRows("select a.*
-                                                     from   user_accesslist a
-                                                        inner join user_accesslist_user u on u.userid = a.id
-                                                     where  u.userid = ?
-                                                  union
-                                                     select a.*
-                                                     from   user_accesslist a
-                                                        inner join user_accesslist_characters ac on ac.accesslistid = a.id
-                                                        inner join characters c on c.id = ac.characterid
-                                                     where  ac.characterid in (".implode(",", $charIDs).")
-                                                  union
-                                                     select a.*
-                                                     from   user_accesslist a
-                                                        inner join user_accesslist_corporation ac on ac.accesslistid = a.id
-                                                        inner join characters c on c.corpid = ac.corporationid
-                                                     where  c.id in (".implode(",", $charIDs).")
-                                                  union
-                                                     select a.*
-                                                     from   user_accesslist a
-                                                        inner join user_accesslist_alliance aa on aa.accesslistid = a.id
-                                                        inner join corporations cc on cc.allianceid = aa.allianceid
-                                                        inner join characters c on c.corpid = cc.id
-                                                     where  c.id in (".implode(",", $charIDs).")
-                                                  union
-                                                    select  a.*
-                                                    from    user_accesslist a
-                                                    where   a.ownerid = ?
-                                                group by id
-                                                order by title, id"
-                                    , [$this->id, $this->id]))
+            if ($this->getSession("accesslists") !== null)
             {
-                foreach ($results as $result)
+                if ($results = \MySQL::getDB()->getRows("select * from user_accesslist where id in (".$this->getSession("accesslists").") order by title,id")) {
+                    foreach ($results as $result) {
+                        $list = new \admin\model\AccessList();
+                        $list->load($result);
+                        $this->_accessLists[] = $list;
+                    }
+                }
+            }
+            else
+            {
+
+                if ($results = \MySQL::getDB()->getRows("select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_user u on u.userid = a.id
+                                                         where  u.userid = ?
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_characters ac on ac.accesslistid = a.id
+                                                            inner join characters c on c.id = ac.characterid
+                                                         where  ac.characterid in (".implode(",", $charIDs).")
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_corporation ac on ac.accesslistid = a.id
+                                                            inner join characters c on c.corpid = ac.corporationid
+                                                         where  c.id in (".implode(",", $charIDs).")
+                                                      union
+                                                         select a.*
+                                                         from   user_accesslist a
+                                                            inner join user_accesslist_alliance aa on aa.accesslistid = a.id
+                                                            inner join corporations cc on cc.allianceid = aa.allianceid
+                                                            inner join characters c on c.corpid = cc.id
+                                                         where  c.id in (".implode(",", $charIDs).")
+                                                      union
+                                                        select  a.*
+                                                        from    user_accesslist a
+                                                        where   a.ownerid = ?
+                                                    group by id
+                                                    order by title, id"
+                                        , [$this->id, $this->id]))
                 {
-                    $list = new \admin\model\AccessList();
-                    $list->load($result);
-                    $this->_accessLists[] = $list;
+                    $ids = [];
+                    foreach ($results as $result)
+                    {
+                        $list = new \admin\model\AccessList();
+                        $list->load($result);
+                        $ids[] = $list->id;
+                        $this->_accessLists[] = $list;
+                    }
+                    $this->setSession("accesslists", implode(",",$ids));
                 }
             }
         }

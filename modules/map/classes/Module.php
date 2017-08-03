@@ -15,8 +15,7 @@ class Module extends \Module
         }
 
         $map = null;
-        if (\Tools::REQUEST("section"))
-        {
+        if (\Tools::REQUEST("section")) {
             $map = \map\model\Map::findByURL(\Tools::REQUEST("section"));
             if ($map) {
                 $_GET["chainid"] = $map->id;
@@ -30,13 +29,13 @@ class Module extends \Module
                 }
                 return $view->$method($map, $arguments);
             }
-
             $view = parent::getView();
             if ($view)
                 return $view;
         }
 
         // Geen map gekozen. Pak eerste map
+        \AppRoot::debug("No map found, select first available map");
         if (count(\User::getUSER()->getAvailibleChains()) > 0) {
             foreach (\User::getUSER()->getAvailibleChains() as $chain) {
                 \AppRoot::redirect("map/".$chain->getURL());

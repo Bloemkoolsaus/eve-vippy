@@ -27,6 +27,8 @@ class Module
 
     function getView()
     {
+        \AppRoot::debug("Module->getView(".\Tools::REQUEST("arguments").")");
+
         // Pretty url stuff
         $arguments = [];
         if (\Tools::REQUEST("arguments")) {
@@ -131,23 +133,32 @@ class Module
 
     /**
      * Mag de user deze module zien?
-     * @param array $arguments
      * @return bool
      */
-    function isAuthorized($arguments=[])
+    function isAuthorized()
     {
         if (\User::getUSER())
         {
+            \AppRoot::doCliOutput("Module(".$this->moduleName.")->isAuthorized(".\User::getUSER()->getFullName().")");
+
+            // Check for a session
+            if (\User::getUSER()->getSession("authorized_".$this->moduleName) !== null)
+                return \User::getUSER()->getSession("authorized_".$this->moduleName);
+
+            $authorized = true;
             // Check aantal characters
             if (count(\User::getUSER()->getCharacters()) == 0)
-                return false;
-
+                $authorized = false;
             // Check geldige authgroup
             if (count(\User::getUSER()->getAuthGroups()) == 0)
-                return false;
+                $authorized = false;
+
+            \User::getUSER()->setSession("authorized_".$this->moduleName, $authorized);
+            return $authorized;
         }
 
-        return true;
+        // Niet ingelogd?
+        return false;
     }
 
 	/**
@@ -184,4 +195,3 @@ class Module
 		return $user->hasRight($this->moduleName, "availible");
 	}
 }
-?>

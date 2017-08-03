@@ -255,7 +255,7 @@ class AppRoot
 	{
 		if (self::doDebug())
 		{
-			if (self::$startTime == 0)
+			if (!self::$startTime)
 				self::$startTime = microtime(true);
 
 			if (is_array($value) || is_object($value))
@@ -308,8 +308,7 @@ class AppRoot
 
 	public static function getExecTime()
 	{
-		self::$execTime = self::getCurrentTime() - self::$startTime;
-		return round(self::$execTime,1);
+		return (self::getCurrentTime() - self::$startTime);
 	}
 
     public static function getMaxExecTime()

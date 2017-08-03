@@ -100,8 +100,8 @@ class Modules
 				while (false !== ($file = readdir($handle))) {
 					$filename = $directory."/".$file;
 					if (is_file($filename)) {
+                        AppRoot::debug("Load Config file: ".$filename);
 						require_once($filename);
-						AppRoot::debug("Load Config file: ".$filename);
 					}
 				}
 				closedir($handle);

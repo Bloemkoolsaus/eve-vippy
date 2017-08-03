@@ -12,8 +12,8 @@ class User
 	public static function getUSER()
 	{
         if (!self::$loggedInUser) {
-            if (isset($_SESSION["vippy_userid"]) && $_SESSION["vippy_userid"])
-                self::$loggedInUser = new \users\model\User($_SESSION["vippy_userid"]);
+            if (isset($_SESSION["vippy"]["user"]["id"]) && $_SESSION["vippy"]["user"]["id"])
+                self::$loggedInUser = new \users\model\User($_SESSION["vippy"]["user"]["id"]);
         }
         return self::$loggedInUser;
 	}
@@ -24,13 +24,13 @@ class User
      */
 	public static function setUSER(\users\model\User $user=null)
 	{
-        $_SESSION["vippy_userid"] = ($user)?$user->id:null;
+        $_SESSION["vippy"]["user"]["id"] = ($user)?$user->id:null;
         self::$loggedInUser = $user;
 	}
 
     public static function unsetUser()
     {
-        $_SESSION["vippy_userid"] = null;
+        $_SESSION["vippy"]["user"]["id"] = null;
         self::$loggedInUser = null;
     }
 

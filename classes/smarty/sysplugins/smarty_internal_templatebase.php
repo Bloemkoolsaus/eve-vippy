@@ -96,6 +96,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      */
     public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
+        \AppRoot::debug("SMARTY FETCH ".$template);
         $result = $this->_execute($template, $cache_id, $compile_id, $parent, 0);
         return $result === null ? ob_get_clean() : $result;
     }

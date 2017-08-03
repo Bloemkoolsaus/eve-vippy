@@ -90,17 +90,19 @@ class Map extends \scanning\model\Chain
             $map = new \map\model\Map($parts[0]);
             if ($map->getUserAllowed() || (\User::getUSER() && \User::getUSER()->getIsSysAdmin()))
                 return $map;
-        }
 
-        if (\User::getUSER()) {
-            foreach (\User::getUSER()->getAvailibleChains() as $map) {
-                $findURL = $url;
-                if (!$findByID)
-                    $findURL = $map->id."-".$url;
-                if ($map->getURL() == $findURL)
-                    return $map;
+            if (\User::getUSER()) {
+                foreach (\User::getUSER()->getAvailibleChains() as $map) {
+                    $findURL = $url;
+                    if (!$findByID)
+                        $findURL = $map->id."-".$url;
+                    if ($map->getURL() == $findURL)
+                        return $map;
+                }
             }
-        }
+        } else
+            \AppRoot::debug("<strong>NO MAP:</strong> Map URL has to be prefixed by the map ID");
+
         return null;
     }
 

@@ -7,7 +7,7 @@ $config["enabled"] = true;
 $config["sortorder"] = 2;
 
 // Haal beschikbare chains
-if (\User::getUSER()) {
+if (\User::getUSER() && !\Tools::REQUEST("ajax")) {
     foreach (\User::getUSER()->getAvailibleChains(false) as $chain) {
         $config["submenu"][] = array(
             "type" => "link",
