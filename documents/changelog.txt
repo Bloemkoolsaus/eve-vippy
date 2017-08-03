@@ -1,3 +1,4 @@
+<h3>August 7, 2017</h3>
 <b><u>VIPPY</u></b>
  - I am (more or less) done with the back-end rework and new subscription model.
    <strong>Starting in September</strong> VIPPY will start automatically calculating your monthly subscription, based on the amount of your groups active users.
