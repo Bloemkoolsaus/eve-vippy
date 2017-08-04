@@ -179,16 +179,22 @@ class Character
     }
 
 
-
-
     /**
      * Find all
-     * @return \eve\model\Character[]
+     * @param array $conditions
+     * @return Character[]
      */
-    public static function findAll()
+    public static function findAll($conditions=[])
     {
+        $query = [];
+        $params = [];
+        foreach ($conditions as $var => $val) {
+            $query[] = $var." = ?";
+            $params[] = $val;
+        }
+
         $characters = [];
-        if ($results = \MySQL::getDB()->getRows("select * from characters order by name")) {
+        if ($results = \MySQL::getDB()->getRows("select * from characters ".((count($query)>0)?"where ".implode(" and ", $query):"")." order by name", $params)) {
             foreach ($results as $result) {
                 $char = new \eve\model\Character();
                 $char->load($result);

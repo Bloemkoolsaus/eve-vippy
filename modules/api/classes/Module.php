@@ -41,10 +41,12 @@ class Module extends \Module
 
             $apiName = ucfirst(array_shift($params));
             $className = "\\".$module."\\api\\".$apiName;
-            if (!class_exists($className))
-                $className = "\\".$module."\\common\\api\\".$apiName;
-
             \AppRoot::debug("API REQUEST: ".$className);
+            if (!class_exists($className)) {
+                $className = "\\".$module."\\common\\api\\".$apiName;
+                \AppRoot::debug("API controller not found. Look for: ".$className);
+            }
+
             if (class_exists($className))
             {
                 /** @var \api\Server $api */
@@ -57,8 +59,7 @@ class Module extends \Module
                 }
                 \AppRoot::debug("API REQUEST: ".$method."()");
 
-                if ($api->authenticateClient())
-                {
+                if ($api->authenticateClient()) {
                     if (strtolower($type) == "post") {
                         if (!$postData = file_get_contents("php://input"))
                             $result = \api\HTTP::getHTTP()->sendNoContent();
@@ -68,8 +69,7 @@ class Module extends \Module
                             $result = $api->$method($postData, $params);
                     } else
                         $result = $api->$method($params);
-                }
-                else
+                } else
                     $result = \api\HTTP::getHTTP()->sendNotAllowed();
             }
         }
