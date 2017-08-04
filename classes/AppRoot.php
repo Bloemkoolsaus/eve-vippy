@@ -203,6 +203,8 @@ class AppRoot
 
 	public static function loginRequired()
 	{
+	    \AppRoot::debug("loginRequired()");
+
 		// Api
 		if (\Tools::GET("module") == "api")
 			return false;

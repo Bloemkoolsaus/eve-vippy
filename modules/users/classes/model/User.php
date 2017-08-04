@@ -191,6 +191,7 @@ class User
     {
         \AppRoot::debug("Logout");
         \Tools::unsetCOOKIE("vippy");
+        \User::unsetUser();
         session_destroy();
         session_start();
     }
@@ -198,12 +199,9 @@ class User
     public function login($username, $password, $retry=false, $setKeyCookie=false)
     {
         \AppRoot::debug("LOGIN: ".$username." ($retry)");
-        if ($users = \MySQL::getDB()->getRows("SELECT * FROM users WHERE username = ? AND deleted = 0", [$username]))
-        {
-            foreach ($users as $key => $user)
-            {
-                if ($user["password"] == \User::generatePassword($password, $user["password"]))
-                {
+        if ($users = \MySQL::getDB()->getRows("SELECT * FROM users WHERE username = ? AND deleted = 0", [$username])) {
+            foreach ($users as $key => $user) {
+                if ($user["password"] == \User::generatePassword($password, $user["password"])) {
                     $this->load($user);
                     $this->setLoginStatus(true, $setKeyCookie);
                     return true;

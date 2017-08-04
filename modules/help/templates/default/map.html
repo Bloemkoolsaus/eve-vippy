@@ -41,163 +41,159 @@
 		</div>
 		<div style="clear:both;"></div>
 	</div>
-	<div class="col8 right last">
+	<div class="col4">
 		<h3><u>Map Legend</u></h3>
-		<div class="col6">
+		<table>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.png" /></td>
+				<td valign="top">This wormhole has not yet had its stability disrupted.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.reduced.png" /></td>
+				<td valign="top">This wormhole has had its stability reduced.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.crit.png" /></td>
+				<td valign="top">This wormhole has had its stability critically disrupted.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/kspace.gate.png" /></td>
+				<td valign="top">Not a wormhole but regular stargate connection(s).</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.eol.png" /></td>
+				<td valign="top">This wormhole is reaching the end of its natural lifetime.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.capital.png" /></td>
+				<td valign="top">Capitals are able to jump through this wormhole.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/wspace.link.frigate.png" /></td>
+				<td valign="top">Only Frigates and Destroyers can jump through this wormhole.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/help/kspace.link.png" /></td>
+				<td valign="top">This wormhole links 2 kspace systems.<br />The number indicates the amount of regular gate jumps.</td>
+			</tr>
+		</table>
+		<div style="clear:both;"></div>
+		<table>
+			<tr>
+				<td valign="top"><img src="/images/eve/star.png" /></td>
+				<td valign="top">I currently have a pilot in this system.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/pin.png" /></td>
+				<td valign="top">This system persists when the map is cleared (<i>unless manually deleted).</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/station.png" /></td>
+				<td valign="top">This system has 1 or more stations.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/cyno.png" /></td>
+				<td valign="top">You have a registered capital ship in jump range of this system.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/stargate.red.png" /></td>
+				<td valign="top">This system is on a high-sec island!</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/stargate.green.png" /></td>
+				<td valign="top">This system has a direct gate to high-sec.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/fw.png" /></td>
+				<td valign="top">This is a Factional Warfare system.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/fw.contested.png" /></td>
+				<td valign="top">This system is contested.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/skull.red.png" /></td>
+				<td valign="top">This system has had PVP in the last 2 hours.</td>
+			</tr>
+			<tr>
+				<td valign="top"><img src="/images/eve/skull.orange.png" /></td>
+				<td valign="top">This system has had PVE in the last 2 hours.</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<u>Please note:</u>
+					<ul style="margin: 0px; padding: 0;">
+						<li>CCP has made kill info unavailable for wh-space.</li>
+						<li>Kill info is refreshed once every hour (<i>api limit</i>).</li>
+						<li>High-Sec systems are excluded.</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<div style="clear:both;"></div>
+	</div>
+	<div class="col4 right last">
+		<h3><u>System Bar</u></h3>
+		<div>
+			<div style="padding: .5em;">
+				The vertical gray bars indicate whether or not a system requires scanning or scouting.
+				If you are looking for something to do, start in systems with a bar!
+			</div>
 			<table>
 				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.png" /></td>
-					<td valign="top">This wormhole has not yet had its stability disrupted.</td>
+					<td valign="top"><img src="/images/default/legend/greybar-full.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>FULL BAR</u></b></div>
+						<div>A system with a full bar has not yet been (fully) scanned.</div>
+					</td>
 				</tr>
 				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.reduced.png" /></td>
-					<td valign="top">This wormhole has had its stability reduced.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.crit.png" /></td>
-					<td valign="top">This wormhole has had its stability critically disrupted.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/kspace.gate.png" /></td>
-					<td valign="top">Not a wormhole but regular stargate connection(s).</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.eol.png" /></td>
-					<td valign="top">This wormhole is reaching the end of its natural lifetime.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.capital.png" /></td>
-					<td valign="top">Capitals are able to jump through this wormhole.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/wspace.link.frigate.png" /></td>
-					<td valign="top">Only Frigates and Destroyers can jump through this wormhole.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/help/kspace.link.png" /></td>
-					<td valign="top">This wormhole links 2 kspace systems.<br />The number indicates the amount of regular gate jumps.</td>
-				</tr>
-			</table>
-			<div style="clear:both;"></div>
-		</div>
-		<div class="col6 right last">
-			<table>
-				<tr>
-					<td valign="top"><img src="/images/eve/star.png" /></td>
-					<td valign="top">I currently have a pilot in this system.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/pin.png" /></td>
-					<td valign="top">This system persists when the map is cleared (<i>unless manually deleted).</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/station.png" /></td>
-					<td valign="top">This system has 1 or more stations.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/cyno.png" /></td>
-					<td valign="top">You have a registered capital ship in jump range of this system.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/stargate.red.png" /></td>
-					<td valign="top">This system is on a high-sec island!</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/stargate.green.png" /></td>
-					<td valign="top">This system has a direct gate to high-sec.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/fw.png" /></td>
-					<td valign="top">This is a Factional Warfare system.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/fw.contested.png" /></td>
-					<td valign="top">This system is contested.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/skull.red.png" /></td>
-					<td valign="top">This system has had PVP in the last 2 hours.</td>
-				</tr>
-				<tr>
-					<td valign="top"><img src="/images/eve/skull.orange.png" /></td>
-					<td valign="top">This system has had PVE in the last 2 hours.</td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<u>Please note:</u>
-						<ul style="margin: 0px; padding: 0;">
-							<li>CCP has made kill info unavailable for wh-space.</li>
-							<li>Kill info is refreshed once every hour (<i>api limit</i>).</li>
-							<li>High-Sec systems are excluded.</li>
-						</ul>
+					<td valign="top"><img src="/images/default/legend/greybar-half.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>HALF BAR</u></b></div>
+						<div>A system was scanned, but it was more then 2 hours ago.</div>
+						<div><i>New things may have popped up!</i></div>
 					</td>
 				</tr>
 			</table>
-			<div style="clear:both;"></div>
 		</div>
-		<div style="clear:both;"></div>
-	</div>
-	<div style="clear:both;"></div>
-</div>
-
-<div class="content">
-	<div class="col4">
-		<h3><u>System Bar</u></h3>
-		<div style="padding: 10px;">
-			The virtical gray bars indicate whether or not a system requires scanning or scouting.
-			If you are looking for something to do, start in systems with a bar!
+		<div style="margin-top: 2em;">
+			<h3><u>System Outlines</u></h3>
+			<table>
+				<tr>
+					<td valign="top"><img src="/images/default/legend/outline-blue.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>BLUE OUTLINE</u></b></div>
+						<div>Home system</div>
+						<div style="font-style:italic;">Home system on the current or other chain.</div>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top"><img src="/images/default/legend/outline-green.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>GREEN OUTLINE</u></b></div>
+						<div>This system is clear.</div>
+						<div style="font-style:italic;">Nothing has been seen in this system.</div>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top"><img src="/images/default/legend/outline-yellow.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>YELLOW OUTLINE</u></b></div>
+						<div>Be Carefull!</div>
+						<div style="font-style:italic;">Activity has been seen in this system!</div>
+					</td>
+				</tr>
+				<tr>
+					<td valign="top"><img src="/images/default/legend/outline-red.png">&nbsp;&nbsp;</td>
+					<td valign="top">
+						<div><b><u>RED OUTLINE</u></b></div>
+						<div>This system is active!</div>
+						<div style="font-style:italic;">This system is currently hot and dangerous.</div>
+					</td>
+				</tr>
+			</table>
 		</div>
-		<table>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/greybar-full.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>FULL BAR</u></b></div>
-					<div>This system has not yet been (fully) scanned.</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/greybar-half.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>HALF BAR</u></b></div>
-					<div>This system was scanned, but it was more then 2 hours ago.</div>
-					<div><i>New things may have popped up!</i></div>
-				</td>
-			</tr>
-		</table>
-		<div style="clear:both;"></div>
-	</div>
-	<div class="col8 right last">
-		<h3><u>System Outlines</u></h3>
-		<table>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/outline-blue.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>BLUE OUTLINE</u></b></div>
-					<div>Home system<br />This system is a home system on the current, or other chain.</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/outline-green.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>GREEN OUTLINE</u></b></div>
-					<div>This system is clear.<br />Nothing has been seen in this system.</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/outline-yellow.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>YELLOW OUTLINE</u></b></div>
-					<div>Be Carefull!<br />Activity has been seen in this system!</div>
-				</td>
-			</tr>
-			<tr>
-				<td valign="top"><img src="/images/default/legend/outline-red.png">&nbsp;&nbsp;</td>
-				<td valign="top">
-					<div><b><u>RED OUTLINE</u></b></div>
-					<div>This system is active!<br />This system is currently hot and dangerous.</div>
-				</td>
-			</tr>
-		</table>
 		<div style="clear:both;"></div>
 	</div>
 	<div style="clear:both;"></div>

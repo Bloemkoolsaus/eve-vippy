@@ -63,7 +63,7 @@ if (!\Tools::REQUEST("ajax")) {
 $mainContent = null;
 
 // Niet ingelogd terwijl we dat wel moeten zijn
-if (\AppRoot::loginRequired() && !\User::getUSER()) {
+if (!\User::getUSER() && \AppRoot::loginRequired()) {
 	if (\Tools::REQUEST("register")) {
 		$content = \SmartyTools::getSmarty();
 		if (isset($registerDifferentPasswords))

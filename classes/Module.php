@@ -133,14 +133,13 @@ class Module
 
     /**
      * Mag de user deze module zien?
+     * @param array $arguments
      * @return bool
      */
-    function isAuthorized()
+    function isAuthorized($arguments=[])
     {
-        if (\User::getUSER())
-        {
-            \AppRoot::doCliOutput("Module(".$this->moduleName.")->isAuthorized(".\User::getUSER()->getFullName().")");
-
+        \AppRoot::debug("Module(".$this->moduleName.")->isAuthorized(".implode(",",$arguments).")");
+        if (\User::getUSER()) {
             // Check for a session
             if (\User::getUSER()->getSession("authorized_".$this->moduleName) !== null)
                 return \User::getUSER()->getSession("authorized_".$this->moduleName);
