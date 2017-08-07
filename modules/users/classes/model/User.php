@@ -1452,11 +1452,13 @@ class User
         \AppRoot::doCliOutput("[$this->id] ".$this->displayname." ->getAuthGroups()");
         if ($this->authGroups === null) {
             $this->authGroups = [];
-            if ($results = \MySQL::getDB()->getRows("select * from user_auth_groups where id in (".implode(",",$this->getAuthGroupsIDs()).")")) {
-                foreach ($results as $result) {
-                    $group = new \admin\model\AuthGroup();
-                    $group->load($result);
-                    $this->authGroups[] = $group;
+            if (count($this->getAuthGroupsIDs()) > 0) {
+                if ($results = \MySQL::getDB()->getRows("select * from user_auth_groups where id in (".implode(",",$this->getAuthGroupsIDs()).")")) {
+                    foreach ($results as $result) {
+                        $group = new \admin\model\AuthGroup();
+                        $group->load($result);
+                        $this->authGroups[] = $group;
+                    }
                 }
             }
         }
