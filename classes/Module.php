@@ -25,9 +25,9 @@ class Module
 		return $tpl->fetch("module/index");
 	}
 
-    function getView()
+    function getView($checkAuth=true)
     {
-        \AppRoot::debug("Module->getView(".\Tools::REQUEST("arguments").")");
+        \AppRoot::debug("Module($this->moduleName)->getView(".\Tools::REQUEST("arguments").")");
 
         // Pretty url stuff
         $arguments = [];
@@ -41,9 +41,11 @@ class Module
         $section = (\Tools::REQUEST("section"))?:$this->moduleName;
         $action = (count($arguments)>0)?array_shift($arguments):"overview";
 
-        // Check of we toegang hebben. Zo niet, redirect naar profiel.
-        if (!$this->isAuthorized(array_merge([$section],[$action],$arguments)))
-            \AppRoot::redirect("profile/characters");
+        if ($checkAuth) {
+            // Check of we toegang hebben. Zo niet, redirect naar profiel.
+            if (!$this->isAuthorized(array_merge([$section],[$action],$arguments)))
+                \AppRoot::redirect("profile/characters");
+        }
 
         $sectionParts = explode("-", $section);
         $classname = "";
