@@ -31,9 +31,8 @@ namespace users
 			return parent::getContent();
 		}
 
-		function getView($checkAuth=true)
+		function getView($checkAuth=false)
         {
-            $checkAuth = (\Tools::REQUEST("section")=="login")?false:$checkAuth;
             return parent::getView($checkAuth);
         }
 
