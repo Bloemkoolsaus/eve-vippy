@@ -51,12 +51,12 @@
     {/if}
     {if $wormhole->getChain()->isAllowedAction('known')}
         {if $wormhole->getSolarsystem()->isKnownSystem()}
-            <div class="menuitem" onclick="removeFromKnownSystems('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
+            <div class="menuitem" onclick="editKnownSystems('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
                 <img src="/images/eve/note-apply.png" align="left" />
-                Remove from known-systems
+                Edit known-systems
             </div>
         {else}
-            <div class="menuitem" onclick="addToKnownSystems('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
+            <div class="menuitem" onclick="editKnownSystems('{$wormhole->getSolarsystem()->name}'); closeContextMenu();">
                 <img src="/images/eve/note-apply.png" align="left" />
                 Add to known-systems
             </div>

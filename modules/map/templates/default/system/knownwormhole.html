@@ -1,0 +1,63 @@
+<div style="padding: 1em;">
+	<h2>Set {$system->name} as a known system</h2>
+	<div id="known-systems-form">
+	{if $known}
+		<div class="form buttons">
+			<div style="text-align: right; margin-top: -1em; margin-bottom: 1em;">
+				<button type="button" class="small" style="width: 215px;"
+						onclick="$('#known-systems-form').hide();$('#known-systems-remove').fadeIn('fast');">
+					<img src="/images/default/cross.png" align="left">
+					Remove from known systems
+				</button>
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+		<div style="clear:both;"></div>
+	{/if}
+		<form method="post" name="formKnownWormhole" action="Javascript: storeKnownSystem()">
+			<input type="hidden" name="known-system-id" value="{$system->id}">
+			<input type="hidden" name="known-system-name" value="{$system->name}">
+			<div class="form">
+				<div class="field">Displayname:</div>
+				<div class="value"><input type="text" name="known-system-title" value="{if $known}{$known->name}{/if}" /></div>
+			</div>
+			<div class="form">
+				<div class="field">Status:</div>
+				<div class="value">
+					<select name="known-system-status">
+						<option value="2" {if $known && $known->status == 2}selected{/if}>[+] Alliance System</option>
+						<option value="1" {if $known && $known->status == 1}selected{/if}>[+] Friendly System</option>
+						<option value="0"  {if ($known && $known->status == 0) || !$known}selected{/if}>[=] Neutral System</option>
+						<option value="-1" {if $known && $known->status == -1}selected{/if}>[-] Hostile System</option>
+						<option value="-2" {if $known && $known->status == -2}selected{/if}>[-] Dangerous System</option>
+					</select>
+				</div>
+			</div>
+			<div style="clear: both;"></div>
+			<div class="form buttons">
+				<div style="text-align: right; margin-top: 1.5em;">
+					<button type="submit">
+						<img src="/images/default/save.png" align="left">
+						&nbsp; Save
+					</button>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+			<div style="clear:both;"></div>
+		</form>
+		<div style="clear:both;"></div>
+	</div>
+	<div id="known-systems-remove" style="display:none;">
+		<input type="hidden" name="confirmed" value="{$App->user->id}">
+		<div class="warning">
+			<div>
+				<img src="/images/default/alert.png" style="margin-right: .5em;">
+				Do you want to forget `<strong>{$system->name}</strong>` as
+				`<span style='font-weight: bold; color: {$system->getKnownSystem()->getColor()}'>{$system->getKnownSystem()->name}</span>`
+			</div>
+		</div>
+		<div style="padding: 1.5em;">
+			<button type="button" onclick="removeKnownSystem()">Confirm</button>
+		</div>
+	</div>
+</div>

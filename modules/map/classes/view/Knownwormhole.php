@@ -3,45 +3,52 @@ namespace map\view;
 
 class Knownwormhole
 {
-    function getAdd($arguments=[])
+    function getEdit($arguments=[])
     {
         $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
-
-        if (\Tools::POST("name"))
-        {
-            $known = $system->getKnownSystem();
-            if (!$known) {
-                $known = new \map\model\KnownWormhole();
-                $known->solarSystemID = $system->id;
-                $known->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
-            }
-
-            $known->name = \Tools::POST("name");
-            $known->status = \Tools::POST("status");
-            $known->store();
-
-            \AppRoot::redidrectToReferer();
-        }
+        $known = $system->getKnownSystem();
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
-        return $tpl->fetch("map/system/known/add");
+        $tpl->assign("known", $known);
+        return $tpl->fetch("map/system/knownwormhole");
+    }
+
+    function getSave($arguments=[])
+    {
+        $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+
+        $known = $system->getKnownSystem();
+        if (!$known) {
+            $known = new \map\model\KnownWormhole();
+            $known->solarSystemID = $system->id;
+            $known->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
+        }
+
+        $known->name = \Tools::POST("name");
+        $known->status = \Tools::POST("status");
+        $known->store();
+
+        foreach (\User::getUSER()->getAvailibleChains() as $map) {
+            $map->setMapUpdateDate();
+        }
+
+        return "stored";
     }
 
     function getRemove($arguments=[])
     {
         $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
 
-        if (\Tools::POST("confirmed"))
-        {
+        if (\Tools::POST("confirmed")) {
             if ($system->getKnownSystem())
                 $system->getKnownSystem()->delete();
 
-            \AppRoot::redidrectToReferer();
+            foreach (\User::getUSER()->getAvailibleChains() as $map) {
+                $map->setMapUpdateDate();
+            }
         }
 
-        $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("system", $system);
-        return $tpl->fetch("map/system/known/remove");
+        return "removed";
     }
 }

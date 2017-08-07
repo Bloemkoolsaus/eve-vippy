@@ -8,6 +8,7 @@
 <b>System Contextmenu</b>
  - Moved 'remove connected systems' futher down to (hopefully) prevent accidental clicks. Even though there is a confirmation dialog...
  - Add an option to rename a system, rather having to do it from the (cumbersome) form at the bottom right of the page.
+ - Changed the 'remove from known systems' to 'edit known systems'.
 
 
 

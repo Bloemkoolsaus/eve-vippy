@@ -204,7 +204,7 @@ function deleteWormhole(systemName, removeConnected)
                 ajax: 1
             },
             complete: function() {
-                loadSignatureMap(null, null, true);
+                loadSignatureMap(false, false, true);
                 destroyPopup();
             }
         });
@@ -296,25 +296,47 @@ function showActivePilots()
 }
 
 
-function addToKnownSystems(systemName)
+function editKnownSystems(systemName)
 {
     $.ajax({
-        url: "/map/knownwormhole/add/"+systemName,
+        url: "/map/knownwormhole/edit/"+systemName,
         data: { ajax: 1 },
         success: function(data) {
-            showPopup(data, 500, 200);
+            showPopup(data, 500, 250);
         }
     });
 }
-function removeFromKnownSystems(systemName)
+function storeKnownSystem()
 {
-	$.ajax({
-        url: "/map/knownwormhole/remove/"+systemName,
-        data: { ajax: 1 },
-		success: function(data) {
-			showPopup(data, 500, 200);
-		}
-	});
+    $.ajax({
+        type: "POST",
+        url: "/map/knownwormhole/save/"+$("input[name=known-system-name]").val(),
+        data: {
+            id: $("input[name=known-system-id]").val(),
+            name: $("input[name=known-system-title]").val(),
+            status: $("input[name=known-system-status]").val(),
+            ajax: 1
+        },
+        complete: function() {
+            destroyPopup();
+            loadSignatureMap(false, false, true);
+        }
+    });
+}
+function removeKnownSystem()
+{
+    $.ajax({
+        type: "POST",
+        url: "/map/knownwormhole/remove/"+$("input[name=known-system-name]").val(),
+        data: {
+            confirmed: 1,
+            ajax: 1
+        },
+        complete: function() {
+            destroyPopup();
+            loadSignatureMap(false, false, true);
+        }
+    });
 }
 
 function addFleet()
