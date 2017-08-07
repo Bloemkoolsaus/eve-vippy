@@ -541,14 +541,19 @@ class AppRoot
 
 	public static function doDebug()
 	{
-		if (\Tools::REQUEST("debug") == "1")
-			return true;
+        if (\Tools::REQUEST("debug") == "1")
+            return true;
 
-		if (defined("APP_DEBUG"))
-		{
+        if (\Tools::REQUEST("debug") == "session")
+            $_SESSION["vippy_debug"] = 1;
+
+		if (defined("APP_DEBUG")) {
 			if (APP_DEBUG && !\Tools::REQUEST("ajax"))
 				return true;
 		}
+
+		if (isset($_SESSION["vippy_debug"]) && $_SESSION["vippy_debug"] == 1)
+		    return true;
 
 		return false;
 	}
