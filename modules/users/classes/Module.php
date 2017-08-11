@@ -9,13 +9,10 @@ namespace users
 		function getContent()
 		{
 			$section = (\Tools::REQUEST("section"))?:"users";
-			$action = (\Tools::REQUEST("action"))?:"overview";
             \AppRoot::title("Users");
 
-			if (\Tools::REQUEST("loginas"))
-			{
-				if (\User::getUSER() && \User::getUSER()->getIsSysAdmin())
-				{
+			if (\Tools::REQUEST("loginas")) {
+				if (\User::getUSER() && \User::getUSER()->getIsSysAdmin()) {
 					\User::getUSER()->logout();
 					$user = new \users\model\User(\Tools::REQUEST("loginas"));
 					$user->setLoginStatus();
@@ -23,8 +20,7 @@ namespace users
 				\AppRoot::redirect("");
 			}
 
-			if ($section == "logs")
-			{
+			if ($section == "logs") {
 				if (!\User::getUSER()->isAdmin())
 					\AppRoot::redirect("");
 
@@ -35,7 +31,12 @@ namespace users
 			return parent::getContent();
 		}
 
-		function getAppData(\stdClass $appData)
+		function getView($checkAuth=false)
+        {
+            return parent::getView($checkAuth);
+        }
+
+        function getAppData(\stdClass $appData)
 		{
 			if (\User::getUSER())
 				$appData->user = \User::getUSER();
