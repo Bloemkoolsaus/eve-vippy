@@ -33,11 +33,13 @@ class Authgroup
 
     function doSubscriptions($arguments=[])
     {
+        \Approot::doCliOutput("Calculate new subscriptions");
+
         // Alleen op de laatste dag van de maand uitrekenen!
         if (date("Y-m-d") == date("Y-m-d", mktime(0,0,0,date("m")+1,0,date("Y"))))
         {
-            \Approot::doCliOutput("Calculate new subscriptions");
             $nextMonth = date("Y-m-d", mktime(0,0,0,date("m")+1,5,date("Y")));
+            \AppRoot::doCliOutput("> Calculate for ".$nextMonth);
 
             /** @var \admin\model\AuthGroup[] $authGroups */
             $authGroups = [];
@@ -81,5 +83,7 @@ class Authgroup
                 $subscription->store();
             }
         }
+        else
+            \Approot::doCliOutput("> Not the last day of the month.. Skip");
     }
 }
