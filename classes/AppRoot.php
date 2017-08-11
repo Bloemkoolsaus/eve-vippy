@@ -793,5 +793,11 @@ class AppRoot
                 echo "<pre>".$var."</pre>";
         }
     }
+
+    public static function runCron($arguments=[])
+    {
+        $command = "php ".getcwd()."/cron.php ".implode(" ", $arguments)." > /dev/null &";
+        \AppRoot::doCliOutput($command);
+        exec($command);
+    }
 }
-?>

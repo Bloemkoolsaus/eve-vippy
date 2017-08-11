@@ -41,9 +41,7 @@ class Location
                     \MySQL::getDB()->update("map_character_locations", ["lastdate" => date("Y-m-d H:i:s")], ["characterid" => $result["id"]]);
 
                     // Asynchroon uitvoeren
-                    $command = "php ".getcwd()."/cron.php crest location character ".$result["id"]." > /dev/null &";
-                    \AppRoot::doCliOutput($command);
-                    exec($command);
+                    \AppRoot::runCron(["crest", "location", "character", $result["id"]]);
                     $i++;
                 }
             }
