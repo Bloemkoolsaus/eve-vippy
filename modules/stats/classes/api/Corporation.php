@@ -16,27 +16,43 @@ class Corporation extends \api\Server
         $users = [];
         $activeUsers = [];
         $hoursOnline = 0;
+        $signatures = 0;
         $characters = \eve\model\Character::findAll(["corpid" => $corporation->id]);
-        foreach ($characters as $char) {
-            if ($char->userID && !isset($users[$char->userID])) {
-                $user = new \users\model\User($char->userID);
-                $users[$user->id] = $user;
-                if ($user->getIsActive($sdate, $edate)) {
-                    $activeUsers[$user->id] = $user;
-                    $hoursOnline += $user->getHoursOnline($sdate, $edate);
+        foreach ($characters as $char)
+        {
+            if ($char->getUser())
+            {
+                $mainCharacterID = (int)$char->getUser()->getMainCharacter()->id;
+
+                if (!isset($users[$mainCharacterID]))
+                {
+                    $users[$mainCharacterID]["user"] = $char->getUser()->getMainCharacter()->name;
+                    $users[$mainCharacterID]["online"] = 0;
+                    $users[$mainCharacterID]["signatures"] = 0;
+                    $users[$mainCharacterID]["characters"] = [];
+
+                    // Online time
+                    if ($char->getUser()->getIsActive($sdate, $edate)) {
+                        $activeUsers[$mainCharacterID] = $char->getUser()->getMainCharacter()->name;
+                        $users[$mainCharacterID]["online"] = $char->getUser()->getHoursOnline($sdate, $edate);
+                        $hoursOnline += $users[$mainCharacterID]["online"];
+                    }
+
+                    // Scanned signatures
+                    $query = [
+                        "corpid = ".$corporation->id,
+                        "userid = ".$char->getUser()->id,
+                        "scandate between '".$sdate." 00:00:00' and '".$edate." 23:59:59'"
+                    ];
+                    if ($result = \MySQL::getDB()->getRow("select count(*) as amount from stats_signatures where ".implode(" and ", $query))) {
+                        $users[$mainCharacterID]["signatures"] = $result["amount"]-0;
+                        $signatures += $result["amount"]-0;
+                    }
                 }
+                $users[$mainCharacterID]["characters"][$char->id] = $char->name;
             }
         }
 
-        /* Signatures tellen */
-        $signatures = 0;
-        $query = [
-            "corpid = ".$corporation->id,
-            "scandate between '".$sdate." 00:00:00' and '".$edate." 23:59:59'"
-        ];
-        if ($result = \MySQL::getDB()->getRow("select count(*) as amount from stats_signatures where ".implode(" and ", $query))) {
-            $signatures = $result["amount"];
-        }
 
         /* Wormholes tellen */
         $wormholes = 0;
@@ -55,7 +71,8 @@ class Corporation extends \api\Server
             "users" => [
                 "characters" => count($characters),
                 "registered" => count($users),
-                "active" => count($activeUsers)
+                "active" => count($activeUsers),
+                "users" => $users
             ],
             "stats" => [
                 "hoursonline" => $hoursOnline,
