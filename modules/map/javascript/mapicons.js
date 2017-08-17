@@ -15,7 +15,8 @@ var mapIcons = {
         message: createImage("/modules/map/images/notifications/message.png"),
         notice: createImage("/modules/map/images/notifications/notice.png"),
         warning: createImage("/modules/map/images/notifications/warning.png"),
-        error: createImage("/modules/map/images/notifications/error.png")
+        error: createImage("/modules/map/images/notifications/error.png"),
+        drifter: createImage("/modules/map/images/notifications/drifter.png"),
     }
 };
 

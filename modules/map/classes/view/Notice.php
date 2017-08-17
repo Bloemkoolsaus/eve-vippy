@@ -43,8 +43,7 @@ class Notice
         $notice = new \notices\model\Notice(array_shift($arguments));
         $map = new \map\model\Map(array_shift($arguments));
 
-        if (\Tools::POST("confirmed"))
-        {
+        if (\Tools::POST("confirmed")) {
             $notice->delete();
             \AppRoot::redirect("map/".$map->getURL());
         }
@@ -53,5 +52,37 @@ class Notice
         $tpl->assign("notice", $notice);
         $tpl->assign("map", $map);
         return $tpl->fetch("map/system/notice/remove");
+    }
+
+    function getDrifter($arguments=[])
+    {
+        $system = new \map\model\SolarSystem(array_shift($arguments));
+        $map = new \map\model\Map(array_shift($arguments));
+
+        $drifter = \notices\model\Drifter::findOne(["solarsystemid" => $system->id]);
+        if (!$drifter) {
+            $drifter = new \notices\model\Drifter();
+            $drifter->solarSystemID = $system->id;
+            $drifter->authGroupID = $map->authgroupID;
+        }
+
+        if (\Tools::POST("store") == "drifters") {
+            $drifter->nrDrifters = (\Tools::POST("nrdrifters"))?:0;
+            $drifter->comments = (\Tools::POST("comments"))?:null;
+            if ($drifter->nrDrifters == 0) {
+                $drifter->delete();
+                return "Deleted";
+            } else {
+                $drifter->store();
+                print_r($drifter);
+                return "Stored";
+            }
+        }
+
+        $tpl = \SmartyTools::getSmarty();
+        $tpl->assign("map", $map);
+        $tpl->assign("system", $system);
+        $tpl->assign("drifter", $drifter);
+        return $tpl->fetch("map/system/notice/drifter");
     }
 }

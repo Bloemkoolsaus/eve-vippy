@@ -51,3 +51,34 @@ function removeSystemNotice(noticeID)
 		}
 	});
 }
+
+function setDrifterNotification(systemID, store)
+{
+    reqType = "GET";
+    reqData = { ajax: 1 };
+   	if (store) {
+        reqType = "POST";
+        reqData = {
+            store: "drifters",
+            nrdrifters: $("input[name=drifter-nr]").val(),
+            comments: $("input[name=drifter-comments]").val(),
+            ajax: 1
+        };
+    }
+
+   	$.ajax({
+        type: reqType,
+        data: reqData,
+        url: "/map/notice/drifter/"+systemID+"/"+$("#mapID").val(),
+   		success: function(data) {
+            if (!store)
+                showPopup(data, 400, 200);
+   		},
+        complete: function() {
+            if (store) {
+                destroyPopup();
+                loadSignatureMap(false, false, true);
+            }
+        }
+   	});
+}

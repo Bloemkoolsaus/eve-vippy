@@ -82,9 +82,7 @@ class Map
         $controller = new \map\controller\Map();
         $data = ["map" => "cached", "notifications" => []];
 
-        /**
-         * Get notifications
-         */
+        /** Get notifications */
         foreach ($controller->getNotices($map) as $note) {
             $wormhole = $map->getWormholeBySystem($note->solarSystemID);
             $title = $note->getSystem()->name;
@@ -98,6 +96,7 @@ class Map
                 "content" => $note->body
             ];
         }
+
 
         if (!\User::getUSER()->getScanAlt())
         {
@@ -157,12 +156,20 @@ class Map
         if (!$isCached)
         {
             $wormholes = $controller->getWormholes($map);
+
             foreach ($wormholes as $key => $wh) {
+                // Notifications
                 foreach ($data["notifications"] as $note) {
                     if (isset($note["wormhole"]) && $note["wormhole"] == $wh["id"])
                         $wormholes[$key]["notifications"][] = $note;
                 }
+                // Drifters
+                foreach ($controller->getDrifers($map) as $drifer) {
+                    if ($wh["solarsystem"]["id"] == $drifer->solarSystemID)
+                        $wormholes[$key]["drifters"] = $drifer->nrDrifters;
+                }
             }
+
 
             // Maak de map
             $data["map"] = [

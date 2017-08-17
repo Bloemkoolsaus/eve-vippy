@@ -43,8 +43,8 @@ class Model
         foreach ($this->getDBProperties() as $property => $field) {
             $data[$field] = $this->$property;
         }
-        foreach ($this->getDBKeyFields() as $field) {
-            $where[$field] = $data[$field];
+        foreach ($this->getDBKeyFields() as $property => $field) {
+            $where[$field] = $this->$property;
         }
 
         $result = \MySQL::getDB()->updateinsert($this->getDBTable(), $data, $where);
@@ -92,14 +92,13 @@ class Model
      */
     private function getDBKeyFields()
     {
-        $keyfields = array();
-
+        $keyfields = [];
         if (is_array($this->_keyfield)) {
             foreach ($this->_keyfield as $field) {
-                $keyfields[] = $field;
+                $keyfields[$field] = strtolower($field);
             }
         } else
-            $keyfields[] = $this->_keyfield;
+            $keyfields[$this->_keyfield] = strtolower($this->_keyfield);
 
         return $keyfields;
     }

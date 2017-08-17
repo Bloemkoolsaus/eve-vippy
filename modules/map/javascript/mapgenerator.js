@@ -189,6 +189,7 @@ function generateSystems(data)
             if (data[i].whsystem.homesystem)
                 wormhole.setAsHomesystem();
         }
+
         if (data[i].solarsystem != undefined) {
             wormhole.solarsystem.name = data[i].solarsystem.name;
             wormhole.solarsystem.class.color = data[i].solarsystem.class.color;
@@ -257,6 +258,12 @@ function generateSystems(data)
         // Notifications
         if (data[i].notifications != undefined) {
             wormhole.notification = data[i].notifications[0].type;
+        }
+
+        // Drifters
+        if (data[i].drifters != undefined) {
+            wormhole.drifters = data[i].drifters;
+            console.log("Drifters: "+wormhole.drifters);
         }
 
         mapWormholes[wormhole.id] = wormhole;

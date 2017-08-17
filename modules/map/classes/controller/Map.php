@@ -5,23 +5,22 @@ class Map
 {
     /**
      * Get notices
-     * @param \scanning\model\Chain $chain
+     * @param \map\model\Map $map
      * @return \notices\model\Notice[]
      */
-    function getNotices(\scanning\model\Chain $chain)
+    function getNotices(\map\model\Map $map)
     {
-        $notices = array();
-
         // Build query
         $queryParts = [
             "n.deleted = 0",
             "n.expiredate > '".date("Y-m-d H:i:s")."'",
-            "n.authgroupid = ".$chain->authgroupID,
-            "(w.chainid = ".$chain->id." or n.global > 0)",
+            "n.authgroupid = ".$map->authgroupID,
+            "(w.chainid = ".$map->id." or n.global > 0)",
             "(r.userid is null or n.persistant > 0)"
         ];
 
         // Exec query
+        $notices = [];
         if ($results = \MySQL::getDB()->getRows("SELECT	n.*
                                                 FROM	notices n
                                                     INNER JOIN mapwormholes w ON w.solarsystemid = n.solarsystemid
@@ -30,8 +29,7 @@ class Map
                                                 GROUP BY n.id"
                                     , [\User::getUSER()->id]))
         {
-            foreach ($results as $result)
-            {
+            foreach ($results as $result) {
                 $notice = new \notices\model\Notice();
                 $notice->load($result);
                 $notices[] = $notice;
@@ -39,6 +37,31 @@ class Map
         }
 
         return $notices;
+    }
+
+    /**
+     * Get drifters
+     * @param \map\model\Map $map
+     * @return \notices\model\Drifter[]
+     */
+    function getDrifers(\map\model\Map $map)
+    {
+        $drifters = [];
+        if ($results = \MySQL::getDB()->getRows("select d.solarsystemid, d.nrdrifters
+                                                 from   notices_drifter d
+                                                    inner join mapwormholes w on w.solarsystemid = d.solarsystemid
+                                                 where  w.chainid = ?
+                                                 and    d.authgroupid = ?
+                                                 group by d.solarsystemid"
+                                        , [$map->id, $map->authgroupID]))
+        {
+            foreach ($results as $result) {
+                $drifter = new \notices\model\Drifter();
+                $drifter->load($result);
+                $drifters[] = $drifter;
+            }
+        }
+        return $drifters;
     }
 
     function getWormholes(\map\model\Map $map)

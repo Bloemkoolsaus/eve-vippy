@@ -237,18 +237,14 @@ namespace eve\model
 		function getRecentKills()
 		{
 			$cacheFilename = "solarsystem/".$this->id."/recentkills.json";
-			if ($cache = \Cache::file()->get($cacheFilename))
-			{
+			if ($cache = \Cache::file()->get($cacheFilename)) {
 				$data = json_decode($cache,true);
-
 				// cache mag niet ouder zijn dan een uur
-				if (isset($data["date"]))
-				{
+				if (isset($data["date"])) {
 					if (strtotime($data["date"]) > mktime(date("H")-1,date("i"),date("s"),date("m"),date("d"),date("Y")))
 						$kills = $data;
 				}
 			}
-
 			if (!isset($kills))
 				$kills = $this->setRecentKills();
 
@@ -270,11 +266,10 @@ namespace eve\model
 		{
 			if ($this->info == null || !isset($this->info["factionid"]))
 				$this->fetchSystemInfo();
-
 			if ($this->info["factionid"] !== null)
 				return $this->info["factionid"];
-			else
-				return 0;
+
+			return 0;
 		}
 
 		function getEffect()
@@ -291,8 +286,7 @@ namespace eve\model
 				$this->fetchSystemInfo();
 
 			$statics = $this->info["statics"];
-			if ($parsed)
-			{
+			if ($parsed) {
 				$statics = array();
 				foreach ($this->info["statics"] as $type => $static) {
 					$statics[] = $type." (to ".(($short)?$static["tag"]:$static["name"]).")";
@@ -334,15 +328,13 @@ namespace eve\model
          */
 		function getNrJumpsTo($systemID, $minSecurity=null)
 		{
-			if ($this->jumps === null)
-			{
+			if ($this->jumps === null) {
 				$this->jumps = array();
 				if ($cache = \Cache::file()->get("solarsystem/".$this->id."/nrjumps.json"))
 					$this->jumps = json_decode($cache,true);
 			}
 
-			if (!isset($this->jumps[$systemID]))
-			{
+			if (!isset($this->jumps[$systemID])) {
 				$controller = new \eve\controller\SolarSystem();
 				$this->jumps[$systemID] = $controller->getNrJumps($this->id, $systemID, $minSecurity=null);
                 \Cache::file()->set("solarsystem/".$this->id."/nrjumps.json", json_encode($this->jumps));

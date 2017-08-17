@@ -1,1 +1,0 @@
-alter table characters add column lastonline datetime default null;

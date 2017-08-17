@@ -36,6 +36,7 @@ function Wormhole(id) {
     this.characters = [];
     this.icons = [];
     this.notification = null;
+    this.drifters = 0;
 }
 
 /** Setters **/
@@ -189,26 +190,40 @@ Wormhole.prototype.render = function(canvas)
             draggable: false
         }));
     }
+
+    var topRightPosition = this.map.width-16;
+    if (this.drifters) {
+        wormhole.add(new Kinetic.Image({
+            x: topRightPosition-2,
+            y: 2,
+            image: mapIcons.notifications["drifter"],
+            width: 16,
+            height: 16,
+            draggable: false
+        }));
+        topRightPosition -= 16;
+    }
     if (this.notification) {
         wormhole.add(new Kinetic.Image({
-            x: this.map.width-16,
-            y: 2,
+            x: topRightPosition,
+            y: 3,
             image: mapIcons.notifications[this.notification],
             width: 14,
             height: 14,
             draggable: false
         }));
-    } else {
-        if (this.status.persistant) {
-            wormhole.add(new Kinetic.Image({
-                x: this.map.width-15,
-                y: 2,
-                image: mapIcons.pin,
-                width: 13,
-                height: 13,
-                draggable: false
-            }));
-        }
+        topRightPosition -= 14;
+    }
+    if (this.status.persistant) {
+        wormhole.add(new Kinetic.Image({
+            x: topRightPosition,
+            y: 3,
+            image: mapIcons.pin,
+            width: 13,
+            height: 13,
+            draggable: false
+        }));
+        topRightPosition -= 13
     }
 
 

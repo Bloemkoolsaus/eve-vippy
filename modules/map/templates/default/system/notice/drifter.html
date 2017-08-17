@@ -1,0 +1,29 @@
+<div style="padding: 1em;">
+	<h2>
+		<img src="/modules/map/images/contextmenu/drifter.png" align="left" style="height: 16px;">
+		Drifters
+		<div style="float:right;">{$system->getFullname()}</div>
+	</h2>
+	<form method="post" action="Javascript: setDrifterNotification('{$system->id}', true);">
+		<input type="hidden" name="store" value="drifters">
+		<div class="form">
+			<div class="field">Number of drifters:</div>
+			<div class="value">
+				<input type="text" name="drifter-nr" value="{$drifter->nrDrifters}" style="width: 50px; text-align: center;">
+			</div>
+		</div>
+		<div class="form">
+			<div class="field">Comments:</div>
+			<div class="value">
+				<input type="text" name="drifter-comments" value="{$drifter->comments}" />
+			</div>
+		</div>
+		<div class="form buttons">
+			<button type="submit">
+				<img src="/images/default/ui/save.png" align="left">
+				Save
+			</button>
+		</div>
+		<div style="clear:both;"></div>
+	</form>
+</div>

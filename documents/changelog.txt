@@ -1,3 +1,9 @@
+
+<b><u>MAP</u></b>
+ - Add special drifter icon on the map. Add/Edit drifters through the context menu on C5 or C6 wormholes.
+
+
+
 <h3>August 7, 2017</h3>
 <b><u>VIPPY</u></b>
  - I am (more or less) done with the back-end rework and new subscription model.
