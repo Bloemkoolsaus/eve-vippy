@@ -27,7 +27,7 @@ function reloadPage()
             return true;
         }
     }
-    setTimeout(reloadPage, 5000);
+    //setTimeout(reloadPage, 5000);
     pageTimer += 5000;
 }
 

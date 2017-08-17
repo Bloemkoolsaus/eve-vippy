@@ -17,5 +17,6 @@ class Drifter extends \Model
         $this->updateBy = (\User::getUSER())?\User::getUSER()->id:null;
         $this->updateDate = date("Y-m-d H:i:s");
         parent::store();
+        \Cache::memory()->remove(["map", $this->authGroupID, "drifters"]);
     }
 }

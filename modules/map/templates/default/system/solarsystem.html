@@ -18,19 +18,19 @@
 			{/if}
 		</h3>
 
-		{if $system->getNotes()}
-			{assign var=notes value=$system->getNotes()}
-			{if $notes.notes|strlen > 0}
-			<div style="margin: 8px; padding: 3px; color: #EEEEEE; border: dashed 1px #777777; border-radius: 5px;">
-				{$notes.notes}
-				{if $notes.updatedate}
-				<div style="text-align: right; font-size: 9px; margin-top: 5px;">
-					<i>Last edit: {$notes.updatedate|date_full}</i>
-				</div>
-				{/if}
+	{if $system->getNotes()}
+		{assign var=notes value=$system->getNotes()}
+		{if $notes.notes|strlen > 0}
+		<div style="margin: 8px; padding: 3px; color: #EEEEEE; border: dashed 1px #777777; border-radius: 5px;">
+			{$notes.notes}
+			{if $notes.updatedate}
+			<div style="text-align: right; font-size: 9px; margin-top: 5px;">
+				<i>Last edit: {$notes.updatedate|date_full}</i>
 			</div>
 			{/if}
+		</div>
 		{/if}
+	{/if}
 
 		<div>
 			{if $system->isWSpace()}
@@ -64,40 +64,46 @@
 
 			<div class="form">&nbsp;</div>
 
-			{if !$system->isWSpace()}
-				{if $system->isHSIsland() > 0}
-					<div class="form">
-						<img src="/images/eve/stargate.red.png" align="left"/>
-						&nbsp;
-						<span style="color:#CC0000;">High-Sec Island</span>
-					</div>
+		{if $wormhole->getDrifters()}
+			<div class="form" style="color: #ff2222;">
+				<img src="/modules/map/images/notifications/drifter.png" align="left" style="height: 14px;">
+				&nbsp; {$wormhole->getDrifters()->nrDrifters} Drifter Battleships!
+			</div>
+		{/if}
+	{if !$system->isWSpace()}
+		{if $system->isHSIsland() > 0}
+			<div class="form">
+				<img src="/images/eve/stargate.red.png" align="left"/>
+				&nbsp;
+				<span style="color:#CC0000;">High-Sec Island</span>
+			</div>
+		{/if}
+		{if $system->isDirectHS() > 0}
+			<div class="form">
+				<img src="/images/eve/stargate.green.png" align="left"/>
+				&nbsp;
+				<span style="color:#00CC00;">Direct gate to High-Sec</span>
+			</div>
+		{/if}
+		{if $system->getNrStations() > 0}
+			<div class="form">
+				<img src="/images/eve/station.png" align="left"/>
+				&nbsp;
+				{$system->getNrStations()} Stations / Outposts
+			</div>
+		{/if}
+		{if $system->isFactionWarfareSystem()}
+			<div class="form">
+				{if $system->isContested()}
+					<img src="/images/eve/fw.contested.png" align="left"/>
+				{else}
+					<img src="/images/eve/fw.png" align="left"/>
 				{/if}
-				{if $system->isDirectHS() > 0}
-					<div class="form">
-						<img src="/images/eve/stargate.green.png" align="left"/>
-						&nbsp;
-						<span style="color:#00CC00;">Direct gate to High-Sec</span>
-					</div>
-				{/if}
-				{if $system->getNrStations() > 0}
-					<div class="form">
-						<img src="/images/eve/station.png" align="left"/>
-						&nbsp;
-						{$system->getNrStations()} Stations / Outposts
-					</div>
-				{/if}
-				{if $system->isFactionWarfareSystem()}
-					<div class="form">
-						{if $system->isContested()}
-							<img src="/images/eve/fw.contested.png" align="left"/>
-						{else}
-							<img src="/images/eve/fw.png" align="left"/>
-						{/if}
-						Faction Warfare system
-					</div>
-				{/if}
-				<div class="form">&nbsp;</div>
-			{/if}
+				Faction Warfare system
+			</div>
+		{/if}
+		<div class="form">&nbsp;</div>
+	{/if}
 
 		{if $wormhole}
 				<div class="form">

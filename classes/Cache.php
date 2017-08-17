@@ -2,6 +2,7 @@
 class Cache
 {
     protected $type;
+    protected static $available = null;
 
     function get($var)
     {
@@ -16,6 +17,17 @@ class Cache
     function remove($var)
     {
         return null;
+    }
+
+    function isAvailable()
+    {
+        if (self::$available === null)
+            self::$available = true;
+
+        if (!self::$available)
+            \AppRoot::error("Cache method ".$this->type." not available");
+
+        return self::$available;
     }
 
 
@@ -40,5 +52,18 @@ class Cache
     public static function file()
     {
         return self::getCache("file");
+    }
+
+    /**
+     * Get memory cache
+     * @param int $ttl time-to-live (in seconds)
+     * @return Cache
+     */
+    public static function memory($ttl=86400)
+    {
+        $cache = self::getCache("memory");
+        if (isset($cache->ttl))
+            $cache->ttl = $ttl;
+        return $cache;
     }
 }

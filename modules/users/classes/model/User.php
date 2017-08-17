@@ -78,6 +78,8 @@ class User
     public function resetCache()
     {
         \Tools::deleteDir($this->getCacheDirectory(true));
+        \Cache::memory()->remove(["user", $this->id, "scanalt"]);
+        \Cache::memory()->remove(["user", $this->id, "maincharacter"]);
     }
 
     function load($resultset=false)
@@ -565,10 +567,14 @@ class User
      */
     function getScanAlt()
     {
-        if ($this->_scanalt === null)
-        {
-            if ($this->getSetting("scanalt"))
-                $this->_scanalt = new \eve\model\Character($this->getSetting("scanalt"));
+        if ($this->_scanalt === null) {
+            $this->_scanalt = \Cache::memory()->get(["user", $this->id, "scanalt"]);
+            if (!$this->_scanalt) {
+                if ($this->getSetting("scanalt")) {
+                    $this->_scanalt = new \eve\model\Character($this->getSetting("scanalt"));
+                    \Cache::memory(0)->set(["user", $this->id, "scanalt"], $this->_scanalt);
+                }
+            }
         }
 
         return $this->_scanalt;
@@ -582,11 +588,9 @@ class User
      */
     public function getConfig($var)
     {
-        if ($this->config === null)
-        {
-            $this->config = array();
-            if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_config WHERE userid = ?", array($this->id)))
-            {
+        if ($this->config === null) {
+            $this->config = [];
+            if ($results = \MySQL::getDB()->getRows("SELECT * FROM user_config WHERE userid = ?", [$this->id])) {
                 foreach ($results as $result) {
                     $this->config[$result["var"]] = $result["val"];
                 }
@@ -664,10 +668,8 @@ class User
     public function inGroup($groupID)
     {
         \AppRoot::debug("\User(".$this->id.")->inGroup(".$groupID.")");
-        foreach ($this->getUserGroups() as $group)
-        {
-            if ($group->id == $groupID)
-            {
+        foreach ($this->getUserGroups() as $group) {
+            if ($group->id == $groupID) {
                 return true;
                 break;
             }
@@ -739,14 +741,18 @@ class User
     public function getMainCharacter()
     {
         \AppRoot::debug("getMainCharacter()");
-        if ($this->character == null)
-        {
-            \AppRoot::debug("fetch main characeter");
-            if ($this->mainCharId == 0)
-                $this->resetMainCharacter();
+        if (!$this->character) {
+            $this->character = \Cache::memory()->get(["user", $this->id, "maincharacter"]);
+            if (!$this->character) {
+                \AppRoot::debug("fetch main characeter");
+                if ($this->mainCharId == 0)
+                    $this->resetMainCharacter();
 
-            if ($this->mainCharId > 0)
-                $this->character = new \eve\model\Character($this->mainCharId);
+                if ($this->mainCharId > 0) {
+                    $this->character = new \eve\model\Character($this->mainCharId);
+                    \Cache::memory(0)->set(["user", $this->id, "maincharacter"], $this->character);
+                }
+            }
         }
 
         return $this->character;

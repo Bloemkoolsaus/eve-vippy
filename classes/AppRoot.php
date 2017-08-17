@@ -255,41 +255,40 @@ class AppRoot
 
 	public static function debug($value, $addStackTrace=false)
 	{
-		if (self::doDebug())
-		{
-			if (!self::$startTime)
-				self::$startTime = microtime(true);
+		if (!self::doDebug())
+		    return;
 
-			if (is_array($value) || is_object($value))
-				$value = "<pre>".print_r($value,true)."</pre>";
-			else
-				$value = nl2br($value);
+        if (!self::$startTime)
+            self::$startTime = microtime(true);
 
-			if ($addStackTrace)
-				$value .= "<pre>".print_r(self::getStackTrace(),true)."</pre>";
+        if (is_array($value) || is_object($value))
+            $value = "<pre>".print_r($value,true)."</pre>";
+        else
+            $value = nl2br($value);
 
-            $terms = array();
-            $replacements = array();
+        if ($addStackTrace)
+            $value .= "<pre>".print_r(self::getStackTrace(),true)."</pre>";
 
-            $terms[] = "[string]";
-            $terms[] = "[/string]";
-            $replacements[] = "<span style='color:#1111AA'>";
-            $replacements[] = "</span>";
+        $terms = array();
+        $replacements = array();
 
-            $terms[] = "[success]";
-            $terms[] = "[/success]";
-            $replacements[] = "<span style='color:#008800'>";
-            $replacements[] = "</span>";
+        $terms[] = "[string]";
+        $terms[] = "[/string]";
+        $replacements[] = "<span style='color:#1111AA'>";
+        $replacements[] = "</span>";
 
-            $terms[] = "[error]";
-            $terms[] = "[/error]";
-            $replacements[] = "<span style='color:red'>";
-            $replacements[] = "</span>";
+        $terms[] = "[success]";
+        $terms[] = "[/success]";
+        $replacements[] = "<span style='color:#008800'>";
+        $replacements[] = "</span>";
 
-            $value = str_replace($terms, $replacements, $value);
+        $terms[] = "[error]";
+        $terms[] = "[/error]";
+        $replacements[] = "<span style='color:red'>";
+        $replacements[] = "</span>";
 
-			self::$debug[] = array("time" => number_format(self::getExecTime(), 4), "msg" => $value);
-		}
+        $value = str_replace($terms, $replacements, $value);
+        self::$debug[] = ["time" => number_format(self::getExecTime(), 4), "msg" => $value];
 	}
 
 	public static function getStackTrace()
@@ -541,17 +540,19 @@ class AppRoot
 
 	public static function doDebug()
 	{
-        if (\Tools::REQUEST("debug") == "1")
+		if (defined("APP_DEBUG")) {
+			if (APP_DEBUG) {
+			    if (!\Tools::REQUEST("ajax"))
+                    return true;
+			    if (\Tools::REQUEST("debug"))
+			        return true;
+            }
+		}
+        if (\Tools::REQUEST("debug") == "dfYDFSD3F6d7tHSDFGsdhfdSDF")
             return true;
 
-        if (\Tools::REQUEST("debug") == "session")
+        if (\Tools::REQUEST("debug") == "jkhdhgsdF8JHhDGF&kJH78DJKS")
             $_SESSION["vippy_debug"] = 1;
-
-		if (defined("APP_DEBUG")) {
-			if (APP_DEBUG && !\Tools::REQUEST("ajax"))
-				return true;
-		}
-
 		if (isset($_SESSION["vippy_debug"]) && $_SESSION["vippy_debug"] == 1)
 		    return true;
 
@@ -644,17 +645,13 @@ class AppRoot
 	{
 		if (!$var)
 			return self::$config;
-		else
-		{
-			if (!$val)
-			{
+		else {
+			if (!$val) {
 				if (array_key_exists($var, self::$config))
 					return self::$config[$var];
 				else
 					return false;
-			}
-			else
-			{
+			} else {
 				self::$config[$var] = $val;
 				return true;
 			}

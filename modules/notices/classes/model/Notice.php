@@ -36,6 +36,7 @@ class Notice extends \Model
             $this->expireDate = date("Y-m-d", mktime(0,0,0,date("m")+2,0,date("Y")));
 
         parent::store();
+        \Cache::memory(0)->set(["notifications", "update"], strtotime("now"));
     }
 
     function getTitle()

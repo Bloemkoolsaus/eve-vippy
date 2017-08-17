@@ -15,7 +15,7 @@ class Config
 			$this->fetch();
 
 		if (!isset($this->config[$var])) {
-			if ($result = \MySQL::getDB()->getRow("SELECT val FROM system_config WHERE var = ?", array($var)))
+			if ($result = \MySQL::getDB()->getRow("SELECT val FROM system_config WHERE var = ?", [$var]))
 				$this->config[$var] = $result["val"];
 		}
 
@@ -41,24 +41,30 @@ class Config
 		if (is_array($value) || is_object($value))
 			$value = json_encode($value);
 
-		\MySQL::getDB()->updateinsert("system_config", array("var" => $var, "val" => $value), array("var" => $var));
+		\MySQL::getDB()->updateinsert("system_config", ["var" => $var, "val" => $value], ["var" => $var]);
 		$this->config[$var] = $value;
+        \Cache::memory(120)->set("config", $this->config);
 	}
 
 	function fetch()
 	{
-		$this->config = array();
-		if ($results = \MySQL::getDB()->getRows("select var, val from system_config order by var")) {
-			foreach ($results as $result) {
-				$this->config[$result["var"]] = $result["val"];
-                \AppRoot::debug("set-config: ".$result["var"]." = ".$result["val"]);
-			}
-		}
+	    // Check cache eerst
+        $this->config = \Cache::memory()->get("config");
+        if (!$this->config) {
+            $this->config = [];
+            if ($results = \MySQL::getDB()->getRows("select var, val from system_config order by var")) {
+                foreach ($results as $result) {
+                    $this->config[$result["var"]] = $result["val"];
+                      \AppRoot::debug("set-config: ".$result["var"]." = ".$result["val"]);
+                }
+            }
 
-        // Zoek naar config overrides
-        $directories = array("config");
-        foreach ($directories as $directory) {
-            $this->loadDirectory($directory);
+            // Zoek naar config overrides
+            $directories = array("config");
+            foreach ($directories as $directory) {
+                $this->loadDirectory($directory);
+            }
+            \Cache::memory(120)->set("config", $this->config);
         }
 	}
 

@@ -83,7 +83,19 @@ class Map
         $data = ["map" => "cached", "notifications" => []];
 
         /** Get notifications */
-        foreach ($controller->getNotices($map) as $note) {
+        $notifications = null;
+        if (isset($_SESSION["vippy"]["notifications"]["cache"])) {
+            $updateDate = \Cache::memory()->get(["notifications", "update"]);
+            $cachedDate = $_SESSION["vippy"]["notifications"]["cache"];
+            if ($updateDate < $cachedDate)
+                $notifications = \Cache::memory()->get(["notifications", \User::getUSER()->id]);
+        }
+        if ($notifications === null) {
+            $notifications = $controller->getNotices($map);
+            \Cache::memory(0)->set(["notifications", \User::getUSER()->id], $notifications);
+            $_SESSION["vippy"]["notifications"]["cache"] = strtotime("now");
+        }
+        foreach ($notifications as $note) {
             $wormhole = $map->getWormholeBySystem($note->solarSystemID);
             $title = $note->getSystem()->name;
             if ($wormhole)
@@ -131,28 +143,19 @@ class Map
          * Get map data.
          */
 
-        // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
         if ($checkCache)
         {
-            if (isset($_SESSION["vippy"]["map"]["cache"]["map"][$map->id]))
-            {
+            // Kijk of er iets veranderd is in de chain sinds de laatste check.
+            if (isset($_SESSION["vippy"]["map"]["cache"]["map"][$map->id])) {
                 $cacheDate = $_SESSION["vippy"]["map"]["cache"]["map"][$map->id];
-                if (strtotime($cacheDate) + 60 > strtotime("now")) {
-                    if ($result = \MySQL::getDB()->getRow("select lastmapupdatedate as lastdate from mapwormholechains where id = ?", [$map->id]))
-                    {
-                        \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
-                        \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
-                        if (strtotime($result["lastdate"]) < strtotime($cacheDate) - 2) {
-                            \AppRoot::debug("do cache");
-                            $isCached = true;
-                        } else
-                            \AppRoot::debug("cache out-dated.. gogogo!");
-                    }
-                } else
-                    \AppRoot::debug("Cache is older then 1 minute");
+                $mapUpdate = \Cache::memory()->get(["map", $map->id, "lastupdate"]);
+                if ($mapUpdate <= $cacheDate)
+                    $isCached = true;
             }
         }
 
+
+        // Geen cache of cache outdated.
         if (!$isCached)
         {
             $wormholes = $controller->getWormholes($map);
@@ -165,11 +168,12 @@ class Map
                 }
                 // Drifters
                 foreach ($controller->getDrifers($map) as $drifer) {
-                    if ($wh["solarsystem"]["id"] == $drifer->solarSystemID)
-                        $wormholes[$key]["drifters"] = $drifer->nrDrifters;
+                    if (isset($wh["solarsystem"])) {
+                        if ($wh["solarsystem"]["id"] == $drifer->solarSystemID)
+                            $wormholes[$key]["drifters"] = $drifer->nrDrifters;
+                    }
                 }
             }
-
 
             // Maak de map
             $data["map"] = [
@@ -183,7 +187,7 @@ class Map
             ];
 
             // Cache datum opslaan.
-            $_SESSION["vippy"]["map"]["cache"]["map"][$map->id] = date("Y-m-d H:i:s");
+            $_SESSION["vippy"]["map"]["cache"]["map"][$map->id] = strtotime("now");
         }
 
         // Geef de map terug

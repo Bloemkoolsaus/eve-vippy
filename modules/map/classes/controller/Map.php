@@ -46,20 +46,24 @@ class Map
      */
     function getDrifers(\map\model\Map $map)
     {
-        $drifters = [];
-        if ($results = \MySQL::getDB()->getRows("select d.solarsystemid, d.nrdrifters
-                                                 from   notices_drifter d
-                                                    inner join mapwormholes w on w.solarsystemid = d.solarsystemid
-                                                 where  w.chainid = ?
-                                                 and    d.authgroupid = ?
-                                                 group by d.solarsystemid"
-                                        , [$map->id, $map->authgroupID]))
-        {
-            foreach ($results as $result) {
-                $drifter = new \notices\model\Drifter();
-                $drifter->load($result);
-                $drifters[] = $drifter;
+        $drifters = \Cache::memory()->get(["map", $map->authgroupID, "drifters"]);
+        if (!$drifters) {
+            $drifters = [];
+            if ($results = \MySQL::getDB()->getRows("select d.*
+                                                     from   notices_drifter d
+                                                        inner join mapwormholes w on w.solarsystemid = d.solarsystemid
+                                                     where  w.chainid = ?
+                                                     and    d.authgroupid = ?
+                                                     group by d.solarsystemid"
+                                            , [$map->id, $map->authgroupID]))
+            {
+                foreach ($results as $result) {
+                    $drifter = new \notices\model\Drifter();
+                    $drifter->load($result);
+                    $drifters[] = $drifter;
+                }
             }
+            \Cache::memory()->set(["map", $map->authgroupID, "drifters"], $drifters);
         }
         return $drifters;
     }

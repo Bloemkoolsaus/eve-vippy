@@ -5,6 +5,7 @@ class Wormhole extends \scanning\model\Wormhole
 {
     private $_solarsystem;
     private $_map;
+    private $_drifters;
 
     /**
      * Get map
@@ -15,7 +16,7 @@ class Wormhole extends \scanning\model\Wormhole
         if ($this->_map === null)
             $this->_map = new \map\model\Map($this->chainID);
 
-        return $this->getMap();
+        return $this->_map;
     }
 
 
@@ -29,6 +30,21 @@ class Wormhole extends \scanning\model\Wormhole
             $this->_solarsystem = new \map\model\SolarSystem($this->solarSystemID);
 
         return $this->_solarsystem;
+    }
+
+    /**
+     * Get drifters
+     * @return \notices\model\Drifter|null
+     */
+    function getDrifters()
+    {
+        if ($this->_drifters === null) {
+            $this->_drifters = \notices\model\Drifter::findOne([
+                "solarsystemid" => $this->solarSystemID,
+                "authgroupid" => $this->getMap()->authgroupID
+            ]);
+        }
+        return $this->_drifters;
     }
 
 
