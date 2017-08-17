@@ -15,6 +15,10 @@ class User
             if (isset($_SESSION["vippy"]["user"]["id"]) && $_SESSION["vippy"]["user"]["id"])
                 self::$loggedInUser = new \users\model\User($_SESSION["vippy"]["user"]["id"]);
         }
+        if (!self::$loggedInUser) {
+            if (\Tools::COOKIE("vippy"))
+           		\users\model\User::loginByKey(\Tools::COOKIE("vippy"));
+        }
         return self::$loggedInUser;
 	}
 

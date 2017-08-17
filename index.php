@@ -7,7 +7,6 @@ if (\Tools::GET("state") && \Tools::GET("code")) {
     \AppRoot::doCliOutput("CREST Callback");
     \AppRoot::redirect("crest/login/login/".\Tools::GET("state")."/".\Tools::GET("code"));
 }
-
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
 // Koningsdag
@@ -27,23 +26,10 @@ if (date("Y-m") == "2017-05")
     \SmartyTools::setTemplate("anniversary");
 
 // Logout
-if (Tools::GET("action") == "logout") {
+if (\Tools::GET("action") == "logout") {
 	if (\User::getUSER())
 		\User::getUSER()->logout();
 	\AppRoot::redirect("/");
-}
-
-if (!\User::getUSER()) {
-	// Login by cookie
-	if (\Tools::COOKIE("vippy")) {
-		if (\users\model\User::loginByKey(Tools::COOKIE("vippy")))
-			\AppRoot::redirect("/");
-	}
-	// Login by ATLAS
-	if (\Tools::REQUEST("loginbyatlas")) {
-		$atlas = new \atlas\console\Atlas();
-		$atlas->loginByAtlas();
-	}
 }
 
 // Een ajax verzoek hoeft geen javascript en css in te laden.

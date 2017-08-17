@@ -685,7 +685,7 @@ class AppRoot
 						<div style='padding: 5px; font-size: 16px;'><b>REDIRECTING</b></div>
 						<a href='".$url."' style='color: #FFAA00;'>".$url."</a>
 					</div>";
-
+			echo "<pre>".self::getStackTrace()."</pre>";
 			echo self::printDebug();
 			exit;
 		}
