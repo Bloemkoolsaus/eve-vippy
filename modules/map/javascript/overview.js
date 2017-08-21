@@ -349,3 +349,24 @@ function addFleet()
         }
     });
 }
+
+function addBroadcast(wormholeID)
+{
+    $.ajax({
+        url: "/map/rally/add/"+wormholeID,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
+}
+function removeBroadcast(wormholeID)
+{
+    $.ajax({
+        url: "/map/rally/remove/"+wormholeID,
+        data: { ajax: 1 },
+        complete: function() {
+            loadSignatureMap(false, false, true);
+        }
+    });
+}

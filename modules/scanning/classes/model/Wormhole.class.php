@@ -11,7 +11,8 @@ namespace scanning\model
 		public $chainID = 0;
 		public $signatureID = null;
 		public $solarSystemID = 0;
-		public $permanent = false;
+        public $permanent = false;
+        public $rally = false;
 		public $name = "";
 		public $x = 0;
 		public $y = 0;
@@ -38,15 +39,10 @@ namespace scanning\model
 
 		function load($result=false)
 		{
-			if (!$result)
-			{
-				$cacheFileName = "wormhole/".$this->id.".json";
-				if ($cache = \Cache::file()->get($cacheFileName))
-					$result = json_decode($cache, true);
-				else
-				{
+			if (!$result) {
+				if (!$result = \Cache::memory()->get(["wormhole", $this->id])) {
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE id = ?", array($this->id));
-                    \Cache::file()->set($cacheFileName, json_encode($result));
+                    \Cache::memory(3600)->set(["wormhole",$this->id], $result);
 				}
 			}
 
@@ -56,7 +52,8 @@ namespace scanning\model
 				$this->chainID = $result["chainid"];
 				$this->signatureID = $result["signatureid"];
 				$this->solarSystemID = $result["solarsystemid"];
-				$this->permanent = ($result["permanent"]>0)?true:false;
+                $this->permanent = ($result["permanent"]>0)?true:false;
+                $this->rally = ($result["rally"]>0)?true:false;
 				$this->name = $result["name"];
 				$this->x = $result["x"];
 				$this->y = $result["y"];
@@ -91,7 +88,8 @@ namespace scanning\model
 			$data = array(	"chainid"		=> $this->chainID,
 							"signatureid"	=> $this->signatureID,
 							"solarsystemid" => $this->solarSystemID,
-							"permanent"		=> ($this->permanent)?1:0,
+                            "permanent"		=> ($this->permanent)?1:0,
+                            "rally" 		=> ($this->rally)?1:0,
 							"name"			=> $this->name,
 							"x"				=> $this->x,
 							"y"				=> $this->y,
@@ -106,13 +104,11 @@ namespace scanning\model
 				$data["id"] = $this->id;
 
             // New wormhole
-			if (!$this->id)
-			{
+			if (!$this->id) {
                 $this->id = \MySQL::getDB()->insert("mapwormholes", $data);
 
                 // User log
-                if (\User::getUSER())
-                {
+                if (\User::getUSER()) {
                     \User::getUSER()->addLog("add-wormhole", $this->solarSystemID, [
                         "system" => [
                             "id" => $this->solarSystemID,
@@ -124,8 +120,7 @@ namespace scanning\model
                         ]
                     ]);
                 }
-			}
-			else
+			} else
 				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
 
 
@@ -135,7 +130,7 @@ namespace scanning\model
             }
 
             // Remove cache so that it resets
-            \Cache::file()->remove("wormhole/".$this->id.".json");
+            \Cache::memory()->remove(["wormhole", $this->id]);
             $this->getChain()->setMapUpdateDate();
             $this->load(); // Re-load (setMapUpdate kan coordinaten gewijzigd hebben)!
 		}

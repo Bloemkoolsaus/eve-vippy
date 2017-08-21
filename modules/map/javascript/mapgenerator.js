@@ -20,6 +20,7 @@ var whMouseOver = false;
 
 var mapWormholes = [];
 var mapConnections = [];
+var mapAnimations = [];
 
 function mapRendered()
 {
@@ -62,6 +63,11 @@ function generateMap(data)
         stage.remove(layer);
         stage.removeChildren();
         stage.clear();
+
+        for (var i=0; i<mapAnimations; i++) {
+            mapAnimations[i].remove();
+        }
+        mapAnimations = [];
     }
     else
     {
@@ -85,8 +91,21 @@ function generateMap(data)
         wh.render(layer);
     });
 
+    for (var i=0; i<mapAnimations.length; i++) {
+        layer.add(mapAnimations[i]);
+    }
+
     // add the layer to the stage
     stage.add(layer);
+
+    for (var i=0; i<mapAnimations.length; i++) {
+        mapAnimations[i].start();
+    }
+}
+
+function addAnimation(sprite)
+{
+    mapAnimations.push(sprite);
 }
 
 function resizeMap()
@@ -173,6 +192,10 @@ function generateSystems(data)
         if (data[i].persistant != null) {
             if (data[i].persistant)
                 wormhole.status.persistant = true;
+        }
+        if (data[i].rally != null) {
+            if (data[i].rally)
+                wormhole.setAsRally();
         }
 
         if (data[i].whsystem != undefined) {

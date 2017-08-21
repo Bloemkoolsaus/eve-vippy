@@ -84,7 +84,7 @@ class Map
 
         if ($results = \MySQL::getDB()->getRows("
                     SELECT  wh.id, wh.fullyscanned, s.solarsystemid, r.regionname, s.solarsystemname, wh.status,
-                            wh.name AS solarsystemtitle, c2.homesystemname, k.name AS knownname, wh.permanent,
+                            wh.name AS solarsystemtitle, c2.homesystemname, k.name AS knownname, wh.permanent, wh.rally,
                             IF(k.status IS NOT NULL, k.status, 0) AS known, s.security, s.regionid, wh.x, wh.y
                     FROM 	mapwormholes wh
                         INNER JOIN mapwormholechains c1 ON c1.id = wh.chainid
@@ -113,6 +113,7 @@ class Map
                 $data["position"]["x"] = $result["x"];
                 $data["position"]["y"] = $result["y"];
                 $data["persistant"] = ($result["permanent"] > 0) ? true : false;
+                $data["rally"] = ($result["rally"] > 0) ? true : false;
 
                 if ($result["fullyscanned"] != null && strlen(trim($result["fullyscanned"])) > 0) {
                     if (strtotime($result["fullyscanned"]) > 0) {

@@ -927,17 +927,27 @@ class SolarSystem
     public static function getTradehubs()
     {
         $systems = [];
-        if ($results = \MySQL::getDB()->getRows("select s.*
-                                                from    ".\eve\Module::eveDB().".mapsolarsystems s
-                                                    inner join maptradehubs t on t.solarsystemid = s.solarsystemid
-                                                order by s.solarsystemname"))
-        {
-            foreach ($results as $result)
-            {
-                $system = new \eve\model\SolarSystem();
-                $system->load($result);
+        $tradeHubIDs = \Cache::file()->get("solarsystem/tradehubs.json");
+        if ($tradeHubIDs) {
+            foreach (json_decode($tradeHubIDs) as $id) {
+                $system = new \eve\model\SolarSystem($id);
                 $systems[] = $system;
             }
+        } else {
+            $tradeHubIDs = [];
+            if ($results = \MySQL::getDB()->getRows("select s.*
+                                                    from    ".\eve\Module::eveDB().".mapsolarsystems s
+                                                        inner join maptradehubs t on t.solarsystemid = s.solarsystemid
+                                                    order by s.solarsystemname"))
+            {
+                foreach ($results as $result) {
+                    $system = new \eve\model\SolarSystem();
+                    $system->load($result);
+                    $systems[] = $system;
+                    $tradeHubIDs[] = $system->id;
+                }
+            }
+            \Cache::file()->set("solarsystem/tradehubs.json", json_encode($tradeHubIDs));
         }
 
         return $systems;

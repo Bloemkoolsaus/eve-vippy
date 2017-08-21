@@ -7,6 +7,11 @@ class Wormhole extends \scanning\model\Wormhole
     private $_map;
     private $_drifters;
 
+    function store($positionModifier=null, $copyToOtherChains=true)
+    {
+        parent::store($positionModifier, $copyToOtherChains);
+    }
+
     /**
      * Get map
      * @return \map\model\Map|null

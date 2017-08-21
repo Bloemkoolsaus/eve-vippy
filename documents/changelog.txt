@@ -1,6 +1,7 @@
 
 <b><u>MAP</u></b>
  - Add special drifter icon on the map. Add/Edit drifters through the context menu on C5 or C6 wormholes.
+ - Add 'rally point broadcast' function. Available via the system's context menu.
 
 
 

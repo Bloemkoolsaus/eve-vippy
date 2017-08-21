@@ -53,7 +53,8 @@ class System
 
     function getContext($arguments=[])
     {
-        $wormhole = new \map\model\Wormhole(array_shift($arguments));
+        $wormholeID = array_shift($arguments);
+        $wormhole = new \map\model\Wormhole($wormholeID);
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("wormhole", $wormhole);

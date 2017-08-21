@@ -6,7 +6,8 @@ function Wormhole(id) {
     this.status = {
         status: "unknown",
         homesystem: false,
-        persistant: false
+        persistant: false,
+        rally: false
     };
     this.scanned = {
         scanned: false,
@@ -95,10 +96,19 @@ Wormhole.prototype.addIcon = function(icon) {
     this.icons.push(icon);
 };
 Wormhole.prototype.setAsHomesystem = function() {
-    this.map.colors.border = "#0066ff";
-    this.map.colors.title = "#0066ff";
+    if (!this.status.rally) {
+        this.map.colors.border = "#0066ff";
+        this.map.colors.title = "#0066ff";
+    }
     this.map.colors.style = "bold";
     this.status.persistant = true;
+    this.status.homesystem = true;
+};
+Wormhole.prototype.setAsRally = function() {
+    this.map.colors.border = "#a41fff";
+    this.map.colors.title = "#a41fff";
+    this.map.colors.style = "bold";
+    this.status.rally = true;
 };
 
 
@@ -223,9 +233,8 @@ Wormhole.prototype.render = function(canvas)
             height: 13,
             draggable: false
         }));
-        topRightPosition -= 13
+        topRightPosition -= 13;
     }
-
 
     if (this.isKspace()) {
         wormhole.add(new Kinetic.Rect({
@@ -361,6 +370,13 @@ Wormhole.prototype.render = function(canvas)
             draggable: false
         }));
     }
+
+    if (this.status.rally) {
+        ping = animatePing((this.map.position.x-0)-10, (this.map.position.y-0)+(this.map.height-0)-18);
+        addAnimation(ping);
+    }
+
+
 
 
 

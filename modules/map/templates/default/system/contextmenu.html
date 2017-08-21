@@ -46,7 +46,7 @@
 	{if $wormhole->getSolarsystem()->getClass(true) == "C5" || $wormhole->getSolarsystem()->getClass(true) == "C6"}
 		<div class="menuitem" onclick="setDrifterNotification('{$wormhole->getSolarsystem()->id}'); closeContextMenu();">
 			<img src="/modules/map/images/contextmenu/drifter.png" align="left">
-			Add Drifter(s)
+			Add/Edit Drifter(s)
 		</div>
 	{/if}
 	{if $wormhole->getChain()->isAllowedAction('notice')}
@@ -68,6 +68,17 @@
 		</div>
 	{/if}
 {/if}
+	{if $wormhole->rally}
+		<div class="menuitem" onclick="removeBroadcast('{$wormhole->id}'); closeContextMenu();">
+			<img src="/modules/map/images/contextmenu/d-scan.png" align="left" />
+			Remove Broadcast
+		</div>
+	{else}
+		<div class="menuitem" onclick="addBroadcast('{$wormhole->id}'); closeContextMenu();">
+			<img src="/modules/map/images/contextmenu/d-scan.png" align="left" />
+			Broadcast Rally Point
+		</div>
+	{/if}
 {if $wormhole->getChain()->isAllowedAction('move')}
 	{if $wormhole->permanent == 0}
 		<div class="menuitem" onclick="setSystemPermanent('{$wormhole->getSolarsystem()->name}'); closeContextMenu();" style="border: 0px;">
@@ -82,7 +93,7 @@
 	{/if}
 {/if}
 	{if $wormhole->getChain()->isAllowedAction('delete')}
-		<div class="menuitem" onclick="deleteWormhole('{$wormhole->id}', true); closeContextMenu();" style="margin-top: .5em;">
+		<div class="menuitem" onclick="deleteWormhole('{$wormhole->id}', true); closeContextMenu();" style="margin-top: .7em; border: 0;">
 			<img src="/modules/map/images/contextmenu/remove.png" align="left" />
 			Remove Connected Systems
 		</div>
