@@ -202,7 +202,7 @@ class Modules
 	{
         // Check characters
         if (\User::getUSER() && count(\User::getUSER()->getAuthorizedCharacters()) == 0)
-            \AppRoot::redirect("profile/characters");
+            \AppRoot::redirect("profile/account");
 
 		\AppRoot::redirect("map");
         return true;

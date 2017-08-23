@@ -40,6 +40,7 @@ class User
 
     private $_adminCorporations = null;
     private $_adminAlliances = null;
+    private $_mapActions = null;
 
     /** @var \eve\model\Character */
     private $character = null;
@@ -63,15 +64,12 @@ class User
      */
     private function getCacheDirectory($full=false)
     {
-        if ($this->id !== 0)
-        {
+        if ($this->id !== 0) {
             $directory = "user/".$this->id."/";
             if ($full)
                 $directory = \Cache::file()->getDirectory().$directory;
-
             return $directory;
         }
-
         return null;
     }
 
@@ -80,6 +78,8 @@ class User
         \Tools::deleteDir($this->getCacheDirectory(true));
         \Cache::memory()->remove(["user", $this->id, "scanalt"]);
         \Cache::memory()->remove(["user", $this->id, "maincharacter"]);
+        \Cache::memory()->remove(["user", $this->id, "permissions"]);
+        \Cache::memory()->remove(["user", $this->id, "settings"]);
     }
 
     function load($resultset=false)
@@ -224,18 +224,14 @@ class User
     public function getFullName($reversed=false)
     {
         $ticker = "";
-        if ($this->getMainCharacter() != null)
-        {
-            if ($this->getMainCharacter()->getCorporation())
-            {
+        if ($this->getMainCharacter() != null) {
+            if ($this->getMainCharacter()->getCorporation()) {
                 $ticker = $this->getMainCharacter()->getCorporation()->ticker;
-
                 if ($this->getMainCharacter()->isCEO())
                     $ticker .= " CEO";
                 else if ($this->getMainCharacter()->isDirector())
                     $ticker .= " DIR";
             }
-
             return ((strlen(trim($ticker)) > 0)?"[".$ticker."] ":"").$this->getMainCharacter()->name;
         }
 
@@ -250,47 +246,42 @@ class User
         if ($this->username == null)
             return false;
 
-
-        $user = array();
-        $user["username"] = $this->username;
-        $user["displayname"] = $this->getFullName();
-        $user["password"] = $this->password;
-        $user["loginkey"] = $this->loginkey;
-        $user["email"] = $this->email;
-        $user["deleted"] = ($this->deleted)?1:0;
-        $user["mainchar"] = $this->mainCharId;
-        $user["isdirector"] = ($this->isDirector)?1:0;
-        $user["isceo"] = ($this->isCEO)?1:0;
-        $user["isvalid"] = ($this->isAuthorized())?1:0;
-        $user["updatedate"] = date("Y-m-d H:i:s");
+        $user = [
+            "username" => $this->username,
+            "displayname" => $this->getFullName(),
+            "password" => $this->password,
+            "loginkey" => $this->loginkey,
+            "email" => $this->email,
+            "deleted" => ($this->deleted)?1:0,
+            "mainchar" => $this->mainCharId,
+            "isdirector" => ($this->isDirector)?1:0,
+            "isceo" => ($this->isCEO)?1:0,
+            "isvalid" => ($this->isAuthorized())?1:0,
+            "updatedate" => date("Y-m-d H:i:s")
+        ];
 
         if ($this->id != 0)
             $user["id"] = $this->id;
 
-        $result = \MySQL::getDB()->updateinsert("users", $user, array("id" => $this->id));
-        if ($this->id == 0)
-        {
+        $result = \MySQL::getDB()->updateinsert("users", $user, ["id" => $this->id]);
+        if ($this->id == 0) {
             $this->id = $result;
             $this->setConfig("patchnotes", strtotime("now"));
         }
 
         // Zet lidmaatschap gebruikersgroepen
-        if ($this->groups !== null)
-        {
-            \MySQL::getDB()->delete("user_user_group", array("userid" => $this->id));
+        if ($this->groups !== null) {
+            \MySQL::getDB()->delete("user_user_group", ["userid" => $this->id]);
             foreach ($this->getUserGroups() as $group) {
-                \MySQL::getDB()->insert("user_user_group", array("userid" => $this->id, "groupid" => $group->id));
+                \MySQL::getDB()->insert("user_user_group", ["userid" => $this->id, "groupid" => $group->id]);
             }
         }
 
         // User settings
-        if ($this->settings !== null)
-        {
+        if ($this->settings !== null) {
             \MySQL::getDB()->delete("user_user_settings", ["userid" => $this->id]);
-            foreach ($this->settings as $id => $setting)
-            {
-                if ($setting->value != null)
-                {
+            foreach ($this->settings as $id => $setting) {
+                if ($setting->value != null) {
                     \MySQL::getDB()->insert("user_user_settings", [
                         "settingid" => $setting->setting->id,
                         "userid" => $this->id,
@@ -328,29 +319,23 @@ class User
             return null;
         }
 
-        $cacheFilename = $this->getCacheDirectory()."rights.json";
-        if ($cache = \Cache::file()->get($cacheFilename))
-            $this->rights = json_decode($cache,true);
-        else {
-            \AppRoot::debug("User()->fetchRights()");
-            $query = ["ug.userid = ".$this->id];
-            if (count($this->getAuthGroupsIDs()) > 0) {
-                $query[] = "(g.authgroupid in (".implode(",",$this->getAuthGroupsIDs()).") or g.authgroupid is null)";
+        \AppRoot::debug("User()->fetchRights()");
+        $query = ["ug.userid = ".$this->id];
+        if (count($this->getAuthGroupsIDs()) > 0) {
+            $query[] = "(g.authgroupid in (".implode(",",$this->getAuthGroupsIDs()).") or g.authgroupid is null)";
+        }
+        $this->rights = [];
+        if ($rights = \MySQL::getDB()->getRows("
+                              select  r.id, r.module, r.name, r.title
+                              from    user_rights r
+                                  inner join user_group_rights rg on rg.rightid = r.id
+                                  inner join user_user_group ug on ug.groupid = rg.groupid
+                                  inner join user_groups g on g.id = rg.groupid
+                              where   ".implode(" and ", $query)))
+        {
+            foreach ($rights as $right) {
+                $this->rights[$right["module"]][$right["name"]] = true;
             }
-            $this->rights = [];
-            if ($rights = \MySQL::getDB()->getRows("
-                                  select  r.id, r.module, r.name, r.title
-                                  from    user_rights r
-                                      inner join user_group_rights rg on rg.rightid = r.id
-                                      inner join user_user_group ug on ug.groupid = rg.groupid
-                                      inner join user_groups g on g.id = rg.groupid
-                                  where   ".implode(" and ", $query)))
-            {
-                foreach ($rights as $right) {
-                    $this->rights[$right["module"]][$right["name"]] = true;
-                }
-            }
-            \Cache::file()->set($cacheFilename, json_encode($this->rights));
         }
     }
 
@@ -363,24 +348,18 @@ class User
      */
     public function hasRight($module, $right="allowed")
     {
-        \AppRoot::debug("hasRight($module, $right)");
-        $cacheFilename = $this->getCacheDirectory()."permissionss.json";
-
         if ($this->permissions === null) {
-            $this->permissions = [];
-            // Check de cache
-            $cache = \Cache::file()->get($cacheFilename);
-            if ($cache) {
-                $this->permissions = json_decode($cache,true);
-            }
+            $this->permissions = \Cache::memory()->get(["user", $this->id, "permissions"]);
+            if (!$this->permissions)
+                $this->permissions = [];
         }
 
         if (!isset($this->permissions[$module][$right])) {
             $this->permissions[$module][$right] = $this->calcHasRight($module, $right);
-            \Cache::file()->set($cacheFilename, json_encode($this->permissions));
+            \Cache::memory()->set(["user", $this->id, "permissions"], $this->permissions);
         }
 
-        \AppRoot::debug("/hasRight($module, $right): ".(($this->permissions[$module][$right])?"<span style='color:green;'>true</span>":"<span style='color:red;'>false</span>"));
+        \AppRoot::debug("hasRight($module, $right): ".(($this->permissions[$module][$right])?"<span style='color:green;'>true</span>":"<span style='color:red;'>false</span>"));
         return $this->permissions[$module][$right];
     }
 
@@ -391,12 +370,12 @@ class User
 
     private function calcHasRight($module, $right)
     {
+        /** @var \Module $moduleObject */
         $moduleObject = null;
         $moduleClass = '\\'.$module.'\\Module';
         if (class_exists($moduleClass))
             $moduleObject = new $moduleClass();
 
-        \AppRoot::debug(\Approot::$config);
         $modulePublic = \AppRoot::config($module."public");
         if ($moduleObject != null)
             $modulePublic = $moduleObject->public;
@@ -404,20 +383,16 @@ class User
         if ($module == "admin")
             $modulePublic = true;
 
-        if ($right == "allowed")
-        {
+        if ($right == "allowed") {
             if ($moduleObject != null)
                 return $moduleObject->isAvailable();
-
             $right = "availible";
         }
 
-        if ($right == "availible")
-        {
+        if ($right == "availible") {
             // Is de module enabled
             if (\AppRoot::config($module."enabled") == false)
                 return false;
-
             // Kijk of de module public is? Dan heb je geen rechten nodig!
             if ($modulePublic)
                 return true;
@@ -427,64 +402,49 @@ class User
             $this->fetchRights();
 
         // Check op systeem beheer. Een systeem beheerder mag alles
-        if (isset($this->rights["admin"]["sysadmin"]))
-        {
-            if ($this->rights["admin"]["sysadmin"] == true)
-            {
+        if (isset($this->rights["admin"]["sysadmin"])) {
+            if ($this->rights["admin"]["sysadmin"] == true) {
                 \AppRoot::debug("SYSADMIN");
                 return true;
             }
         }
 
         // Check of de module public is.
-        if ($modulePublic)
-        {
+        if ($modulePublic) {
             \AppRoot::debug($module."-".$right." is public");
-
             // Ja, iedereen mag deze module.
             if ($right == "availible")
                 return true;
-
             // Je auth-groep mag het wel, maar mag jij het?
-            if (isset($this->rights[$module][$right]))
-            {
+            if (isset($this->rights[$module][$right])) {
                 if ($this->rights[$module][$right] == true)
                     return true;
             }
-
             \AppRoot::debug($module."-".$right." check dir roles");
             // Check of recht geimpliceerd wordt door director roles
             $rights = \AppRoot::config($module."rights");
             \AppRoot::debug("<pre>".print_r($rights,true)."</pre>");
-            if (isset($rights[$right]) && isset($rights[$right]["dirdefault"]))
-            {
+            if (isset($rights[$right]) && isset($rights[$right]["dirdefault"])) {
                 \AppRoot::debug("dir is default");
                 if ($rights[$right]["dirdefault"] == true && $this->getIsDirector())
                     return true;
             }
-        }
-        else
-        {
+        } else {
             \AppRoot::debug($module."-".$right." is <u>not</u> public");
-
             // Nee, je auth-groep moet de module ook mogen.
-            foreach ($this->getAuthGroupsIDs() as $groupID)
-            {
+            foreach ($this->getAuthGroupsIDs() as $groupID) {
                 if ($results = \MySQL::getDB()->getRows("SELECT *
-                                                    FROM 	user_auth_groups_modules
-                                                    WHERE	authgroupid = ?
-                                                    AND		module = ?"
-                                        , array($groupID, $module)))
+                                                        FROM 	user_auth_groups_modules
+                                                        WHERE	authgroupid = ?
+                                                        AND		module = ?"
+                                                , [$groupID, $module]))
                 {
-                    foreach ($results as $result)
-                    {
+                    foreach ($results as $result) {
                         // Kijk of het public is voor jou authgroup, dan mag het!
                         if ($right == "availible" && $result["public"] > 0)
                             return true;
-
                         // Je auth-groep mag het wel, maar mag jij het?
-                        if (isset($this->rights[$module][$right]))
-                        {
+                        if (isset($this->rights[$module][$right])) {
                             if ($this->rights[$module][$right] == true)
                                 return true;
                         }
@@ -527,6 +487,7 @@ class User
         $this->settings[$setting->name] = new \stdClass();
         $this->settings[$setting->name]->setting = $setting;
         $this->settings[$setting->name]->value = $value;
+        \Cache::memory()->set(["user", $this->id, "settings"], $this->settings);
     }
 
     public function clearSettings()
@@ -537,28 +498,23 @@ class User
     private function fetchSettings()
     {
         $this->clearSettings();
-        $cacheFilename = $this->getCacheDirectory()."settings.json";
-        if ($cache = \Cache::file()->get($cacheFilename))
-            $results = json_decode($cache,true);
-        else
-        {
+        $this->settings = \Cache::memory()->get(["user", $this->id, "settings"]);
+        if (!$this->settings) {
+            $this->clearSession();
             $results = \MySQL::getDB()->getRows("SELECT	s.*, u.value
                                                 FROM    users_setting s
                                                     INNER JOIN user_user_settings u ON u.settingid = s.id
                                                 WHERE   u.userid = ?"
-                                    , array(\User::getUSER()->id));
-            \Cache::file()->set($cacheFilename, json_encode($results));
-        }
-
-        if ($results)
-        {
-            foreach ($results as $result)
-            {
-                $setting = \users\model\Setting::getObjectByName($result["name"]);
-                $setting->load($result);
-                $this->setSetting($setting, $result["value"]);
+                                        , [\User::getUSER()->id]);
+            if ($results) {
+                foreach ($results as $result) {
+                    $setting = \users\model\Setting::getObjectByName($result["name"]);
+                    $setting->load($result);
+                    $this->setSetting($setting, $result["value"]);
+                }
             }
         }
+        return $this->settings;
     }
 
     /**
@@ -627,8 +583,7 @@ class User
         $usergroup = new \users\model\UserGroup($groupID);
 
         // Kan deze user wel in deze groep?
-        if ($usergroup->getAuthgroup() !== null)
-        {
+        if ($usergroup->getAuthgroup() !== null) {
             if (!in_array($usergroup->authGroupID, $this->getAuthGroupsIDs()))
                 return false;
         }
@@ -709,8 +664,7 @@ class User
                 if ($this->character) {
                     if ($char->isCEO())
                         $this->character = $char;
-                }
-                else
+                } else
                     $this->character = $char;
             }
         }
@@ -787,19 +741,15 @@ class User
         {
             $this->capitalShips = array();
             $cacheFilename = $this->getCacheDirectory()."capitals.json";
-            if ($cache = \Cache::file()->get($cacheFilename))
-            {
-                foreach (json_decode($cache) as $ship)
-                {
+            if ($cache = \Cache::file()->get($cacheFilename)) {
+                foreach (json_decode($cache) as $ship) {
                     $cap = new \profile\model\Capital();
                     foreach ($ship as $var => $val) {
                         $cap->$var = $val;
                     }
                     $this->capitalShips[] = $cap;
                 }
-            }
-            else
-            {
+            } else {
                 $this->capitalShips = \profile\model\Capital::findAll(["userid" => $this->id]);
                 \Cache::file()->set($cacheFilename, json_encode($this->capitalShips));
             }
@@ -892,22 +842,18 @@ class User
      */
     public function isAdmin($corpid=false)
     {
+        \AppRoot::debug($this->displayname."->isAdmin($corpid)");
         if ($this->isAdmin === null)
         {
-            if ($this->getSession("isadmin") !== null)
-                $this->isAdmin = $this->getSession("isadmin");
-            else {
-                $this->isAdmin = false;
-                if ($this->getCurrentAuthGroup()) {
-                    if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
-                        if ($this->getIsDirector($corpid))
-                            $this->isAdmin = true;
-                    }
+            $this->isAdmin = false;
+            if ($this->getCurrentAuthGroup()) {
+                if (!$this->getCurrentAuthGroup()->getConfig("dir_admin_disabled")) {
+                    if ($this->getIsDirector($corpid))
+                        $this->isAdmin = true;
                 }
-                if ($this->hasRight("admin", "admin"))
-                    $this->isAdmin = true;
-                \User::getUSER()->setSession("isadmin", $this->isAdmin);
             }
+            if ($this->hasRight("admin", "admin"))
+                $this->isAdmin = true;
         }
 
         return $this->isAdmin;
@@ -994,7 +940,6 @@ class User
     }
 
     /**
-     * DEPRICATED
      * @param \scanning\model\Chain $chain
      * @param $action
      * @return mixed
@@ -1002,31 +947,26 @@ class User
     public function isAllowedChainAction(\scanning\model\Chain $chain, $action)
     {
         \AppRoot::debug("User()->isAllowedChainAction($action)");
-        $actions = new \stdClass();
 
-        // Check cache
-        $cacheFilename = $this->getCacheDirectory() . "chain-actions.json";
-        if ($cache = \Cache::file()->get($cacheFilename))
-            $actions = json_decode($cache);
+        if (!$this->_mapActions)
+            $this->_mapActions = new \stdClass();
 
-        if (!isset($actions->$action))
-        {
-            $actions->$action = true;
+        $mapID = $chain->id;
+        if (!isset($this->_mapActions->$mapID))
+            $this->_mapActions->$mapID = new \stdClass();
 
-            if (!$this->isAdmin())
-            {
-                if ($chain->getSetting('control-' . $action))
-                {
+        if (!isset($this->_mapActions->$mapID->$action)) {
+            $this->_mapActions->$mapID->$action = true;
+            if (!$this->isAdmin()) {
+                if ($chain->getSetting('control-' . $action)) {
                     // Restricted! Check usergroups
                     if (!$this->inGroup($chain->getSetting('control-' . $action)))
-                        $actions->$action = false;
+                        $this->_mapActions->$mapID->$action = false;
                 }
             }
-
-            \Cache::file()->set($cacheFilename, json_encode($actions));
         }
 
-        return $actions->$action;
+        return $this->_mapActions->$mapID->$action;
     }
 
     /**
@@ -1330,15 +1270,13 @@ class User
 
             foreach ($results as $result)
             {
-                $chain = new \map\model\Map();
-                $chain->load($result);
-
-                if ($chain->directorsOnly && !$this->getIsSysAdmin()) {
+                $map = new \map\model\Map();
+                $map->load($result);
+                if ($map->directorsOnly && !$this->getIsSysAdmin()) {
                     if (!$this->isAdmin())
                         continue;
                 }
-
-                $this->chains[] = $chain;
+                $this->chains[] = $map;
             }
         }
 
@@ -1478,11 +1416,12 @@ class User
      */
     public function getAuthGroupsAdmins()
     {
-        $authGroups = array();
+        \AppRoot::debug("getAuthGroupsAdmins()");
+        $authGroups = [];
         foreach ($this->getAuthGroups() as $group) {
             // Heb ik directors in deze groep?
             foreach ($group->getAllowedCorporations() as $corp) {
-                if (\User::getUSER()->isAdmin($corp->id)) {
+                if ($this->isAdmin($corp->id)) {
                     $authGroups[] = $group;
                     continue;
                 }

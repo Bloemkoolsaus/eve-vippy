@@ -7,6 +7,7 @@ $config["enabled"] = true;
 $config["sortorder"] = 2;
 
 // Haal beschikbare chains
+\AppRoot::debug("Start building maps menu ------------------------------------------");
 if (\User::getUSER() && !\Tools::REQUEST("ajax")) {
     foreach (\User::getUSER()->getAvailibleChains(false) as $chain) {
         $config["submenu"][] = array(
@@ -16,6 +17,7 @@ if (\User::getUSER() && !\Tools::REQUEST("ajax")) {
         );
     }
 }
+\AppRoot::debug("End building maps menu ------------------------------------------");
 
 // SET CONFIG
 foreach ($config as $var => $val) {

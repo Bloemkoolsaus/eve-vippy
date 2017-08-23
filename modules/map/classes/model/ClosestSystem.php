@@ -4,7 +4,7 @@ namespace map\model;
 class ClosestSystem extends \Model
 {
     protected $_table = "map_closest_systems";
-    protected $_keyfield = ["solarsystemid","authgroupid","userid"];
+    protected $_keyfield = ["solarSystemID","authGroupID","userID"];
 
     public $solarSystemID;
     public $authGroupID = 0;

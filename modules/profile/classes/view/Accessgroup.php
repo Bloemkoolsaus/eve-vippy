@@ -36,6 +36,7 @@ class Accessgroup
 
             if (count($errors) == 0)
             {
+                \AppRoot::doCliOutput("Create authorization group");
                 $authgroup = new \admin\model\AuthGroup();
                 $authgroup->name = \Tools::POST("name");
                 $authgroup->store();
@@ -55,7 +56,7 @@ class Accessgroup
                 $authgroup->store();
 
                 // Tradehubs toevoegen
-                \AppRoot::debug("Add tradeubs");
+                \AppRoot::doCliOutput("Add tradehubs");
                 foreach (\map\model\SolarSystem::getTradehubs() as $system) {
                     \AppRoot::debug(" > ".$system->name);
                     $hub = new \map\model\ClosestSystem();
@@ -65,6 +66,7 @@ class Accessgroup
                 }
 
                 // Trial subscription
+                \AppRoot::doCliOutput("Create trial subscription");
                 $subscription = new \admin\model\Subscription();
                 $subscription->description = "Free trial";
                 $subscription->amount = 0;
@@ -74,6 +76,7 @@ class Accessgroup
                 $subscription->store();
 
                 // Admin Usergroup
+                \AppRoot::doCliOutput("Create admin usergroup");
                 $usergroup = new \users\model\UserGroup();
                 $usergroup->name = "VIPPY Admin";
                 $usergroup->authGroupID = $authgroup->id;

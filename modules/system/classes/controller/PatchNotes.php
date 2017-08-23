@@ -9,11 +9,9 @@ class PatchNotes
         $patchNoteHash = md5_file("documents/changelog.txt");
 
         $cache = \User::getUSER()->getConfig("patchnotes");
-        if ($cache)
-        {
+        if ($cache) {
             $cache = json_decode($cache);
-            if (isset($cache->time) && isset($cache->hash))
-            {
+            if (isset($cache->time) && isset($cache->hash)) {
                 if ($cache->time < $patchNoteTime) {
                     if ($cache->hash != $patchNoteHash)
                         return true;
@@ -34,5 +32,6 @@ class PatchNotes
         $cache->time = $patchNoteTime;
         $cache->hash = $patchNoteHash;
         $user->setConfig("patchnotes", $cache);
+        $user->resetCache();
     }
 }

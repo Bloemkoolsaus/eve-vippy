@@ -30,6 +30,9 @@ class Register
 
             $character->importData();
             $user->setLoginStatus(true, $rememberLogin);
+
+            $controller = new \system\controller\PatchNotes();
+            $controller->registerPatchNotes($user);
         }
 
         \AppRoot::redirect("/");

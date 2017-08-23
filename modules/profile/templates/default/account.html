@@ -1,0 +1,51 @@
+<div class="content">
+	<h1 style="margin-bottom: 0;">
+		<img src="/images/default/ui/charactersheet.png" align="left">
+		Profile: Account
+	</h1>
+</div>
+
+{include "profile/menu"}
+
+{if $App->user->getCharacters()|@count == 0}
+<div class="content">
+	<div class="warning">
+		<div>
+			<b>You have not registered any characters yet. Login to CREST below to add characters.</b>
+		</div>
+		<div>
+			You need to have atleast one CREST authenticated character in order to use Vippy.
+			Access will be given based on your authed character(s) corporation.
+		</div>
+	</div>
+</div>
+{elseif $App->user->getAuthgroups()|@count == 0}
+<div class="content">
+	<div class="warning">
+		<div class="message">
+			<div><h3>You do not seem to be part of an Access-Group.</h3></div>
+			<div>Atleast one of your characters needs to be in a corporation that is part of an access group.</div>
+			<div>Does your corporation not yet use Vippy? You can create a new access-group.</div>
+			<div style="padding: .5em; margin-top: 1em;">
+				<button type="button" class="small" onclick="document.location='/profile/accessgroup'" style="width: 160px;">
+					<img src="/images/default/ui/plus.png" align="left">
+					Create Access Group
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/if}
+
+<div class="content">
+	<div class="col6">
+		{include "profile/characters/add"}
+	</div>
+	<div class="col6 right last">
+		{include "profile/account/settings"}
+	</div>
+	<div style="clear:both;"></div>
+</div>
+<div class="content">
+	{include "profile/characters/overview"}
+</div>

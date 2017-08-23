@@ -8,18 +8,7 @@ class Account
         \AppRoot::title("Profile");
         \AppRoot::title("Account Settings");
 
-        if (\Tools::POST("save"))
-        {
-            \User::getUSER()->username = \Tools::POST("username");
-            \User::getUSER()->email = \Tools::POST("email");
-
-            if (\Tools::POST("password1") || \Tools::POST("password2")) {
-                if (\Tools::POST("password1") == \Tools::POST("password2"))
-                    \User::getUSER()->password = \User::generatePassword(\Tools::POST("password1"));
-                else
-                    $errors[] = "Passwords did not match";
-            }
-
+        if (\Tools::POST("save") == "account") {
             // Settings
             foreach ($_POST["setting"] as $id => $value) {
                 $setting = \users\model\Setting::findOne(["name" => $id]);
@@ -35,6 +24,6 @@ class Account
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("user", \User::getUSER());
-        return $tpl->fetch("profile/account/settings");
+        return $tpl->fetch("profile/account");
     }
 }

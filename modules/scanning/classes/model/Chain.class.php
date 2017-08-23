@@ -46,6 +46,7 @@ class Chain
         \AppRoot::debug("Chain ".$this->name." (".$this->getHomeSystem()->name.")->resetCache()");
         \Tools::deleteDir($this->getCacheDirectory(true));
         \Cache::memory()->remove(["map", $this->id]);
+        \Cache::memory()->remove(["map", $this->id, "settings"]);
     }
 
     function load($result=false)
@@ -184,10 +185,13 @@ class Chain
     function getSettings()
     {
         if ($this->settings === null) {
-            $this->clearSettings();
-            if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_chain_settings WHERE chainid = ?", [$this->id])) {
-                foreach ($results as $result) {
-                    $this->settings[$result["var"]] = $result["val"];
+            $this->settings = \Cache::memory()->get(["map", $this->id, "settings"]);
+            if (!$this->settings) {
+                $this->clearSettings();
+                if ($results = \MySQL::getDB()->getRows("SELECT * FROM map_chain_settings WHERE chainid = ?", [$this->id])) {
+                    foreach ($results as $result) {
+                        $this->setSetting($result["var"], $result["val"]);
+                    }
                 }
             }
         }
@@ -229,6 +233,8 @@ class Chain
 
         if ($value == null)
             unset($this->settings[$setting]);
+
+        \Cache::memory()->set(["map", $this->id, "settings"], $this->settings);
     }
 
     /**

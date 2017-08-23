@@ -5,11 +5,7 @@ class Characters
 {
     function getOverview($arguments=[])
     {
-        \AppRoot::title("Profile");
-        \AppRoot::title("Characters");
-
-        $tpl = \SmartyTools::getSmarty();
-        return $tpl->fetch("profile/characters/overview");
+        \AppRoot::redirect("profile/account");
     }
 
     function getAddnew($arguments=[])

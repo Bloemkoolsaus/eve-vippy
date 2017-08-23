@@ -7,7 +7,6 @@ class Patchnotes
     {
         $controller = new \system\controller\PatchNotes();
         $controller->registerPatchNotes(\User::getUSER());
-        \User::getUSER()->resetCache();
 
         $numericNaming = false;
         $dirAdminEnabled = false;

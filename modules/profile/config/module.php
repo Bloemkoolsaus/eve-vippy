@@ -8,17 +8,12 @@ $config["sortorder"] = 1;
 
 $config["submenu"][] = [
     "type"  => "link",
-    "name"  => "Account Settings",
+    "name"  => "Account",
     "url"   => "profile/account"
 ];
 $config["submenu"][] = [
     "type"  => "link",
-    "name"	=> "Characters",
-    "url"   => "profile/characters"
-];
-$config["submenu"][] = [
-    "type"  => "link",
-    "name"  => "My Capital-ships",
+    "name"  => "Capital-ships",
     "url"   => "profile/capitals"
 ];
 

@@ -44,7 +44,7 @@ class Module
         if ($checkAuth) {
             // Check of we toegang hebben. Zo niet, redirect naar profiel.
             if (!$this->isAuthorized(array_merge([$section],[$action],$arguments)))
-                \AppRoot::redirect("profile/characters");
+                \AppRoot::redirect("profile/account");
         }
 
         $sectionParts = explode("-", $section);

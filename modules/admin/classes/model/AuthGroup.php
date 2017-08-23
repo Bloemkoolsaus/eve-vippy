@@ -544,10 +544,14 @@ class AuthGroup
         if ($user == null)
             $user = \User::getUSER();
 
+        \AppRoot::debug($this->name."->getMayAdmin(".$user->displayname.")");
         if ($user->getIsSysAdmin())
             return true;
 
-        foreach ($user->getAuthGroupsAdmins() as $group) {
+        $adminGroups = $user->getAuthGroupsAdmins();
+        \AppRoot::debug("adminGroups:");
+        \AppRoot::debug($adminGroups);
+        foreach ($adminGroups as $group) {
             if ($group->id == $this->id)
                 return true;
         }
