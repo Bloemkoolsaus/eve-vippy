@@ -40,7 +40,6 @@ class Corporation extends \api\Server
 
                     // Scanned signatures
                     $query = [
-                        "corpid = ".$corporation->id,
                         "userid = ".$char->getUser()->id,
                         "scandate between '".$sdate." 00:00:00' and '".$edate." 23:59:59'"
                     ];
