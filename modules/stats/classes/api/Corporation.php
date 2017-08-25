@@ -28,7 +28,7 @@ class Corporation extends \api\Server
                 {
                     $users[$mainCharacterID]["user"] = $char->getUser()->getMainCharacter()->name;
                     $users[$mainCharacterID]["online"] = 0;
-                    $users[$mainCharacterID]["signatures"] = 0;
+                    $users[$mainCharacterID]["signatures"] = ["total" => 0, "hours" => []];
                     $users[$mainCharacterID]["characters"] = [];
 
                     // Online time
@@ -43,9 +43,16 @@ class Corporation extends \api\Server
                         "userid = ".$char->getUser()->id,
                         "scandate between '".$sdate." 00:00:00' and '".$edate." 23:59:59'"
                     ];
-                    if ($result = \MySQL::getDB()->getRow("select count(*) as amount from stats_signatures where ".implode(" and ", $query))) {
-                        $users[$mainCharacterID]["signatures"] = $result["amount"]-0;
-                        $signatures += $result["amount"]-0;
+                    if ($results = \MySQL::getDB()->getRows("select hour(scandate) as hour, count(*) as amount 
+                                                             from   stats_signatures 
+                                                             where ".implode(" and ", $query)."
+                                                             group by hour(scandate)"))
+                    {
+                        foreach ($results as $result) {
+                            $users[$mainCharacterID]["signatures"]["total"] += $result["amount"]-0;
+                            $users[$mainCharacterID]["signatures"]["hours"][$result["hour"]] = $result["amount"]-0;
+                            $signatures += $result["amount"]-0;
+                        }
                     }
                 }
                 $users[$mainCharacterID]["characters"][$char->id] = $char->name;
@@ -67,6 +74,8 @@ class Corporation extends \api\Server
             "id" => $corporation->id,
             "ticker" => $corporation->ticker,
             "name" => $corporation->name,
+            "year" => $year,
+            "month" => $month,
             "users" => [
                 "characters" => count($characters),
                 "registered" => count($users),

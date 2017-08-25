@@ -12,6 +12,8 @@ class Alliance extends \api\Server
         $data = [
             "id" => $alliance->id,
             "name" => $alliance->name,
+            "year" => $year,
+            "month" => $month,
             "corporations" => []
         ];
 
