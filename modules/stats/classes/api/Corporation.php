@@ -27,15 +27,35 @@ class Corporation extends \api\Server
                 if (!isset($users[$mainCharacterID]))
                 {
                     $users[$mainCharacterID]["user"] = $char->getUser()->getMainCharacter()->name;
-                    $users[$mainCharacterID]["online"] = 0;
+                    $users[$mainCharacterID]["online"] = ["total" => 0, "hours" => [], "days" => []];
                     $users[$mainCharacterID]["signatures"] = ["total" => 0, "hours" => []];
                     $users[$mainCharacterID]["characters"] = [];
 
                     // Online time
                     if ($char->getUser()->getIsActive($sdate, $edate)) {
                         $activeUsers[$mainCharacterID] = $char->getUser()->getMainCharacter()->name;
-                        $users[$mainCharacterID]["online"] = $char->getUser()->getHoursOnline($sdate, $edate);
-                        $hoursOnline += $users[$mainCharacterID]["online"];
+                        $users[$mainCharacterID]["online"]["total"] = $char->getUser()->getHoursOnline($sdate, $edate);
+                        $hoursOnline += $users[$mainCharacterID]["online"]["total"];
+
+                        foreach (\users\model\Log::getLogByUserOnDate($char->getUser()->id, $sdate, $edate, "ingame") as $log) {
+                            if ($log->pilotID) {
+                                if (!isset($users[$mainCharacterID]["online"]["days"][date("Y-m-d", strtotime($log->logDate))]))
+                                    $users[$mainCharacterID]["online"]["days"][date("Y-m-d", strtotime($log->logDate))]["total"] = 0;
+                                $seconds = (strtotime($log->lastDate)-strtotime($log->logDate));
+                                if ($users[$mainCharacterID]["online"]["days"][date("Y-m-d", strtotime($log->logDate))]["total"] < $seconds) {
+                                    $users[$mainCharacterID]["online"]["days"][date("Y-m-d", strtotime($log->logDate))]["total"] = round(($seconds/60)/60,2);
+
+                                    $increment = 30; // seconden
+                                    $curtime = strtotime($log->lastDate);
+                                    while ($curtime > strtotime($log->logDate)) {
+                                        if (!isset($users[$mainCharacterID]["online"]["days"][date("Y-m-d", $curtime)]["hours"][date("H", $curtime)]))
+                                            $users[$mainCharacterID]["online"]["days"][date("Y-m-d", $curtime)]["hours"][date("H", $curtime)] = 0;
+                                        $users[$mainCharacterID]["online"]["days"][date("Y-m-d", $curtime)]["hours"][date("H", $curtime)] += $increment;
+                                        $curtime -= $increment;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     // Scanned signatures
