@@ -3,6 +3,11 @@
  - Add special drifter icon on the map. Add/Edit drifters through the context menu on C5 or C6 wormholes.
  - Add 'rally point broadcast' function. Available via the context menu.
 
+<b><u>DISCORD</u></b>
+ - I've setup a Vippy <a href="/vippy/contact" target="_blank">Discord</a> server. Hopefully, this will reduce the amount of eve mail I get, eve mail is a pain to work with.
+
+
+
 <h3>August 7, 2017</h3>
 <b><u>VIPPY</u></b>
  - I am (more or less) done with the back-end rework and new subscription model.
