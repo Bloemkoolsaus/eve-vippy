@@ -89,8 +89,9 @@ class Signature extends \Model
      */
     function getSignatureType()
     {
-        if ($this->_signatureType === null && $this->sigTypeID)
-            $this->_signatureType = new \map\model\SignatureType($this->sigTypeID);
+        if ($this->_signatureType === null && $this->sigTypeID) {
+            $this->_signatureType = \map\model\SignatureType::findById($this->sigTypeID);
+        }
 
         return $this->_signatureType;
     }

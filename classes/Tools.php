@@ -673,23 +673,22 @@ Class Tools
 	{
 		if (\eve\model\IGB::getIGB()->isIGB())
 			return \eve\model\IGB::getIGB()->getSolarsystemName();
-		else if (isset($_SESSION["currentsystem"]))
-			return $_SESSION["currentsystem"];
+		else if (\Session::getSession()->get(["currentsystem"]))
+			return \Session::getSession()->get(["currentsystem"]);
 		else
 			return false;
 	}
 
 	public static function setCurrentSystem($system)
 	{
-		$_SESSION["currentsystem"] = $system;
+        \Session::getSession()->set(["currentsystem"], $system);
 	}
 
 	public static function generateRandomString($length=10)
 	{
 		$string = "";
 		$characters = "a2bc3de4fg5hi6jk7mn8pq9rs2tu3vw4xyz";
-		while (strlen(trim($string)) < $length)
-		{
+		while (strlen(trim($string)) < $length) {
 			$char = substr($characters, rand(0, strlen($characters)-1), 1);
 			if (rand(0,200)%2 == 0)
 				$char = strtoupper($char);

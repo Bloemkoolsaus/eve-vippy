@@ -8,6 +8,7 @@ class Module extends \Module
 
     function getContent()
     {
+        \AppRoot::debug("Module(".$this->moduleName.")->getContent()");
         $arguments = [];
         foreach (explode(",", \Tools::REQUEST("arguments")) as $arg) {
             if (strlen(trim($arg)) > 0)
@@ -45,13 +46,6 @@ class Module extends \Module
         // Geen map gevonden..
         $tpl = \SmartyTools::getSmarty();
         return $tpl->fetch("map/map/nomap");
-    }
-
-    function getAppData(\stdClass $appData)
-    {
-        $appData->map = new \stdClass();
-        $appData->map->trackingMode = (isset($_SESSION["trackingonly"]) && $_SESSION["trackingonly"] === true) ? true : false;
-        return $appData;
     }
 
     function doMaintenance()

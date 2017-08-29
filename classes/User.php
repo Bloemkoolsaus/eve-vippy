@@ -12,10 +12,13 @@ class User
 	public static function getUSER()
 	{
         if (!self::$loggedInUser) {
-            if (isset($_SESSION["vippy"]["user"]["id"]) && $_SESSION["vippy"]["user"]["id"])
-                self::$loggedInUser = new \users\model\User($_SESSION["vippy"]["user"]["id"]);
+            $userID = \Session::getSession()->get(["user","id"]);
+            \AppRoot::debug("getUSER(): ".($userID)?:null);
+            if ($userID)
+                self::$loggedInUser = new \users\model\User($userID);
         }
         if (!self::$loggedInUser) {
+            \AppRoot::debug("No user, getUSER by cookie");
             if (\Tools::COOKIE("vippy"))
            		\users\model\User::loginByKey(\Tools::COOKIE("vippy"));
         }
@@ -28,13 +31,20 @@ class User
      */
 	public static function setUSER(\users\model\User $user=null)
 	{
-        $_SESSION["vippy"]["user"]["id"] = ($user)?$user->id:null;
-        self::$loggedInUser = $user;
+	    if ($user) {
+            \Session::getSession()->set(["user","id"], $user->id);
+            self::$loggedInUser = $user;
+        } else {
+	        self::unsetUser();
+            self::$loggedInUser = null;
+        }
 	}
 
     public static function unsetUser()
     {
-        $_SESSION["vippy"]["user"]["id"] = null;
+        \AppRoot::doCliOutput("UNSET USER");
+        \AppRoot::log(\AppRoot::getStackTrace(), "unset-user");
+        \Session::getSession()->remove(["user","id"]);
         self::$loggedInUser = null;
     }
 

@@ -95,7 +95,12 @@ class Corporation
      */
     public static function getCorporationByID($corporationID)
     {
-        if ($result = \MySQL::getDB()->getRow("SELECT * FROM corporations WHERE id = ?", [$corporationID])) {
+        $result = \Cache::memory()->get(["corporation", $corporationID]);
+        if (!$result) {
+            $result = \MySQL::getDB()->getRow("SELECT * FROM corporations WHERE id = ?", [$corporationID]);
+            \Cache::memory(600)->set(["corporation", $corporationID], $result);
+        }
+        if ($result) {
             $corp = new \eve\model\Corporation();
             $corp->load($result);
             return $corp;

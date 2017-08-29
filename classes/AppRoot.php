@@ -542,18 +542,19 @@ class AppRoot
 	{
 		if (defined("APP_DEBUG")) {
 			if (APP_DEBUG) {
+                if (\Tools::REQUEST("debug"))
+                    return true;
 			    if (!\Tools::REQUEST("ajax"))
                     return true;
-			    if (\Tools::REQUEST("debug"))
-			        return true;
             }
 		}
         if (\Tools::REQUEST("debug") == "dfYDFSD3F6d7tHSDFGsdhfdSDF")
             return true;
 
         if (\Tools::REQUEST("debug") == "jkhdhgsdF8JHhDGF&kJH78DJKS")
-            $_SESSION["vippy_debug"] = 1;
-		if (isset($_SESSION["vippy_debug"]) && $_SESSION["vippy_debug"] == 1)
+            \Session::getSession()->set("debug", 1);
+
+        if (\Session::getSession()->get("debug"))
 		    return true;
 
 		return false;

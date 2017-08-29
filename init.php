@@ -29,6 +29,7 @@ function myExceptionHandler($e) {
 }
 set_exception_handler("myExceptionHandler");
 
+
 // Load Config & Classes
 $directories = array("config");
 foreach ($directories as $directory) {
@@ -51,7 +52,7 @@ if ($handle = @opendir($directory)) {
 	while (false !== ($file = readdir($handle))) {
 		$filename = $directory."/".$file;
 		if (is_file($filename))
-			require_once($filename);
+		    require_once($filename);
 	}
 	closedir($handle);
 }

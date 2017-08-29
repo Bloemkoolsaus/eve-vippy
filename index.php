@@ -1,5 +1,6 @@
 <?php
 require_once("init.php");
+
 \AppRoot::debug("finished init");
 
 /* CREST callback */
@@ -8,6 +9,7 @@ if (\Tools::GET("state") && \Tools::GET("code")) {
     \AppRoot::redirect("crest/login/login/".\Tools::GET("state")."/".\Tools::GET("code"));
 }
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
+
 
 // Koningsdag
 if (date("Y-m-d") == date("Y")."-04-27")
@@ -33,12 +35,14 @@ if (\Tools::GET("action") == "logout") {
 }
 
 // Een ajax verzoek hoeft geen javascript en css in te laden.
-if (!\Tools::REQUEST("ajax")) {
+if (!\Tools::REQUEST("ajax") || (\Tools::REQUEST("ajax") && \Tools::REQUEST("debug"))) {
     // Load Javascripts
     \AppRoot::addJavascriptDirectory("javascript/common");
     \AppRoot::addJavascriptDirectory("javascript", false);
-    \AppRoot::addJavascriptDirectory("javascript/".\SmartyTools::getTemplate());
+    \AppRoot::addJavascriptDirectory("javascript/" . \SmartyTools::getTemplate());
     \AppRoot::debug("Javascripts loaded");
+}
+if (!\Tools::REQUEST("ajax")) {
     // Load Stylesheets
     \AppRoot::addStylesheetDirectory("css/common");
     \AppRoot::addStylesheetDirectory("css", false);
@@ -86,9 +90,9 @@ if (!\User::getUSER() && \AppRoot::loginRequired()) {
 
 // Render templates
 $mainTPL = \SmartyTools::getSmarty();
+$mainTPL->assign("javascript", \AppRoot::$javascripts);
+$mainTPL->assign("stylesheet", \AppRoot::$stylesheets);
 if (!\Tools::REQUEST("ajax")) {
-	$mainTPL->assign("javascript", \AppRoot::$javascripts);
-	$mainTPL->assign("stylesheet", \AppRoot::$stylesheets);
 	$mainTPL->assign("pageTitle", \AppRoot::getTitle());
 	$mainTPL->assign("mainheader", \Modules::getHeader());
 }

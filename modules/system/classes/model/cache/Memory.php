@@ -10,8 +10,9 @@ class Memory extends \Cache
     {
         if (is_array($var))
             $var = implode("-", $var);
-        \AppRoot::debug("Get memory cache: ".$var);
 
+        $var = strtolower($var);
+        \AppRoot::debug("Get memory cache: ".$var);
         if (!$this->isAvailable())
             return parent::get($var);
 
@@ -33,6 +34,7 @@ class Memory extends \Cache
         if (is_array($var))
             $var = implode("-",$var);
 
+        $var = strtolower($var);
         \AppRoot::debug("Set memory cache: ".$var);
         $store = apcu_store($var, $val, $this->ttl);
         return $store;
@@ -46,6 +48,7 @@ class Memory extends \Cache
         if (is_array($var))
             $var = implode("-",$var);
 
+        $var = strtolower($var);
         return apcu_delete($var);
     }
 

@@ -20,12 +20,10 @@ class Signature
                 $countInStats = true;
         }
 
+        /** Signature opslaan */
         $signature->store();
 
-
-        /**
-         * Toevoegen in statistsieken
-         */
+        /**  Toevoegen in statistsieken */
         if ($countInStats)
         {
             $stat = new \stats\model\Signature();
@@ -37,12 +35,8 @@ class Signature
             $stat->store();
         }
 
-
-        /**
-         * Systeem toevoegen
-         */
-        if ($map && $map->getSetting("create-unmapped"))
-        {
+        /** Systeem toevoegen */
+        if ($map && $map->getSetting("create-unmapped")) {
             \AppRoot::doCliOutput("add unmapped system");
             if ($signature->isWormhole() && !$signature->deleted) {
                 $controller = new \map\controller\Wormhole();
@@ -50,10 +44,9 @@ class Signature
             }
         }
 
-        /**
-         * Check open signaturs
-         */
+        /** Check open signaturs */
         $this->checkOpenSignatures($signature->getSolarSystem(), $map);
+        \Cache::memory()->set(["map","signatures","lastupdate",$signature->authGroupID,$signature->solarSystemID], strtotime("now"));
     }
 
     /**

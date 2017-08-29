@@ -1,1 +1,1 @@
-{$maincontent}{if $debug}{$debug}{/if}
+{if isset($javascript)}{foreach from=$javascript item=file}<script type="text/javascript" language="javascript" src="/{$file}"></script>{/foreach}{/if}{$maincontent}{if $debug}{$debug}{/if}

@@ -160,7 +160,6 @@ namespace scanning\model
 				}
 			}
 
-
 			// Check open sigs.
 			$controller = new \scanning\controller\Signature();
 			$controller->checkOpenSignatures($this->getSolarSystem());

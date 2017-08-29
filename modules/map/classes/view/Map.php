@@ -84,16 +84,16 @@ class Map
 
         /** Get notifications */
         $notifications = null;
-        if (isset($_SESSION["vippy"]["notifications"]["cache"])) {
+        $cachedDate = \Session::getSession()->get(["vippy","notifications","cache"]);
+        if ($cachedDate) {
             $updateDate = \Cache::memory()->get(["notifications", "update"]);
-            $cachedDate = $_SESSION["vippy"]["notifications"]["cache"];
             if ($updateDate < $cachedDate)
                 $notifications = \Cache::memory()->get(["notifications", \User::getUSER()->id]);
         }
         if ($notifications === null) {
             $notifications = $controller->getNotices($map);
             \Cache::memory(0)->set(["notifications", \User::getUSER()->id], $notifications);
-            $_SESSION["vippy"]["notifications"]["cache"] = strtotime("now");
+            \Session::getSession()->set(["vippy","notifications","cache"], strtotime("now"));
         }
         foreach ($notifications as $note) {
             $wormhole = $map->getWormholeBySystem($note->solarSystemID);
@@ -139,15 +139,11 @@ class Map
         }
 
 
-        /**
-         * Get map data.
-         */
-
-        if ($checkCache)
-        {
+        /** Get map data. */
+        if ($checkCache) {
             // Kijk of er iets veranderd is in de chain sinds de laatste check.
-            if (isset($_SESSION["vippy"]["map"]["cache"]["map"][$map->id])) {
-                $cacheDate = $_SESSION["vippy"]["map"]["cache"]["map"][$map->id];
+            $cacheDate = \Session::getSession()->get(["vippy","map","cache","map",$map->id]);
+            if ($cacheDate) {
                 $mapUpdate = \Cache::memory()->get(["map", $map->id, "lastupdate"]);
                 if ($mapUpdate <= $cacheDate)
                     $isCached = true;
@@ -187,7 +183,7 @@ class Map
             ];
 
             // Cache datum opslaan.
-            $_SESSION["vippy"]["map"]["cache"]["map"][$map->id] = strtotime("now");
+            \Session::getSession()->set(["vippy","map","cache","map",$map->id], strtotime("now"));
         }
 
         // Geef de map terug

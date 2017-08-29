@@ -20,24 +20,19 @@ class Signatures
             }
 
             // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
-            if ($checkCache)
-            {
+            if ($checkCache) {
                 // Bestaat er wel een cache?
-                iF (isset($_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id]))
-                {
-                    $cacheDate = $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id];
-                    if ($result = \MySQL::getDB()->getRow("select max(updatedate) as lastdate
-                                                           from   map_signature
-                                                           where  authgroupid = ?
-                                                           and    solarsystemid = ?"
-                                                , [$map->authgroupID, $solarSystem->id]))
-                    {
-                        \AppRoot::debug("cache-date: " . date("Y-m-d H:i:s", strtotime($cacheDate)));
-                        \AppRoot::debug("lastupdate: " . date("Y-m-d H:i:s", strtotime($result["lastdate"])));
-
-                        if (strtotime($cacheDate) > strtotime($result["lastdate"])) {
-                            if (strtotime($cacheDate) > mktime(date("H"), date("i") - 1, date("s"), date("m"), date("d"), date("Y"))) {
-                                \AppRoot::debug("do cache");
+                $cacheDate = \Session::getSession()->get(["vippy","map","cache","signatures",$solarSystem->id]);
+                $lastUpdate = \Cache::memory()->get(["map","signatures","lastupdate",$map->authgroupID,$solarSystem->id]);
+                if ($lastUpdate && $cacheDate) {
+                    // Alleen cached teruggeven als de cache niet ouder is dan 2 minuten
+                    if ($cacheDate > strtotime("now")-120) {
+                        if ($lastUpdate < $cacheDate) {
+                            if (!\AppRoot::doDebug()) {
+                                echo "cached";
+                                exit;
+                            } else {
+                                \AppRoot::debug("-------------------------- cached ---------------------------");
                                 return "cached";
                             }
                         }
@@ -81,7 +76,7 @@ class Signatures
                 }
             }
 
-            $_SESSION["vippy"]["map"]["cache"]["signatures"][$solarSystem->id] = date("Y-m-d H:i:s");
+            \Session::getSession()->set(["vippy","map","cache","signatures",$solarSystem->id], strtotime("now"));
         }
 
         return json_encode($signatures);

@@ -41,10 +41,12 @@ class System
 
     function getTradehubs($arguments=[])
     {
+        \AppRoot::doCliOutput("getTradehubs()");
         $wormhole = new \map\model\Wormhole(array_shift($arguments));
         $system = $wormhole->getSolarsystem();
         $closeSysConsole = new \map\console\ClosestSystems();
         $closestSystems = $closeSysConsole->getClosestSystems($system);
+        \AppRoot::doCliOutput("/getTradehubs()");
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("systems", $closestSystems);

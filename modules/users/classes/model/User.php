@@ -171,9 +171,7 @@ class User
     public function setLoginStatus($loggedin=true, $setKeyCookie=false)
     {
         \AppRoot::debug("setLoginStatus(".$loggedin."): ".$this->id);
-        \User::unsetUser();
-        if ($loggedin)
-        {
+        if ($loggedin) {
             $this->resetCache();
             $this->fetchIsAuthorized();
             \User::setUSER($this);
@@ -186,7 +184,8 @@ class User
                 if (!$this->getMainCharacter()->isAuthorized())
                     $this->resetMainCharacter();
             }
-        }
+        } else
+            \User::unsetUser();
     }
 
     public function logout()
@@ -805,9 +804,11 @@ class User
         // Alleen als dit ook de user is die ingelogd is
         if (\User::getUSER() && \User::getUSER()->id == $this->id) {
             \AppRoot::debug("User->getSession($var)");
-            if (isset($_SESSION["vippy"]["user"][$var]["value"])) {
-                if ($_SESSION["vippy"]["user"][$var]["timestamp"] >= strtotime("now")-(60*15))
-                    return $_SESSION["vippy"]["user"][$var]["value"];
+            $value = \Session::getSession()->get(["user",$var,"value"]);
+            $stamp = \Session::getSession()->get(["user",$var,"timestamp"]);
+            if ($value && $stamp) {
+                if ($stamp >= strtotime("now")-(60*15))
+                    return $value;
             }
         }
         return null;
@@ -823,16 +824,14 @@ class User
         // Alleen als dit ook de user is die ingelogd is
         if (\User::getUSER() && \User::getUSER()->id == $this->id) {
             \AppRoot::debug("User->setSession($var, $value)");
-            $_SESSION["vippy"]["user"][$var] = [
-                "value" => $value,
-                "timestamp" => strtotime("now")
-            ];
+            \Session::getSession()->set(["user",$var,"value"], $value);
+            \Session::getSession()->set(["user",$var,"timestamp"], strtotime("now"));
         }
     }
 
     public function clearSession()
     {
-        $_SESSION["vippy"]["user"] = null;
+        \Session::getSession()->remove(["user"]);
     }
 
     /**
@@ -1526,13 +1525,12 @@ class User
         {
             // Cache stuff
             if ($this->loggedIn() && \Tools::REQUEST("ajax")) {
-                if (isset($_SESSION["vippy_visible_userids"])) {
-                    $this->visibleUserIDs = $_SESSION["vippy_visible_userids"];
+                $this->visibleUserIDs = \Session::getSession()->get(["visible","userids"]);
+                if ($this->visibleUserIDs)
                     return $this->visibleUserIDs;
-                }
             }
 
-            $this->visibleUserIDs = array();
+            $this->visibleUserIDs = [];
             if ($results = \MySQL::getDB()->getRows("SELECT	u.id
                                                     FROM	users u
                                                         INNER JOIN characters c ON c.userid = u.id
@@ -1550,7 +1548,7 @@ class User
 
             // Cache stuff
             if ($this->loggedIn())
-                $_SESSION["vippy_visible_userids"] = $this->visibleUserIDs;
+                \Session::getSession()->set(["visible","userids"], $this->visibleUserIDs);
         }
 
         return $this->visibleUserIDs;

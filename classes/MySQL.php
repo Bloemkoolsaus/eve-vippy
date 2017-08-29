@@ -144,13 +144,13 @@ class MySQL
         if ($result = $this->getConnection()->query($query))
         {
             $execTime = microtime(true)-$execTime;
+            $key = md5($query."-".$execTime);
             \AppRoot::debug("MySQL: Query ($this->user@$this->host.$this->dtbs) ".
                 (($result != null && isset($result->num_rows)) ? "[results: ".$result->num_rows."] " : "").
-                (($execTime>0.05)?"<span style='color:red;'>":"")."[execution-time: ".number_format($execTime,4)."]".(($execTime>0.05)?"</span>":"").
-                "\n[string]".$query."[/string]");
-
-            if ($execTime > 0.05)
-                \AppRoot::debug(\AppRoot::getStackTrace());
+                (($execTime>0.05)?"<span style='color:red;'>":"")."[execution-time: ".number_format($execTime,4)."]".(($execTime>0.05)?"</span> ":" ").
+                "[<span onclick='$(\"#".$key."\").show(); return false;' style='cursor:pointer;'><u>stacktrace</u></span>]".
+                "\n[string]".$query."[/string]".
+                "<div id='".$key."' style='display:none;'>".\AppRoot::getStackTrace()."</div>");
 
             return $result;
         }
@@ -204,7 +204,7 @@ class MySQL
     /**
      * Create select query
      * @param string $columns
-     * @return Query
+     * @return string
      */
     function select($columns = "*")
     {

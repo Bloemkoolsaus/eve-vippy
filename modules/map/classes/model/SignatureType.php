@@ -23,4 +23,20 @@ class SignatureType extends \Model
 
         return true;
     }
+
+    /**
+     * Find by ID
+     * @param $id
+     * @param null $class
+     * @return \map\model\SignatureType|null
+     */
+    public static function findById($id, $class = null)
+    {
+        $sigType = \Cache::memory()->get(["signature-type", $id]);
+        if (!$sigType) {
+            $sigType = parent::findById($id, $class);
+            \Cache::memory(0)->set(["signature-type", $id], $sigType);
+        }
+        return $sigType;
+    }
 }

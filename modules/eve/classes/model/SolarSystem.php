@@ -910,8 +910,13 @@ class SolarSystem
      */
     public static function getSolarsystemByName($name)
     {
-        if ($result = \MySQL::getDB()->getRow("SELECT * FROM ".\eve\Module::eveDB().".mapsolarsystems WHERE solarsystemname = ?", array($name)))
-        {
+        $result = \Cache::memory()->get(["solarsystem", $name]);
+        if (!$result) {
+            $result = \MySQL::getDB()->getRow("SELECT * FROM ".\eve\Module::eveDB().".mapsolarsystems WHERE solarsystemname = ?", [$name]);
+            \Cache::memory(0)->set(["solarsystem", $name], $result);
+        }
+
+        if ($result) {
             $system = new \eve\model\SolarSystem();
             $system->load($result);
             return $system;
