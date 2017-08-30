@@ -8,6 +8,7 @@ class Location
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
+        $limit = (\Config::getCONFIG()->get("crest_location_limit"))?:10;
 
         // Als we tegen de timeout aanlopen, afbreken
         while (\AppRoot::getExecTime() < 55)
@@ -17,29 +18,31 @@ class Location
             $i = 0;
             if ($results = \MySQL::getDB()->getRows("select 1 as online, c.*, l.lastdate as lastupdate
                                                     from    characters c
+                                                        inner join users u on u.id = c.userid
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ?
+                                                    and     u.isvalid > 0
                                                 union
                                                     select  0 as online, c.*, cl.lastupdate
                                                     from    characters c
+                                                        inner join users u on u.id = c.userid
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         left join map_character_locations l on l.characterid = c.id
                                                         left join crest_character_location cl on cl.characterid = c.id
                                                     where   l.characterid is null
+                                                    and     u.isvalid > 0
                                                     and    (cl.lastupdate is null or cl.lastupdate < ?)
                                                 order by online desc, lastupdate asc, updatedate desc
-                                                limit 10"
+                                                limit ".$limit
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-10,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
                 {
                     \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
-
                     // Update datum bijwerken om dubbele execution te voorkomen
                     \MySQL::getDB()->update("map_character_locations", ["lastdate" => date("Y-m-d H:i:s")], ["characterid" => $result["id"]]);
-
                     // Asynchroon uitvoeren
                     \AppRoot::runCron(["crest", "location", "character", $result["id"]]);
                     $i++;
@@ -77,10 +80,8 @@ class Location
             $crest->setToken($character->getToken());
             $crest->get("characters/".$character->id."/location/");
 
-            if ($crest->success())
-            {
-                if (isset($crest->getResult()->solarSystem))
-                {
+            if ($crest->success()) {
+                if (isset($crest->getResult()->solarSystem)) {
                     \User::setUSER($character->getUser());
                     $solarSystem = \map\model\SolarSystem::findById((int)$crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
@@ -99,9 +100,7 @@ class Location
                     $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
                     $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
                     \User::unsetUser();
-                }
-                else
-                {
+                } else {
                     // Offline..?
                     \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
                     $errors[] = "No result from CREST. Is ".$character->name." logged in?";

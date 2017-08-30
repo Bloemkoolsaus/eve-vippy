@@ -18,9 +18,7 @@ class Stats
         \AppRoot::doCliOutput("Calculate statistics ".$sdate." - ".$edate);
 
 
-        /**
-         * Online / Active users
-         */
+        /** Online / Active users */
         if ($results = \MySQL::getDB()->getRows("select * from users where deleted = 0 and isvalid = 1"))
         {
             foreach ($results as $result)

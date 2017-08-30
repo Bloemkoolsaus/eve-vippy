@@ -637,13 +637,12 @@ class User
      */
     public function getCharacters()
     {
-        if ($this->id == 0)
-            return array();
-
-        if ($this->characters == null) {
-            $controller = new \eve\controller\Character();
-            $this->characters = $controller->getUserCharacters($this->id);
+        if ($this->characters === null) {
+            $this->characters = [];
+            if ($this->id)
+                $this->characters = \eve\model\Character::findAll(["userid" => $this->id]);
         }
+
         return $this->characters;
     }
 
@@ -987,8 +986,7 @@ class User
             }
         }
 
-        if (count($characters) == 0)
-        {
+        if (count($characters) == 0) {
             \AppRoot::debug("No authorized characters found. Check again!");
             $characters = array();
             foreach ($this->getCharacters() as $character) {
@@ -1707,13 +1705,23 @@ class User
     }
 
     /**
-     * Get user by key
+     * Find
+     * @param $conditions
      * @return \users\model\User|null
      */
-    public static function getUserByKey($key)
+    public static function find($conditions)
     {
-        if ($result = \MySQL::getDB()->getRow("SELECT * FROM users WHERE loginkey = ? AND deleted = 0", array($key)))
-        {
+        $query = [];
+        $param = [];
+        foreach ($conditions as $var => $val) {
+            $query[] = $var." = ?";
+            $param[] = $val;
+        }
+
+        if (count($query) == 0)
+            return null;
+
+        if ($result = \MySQL::getDB()->getRow("select * from users where ".implode(" and ", $query), $param)) {
             $user = new \users\model\User();
             $user->load($result);
             return $user;
@@ -1722,16 +1730,24 @@ class User
         return null;
     }
 
-    public static function getUserByToon($characterid)
+    /**
+     * Find by id
+     * @param $id
+     * @return \users\model\User|null
+     */
+    public static function findByID($id)
     {
-        if ($result = \MySQL::getDB()->getRow("SELECT userid FROM characters WHERE id = ?", array($characterid)))
-        {
-            \AppRoot::debug("An userid is found for this character");
-            $user = new \users\model\User($result["userid"]);
-            return $user;
-        }
-        return null;
+        return static::find(["id" => $id]);
+    }
 
+    /**
+     * Get user by key
+     * @param $key
+     * @return \users\model\User|null
+     */
+    public static function getUserByKey($key)
+    {
+        return static::find(["loginkey" => $key, "deleted" => 0]);
     }
 
     /**
@@ -1741,21 +1757,36 @@ class User
      */
     public static function getUserByUsername($username)
     {
-        if ($result = \MySQL::getDB()->getRow("SELECT * FROM users WHERE username = ?", array($username)))
+        return static::find(["username" => $username]);
+    }
+
+    /**
+     * Find user by toon
+     * @param $characterid
+     * @return \users\model\User|null
+     */
+    public static function getUserByToon($characterid)
+    {
+        if ($result = \MySQL::getDB()->getRow("SELECT userid FROM characters WHERE id = ?", [$characterid]))
         {
-            $user = new \users\model\User();
-            $user->load($result);
+            \AppRoot::debug("An userid is found for this character");
+            $user = new \users\model\User($result["userid"]);
             return $user;
         }
         return null;
     }
 
+    /**
+     * Log in by key
+     * @param $key
+     * @return bool
+     */
     public static function loginByKey($key)
     {
         $loggedIn = false;
 
-        $user = \users\model\User::getUserByKey($key);
-        if ($user !== null) {
+        $user = static::getUserByKey($key);
+        if ($user) {
             $user->setLoginStatus();
             $loggedIn = true;
         }

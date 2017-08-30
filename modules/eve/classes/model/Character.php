@@ -173,7 +173,7 @@ class Character
     function getUser()
     {
         if ($this->user === null && $this->userID > 0)
-            $this->user = new \users\model\User($this->userID);
+            $this->user = \users\model\User::findByID($this->userID);
 
         return $this->user;
     }
