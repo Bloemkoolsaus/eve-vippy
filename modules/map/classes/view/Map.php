@@ -95,18 +95,20 @@ class Map
             \Cache::memory(0)->set(["notifications", \User::getUSER()->id], $notifications);
             \Session::getSession()->set(["vippy","notifications","cache"], strtotime("now"));
         }
-        foreach ($notifications as $note) {
-            $wormhole = $map->getWormholeBySystem($note->solarSystemID);
-            $title = $note->getSystem()->name;
-            if ($wormhole)
-                $title = $wormhole->name." - ".$title;
-            $data["notifications"][] = [
-                "id" => $note->id,
-                "wormhole" => ($wormhole)?$wormhole->id:0,
-                "type" => $note->getTypeName(),
-                "title" => "[".$title."] - ".$note->title,
-                "content" => $note->body
-            ];
+        if ($notifications) {
+            foreach ($notifications as $note) {
+                $wormhole = $map->getWormholeBySystem($note->solarSystemID);
+                $title = $note->getSystem()->name;
+                if ($wormhole)
+                    $title = $wormhole->name." - ".$title;
+                $data["notifications"][] = [
+                    "id" => $note->id,
+                    "wormhole" => ($wormhole)?$wormhole->id:0,
+                    "type" => $note->getTypeName(),
+                    "title" => "[".$title."] - ".$note->title,
+                    "content" => $note->body
+                ];
+            }
         }
 
 
