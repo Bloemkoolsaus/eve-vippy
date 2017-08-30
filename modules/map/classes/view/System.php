@@ -6,7 +6,9 @@ class System
     function getDetails($arguments=[])
     {
         $wormhole = new \map\model\Wormhole(array_shift($arguments));
+        \AppRoot::debug($wormhole);
         $system = $wormhole->getSolarsystem();
+        \AppRoot::debug($system);
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
