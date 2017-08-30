@@ -215,7 +215,7 @@ namespace scanning\model
 							"eol"			=> ($this->eol)?1:0,
 							"lifetimeupdateby"	=> $this->lifetimeUpdateBy,
 							"lifetimeupdatedate"=> $this->lifetimeUpdateDate,
-							"mass"			=> $this->mass,
+							"mass"			=> ($this->mass)?$this->mass:0,
 							"massupdateby"	=> $this->massUpdateBy,
 							"massupdatedate"=> $this->massUpdateDate,
 							"normalgates"	=> ($this->normalgates)?1:0,
