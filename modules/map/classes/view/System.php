@@ -12,7 +12,7 @@ class System
         $tpl->assign("system", $system);
         $tpl->assign("wormhole", $wormhole);
 
-        if ($system->isWSpace())
+        if ($system && $system->isWSpace())
             $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
 
         return $tpl->fetch("map/system/solarsystem");

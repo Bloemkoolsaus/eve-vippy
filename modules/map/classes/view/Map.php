@@ -102,7 +102,7 @@ class Map
                 $title = $wormhole->name." - ".$title;
             $data["notifications"][] = [
                 "id" => $note->id,
-                "wormhole" => $wormhole->id,
+                "wormhole" => ($wormhole)?$wormhole->id:0,
                 "type" => $note->getTypeName(),
                 "title" => "[".$title."] - ".$note->title,
                 "content" => $note->body
