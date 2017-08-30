@@ -77,8 +77,6 @@ class Map
             if ($arg == "nocache")
                 $checkCache = false;
         }
-        $checkCache = false;
-
 
         $controller = new \map\controller\Map();
         $data = ["map" => "cached", "notifications" => []];
@@ -146,7 +144,7 @@ class Map
         if ($checkCache) {
             // Kijk of er iets veranderd is in de chain sinds de laatste check.
             $cacheDate = \Session::getSession()->get(["vippy","map","cache","map",$map->id]);
-            if ($cacheDate) {
+            if ($cacheDate && $cacheDate > strtotime(30)) {
                 $mapUpdate = \Cache::memory()->get(["map", $map->id, "lastupdate"]);
                 if ($mapUpdate <= $cacheDate)
                     $isCached = true;
