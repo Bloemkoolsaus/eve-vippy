@@ -4,7 +4,7 @@ namespace stats\model;
 class User extends \Model
 {
     protected $_table = "stats_users";
-    protected $_keyfield = array("userid", "authgroupid", "year", "month");
+    protected $_keyfield = ["userID", "authgroupID", "year", "month"];
 
     public $userID;
     public $corporationID;
@@ -37,7 +37,7 @@ class User extends \Model
     function getUser()
     {
         if ($this->_user === null)
-            $this->_user = new \users\model\User($this->userID);
+            $this->_user = \users\model\User::findByID($this->userID);
 
         return $this->_user;
     }
