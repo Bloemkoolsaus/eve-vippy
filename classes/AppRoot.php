@@ -540,7 +540,7 @@ class AppRoot
 
 	public static function doDebug()
 	{
-	    if (self::getClientIP() == "212.115.197.251")
+	    if (!\Tools::REQUEST("ajax") && self::getClientIP() == "212.115.197.251")
 	        return true;
 
 		if (defined("APP_DEBUG")) {
@@ -746,7 +746,7 @@ class AppRoot
 
     public static function getClientIP()
     {
-        $ip = $_SERVER["REMOTE_ADDR"];
+        $ip = (isset($_SERVER["REMOTE_ADDR"]))?$_SERVER["REMOTE_ADDR"]:null;
         if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
             $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
         if (isset($_SERVER["HTTP_X_REAL_IP"]))
