@@ -4,7 +4,7 @@ namespace map\model;
 class KnownWormhole extends \Model
 {
     protected $_table = "map_knownwormhole";
-    protected $_keyfield = ["solarsystemid","authgroupid"];
+    protected $_keyfield = ["solarSystemID","authGroupID"];
 
     public $solarSystemID;
     public $authGroupID;
