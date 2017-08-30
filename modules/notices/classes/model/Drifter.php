@@ -19,4 +19,10 @@ class Drifter extends \Model
         parent::store();
         \Cache::memory()->remove(["map", $this->authGroupID, "drifters"]);
     }
+
+    function delete()
+    {
+        parent::delete();
+        \Cache::memory()->remove(["map", $this->authGroupID, "drifters"]);
+    }
 }

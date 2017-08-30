@@ -74,7 +74,6 @@ class Notice
                 return "Deleted";
             } else {
                 $drifter->store();
-                print_r($drifter);
                 return "Stored";
             }
         }
