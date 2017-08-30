@@ -314,7 +314,7 @@ function storeKnownSystem()
         data: {
             id: $("input[name=known-system-id]").val(),
             name: $("input[name=known-system-title]").val(),
-            status: $("input[name=known-system-status]").val(),
+            status: $("select[name=known-system-status]").val(),
             ajax: 1
         },
         complete: function() {
