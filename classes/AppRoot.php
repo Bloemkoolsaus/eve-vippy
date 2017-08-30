@@ -538,18 +538,26 @@ class AppRoot
 		return self::$debug;
 	}
 
-	public static function doDebug()
-	{
-		if (defined("APP_DEBUG")) {
-			if (APP_DEBUG) {
-                if (\Tools::REQUEST("debug"))
-                    return true;
-			    if (!\Tools::REQUEST("ajax"))
-                    return true;
+    private static $doDebug = null;
+   	public static function doDebug()
+   	{
+   	    if (self::$doDebug === null) {
+   	        self::$doDebug = false;
+   	        if (\Config::getCONFIG()->get("debug_ip")) {
+   	            if (!\Tools::REQUEST("ajax") && self::getClientIP() == \Config::getCONFIG()->get("debug_ip"))
+                    self::$doDebug = true;
+   	        }
+   	        if (defined("APP_DEBUG")) {
+                if (APP_DEBUG) {
+                    if (\Tools::REQUEST("debug"))
+                        self::$doDebug = true;
+                    if (!\Tools::REQUEST("ajax"))
+                        self::$doDebug = true;
+                }
             }
-		}
-		return false;
-	}
+       }
+   		return self::$doDebug;
+   	}
 
 	public static function printDebug()
 	{
