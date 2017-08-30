@@ -42,7 +42,7 @@ namespace scanning\model
 			if (!$result) {
 				if (!$result = \Cache::memory()->get(["wormhole", $this->id])) {
 					$result = \MySQL::getDB()->getRow("SELECT * FROM mapwormholes WHERE id = ?", array($this->id));
-                    \Cache::memory(3600)->set(["wormhole",$this->id], $result);
+                    //\Cache::memory(3600)->set(["wormhole",$this->id], $result);
 				}
 			}
 
@@ -121,7 +121,7 @@ namespace scanning\model
                     ]);
                 }
 			} else
-				$result = \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
+			    \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
 
 
             // Check en update connections
