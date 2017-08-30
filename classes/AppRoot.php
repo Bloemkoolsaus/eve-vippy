@@ -540,11 +540,6 @@ class AppRoot
 
 	public static function doDebug()
 	{
-	    if (\Config::getCONFIG()->get("debug_ip")) {
-            if (!\Tools::REQUEST("ajax") && self::getClientIP() == \Config::getCONFIG()->get("debug_ip"))
-       	        return true;
-        }
-
 		if (defined("APP_DEBUG")) {
 			if (APP_DEBUG) {
                 if (\Tools::REQUEST("debug"))
