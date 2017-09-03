@@ -30,8 +30,8 @@ class Map
         \AppRoot::doCliOutput("Purge really old signatures");
         \MySQL::getDB()->doQuery("delete from map_signature where updatedate < ? and deleted > 0", [$cleanupDate]);
         \MySQL::getDB()->doQuery("delete from map_anomaly where solarsystemid not in (select solarsystemid from mapwormholes where solarsystemid is not null and solarsystemid != 0)");
-        \MySQL::getDB()->doQuery("delete from map_signature where authgroupid in (select id from user_auth_groups where deleted > 0)");
-        \MySQL::getDB()->doQuery("delete from map_anomaly where authgroupid in (select id from user_auth_groups where deleted > 0)");
+        //\MySQL::getDB()->doQuery("delete from map_signature where authgroupid in (select id from user_auth_groups where deleted > 0)");
+        //\MySQL::getDB()->doQuery("delete from map_anomaly where authgroupid in (select id from user_auth_groups where deleted > 0)");
         return true;
     }
 

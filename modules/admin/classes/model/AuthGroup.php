@@ -343,11 +343,12 @@ class AuthGroup
     {
         if (count($this->getAllowedUsers()) == 0)
             return false;
+        /*
         if (count($this->getActiveUsers(date("Y-m-d", mktime(0, 0, 0, date("m")-1, 1, date("Y"))))) == 0)
             return false;
         if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)   // 2 maanden
             return false;
-
+        */
         return true;
     }
 
