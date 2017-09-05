@@ -37,7 +37,7 @@ function reloadSignatureMap(noCache)
 		loadSignatureMap();
 		loadSignatureList(noCache);
 	}
-    setTimeout(reloadSignatureMap, 3000);
+    setTimeout(reloadSignatureMap, 1000);
 }
 
 function disableMapRefresh()
@@ -115,8 +115,10 @@ function loadSignatureMap(action, params, force)
             if (mapData != "cached") {
                 destroyPopup();
                 generateMap(mapData);
-            } else
+            } else {
+                console.log("map-cached");
                 resizeMap();
+            }
 
             allowMapLoadingStart = true;
             var currentTime = new Date();

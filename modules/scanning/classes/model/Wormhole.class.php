@@ -135,10 +135,10 @@ namespace scanning\model
             $this->load(); // Re-load (setMapUpdate kan coordinaten gewijzigd hebben)!
 		}
 
-		function delete()
+		function delete($updateCacheTimer=true)
 		{
             if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
-			    $this->getChain()->removeWormhole($this);
+			    $this->getChain()->removeWormhole($this, $updateCacheTimer);
 		}
 
 		function move($newX, $newY, $modifier=null)
@@ -270,15 +270,12 @@ namespace scanning\model
 		function isConnectedTo($systemID)
 		{
 			\AppRoot::debug("is connected to: ".$systemID);
-			foreach ($this->getConnections() as $connection)
-			{
+			foreach ($this->getConnections() as $connection) {
 				if ($connection->getFromWormhole()->solarSystemID == $this->solarSystemID && $connection->getToSystem()->id == $systemID)
 					return true;
-
 				if ($connection->getToWormhole()->solarSystemID == $this->solarSystemID && $connection->getFromSystem()->id == $systemID)
 					return true;
 			}
-
 			return false;
 		}
 

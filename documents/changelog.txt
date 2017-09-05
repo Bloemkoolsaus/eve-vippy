@@ -1,3 +1,8 @@
+<b><u>MAP</u></b>
+ - Improved auto-naming feature for 'naming by letters' scheme. When jumping an unmapped system, Vippy will now correctly name the new system when there are multiple unmapped systems.
+
+
+
 <h3>August 30, 2017</h3>
 <b><u>MAP</u></b>
  - Add special drifter icon on the map. Add/Edit drifters through the context menu on C5 or C6 wormholes.

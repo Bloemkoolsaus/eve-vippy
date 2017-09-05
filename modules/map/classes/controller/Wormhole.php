@@ -104,24 +104,19 @@ class Wormhole
                 $wormholeName = $this->getNewName($map, $addingHole, true);
 
                 // Check of die naam gereserveerd is
-                foreach ($map->getWormholes() as $whole)
-                {
-                    if ($whole->isReservation()
-                        && (strtolower($whole->name) == strtolower($wormholeName))
-                        && ($whole->id != $addingHole->id))
-                    {
+                foreach ($map->getWormholes() as $whole) {
+                    if ($whole->isReservation() && (strtolower($whole->name) == strtolower($wormholeName)) && ($whole->id != $addingHole->id)) {
                         $reservation = $whole;
                         $reservation->name = $wormholeName;
                         $reservation->store();
                     }
                 }
 
-                if ($reservation !== null)
-                {
+                if ($reservation) {
                     \AppRoot::debug("Reservation: <pre>" . print_r($reservation, true) . "</pre>");
                     \AppRoot::debug("AddingHole: <pre>" . print_r($addingHole, true) . "</pre>");
 
-                    $addingHole->delete();
+                    $addingHole->delete(false);
                     $reservation->solarSystemID = $addingHole->solarSystemID;
                     $reservation->store();
 

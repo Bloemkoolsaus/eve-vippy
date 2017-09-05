@@ -18,21 +18,17 @@ class Letters extends \map\model\NamingScheme
                 $statics[] = strtolower($static["tag"]);
             }
 
-            if (in_array($classname, $statics))
-            {
+            if (in_array($classname, $statics)) {
                 // Ik zou de static kunnen zijn.
                 $title = $classname."s";
-
                 // Bestaat deze naam al?
                 $exists = false;
-                foreach ($wormhole->getChain()->getWormholes() as $hole)
-                {
+                foreach ($wormhole->getChain()->getWormholes() as $hole) {
                     if ($hole->isReservation() && $ignoreReservations)
                         continue;
                     if (strtolower($hole->name) == $title)
                         $exists = true;
                 }
-
                 if (!$exists)
                     return $title;
             }
@@ -56,10 +52,19 @@ class Letters extends \map\model\NamingScheme
                 ];
             }
 
+            // Check of de reservering wel aan het origin wormhole zit
+            \AppRoot::debug("Find in unmapped systems ($title)");
+            foreach ($wormhole->getConnectedSystems() as $origins) {
+                foreach ($origins->getConnectedSystems() as $wh) {
+                    \AppRoot::debug($wh->name." ".(($wh->isReservation())?"res":""));
+                    if ($wh->isReservation() && strtolower($wh->name) == $title)
+                        return $title;
+                }
+            }
+
             $title = $classname.implode("",$titleLetters);
-            foreach ($wormhole->getChain()->getWormholes() as $hole) {
-                if ($hole->isReservation() && $ignoreReservations)
-                    continue;
+            foreach ($wormhole->getChain()->getWormholes() as $hole)
+            {
                 if (strtolower($hole->name) == $title) {
                     $exists = true;
                     break;

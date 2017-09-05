@@ -47,7 +47,6 @@ function generateMap(data)
     generateConnections(data.connections);
     generateSystems(data.wormholes);
 
-    console.log("Check fleets");
     if (data.fleets != undefined) {
         if (data.fleets.length > 0)
             $("button#addFleet>img").attr("src", "/images/default/ui/fleet.png");
@@ -58,7 +57,6 @@ function generateMap(data)
 
     if (stage != null)
     {
-        console.log("clear stage");
         layer.removeChildren();
         stage.remove(layer);
         stage.removeChildren();
