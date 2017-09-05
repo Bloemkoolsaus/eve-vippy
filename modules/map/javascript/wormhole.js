@@ -177,7 +177,8 @@ Wormhole.prototype.render = function(canvas)
         x: this.map.position.x-0,
         y: this.map.position.y-0,
         name: this.id,
-        draggable: true
+        draggable: true,
+        dragDistance: 5
     });
 
     wormhole.add(new Kinetic.Rect({

@@ -1,6 +1,6 @@
 <b><u>MAP</u></b>
  - Improved auto-naming feature for 'naming by letters' scheme. When jumping an unmapped system, Vippy will now correctly name the new system when there are multiple unmapped systems.
-
+ - Fix a bug in Chrome where click and right click did not work.
 
 
 <h3>August 30, 2017</h3>
