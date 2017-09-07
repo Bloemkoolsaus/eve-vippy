@@ -85,21 +85,23 @@ namespace scanning\model
             $this->x = round($this->x/$positionModifier)*$positionModifier;
             $this->y = round($this->y/$positionModifier)*$positionModifier;
 
-			$data = array(	"chainid"		=> $this->chainID,
-							"signatureid"	=> $this->signatureID,
-							"solarsystemid" => $this->solarSystemID,
-                            "permanent"		=> ($this->permanent)?1:0,
-                            "rally" 		=> ($this->rally)?1:0,
-							"name"			=> $this->name,
-							"x"				=> $this->x,
-							"y"				=> $this->y,
-							"status"		=> $this->status,
-							"mappedby_userid"		=> $this->mappedByUserID,
-							"mappedby_characterid"	=> $this->mappedByCharacterID,
-							"fullyscanned"	=> $this->fullScanDate,
-							"fullyscannedby"=> $this->fullScanDateBy,
-							"adddate"		=> date("Y-m-d H:i:s", strtotime($this->addDate)),
-							"updatedate"	=> date("Y-m-d H:i:s"));
+			$data = [
+			    "chainid"		=> $this->chainID,
+                "signatureid"	=> $this->signatureID,
+                "solarsystemid" => $this->solarSystemID,
+                "permanent"		=> ($this->permanent)?1:0,
+                "rally" 		=> ($this->rally)?1:0,
+                "name"			=> $this->name,
+                "x"				=> $this->x,
+                "y"				=> $this->y,
+                "status"		=> $this->status,
+                "mappedby_userid"		=> $this->mappedByUserID,
+                "mappedby_characterid"	=> $this->mappedByCharacterID,
+                "fullyscanned"	=> $this->fullScanDate,
+                "fullyscannedby"=> $this->fullScanDateBy,
+                "adddate"		=> date("Y-m-d H:i:s", strtotime($this->addDate)),
+                "updatedate"	=> date("Y-m-d H:i:s")
+            ];
 			if ($this->id != 0)
 				$data["id"] = $this->id;
 
@@ -121,7 +123,7 @@ namespace scanning\model
                     ]);
                 }
 			} else
-			    \MySQL::getDB()->update("mapwormholes", $data, array("id" => $this->id));
+			    \MySQL::getDB()->update("mapwormholes", $data, ["id" => $this->id]);
 
 
             // Check en update connections
@@ -131,7 +133,7 @@ namespace scanning\model
 
             // Remove cache so that it resets
             \Cache::memory()->remove(["wormhole", $this->id]);
-            $this->getChain()->setMapUpdateDate();
+            $this->getChain()->setMapUpdateDate(true);
             $this->load(); // Re-load (setMapUpdate kan coordinaten gewijzigd hebben)!
 		}
 

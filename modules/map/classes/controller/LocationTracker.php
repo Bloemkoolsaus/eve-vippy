@@ -49,18 +49,20 @@ class LocationTracker
                 // Map update
                 \AppRoot::debug("LocationID: ".$locationID);
                 \AppRoot::debug("PreviousID: ".$previousLocationID);
-                \MySQL::getDB()->update("mapwormholechains", ["lastmapupdatedate" => date("Y-m-d H:i:s")], ["authgroupid" => $authGroupID]);
 
-                // Pods tellen niet mee.
-                if (!$shipTypeID || !in_array($shipTypeID, [0, 670, 33328]))
+                // Check alle maps van deze authgroup
+                foreach (\map\model\Map::findAll(["authgroupid" => $authGroupID]) as $map)
                 {
+                    $map->setMapUpdateDate(false);
+
                     /** @var \map\model\Wormhole[] $addedWormholes */
                     $addedWormholes = [];
 
-                    // Check alle maps van deze authgroup
-                    foreach (\map\model\Map::findAll(["authgroupid" => $authGroupID]) as $map)
+                    // Pods tellen niet mee.
+                    if (!$shipTypeID || !in_array($shipTypeID, [0, 670, 33328]))
                     {
                         \AppRoot::debug("check map: ".$map->name);
+
                         $addNewWormhole = true;
                         $wormholeFrom = null;
                         $wormholeTo = null;
@@ -136,12 +138,11 @@ class LocationTracker
                         }
                     }
 
-                    foreach ($addedWormholes as $wormhole)
-                    {
+                    if (count($addedWormholes) > 0) {
                         // Toevoegen aan stats.
+                        $wormhole = $addedWormholes[0];
                         $char = \eve\model\Character::findByID($characterID);
-                        if ($char->getUser() || \User::getUSER())
-                        {
+                        if ($char->getUser() || \User::getUSER()) {
                             $stat = new \stats\model\Whmap();
                             $stat->userID = ($char->getUser())?$char->getUser()->id:\User::getUSER()->id;
                             $stat->corpID = $char->corporationID;
@@ -151,8 +152,6 @@ class LocationTracker
                             $stat->mapdate = date("Y-m-d H:i:s");
                             $stat->store();
                         }
-                        // Hoeft maar 1x
-                        break;
                     }
                 }
             }

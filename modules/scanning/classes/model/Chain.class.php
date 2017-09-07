@@ -641,40 +641,38 @@ class Chain
         }
 
         if ($updateCacheTimer)
-            $this->setMapUpdateDate();
+            $this->setMapUpdateDate(true);
     }
 
-    function setMapUpdateDate($datetime=false)
+    function setMapUpdateDate($checkPosition=false)
     {
-        \AppRoot::debug("setMapUpdateDate($datetime)", true);
+        if ($checkPosition) {
+            /** Check minimale positie. */
+            if ($result = \MySQL::getDB()->getRow("select min(x) as x, min(y) as y from mapwormholes where chainid = ?", [$this->id]))
+            {
+                \AppRoot::debug($result);
+                $minX = \Config::getCONFIG()->get("map_wormhole_offset_x");
+                $minY = \Config::getCONFIG()->get("map_wormhole_offset_y");
 
-        /**
-         * Check minimale positie.
-         */
-        if ($result = \MySQL::getDB()->getRow("select min(x) as x, min(y) as y from mapwormholes where chainid = ?", [$this->id]))
-        {
-            \AppRoot::debug($result);
-            $minX = \Config::getCONFIG()->get("map_wormhole_offset_x");
-            $minY = \Config::getCONFIG()->get("map_wormhole_offset_y");
+                /** Check voor negatieve posities (die vallen van de map) **/
+                if ($result["x"] < $minX) {
+                    $x = $result["x"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_x"));
+                    \MySQL::getDB()->doQuery("update mapwormholes set x = x + $x where chainid = ?", [$this->id]);
+                }
+                if ($result["y"] < $minY) {
+                    $y = $result["y"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_y"));
+                    \MySQL::getDB()->doQuery("update mapwormholes set y = y + $y where chainid = ?", [$this->id]);
+                }
 
-            /** Check voor negatieve posities (die vallen van de map) **/
-            if ($result["x"] < $minX) {
-                $x = $result["x"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_x"));
-                \MySQL::getDB()->doQuery("update mapwormholes set x = x + $x where chainid = ?", [$this->id]);
-            }
-            if ($result["y"] < $minY) {
-                $y = $result["y"]*-1+((int)\Config::getCONFIG()->get("map_wormhole_offset_y"));
-                \MySQL::getDB()->doQuery("update mapwormholes set y = y + $y where chainid = ?", [$this->id]);
-            }
-
-            /** Te ver van de kant? **/
-            if ($result["x"] > $minX) {
-                $x = $result["x"]-$minX;
-                \MySQL::getDB()->doQuery("update mapwormholes set x = x - $x where chainid = ?", [$this->id]);
-            }
-            if ($result["y"] > $minY) {
-                $y = $result["y"]-$minY;
-                \MySQL::getDB()->doQuery("update mapwormholes set y = y - $y where chainid = ?", [$this->id]);
+                /** Te ver van de kant? **/
+                if ($result["x"] > $minX) {
+                    $x = $result["x"]-$minX;
+                    \MySQL::getDB()->doQuery("update mapwormholes set x = x - $x where chainid = ?", [$this->id]);
+                }
+                if ($result["y"] > $minY) {
+                    $y = $result["y"]-$minY;
+                    \MySQL::getDB()->doQuery("update mapwormholes set y = y - $y where chainid = ?", [$this->id]);
+                }
             }
         }
 
