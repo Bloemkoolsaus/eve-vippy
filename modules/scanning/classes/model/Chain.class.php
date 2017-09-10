@@ -676,6 +676,7 @@ class Chain
             }
         }
 
+        \Cache::file()->set("map/".$this->id."/lastupdate", strtotime("now"));
         \Cache::memory(0)->set(["map", $this->id, "lastupdate"], strtotime("now"));
     }
 

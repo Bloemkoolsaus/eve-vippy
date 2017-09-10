@@ -145,7 +145,8 @@ class Map
             // Kijk of er iets veranderd is in de chain sinds de laatste check.
             $cacheDate = \Session::getSession()->get(["vippy","map","cache","map",$map->id]);
             if ($cacheDate && $cacheDate > strtotime("now")-15) {
-                $mapUpdate = \Cache::memory()->get(["map", $map->id, "lastupdate"]);
+                //$mapUpdate = \Cache::memory()->get(["map", $map->id, "lastupdate"]);
+                $mapUpdate = \Cache::file()->get("map/".$map->id."/lastupdate");
                 if ($mapUpdate <= $cacheDate)
                     $isCached = true;
             }
