@@ -8,34 +8,31 @@ class Location
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
-        $limit = (\Config::getCONFIG()->get("crest_location_limit"))?:10;
+        $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:10);
+        $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:10);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (\AppRoot::getExecTime() < 55)
-        {
+        while (\AppRoot::getExecTime() < 55) {
             \AppRoot::doCliOutput("Find characters");
 
             $i = 0;
-            if ($results = \MySQL::getDB()->getRows("select 1 as online, c.*, l.lastdate as lastupdate
+            if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.lastdate as lastupdate, 1 as online
                                                     from    characters c
-                                                        inner join users u on u.id = c.userid
+                                                        inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
-                                                    where   l.lastdate < ?
-                                                    and     u.isvalid > 0
+                                                    where   l.lastdate < ? and l.lastdate > ?
                                                 union
-                                                    select  0 as online, c.*, cl.lastupdate
+                                                    select  c.id, c.name, null as lastupdate, 0 as online
                                                     from    characters c
-                                                        inner join users u on u.id = c.userid
+                                                        inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         left join map_character_locations l on l.characterid = c.id
-                                                        left join crest_character_location cl on cl.characterid = c.id
-                                                    where   l.characterid is null
-                                                    and     u.isvalid > 0
-                                                    and    (cl.lastupdate is null or cl.lastupdate < ?)
-                                                order by online desc, lastupdate asc, updatedate desc
-                                                limit ".$limit
-                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-10,date("m"),date("d"),date("Y"))),
+                                                    where  (l.characterid is null or l.lastdate < ?)
+                                                order by online desc, lastupdate asc
+                                                limit ".$crestLimit
+                        , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-$crestTimer,date("m"),date("d"),date("Y"))),
+                            date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
@@ -53,79 +50,55 @@ class Location
             sleep(1);
         }
         \AppRoot::doCliOutput("Finished run!");
-
-        // Offline characters opruimen
-        \MySQL::getDB()->doQuery("delete from map_character_locations where lastdate < ?", [date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]);
     }
 
     function doCharacter($arguments=[])
     {
-        $errors = [];
         $results = [];
-        $authGroup = null;
+        $authGroups = [];
         $character = new \crest\model\Character(array_shift($arguments));
+
         \AppRoot::doCliOutput("Location->doCharacter($character->name)");
         if ($character->getUser())
-            $authGroup = $character->getUser()->getCurrentAuthGroup();
-        if (!$authGroup) {
+            $authGroups = $character->getUser()->getAuthGroups();
+        if (count($authGroups) == 0) {
             \AppRoot::doCliOutput("No authgroup for ".$character->name);
             return "No authgroup for ".$character->name;
         }
 
-        $solarSystem = null;
-        if (count($errors) == 0)
-        {
-            // Locatie ophalen
-            $crest = new \crest\Api();
-            $crest->setToken($character->getToken());
-            $crest->get("characters/".$character->id."/location/");
-
-            if ($crest->success()) {
-                if (isset($crest->getResult()->solarSystem)) {
-                    \User::setUSER($character->getUser());
-                    $solarSystem = \map\model\SolarSystem::findById((int)$crest->getResult()->solarSystem->id);
-                    $locationTracker = new \map\controller\LocationTracker();
-                    $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
-                    $results = [
-                        "system" => [
-                            "id" => $solarSystem->id,
-                            "name" => $solarSystem->name
-                        ],
-                        "character" => [
-                            "id" => $character->id,
-                            "name" => $character->name
-                        ]
-                    ];
-
-                    $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
-                    $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
-                    \User::unsetUser();
-                } else {
-                    // Offline..?
-                    \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
-                    $errors[] = "No result from CREST. Is ".$character->name." logged in?";
-                }
+        // Locatie ophalen
+        $crest = new \crest\Api();
+        $crest->setToken($character->getToken());
+        $crest->get("characters/".$character->id."/location/");
+        if ($crest->success()) {
+            if (isset($crest->getResult()->solarSystem)) {
+                \User::setUSER($character->getUser());
+                $solarSystem = \map\model\SolarSystem::findById((int)$crest->getResult()->solarSystem->id);
+                $locationTracker = new \map\controller\LocationTracker();
+                $locationTracker->setCharacterLocation($character, $solarSystem->id);
+                $results = [
+                    "system" => [
+                        "id" => $solarSystem->id,
+                        "name" => $solarSystem->name
+                    ],
+                    "character" => [
+                        "id" => $character->id,
+                        "name" => $character->name
+                    ]
+                ];
+                $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
+                $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
+                \User::unsetUser();
             } else {
-                \AppRoot::doCliOutput("CREST call failed. Returned ".$crest->httpStatus);
-                $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
+                // Offline..?
+                \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
+                $results["errors"][] = "No result from CREST. Is ".$character->name." logged in?";
             }
+        } else {
+            \AppRoot::doCliOutput("CREST call failed. Returned ".$crest->httpStatus);
+            $results["errors"][] = "CREST call failed. Returned ".$crest->httpStatus;
         }
 
-        // Last location check date bijwerken.
-        \MySQL::getDB()->updateinsert("crest_character_location", [
-            "characterid" => $character->id,
-            "solarsystemid" => ($solarSystem)?$solarSystem->id:null,
-            "remark" => (count($errors) > 0)?json_encode($errors):$solarSystem->name,
-            "lastupdate" => date("Y-m-d H:i:s")
-        ], [
-            "characterid" => $character->id
-        ]);
-
-        // Kon locatie niet ophalen. Uit lijst met 'actieve' toons halen
-        if (count($errors) > 0) {
-            \MySQL::getDB()->delete("map_character_locations", ["characterid" => $character->id]);
-            return ["errors" => $errors];
-        }
         return $results;
     }
 }

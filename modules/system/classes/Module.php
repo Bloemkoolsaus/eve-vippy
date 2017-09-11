@@ -53,7 +53,7 @@ class Module extends \Module
 
         // refresh debug-key
         \Config::getCONFIG()->set("debug_key", md5(date("Y-m-d")));
-        
+
         return true;
     }
 }
