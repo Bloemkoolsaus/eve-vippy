@@ -50,6 +50,10 @@ class Module extends \Module
     {
         $console = new \system\console\Logs();
         $console->cleanupLogFiles();
+
+        // refresh debug-key
+        \Config::getCONFIG()->set("debug_key", md5(date("Y-m-d")));
+        
         return true;
     }
 }

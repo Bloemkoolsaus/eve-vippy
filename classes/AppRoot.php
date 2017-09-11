@@ -547,6 +547,11 @@ class AppRoot
    	            if (!\Tools::REQUEST("ajax") && self::getClientIP() == \Config::getCONFIG()->get("debug_ip"))
                     self::$doDebug = true;
    	        }
+            if (\Tools::REQUEST("debug")) {
+   	            $key = \Tools::REQUEST("debug");
+   	            if (\Config::getCONFIG()->get("debug_key") == $key)
+                    self::$doDebug = true;
+            }
    	        if (defined("APP_DEBUG")) {
                 if (APP_DEBUG) {
                     if (\Tools::REQUEST("debug"))

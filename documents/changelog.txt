@@ -1,7 +1,7 @@
 <h3>September 7, 2017</h3>
 <b><u>MAP</u></b>
- - Fix a bug in Chrome where left-click and right-click did not work.
- - Improve responsiveness and map update speed when jumping systems.
+ - Fixed a bug in Chrome where left-click and right-click did not work.
+ - Improved responsiveness and map update speed when jumping systems.
  - Improved auto-naming feature for 'naming by letters' scheme. When jumping an unmapped system, Vippy will now correctly name the new system when there are multiple unmapped systems.
 
 
