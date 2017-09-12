@@ -12,17 +12,19 @@ class LocationTracker
      */
     function setCharacterLocation(\crest\model\Character $character, $locationID, $shipTypeID=null)
     {
-        \AppRoot::doCliOutput("setCharacterLocation($character->id, $locationID, $shipTypeID)");
+        \AppRoot::doCliOutput("LocationTracker->setCharacterLocation($character->id, $locationID, $shipTypeID)");
+        $character->setLocation($locationID, $shipTypeID);
 
         // Vorige locatie?
+        $previousLocationID = null;
         $location = $character->getLocation();
-        $previousLocationID = $location->solarsystemID;
-        $character->setLocation($locationID, $shipTypeID);
+        if ($location)
+            $previousLocationID = $location->solarsystemID;
 
         if ($locationID && $previousLocationID)
         {
             if (!is_numeric($previousLocationID))
-                return;
+                return false;
 
             // We jumpen naar een ander systeem!
             if ($previousLocationID != $locationID)
@@ -131,6 +133,7 @@ class LocationTracker
                 }
             }
         }
-        return;
+
+        return true;
     }
 }

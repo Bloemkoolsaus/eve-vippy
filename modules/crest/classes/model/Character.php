@@ -47,14 +47,17 @@ class Character extends \eve\model\Character
             $authgroup = $group;
             break;
         }
+        if (!$authgroup)
+            return null;
 
         $cache = \Cache::file()->get("locations/".$authgroup->id."/".$this->id);
         if ($cache) {
             $data = json_decode($cache);
+            \AppRoot::debug($data);
             if ($data->lastdate > strtotime("now")-60) {
                 $location = new \stdClass();
-                $location->solarsystemID = (int)$data->solarsystemid;
-                $location->shiptypeID = (int)$data->shiptypeid;
+                $location->solarsystemID = (int)$data->solarsystemID;
+                $location->shiptypeID = (int)$data->shiptypeID;
                 $location->lastdate = (int)$data->lastdate;
             }
         } else {
@@ -81,7 +84,7 @@ class Character extends \eve\model\Character
      * @param int $solarsystemID
      * @param int $shiptypeID
      */
-    function setLocation($solarsystemID, $shiptypeID=null)
+    function setLocation($solarsystemID=null, $shiptypeID=null)
     {
         if (!$shiptypeID) {
             $current = $this->getLocation();
@@ -93,20 +96,26 @@ class Character extends \eve\model\Character
         $location->characterID = $this->id;
         $location->characterName = $this->name;
         $location->userID = $this->userID;
-        $location->solarsystemID = (int)$solarsystemID;
+        $location->solarsystemID = ($solarsystemID)?(int)$solarsystemID:0;
         $location->shiptypeID = ($shiptypeID)?(int)$shiptypeID:0;
         $location->lastdate = strtotime("now");
 
-        foreach ($this->getAuthGroups(false) as $group) {
-            \Cache::file()->set("locations/".$group->id."/".$this->id, $location);
+        if ($location->solarsystemID) {
+            foreach ($this->getAuthGroups(false) as $group) {
+                \Cache::file()->set("locations/".$group->id."/".$this->id, $location);
+            }
+        } else {
+            foreach ($this->getAuthGroups(false) as $group) {
+                \Cache::file()->remove("locations/".$group->id."/".$this->id);
+            }
         }
 
         \MySQL::getDB()->doQuery("insert into map_character_locations (characterid, solarsystemid, shiptypeid, lastdate)
-                                  values (".$this->id,", ".$solarsystemID.", ".$shiptypeID.", now())
+                                  values (".$this->id.", ".$location->solarsystemID.", ".$location->shiptypeID.", '".date("Y-m-d H:i:s")."')
                                   on duplicate key update
-                                        solarsystemid = ".$solarsystemID."
-                                        shiptypeid = ".$shiptypeID."
-                                        lastdate = now()");
+                                        solarsystemid = ".$location->solarsystemID.",
+                                        shiptypeid = ".$location->shiptypeID.",
+                                        lastdate = '".date("Y-m-d H:i:s")."'");
     }
 
 

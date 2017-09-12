@@ -99,4 +99,7 @@ if (!\Tools::REQUEST("ajax")) {
 \AppRoot::debug("Finishing");
 $mainTPL->assign("maincontent", $mainContent);
 $mainTPL->assign("debug", \AppRoot::printDebug());
-$mainTPL->display((Tools::REQUEST("ajax"))?"ajax":"index");
+$mainTPL->display((\Tools::REQUEST("ajax"))?"ajax":"index");
+
+if (\AppRoot::doDebug())
+    \AppRoot::printDebug();

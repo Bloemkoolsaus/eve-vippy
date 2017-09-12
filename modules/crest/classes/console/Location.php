@@ -16,14 +16,16 @@ class Location
             \AppRoot::doCliOutput("Find characters");
 
             $i = 0;
-            if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.lastdate as lastupdate, 1 as online
+            if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.solarsystemid, l.shiptypeid, 
+                                                            l.lastdate as lastupdate, 1 as online
                                                     from    characters c
                                                         inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ? and l.lastdate > ?
                                                 union
-                                                    select  c.id, c.name, null as lastupdate, 0 as online
+                                                    select  c.id, c.name, l.solarsystemid, l.shiptypeid, 
+                                                            null as lastupdate, 0 as online
                                                     from    characters c
                                                         inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
@@ -38,8 +40,11 @@ class Location
                 foreach ($results as $result)
                 {
                     \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
+
                     // Update datum bijwerken om dubbele execution te voorkomen
-                    \MySQL::getDB()->update("map_character_locations", ["lastdate" => date("Y-m-d H:i:s")], ["characterid" => $result["id"]]);
+                    $character = new \crest\model\Character($result["id"]);
+                    $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null);
+
                     // Asynchroon uitvoeren
                     \AppRoot::runCron(["crest", "location", "character", $result["id"]]);
                     $i++;
