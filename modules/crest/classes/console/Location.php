@@ -8,7 +8,7 @@ class Location
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
-        $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:10);
+        $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:15);
         $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:10);
 
         // Als we tegen de timeout aanlopen, afbreken
@@ -39,7 +39,7 @@ class Location
             {
                 foreach ($results as $result)
                 {
-                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
+                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"Online":"offline"));
 
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \crest\model\Character($result["id"]);
