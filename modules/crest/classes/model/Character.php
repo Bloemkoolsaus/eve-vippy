@@ -50,11 +50,13 @@ class Character extends \eve\model\Character
         if (!$authgroup)
             return null;
 
+        $expireSeconds = 60*5;
+
         $cache = \Cache::file()->get("locations/".$authgroup->id."/".$this->id);
         if ($cache) {
             $data = json_decode($cache);
             \AppRoot::debug($data);
-            if ($data->lastdate > strtotime("now")-60) {
+            if ($data->lastdate > strtotime("now")-$expireSeconds) {
                 $location = new \stdClass();
                 $location->solarsystemID = (int)$data->solarsystemID;
                 $location->shiptypeID = (int)$data->shiptypeID;
@@ -66,7 +68,7 @@ class Character extends \eve\model\Character
                                                        from   map_character_locations 
                                                        where  characterid = ? 
                                                        and    lastdate > ?"
-                                    , [$this->id, date("Y-m-d H:i:s", strtotime("now")-60)]))
+                                    , [$this->id, date("Y-m-d H:i:s", strtotime("now")-$expireSeconds)]))
                 {
                     $location = new \stdClass();
                     $location->solarsystemID = (int)$result["solarsystemid"];
