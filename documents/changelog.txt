@@ -1,8 +1,16 @@
+<h3>September 13, 2017</h3>
+<b><u>VIPPY</u></b>
+ - Improved character tracking. Hopefully, this fixed some bugs for people with multiple access-groups.
+ - Fixed an issue where manually refreshing your character location could log you out of Vippy.
+
+
+
 <h3>September 7, 2017</h3>
 <b><u>MAP</u></b>
  - Fixed a bug in Chrome where left-click and right-click did not work.
  - Improved responsiveness and map update speed when jumping systems.
  - Improved auto-naming feature for 'naming by letters' scheme. When jumping an unmapped system, Vippy will now correctly name the new system when there are multiple unmapped systems.
+
 
 
 <h3>August 30, 2017</h3>
