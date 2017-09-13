@@ -1,0 +1,1 @@
+alter table map_character_locations add column online tinyint(1) default 0 after shiptypeid;

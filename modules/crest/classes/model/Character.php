@@ -85,8 +85,9 @@ class Character extends \eve\model\Character
      * Set location solarsystemid
      * @param int $solarsystemID
      * @param int $shiptypeID
+     * @param bool $online
      */
-    function setLocation($solarsystemID=null, $shiptypeID=null)
+    function setLocation($solarsystemID=null, $shiptypeID=null, $online=true)
     {
         if (!$shiptypeID) {
             $current = $this->getLocation();
@@ -112,11 +113,12 @@ class Character extends \eve\model\Character
             }
         }
 
-        \MySQL::getDB()->doQuery("insert into map_character_locations (characterid, solarsystemid, shiptypeid, lastdate)
-                                  values (".$this->id.", ".$location->solarsystemID.", ".$location->shiptypeID.", '".date("Y-m-d H:i:s")."')
+        \MySQL::getDB()->doQuery("insert into map_character_locations (characterid, solarsystemid, shiptypeid, online, lastdate)
+                                  values (".$this->id.", ".$location->solarsystemID.", ".$location->shiptypeID.", ".(($online)?1:0).", '".date("Y-m-d H:i:s")."')
                                   on duplicate key update
                                         solarsystemid = ".$location->solarsystemID.",
                                         shiptypeid = ".$location->shiptypeID.",
+                                        online = ".(($online)?1:0).",
                                         lastdate = '".date("Y-m-d H:i:s")."'");
     }
 

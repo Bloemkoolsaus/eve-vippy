@@ -17,7 +17,7 @@ class Location
 
             $i = 0;
             if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.solarsystemid, l.shiptypeid, 
-                                                            l.lastdate as lastupdate, 1 as online
+                                                            l.lastdate as lastupdate, l.online
                                                     from    characters c
                                                         inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
@@ -43,7 +43,7 @@ class Location
 
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \crest\model\Character($result["id"]);
-                    $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null);
+                    $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null, ($result["online"])?true:false);
 
                     // Asynchroon uitvoeren
                     \AppRoot::runCron(["crest", "location", "character", $result["id"]]);
@@ -99,6 +99,7 @@ class Location
                     \User::unsetUser();
             } else {
                 // Offline..?
+                $character->setLocation(null, null, false);
                 \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
                 $results["errors"][] = "No result from CREST. Is ".$character->name." logged in?";
             }
