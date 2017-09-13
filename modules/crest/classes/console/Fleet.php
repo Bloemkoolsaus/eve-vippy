@@ -164,6 +164,18 @@ class Fleet
         $crest = new \crest\Api();
         $crest->setToken($character->getToken());
 
+        // ESI link?
+        if (strpos($url, "esi.tech.ccp") !== false) {
+            $parts = explode("/", $url);
+            while (count($parts) > 0) {
+                $part = array_shift($parts);
+                if ($part == "fleets") {
+                    $url = "fleets/".array_shift($parts)."/";
+                    break;
+                }
+            }
+        }
+
         $url = str_replace($crest->baseURL, "", $url);
         $crest->get($url);
 
