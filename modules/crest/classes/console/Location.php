@@ -64,6 +64,8 @@ class Location
         $results = [];
         $authGroup = null;
         $character = new \crest\model\Character(array_shift($arguments));
+        $userSession = (\User::getUSER())?true:false;
+
         \AppRoot::doCliOutput("Location->doCharacter($character->name)");
         if ($character->getUser())
             $authGroup = $character->getUser()->getCurrentAuthGroup();
@@ -82,7 +84,8 @@ class Location
 
             if ($crest->success()) {
                 if (isset($crest->getResult()->solarSystem)) {
-                    \User::setUSER($character->getUser());
+                    if (!$userSession)
+                        \User::setUSER($character->getUser());
                     $solarSystem = \map\model\SolarSystem::findById((int)$crest->getResult()->solarSystem->id);
                     $locationTracker = new \map\controller\LocationTracker();
                     $locationTracker->setCharacterLocation($authGroup->id, $character->id, $solarSystem->id);
@@ -99,7 +102,8 @@ class Location
 
                     $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
                     $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
-                    \User::unsetUser();
+                    if (!$userSession)
+                        \User::unsetUser();
                 } else {
                     // Offline..?
                     \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
