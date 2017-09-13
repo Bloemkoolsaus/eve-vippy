@@ -843,9 +843,10 @@ Class Tools
      * Get files from directory
      * @param string $directory
      * @param bool $allowDirectory
+     * @param bool $sort
      * @return string[]
      */
-    public static function getFilesFromDirectory($directory, $allowDirectory=false)
+    public static function getFilesFromDirectory($directory, $allowDirectory=false, $sort=true)
     {
         $directory = self::formatFilename(trim($directory,"/"),false);
         $files = array();
@@ -865,8 +866,9 @@ Class Tools
                 }
             }
         }
+        if ($sort)
+            asort($files);
 
-        asort($files);
         return $files;
     }
 }

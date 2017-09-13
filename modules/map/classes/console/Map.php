@@ -65,7 +65,7 @@ class Map
         \Tools::deleteDir("documents/statistics");
 
         \MySQL::getDB()->doQuery("truncate mapnrofjumps");
-        \MySQL::getDB()->doQuery("delete from map_character_locations where lastdate < ?", [date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")))]);
+        \MySQL::getDB()->doQuery("delete from map_character_locations where lastdate < ?", [date("Y-m-d", mktime(0,0,0,date("m")-1,date("d"),date("Y")))]);
         \MYSQL::getDB()->doQuery("delete from mapwormholejumplog where jumptime < ?", [date("Y-m-d", mktime(0,0,0,date("m")-6,date("d"),date("Y")))]);
 
         return true;

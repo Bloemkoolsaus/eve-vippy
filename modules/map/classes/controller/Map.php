@@ -76,7 +76,7 @@ class Map
 
         $myCurrentSystems = array();
         foreach ($characters as $systemID => $chars) {
-            foreach ($chars as $char) {
+            foreach ($chars as $id => $char) {
                 if ($char["isme"] > 0)
                     $myCurrentSystems[] = $systemID;
             }
@@ -214,8 +214,11 @@ class Map
                     $data["kills"] = $system->getRecentKills();
                     unset($data["kills"]["date"]);
 
-                    if (isset($characters[$system->id]))
-                        $data["characters"] =  $characters[$system->id];
+                    if (isset($characters[$system->id])) {
+                        foreach ($characters[$system->id] as $characterID => $character) {
+                            $data["characters"][] = $character;
+                        }
+                    }
 
                     if (in_array($system->id, $myCurrentSystems))
                         $data["insystem"] = true;
@@ -281,22 +284,16 @@ class Map
 
     function getCharacterLocations()
     {
-        $characters = array();
-        if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
-        {
-            if ($results = \MySQL::getDB()->getRows("select	c.id, c.name, c.userid, l.solarsystemid
-                                                     from   map_character_locations l
-                                                        inner join characters c ON c.id = l.characterid
-                                                     where  l.authgroupid in (".implode(",",\User::getUSER()->getAuthGroupsIDs()).")
-                                                     and    l.lastdate >= ?
-                                                     order by c.name"
-                                    , [date("Y-m-d H:i:s", strtotime("now")-(60*5))]))
-            {
-                foreach ($results as $result) {
-                    $characters[$result["solarsystemid"]][] = [
-                        "id" 	=> $result["id"],
-                        "name" 	=> $result["name"],
-                        "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0
+        $characters = [];
+        $cacheDirectory = \Cache::file()->getDirectory()."locations/";
+        foreach (\User::getUSER()->getAuthGroups() as $group) {
+            foreach (\Tools::getFilesFromDirectory($cacheDirectory.$group->id, false, false) as $file) {
+                $data = json_decode(file_get_contents($file));
+                if (isset($data->solarsystemID)) {
+                    $characters[$data->solarsystemID][$data->characterID] = [
+                        "id" 	=> $data->characterID,
+                        "name" 	=> $data->characterName,
+                        "isme"	=> (\User::getUSER()->id == $data->userID)?1:0
                     ];
                 }
             }

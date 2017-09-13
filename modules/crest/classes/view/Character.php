@@ -10,16 +10,11 @@ class Character
 
         if ($character->getToken())
         {
-            $shipTypeID = 0;
-            $authGroupID = \User::getUSER()->getCurrentAuthGroupID();
-
             // Laatst bekende locatie ophalen
-            $current = \MySQL::getDB()->getRow("select * from map_character_locations where characterid = ?", [$character->id]);
-            if ($current)
-            {
-                if (strtotime($current["lastdate"]) > strtotime("now")-11)
-                {
-                    $solarSystem = \map\model\SolarSystem::findById($current["solarsystemid"]);
+            $location = $character->getLocation();
+            if ($location) {
+                if ($location->lastdate > strtotime("now")-11) {
+                    $solarSystem = \map\model\SolarSystem::findById($location->solarsystemID);
                     return json_encode([
                         "system" => [
                             "id" => $solarSystem->id,
@@ -31,9 +26,6 @@ class Character
                         ]
                     ]);
                 }
-
-                $shipTypeID = $current["shiptypeid"];
-                $authGroupID = $current["authgroupid"];
             }
 
             // CREST call

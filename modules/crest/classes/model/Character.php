@@ -35,6 +35,89 @@ class Character extends \eve\model\Character
         return $this->_token;
     }
 
+    /**
+     * Get location solarsystemid
+     * @return \stdClass|null
+     */
+    function getLocation()
+    {
+        $authgroup = null;
+        $location = null;
+        foreach ($this->getAuthGroups(false) as $group) {
+            $authgroup = $group;
+            break;
+        }
+        if (!$authgroup)
+            return null;
+
+        $cache = \Cache::file()->get("locations/".$authgroup->id."/".$this->id);
+        if ($cache) {
+            $data = json_decode($cache);
+            \AppRoot::debug($data);
+            if ($data->lastdate > strtotime("now")-60) {
+                $location = new \stdClass();
+                $location->solarsystemID = (int)$data->solarsystemID;
+                $location->shiptypeID = (int)$data->shiptypeID;
+                $location->lastdate = (int)$data->lastdate;
+            }
+        } else {
+            if (!$location) {
+                if ($result = \MySQL::getDB()->getRow("select solarsystemid, shiptypeid, lastdate
+                                                       from   map_character_locations 
+                                                       where  characterid = ? 
+                                                       and    lastdate > ?"
+                                    , [$this->id, date("Y-m-d H:i:s", strtotime("now")-60)]))
+                {
+                    $location = new \stdClass();
+                    $location->solarsystemID = (int)$result["solarsystemid"];
+                    $location->shiptypeID = (int)$result["shiptypeid"];
+                    $location->lastdate = strtotime($result["lastdate"]);
+                }
+            }
+        }
+
+        return $location;
+    }
+
+    /**
+     * Set location solarsystemid
+     * @param int $solarsystemID
+     * @param int $shiptypeID
+     */
+    function setLocation($solarsystemID=null, $shiptypeID=null)
+    {
+        if (!$shiptypeID) {
+            $current = $this->getLocation();
+            if ($current)
+                $shiptypeID = $current->shiptypeID;
+        }
+
+        $location = new \stdClass();
+        $location->characterID = $this->id;
+        $location->characterName = $this->name;
+        $location->userID = $this->userID;
+        $location->solarsystemID = ($solarsystemID)?(int)$solarsystemID:0;
+        $location->shiptypeID = ($shiptypeID)?(int)$shiptypeID:0;
+        $location->lastdate = strtotime("now");
+
+        if ($location->solarsystemID) {
+            foreach ($this->getAuthGroups(false) as $group) {
+                \Cache::file()->set("locations/".$group->id."/".$this->id, $location);
+            }
+        } else {
+            foreach ($this->getAuthGroups(false) as $group) {
+                \Cache::file()->remove("locations/".$group->id."/".$this->id);
+            }
+        }
+
+        \MySQL::getDB()->doQuery("insert into map_character_locations (characterid, solarsystemid, shiptypeid, lastdate)
+                                  values (".$this->id.", ".$location->solarsystemID.", ".$location->shiptypeID.", '".date("Y-m-d H:i:s")."')
+                                  on duplicate key update
+                                        solarsystemid = ".$location->solarsystemID.",
+                                        shiptypeid = ".$location->shiptypeID.",
+                                        lastdate = '".date("Y-m-d H:i:s")."'");
+    }
+
 
     /**
      * Find character by ID

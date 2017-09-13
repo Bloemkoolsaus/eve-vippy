@@ -69,7 +69,6 @@ class Map
     function getMap(\map\model\Map $map, $arguments=[])
     {
         \AppRoot::debug("----- getMap(".$map->id." - ".$map->name.") -----");
-        $currentDate = date("Y-m-d H:i:s");
         $isCached = false;
         $checkCache = (\Tools::REQUEST("nocache"))?false:true;
         while (count($arguments) > 0) {

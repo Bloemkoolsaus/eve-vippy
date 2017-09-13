@@ -16,6 +16,7 @@ class Character
 
     private $corporation = null;
     private $user = null;
+    private $_authgroups = null;
 
     function __construct($id=false)
     {
@@ -28,7 +29,15 @@ class Character
     function load($result=false)
     {
         if (!$result)
-            $result = \MySQL::getDB()->getRow("SELECT * FROM characters WHERE id = ?", array($this->id));
+        {
+            $cache = \Cache::file()->get("characters/" . $this->id);
+            if ($cache) {
+                $result = json_decode($cache, true);
+            } else {
+                $result = \MySQL::getDB()->getRow("SELECT * FROM characters WHERE id = ?", [$this->id]);
+                \Cache::file()->set("characters/" . $this->id, $result);
+            }
+        }
 
         if ($result)
         {
@@ -69,6 +78,7 @@ class Character
         ];
         \MySQL::getDB()->updateinsert("characters", $data, ["id" => $this->id]);
 
+        \Cache::file()->remove("characters/" . $this->id);
         if ($this->getUser() != null)
             $this->getUser()->resetCache();
 
@@ -139,8 +149,11 @@ class Character
      */
     function getAuthGroups($allowedOnly=true)
     {
+        if ($this->_authgroups === null)
+            $this->_authgroups = \admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID);
+
         $groups = [];
-        foreach (\admin\model\AuthGroup::getAuthgroupsByCorporation($this->corporationID) as $group) {
+        foreach ($this->_authgroups as $group) {
             if (!$allowedOnly || $group->isAllowed())
                 $groups[] = $group;
         }

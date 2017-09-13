@@ -83,8 +83,17 @@ class Fleet
         {
             \AppRoot::debug($crest->getResult());
             $locationTracker = new \map\controller\LocationTracker();
-            if (isset($crest->getResult()->items))
-            {
+
+            // Update datum bijwerken om dubbele execution te voorkomen
+            if (isset($crest->getResult()->items)) {
+                $characterIDs = [];
+                foreach ($crest->getResult()->items as $fleetMember) {
+                    $characterIDs[] = $fleetMember->character->id;
+                }
+                \MySQL::getDB()->doQuery("update map_character_locations set lastdate = ".date("Y-m-d H:i:s")." where characterid in (".implode(",", $characterIDs).")");
+            }
+
+            if (isset($crest->getResult()->items)) {
                 foreach ($crest->getResult()->items as $fleetMember)
                 {
                     // Check character exists
@@ -97,7 +106,7 @@ class Fleet
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
 
-                    //Moeten we de locatie van deze character updaten?
+                    // Moeten we de locatie van deze character updaten?
                     $solarSystemID = null;
                     if ($character->getToken())
                         $solarSystemID = (int)$fleetMember->solarSystem->id;
@@ -110,34 +119,27 @@ class Fleet
                     }
 
                     // Location tracker
-                    $locationTracker->setCharacterLocation($fleet->authGroupID, $fleetMember->character->id, $solarSystemID, $fleetMember->ship->id);
+                    $locationTracker->setCharacterLocation($character, $solarSystemID, $fleetMember->ship->id);
                     \User::unsetUser();
                 }
 
                 $fleet->active = true;
                 $fleet->statusMessage = "Tracking ".count($crest->getResult()->items)." fleet members.";
                 $fleet->store();
-            }
-            else
-            {
+            } else {
                 \AppRoot::doCliOutput("Could not parse result received from CREST. HELP....", "red");
                 $fleet->active = false;
                 $fleet->statusMessage = "Could not parse result received from CREST. HELP....";
                 $fleet->store();
             }
-        }
-        else
-        {
-            if ($crest->httpStatus >= 500 and $crest->httpStatus < 600)
-            {
+        } else {
+            if ($crest->httpStatus >= 500 and $crest->httpStatus < 600) {
                 \AppRoot::doCliOutput("CREST call failed, Is CREST down??  Retrying in 5 minutes.", "red");
                 $fleet->active = false;
                 $fleet->statusMessage = "CREST call failed, Is CREST down??  Retrying in 5 minutes.";
                 $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+(60*5));
                 $fleet->store();
-            }
-            else
-            {
+            } else {
                 \AppRoot::doCliOutput("Failed to call CREST for fleet info. ".$crest->httpStatus." returned!", "red");
                 $fleet->active = false;
                 $fleet->statusMessage = "Failed to call CREST for fleet info. ".$crest->httpStatus." returned!";

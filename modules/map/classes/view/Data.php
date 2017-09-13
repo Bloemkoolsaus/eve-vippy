@@ -3,12 +3,12 @@ namespace map\view;
 
 class Data
 {
-    function getOverview($arguments = array())
+    function getOverview($arguments=[])
     {
         return $this->getMap($arguments);
     }
 
-    function getMap($arguments=array(), \map\model\Map $map=null)
+    function getMap($arguments=[], \map\model\Map $map=null)
     {
         if ($map == null) {
             if (count($arguments) > 0)
@@ -19,47 +19,38 @@ class Data
             return "no map selected";
 
         // Character Locations
-        $characters = array();
-        if (count(\User::getUSER()->getAuthGroupsIDs()) > 0)
-        {
-            if ($results = \MySQL::getDB()->getRows("select	c.id, c.name, c.userid, l.solarsystemid
-                                                    from	map_character_locations l
-                                                        inner join characters c on c.id = l.characterid
-                                                    where   l.authgroupid = ?
-                                                    and		l.lastdate >= date_add(now(), interval -5 minute)
-                                                    order by c.name"
-                                        , [$map->getAuthGroup()->id]))
-            {
-                foreach ($results as $result)
-                {
-                    $characters[$result["solarsystemid"]][] = [
-                        "id" 	=> $result["id"],
-                        "name" 	=> $result["name"],
-                        "isme"	=> (\User::getUSER()->id == $result["userid"])?1:0
+        $characters = [];
+        $cacheDirectory = \Cache::file()->getDirectory()."locations/";
+        foreach (\User::getUSER()->getAuthGroups() as $group) {
+            foreach (\Tools::getFilesFromDirectory($cacheDirectory.$group->id, false, false) as $file) {
+                $data = json_decode(file_get_contents($file));
+                if (isset($data->solarsystemID)) {
+                    $characters[$data->solarsystemID][] = [
+                        "id" 	=> $data->characterID,
+                        "name" 	=> $data->characterName,
+                        "isme"	=> (\User::getUSER()->id == $data->userID)?1:0
                     ];
                 }
             }
         }
 
 
-        $wormholes = array();
-        $connections = array();
-
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE chainid = ?", array($map->id)))
-        {
+        $wormholes = [];
+        $connections = [];
+        if ($results = \MySQL::getDB()->getRows("SELECT * FROM mapwormholes WHERE chainid = ?", [$map->id])) {
             foreach ($results as $result)
             {
                 $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
 
-                $data = ["id"       => $wormhole->id,
-                         "name"     => $wormhole->name,
-                         "titles"   => [],
-                         "position" => ["x" => $wormhole->x, "y" => $wormhole->y],
-                         "status"   => $wormhole->status];
-
-                if ($wormhole->fullScanDate && strtotime($wormhole->fullScanDate) > 0)
-                {
+                $data = [
+                    "id"       => $wormhole->id,
+                    "name"     => $wormhole->name,
+                    "titles"   => [],
+                    "position" => ["x" => $wormhole->x, "y" => $wormhole->y],
+                    "status"   => $wormhole->status
+                ];
+                if ($wormhole->fullScanDate && strtotime($wormhole->fullScanDate) > 0) {
                     $age = strtotime("now")-strtotime($wormhole->fullScanDate);
                     $data["lastscan"] = floor($age/3600);
                 }
@@ -70,26 +61,27 @@ class Data
                     if ($map->getHomeSystem()->id == $system->id)
                         $data["status"] = 10;
 
-                    $data["system"] = ["id"   => $system->id,
-                                       "name" => $system->name,
-                                       "class" => ["tag" => $system->getClass(true),
-                                                   "type" => ($system->isWSpace())?"wspace":"kspace",
-                                                   "color" => $system->getClassColor()]];
-
+                    $data["system"] = [
+                        "id"   => $system->id,
+                        "name" => $system->name,
+                        "class" => [
+                            "tag" => $system->getClass(true),
+                            "type" => ($system->isWSpace())?"wspace":"kspace",
+                            "color" => $system->getClassColor()
+                        ]
+                    ];
                     if (isset($characters[$system->id]))
                         $data["system"]["characters"] = $characters[$system->id];
 
-                    if ($system->isWSpace())
-                    {
-                        foreach ($map->getAuthGroup()->getChains() as $chain)
-                        {
-                            if ($chain->id != $map->id)
-                            {
-                                if ($chain->homesystemID == $system->id)
-                                {
-                                    $data["titles"][] = ["title" => $chain->systemName,
-                                                         "color" => "blue",
-                                                         "bold"  => true];
+                    if ($system->isWSpace()) {
+                        foreach ($map->getAuthGroup()->getChains() as $chain) {
+                            if ($chain->id != $map->id) {
+                                if ($chain->homesystemID == $system->id) {
+                                    $data["titles"][] = [
+                                        "title" => $chain->systemName,
+                                        "color" => "blue",
+                                        "bold"  => true
+                                    ];
                                 }
                             }
                         }
@@ -102,35 +94,34 @@ class Data
                             $color = "red";
                         if ($system->getKnownSystem()->status > 0)
                             $color = "blue";
-                        $data["titles"][] = ["title" => $system->getKnownSystem()->name,
-                                             "color" => $color,
-                                             "bold"  => true];
+                        $data["titles"][] = [
+                            "title" => $system->getKnownSystem()->name,
+                            "color" => $color,
+                            "bold"  => true
+                        ];
                     }
 
                     if ($system->isWSpace())
                     {
                         $data["system"]["statics"] = $system->getStatics(true);
-
-                        if ($system->isShattered() !== false)
-                        {
-                            if ($system->isShattered() == "frigate")
-                            {
-                                $data["titles"][] = ["title" => "Small Ship Shattered",
-                                                     "color" => "purple",
-                                                     "bold"  => true];
-                            }
-                            else
-                            {
-                                $data["titles"][] = ["title" => "Shattered",
-                                                     "color" => "purple",
-                                                     "bold"  => true];
+                        if ($system->isShattered() !== false) {
+                            if ($system->isShattered() == "frigate") {
+                                $data["titles"][] = [
+                                    "title" => "Small Ship Shattered",
+                                    "color" => "purple",
+                                    "bold"  => true
+                                ];
+                            } else {
+                                $data["titles"][] = [
+                                    "title" => "Shattered",
+                                    "color" => "purple",
+                                    "bold"  => true
+                                ];
                             }
                         }
                         if ($system->getEffect())
                             $data["titles"][] = ["title" => $system->getEffect()];
-                    }
-                    else
-                    {
+                    } else {
                         $data["titles"][] = ["title" => $system->getRegion()->name, "bold" => true];
 
                         $tradeHubRoute = $system->getTradehubs();
@@ -150,43 +141,41 @@ class Data
                         if ($system->getFactionID())
                             $data["system"]["faction"] = $system->getFactionID();
                     }
-                }
-                else
-                {
+                } else {
                     $data["titles"][] = ["title" => "Unmapped", "bold" => true];
                 }
-
-                /**
-                 * - Characters in system
-                 */
 
                 $wormholes[$wormhole->id] = $data;
             }
         }
 
-        if ($results = \MySQL::getDB()->getRows("select * from mapwormholeconnections where chainid = ?", array($map->id)))
-        {
+        if ($results = \MySQL::getDB()->getRows("select * from mapwormholeconnections where chainid = ?", [$map->id])) {
             foreach ($results as $result)
             {
                 $connection = new \map\model\Connection();
                 $connection->load($result);
 
-                if ($connection->getFromSystem() == null && $connection->getToSystem() == null)
-                {
+                if ($connection->getFromSystem() == null && $connection->getToSystem() == null) {
                     $connection->delete();
                     continue;
                 }
 
-                $data = array("id"   => $connection->id,
-                              "from" => ["wormhole" => $wormholes[$connection->fromWormholeID]["id"],
-                                         "system"   => (isset($wormholes[$connection->fromWormholeID]["system"]))?$wormholes[$connection->fromWormholeID]["system"]["id"]:0,
-                                         "type"     => $connection->getFromWormholeType()->name,
-                                         "position" => $wormholes[$connection->fromWormholeID]["position"]],
-                              "to"   => ["wormhole" => $wormholes[$connection->toWormholeID]["id"],
-                                         "system"   => (isset($wormholes[$connection->toWormholeID]["system"]))?$wormholes[$connection->toWormholeID]["system"]["id"]:0,
-                                         "type"     => $connection->getToWormholeType()->name,
-                                         "position" => $wormholes[$connection->toWormholeID]["position"]],
-                              "mass" => $connection->mass);
+                $data = [
+                    "id"   => $connection->id,
+                    "from" => [
+                        "wormhole" => $wormholes[$connection->fromWormholeID]["id"],
+                        "system"   => (isset($wormholes[$connection->fromWormholeID]["system"]))?$wormholes[$connection->fromWormholeID]["system"]["id"]:0,
+                        "type"     => $connection->getFromWormholeType()->name,
+                        "position" => $wormholes[$connection->fromWormholeID]["position"]
+                    ],
+                    "to"   => [
+                        "wormhole" => $wormholes[$connection->toWormholeID]["id"],
+                        "system"   => (isset($wormholes[$connection->toWormholeID]["system"]))?$wormholes[$connection->toWormholeID]["system"]["id"]:0,
+                        "type"     => $connection->getToWormholeType()->name,
+                        "position" => $wormholes[$connection->toWormholeID]["position"]
+                    ],
+                    "mass" => $connection->mass
+                ];
 
                 if ($connection->frigateHole)
                     $data["frigate"] = true;
