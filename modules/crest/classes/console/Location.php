@@ -23,16 +23,7 @@ class Location
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ? and l.lastdate > ?
-                                                union
-                                                    select  c.id, c.name, l.solarsystemid, l.shiptypeid, 
-                                                            null as lastupdate, 0 as online
-                                                    from    characters c
-                                                        inner join users u on u.id = c.userid and u.isvalid > 0
-                                                        inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
-                                                        left join map_character_locations l on l.characterid = c.id
-                                                    where  (l.characterid is null or l.lastdate < ?)
-                                                order by online desc, lastupdate asc
-                                                limit ".$crestLimit
+                                                    limit ".$crestLimit
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-$crestTimer,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
