@@ -141,4 +141,27 @@ class Character extends \eve\model\Character
         }
         return null;
     }
+
+    /**
+     * Find characters with a valid token by user
+     * @param $userID
+     * @return \crest\model\Character[]
+     */
+    public static function findByUser($userID)
+    {
+        $characters = [];
+        if ($results = \MySQL::getDB()->getRows("select c.* 
+                                                from    characters c
+                                                    inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
+                                                where   c.userid = ?"
+                                        , [$userID]))
+        {
+            foreach ($results as $result) {
+                $char = new \crest\model\Character();
+                $char->load($result);
+                $characters[] = $char;
+            }
+        }
+        return $characters;
+    }
 }

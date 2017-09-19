@@ -3,6 +3,12 @@ namespace crest\console;
 
 class Location
 {
+    function fetchCharacter($characterID)
+    {
+        // Asynchroon uitvoeren
+        \AppRoot::runCron(["crest", "location", "character", $characterID]);
+    }
+
     function doDefault($arguments=[])
     {
         \AppRoot::setMaxExecTime(60);
@@ -44,9 +50,7 @@ class Location
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \crest\model\Character($result["id"]);
                     $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null);
-
-                    // Asynchroon uitvoeren
-                    \AppRoot::runCron(["crest", "location", "character", $result["id"]]);
+                    $this->fetchCharacter($result["id"]);
                     $i++;
                 }
             }

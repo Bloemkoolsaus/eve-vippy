@@ -184,6 +184,13 @@ class User
                 if (!$this->getMainCharacter()->isAuthorized())
                     $this->resetMainCharacter();
             }
+
+            // Toon locaties checken
+            \AppRoot::debug("Check character locations");
+            $crestLocation = new \crest\console\Location();
+            foreach (\crest\model\Character::findByUser(\User::getUSER()->id) as $char) {
+                $crestLocation->fetchCharacter($char->id);
+            }
         } else
             \User::unsetUser();
     }

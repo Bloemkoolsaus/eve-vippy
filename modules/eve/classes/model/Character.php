@@ -209,7 +209,7 @@ class Character
         $characters = [];
         if ($results = \MySQL::getDB()->getRows("select * from characters ".((count($query)>0)?"where ".implode(" and ", $query):"")." order by name", $params)) {
             foreach ($results as $result) {
-                $char = new \eve\model\Character();
+                $char = new static();
                 $char->load($result);
                 $characters[] = $char;
             }
