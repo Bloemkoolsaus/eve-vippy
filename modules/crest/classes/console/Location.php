@@ -14,42 +14,32 @@ class Location
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
-        $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:10);
+
+        $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:15);
         $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:10);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (\AppRoot::getExecTime() < 55) {
+        while (\AppRoot::getExecTime() < 60) {
             \AppRoot::doCliOutput("Find characters");
-
             $i = 0;
             if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.solarsystemid, l.shiptypeid, 
-                                                            l.lastdate as lastupdate, 1 as online
+                                                            l.lastdate as lastupdate, l.online
                                                     from    characters c
                                                         inner join users u on u.id = c.userid and u.isvalid > 0
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ? and l.lastdate > ?
-                                                union
-                                                    select  c.id, c.name, l.solarsystemid, l.shiptypeid, 
-                                                            null as lastupdate, 0 as online
-                                                    from    characters c
-                                                        inner join users u on u.id = c.userid and u.isvalid > 0
-                                                        inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
-                                                        left join map_character_locations l on l.characterid = c.id
-                                                    where  (l.characterid is null or l.lastdate < ?)
-                                                order by online desc, lastupdate asc
-                                                limit ".$crestLimit
+                                                    limit ".$crestLimit
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-$crestTimer,date("m"),date("d"),date("Y"))),
-                            date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
                 {
-                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]);
+                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"Online":"offline"));
 
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \crest\model\Character($result["id"]);
-                    $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null);
+                    $character->setLocation(($result["solarsystemid"])?:null, ($result["shiptypeid"])?:null, ($result["online"])?true:false);
                     $this->fetchCharacter($result["id"]);
                     $i++;
                 }
@@ -103,6 +93,7 @@ class Location
                     \User::unsetUser();
             } else {
                 // Offline..?
+                $character->setLocation(null, null, false);
                 \AppRoot::doCliOutput("No result from CREST. Is ".$character->name." logged in?");
                 $results["errors"][] = "No result from CREST. Is ".$character->name." logged in?";
             }

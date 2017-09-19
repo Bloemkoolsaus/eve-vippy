@@ -20,7 +20,7 @@ class LocationTracker
         if ($location)
             $previousLocationID = $location->solarsystemID;
 
-        $character->setLocation($locationID, $shipTypeID);
+        $character->setLocation($locationID, $shipTypeID, true);
         \AppRoot::doCliOutput("Previous Location: ".$previousLocationID);
         \AppRoot::doCliOutput("Current Location: ".$locationID);
 

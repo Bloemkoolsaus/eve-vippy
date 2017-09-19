@@ -799,7 +799,7 @@ class AppRoot
     public static function runCron($arguments=[])
     {
         $command = "php ".getcwd()."/cron.php ".implode(" ", $arguments)." > /dev/null &";
-        \AppRoot::doCliOutput($command);
+        \AppRoot::doCliOutput("   > run: ".$command);
         exec($command);
     }
 }
