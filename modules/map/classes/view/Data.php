@@ -20,17 +20,11 @@ class Data
 
         // Character Locations
         $characters = [];
-        $cacheDirectory = \Cache::file()->getDirectory()."locations/";
+        $locationTracker = new \map\controller\LocationTracker();
         foreach (\User::getUSER()->getAuthGroups() as $group) {
-            foreach (\Tools::getFilesFromDirectory($cacheDirectory.$group->id, false, false) as $file) {
-                $data = json_decode(file_get_contents($file));
-                if (isset($data->solarsystemID)) {
-                    $characters[$data->solarsystemID][] = [
-                        "id" 	=> $data->characterID,
-                        "name" 	=> $data->characterName,
-                        "isme"	=> (\User::getUSER()->id == $data->userID)?1:0
-                    ];
-                }
+            foreach ($locationTracker->getCharacterLocationsByAuthGroup($group->id) as $char) {
+                if ($char["system"])
+                    $characters[$char["system"]["id"]][] = $char;
             }
         }
 

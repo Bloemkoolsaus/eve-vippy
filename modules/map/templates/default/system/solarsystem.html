@@ -173,8 +173,7 @@
 		<br />
 {/if}
 
-{if $system && $wormhole}
-	{if $system->getActivePilots($wormhole->chainID)|@count > 0}
+{if $characters|@count > 0}
 		<div class="systemPopupTitle">
 			<div style="float: left; width: 200px; overflow: hidden;">
 				<u>Active Pilots</u>
@@ -184,20 +183,18 @@
 			</div>
 		</div>
 		<div style="padding: 5px;">
-		{foreach from=$system->getActivePilots($wormhole->chainID) item=pilot}
+		{foreach from=$characters key=charname item=pilot}
 			<div style="float: left; width: 200px; overflow: hidden; white-space: nowrap;">
-				* {$pilot.name}
-				{if $pilot.shiptypeid}({$pilot.ship}){/if}
+				* {$pilot.name} {if $pilot.ship}({$pilot.ship.name}){/if}
 			</div>
 			<div style="float: right; text-align: left; width: 100px; overflow: hidden;">
-				<i>{$pilot.lastdate|date_age:1}</i> ago
+				<i>{$pilot.time|date_age:1}</i> ago
 			</div>
 		{/foreach}
 		</div>
 
 		<div style="clear:both;"></div>
 		<br />
-	{/if}
 {/if}
 
 {if !$system->isWSpace()}

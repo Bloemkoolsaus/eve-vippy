@@ -15,6 +15,18 @@ class System
         if ($system && $system->isWSpace())
             $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
 
+        // Character Locations
+        $characters = [];
+        $locationTracker = new \map\controller\LocationTracker();
+        foreach (\User::getUSER()->getAuthGroups() as $group) {
+            foreach ($locationTracker->getCharacterLocationsByAuthGroup($group->id) as $char) {
+                if ($char["system"] && $char["system"]["id"] == $system->id)
+                    $characters[$char["name"]] = $char;
+            }
+        }
+        ksort($characters);
+        $tpl->assign("characters", $characters);
+
         return $tpl->fetch("map/system/solarsystem");
     }
 

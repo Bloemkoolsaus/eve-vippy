@@ -97,7 +97,15 @@ class Character extends \eve\model\Character
         $location->characterName = $this->name;
         $location->userID = $this->userID;
         $location->solarsystemID = ($solarsystemID)?(int)$solarsystemID:0;
+        if ($location->solarsystemID) {
+            $system = new \eve\model\SolarSystem($location->solarsystemID);
+            $location->solarsystemName = $system->name;
+        }
         $location->shiptypeID = ($shiptypeID)?(int)$shiptypeID:0;
+        if ($location->shiptypeID) {
+            $ship = new \eve\model\Ship($location->shiptypeID);
+            $location->shiptypeName = $ship->name;
+        }
         $location->lastdate = strtotime("now");
 
         if ($location->solarsystemID) {
