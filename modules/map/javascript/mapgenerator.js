@@ -57,7 +57,7 @@ function generateMap(data)
 
     if (stage != null)
     {
-        layer.removeChildren();
+        layer.destroyChildren();
         stage.remove(layer);
         stage.removeChildren();
         stage.clear();

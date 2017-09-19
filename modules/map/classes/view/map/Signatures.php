@@ -18,7 +18,6 @@ class Signatures
                 if ($arg == "nocache")
                     $checkCache = false;
             }
-            $checkCache = false;
 
             // Kijk of er iets veranderd is in de chain sinds de laatste check. Zo niet, is natuurlijk geen update nodig.
             if ($checkCache) {
