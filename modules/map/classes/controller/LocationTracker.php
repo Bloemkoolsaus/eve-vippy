@@ -13,13 +13,16 @@ class LocationTracker
     function setCharacterLocation(\crest\model\Character $character, $locationID, $shipTypeID=null)
     {
         \AppRoot::doCliOutput("LocationTracker->setCharacterLocation($character->id, $locationID, $shipTypeID)");
-        $character->setLocation($locationID, $shipTypeID);
 
         // Vorige locatie?
         $previousLocationID = null;
         $location = $character->getLocation();
         if ($location)
             $previousLocationID = $location->solarsystemID;
+
+        $character->setLocation($locationID, $shipTypeID);
+        \AppRoot::doCliOutput("Previous Location: ".$previousLocationID);
+        \AppRoot::doCliOutput("Current Location: ".$locationID);
 
         if ($locationID && $previousLocationID)
         {
@@ -29,10 +32,6 @@ class LocationTracker
             // We jumpen naar een ander systeem!
             if ($previousLocationID != $locationID)
             {
-                // Map update
-                \AppRoot::debug("LocationID: ".$locationID);
-                \AppRoot::debug("PreviousID: ".$previousLocationID);
-
                 // Check alle maps van deze toon
                 foreach ($character->getAuthGroups(false) as $group) {
                     foreach (\map\model\Map::findAll(["authgroupid" => $group->id]) as $map)
