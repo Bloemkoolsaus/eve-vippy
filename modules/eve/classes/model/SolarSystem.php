@@ -212,22 +212,26 @@ class SolarSystem
 
     /**
      * Get known system
+     * @param null $authgroupID
      * @return \map\model\KnownWormhole|null
      */
-    function getKnownSystem()
+    function getKnownSystem($authgroupID=null)
     {
+        if (!$authgroupID)
+            $authgroupID = \User::getUSER()->getCurrentAuthGroupID();
         if ($this->knownSystem === null)
-            $this->knownSystem = \map\model\KnownWormhole::findBySolarSystemID($this->id);
+            $this->knownSystem = [];
+        if (!isset($this->knownSystem[$authgroupID]))
+            $this->knownSystem[$authgroupID] = \map\model\KnownWormhole::findBySolarSystemID($this->id, $authgroupID);
 
-        return $this->knownSystem;
+        return $this->knownSystem[$authgroupID];
     }
 
     function isKnownSystem()
     {
-        if ($this->getKnownSystem() !== null)
+        if ($this->getKnownSystem())
             return true;
-        else
-            return false;
+        return false;
     }
 
     function getRecentKills()

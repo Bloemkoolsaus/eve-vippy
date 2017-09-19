@@ -12,6 +12,7 @@ class Map
             if ($action)
                 array_unshift($arguments, $action);
         }
+        \AppRoot::doCliOutput("MAP-VIEW: ".get_class($view)."->".$method."([".implode(",",$arguments)."])");
         return $view->$method($map, $arguments);
     }
 
@@ -30,6 +31,12 @@ class Map
     function getSystem(\map\model\Map $map, $arguments=[])
     {
         $view = new \map\view\map\System();
+        return $this->doView($view, $map, $arguments);
+    }
+
+    function getKnownwormhole(\map\model\Map $map, $arguments=[])
+    {
+        $view = new \map\view\Knownwormhole();
         return $this->doView($view, $map, $arguments);
     }
 

@@ -84,11 +84,13 @@ class KnownWormhole extends \Model
     /**
      * Find known wormhole by solarsystemid
      * @param $solarSystemID
-     * @return \map\model\KnownWormhole|null
+     * @param $authGroupID
+     * @return KnownWormhole|null
      */
-    public static function findBySolarSystemID($solarSystemID)
+    public static function findBySolarSystemID($solarSystemID, $authGroupID=null)
     {
-        $authGroupID = \User::getUSER()->getCurrentAuthGroupID();
+        if (!$authGroupID)
+            $authGroupID = \User::getUSER()->getCurrentAuthGroupID();
         return self::findOne(["solarsystemid" => $solarSystemID, "authgroupid" => $authGroupID]);
     }
 }

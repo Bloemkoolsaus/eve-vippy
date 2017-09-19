@@ -3,10 +3,13 @@ namespace map\view;
 
 class Knownwormhole
 {
-    function getEdit($arguments=[])
+    function getEdit(\map\model\Map $map, $arguments=[])
     {
+        if (!$map->getUserAllowed())
+            return "Oops! Not allowed.";
+
         $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
-        $known = $system->getKnownSystem();
+        $known = $system->getKnownSystem($map->authgroupID);
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
@@ -14,41 +17,42 @@ class Knownwormhole
         return $tpl->fetch("map/system/knownwormhole");
     }
 
-    function getSave($arguments=[])
+    function getSave(\map\model\Map $map, $arguments=[])
     {
-        $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+        if (!$map->getUserAllowed())
+            return "Oops! Not allowed.";
 
-        $known = $system->getKnownSystem();
+        $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
+        $known = $system->getKnownSystem($map->authgroupID);
         if (!$known) {
             $known = new \map\model\KnownWormhole();
             $known->solarSystemID = $system->id;
-            $known->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
+            $known->authGroupID = $map->authgroupID;
         }
 
-        $known->name = \Tools::POST("name");
-        $known->status = \Tools::POST("status");
-        $known->store();
+        if (\Tools::POST("name")) {
+            $known->name = \Tools::POST("name");
+            $known->status = \Tools::POST("status");
+            $known->store();
+        } else
+            $known->delete();
 
-        foreach (\User::getUSER()->getAvailibleChains() as $map) {
-            $map->setMapUpdateDate();
-        }
-
+        $map->setMapUpdateDate();
         return "stored";
     }
 
-    function getRemove($arguments=[])
+    function getRemove(\map\model\Map $map, $arguments=[])
     {
+        if (!$map->getUserAllowed())
+            return "Oops! Not allowed.";
+
         $system = \map\model\SolarSystem::getSolarsystemByName(array_shift($arguments));
-
         if (\Tools::POST("confirmed")) {
-            if ($system->getKnownSystem())
-                $system->getKnownSystem()->delete();
-
-            foreach (\User::getUSER()->getAvailibleChains() as $map) {
-                $map->setMapUpdateDate();
-            }
+            $known = $system->getKnownSystem($map->authgroupID);
+            if ($known)
+                $known->delete();
         }
-
+        $map->setMapUpdateDate();
         return "removed";
     }
 }

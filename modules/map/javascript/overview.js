@@ -298,7 +298,7 @@ function showActivePilots()
 function editKnownSystems(systemName)
 {
     $.ajax({
-        url: "/map/knownwormhole/edit/"+systemName,
+        url: "/map/"+$("#mapName").val()+"/knownwormhole/edit/"+systemName,
         data: { ajax: 1 },
         success: function(data) {
             showPopup(data, 500, 250);
@@ -309,7 +309,7 @@ function storeKnownSystem()
 {
     $.ajax({
         type: "POST",
-        url: "/map/knownwormhole/save/"+$("input[name=known-system-name]").val(),
+        url: "/map/"+$("#mapName").val()+"/knownwormhole/save/"+$("input[name=known-system-name]").val(),
         data: {
             id: $("input[name=known-system-id]").val(),
             name: $("input[name=known-system-title]").val(),
@@ -326,7 +326,7 @@ function removeKnownSystem()
 {
     $.ajax({
         type: "POST",
-        url: "/map/knownwormhole/remove/"+$("input[name=known-system-name]").val(),
+        url: "/map/"+$("#mapName").val()+"/knownwormhole/remove/"+$("input[name=known-system-name]").val(),
         data: {
             confirmed: 1,
             ajax: 1
