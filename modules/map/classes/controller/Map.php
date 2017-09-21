@@ -71,9 +71,10 @@ class Map
     function getWormholes(\map\model\Map $map)
     {
         \AppRoot::debug("getWormholes(".$map->id.")");
-        $myCurrentSystems = [];
-        $locationTracker = new \map\controller\LocationTracker();
-        $characters = $locationTracker->getCharacterLocationsByAuthGroup($map->authgroupID);
+        $wormholes = array();
+        $characters = $this->getCharacterLocations();
+
+        $myCurrentSystems = array();
         foreach ($characters as $systemID => $chars) {
             foreach ($chars as $id => $char) {
                 if ($char["isme"] > 0)
@@ -81,7 +82,6 @@ class Map
             }
         }
 
-        $wormholes = [];
         if ($results = \MySQL::getDB()->getRows("
                     SELECT  wh.id, wh.fullyscanned, s.solarsystemid, r.regionname, s.solarsystemname, wh.status,
                             wh.name AS solarsystemtitle, c2.homesystemname, k.name AS knownname, wh.permanent, wh.rally,
@@ -280,5 +280,20 @@ class Map
         }
 
         return $connections;
+    }
+
+    function getCharacterLocations()
+    {
+        $locationTracker = new \map\controller\LocationTracker();
+        $characters = [];
+        $cacheDirectory = \Cache::file()->getDirectory()."locations/";
+        foreach (\User::getUSER()->getAuthGroups() as $group) {
+            foreach ($locationTracker->getCharacterLocationsByAuthGroup($group->id) as $char) {
+                if (isset($char["system"]))
+                    $characters[$char["system"]["id"]][$char["id"]] = $char;
+            }
+        }
+
+        return $characters;
     }
 }
