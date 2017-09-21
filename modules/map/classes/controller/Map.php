@@ -71,10 +71,9 @@ class Map
     function getWormholes(\map\model\Map $map)
     {
         \AppRoot::debug("getWormholes(".$map->id.")");
-        $wormholes = array();
-        $characters = $this->getCharacterLocations();
-
-        $myCurrentSystems = array();
+        $myCurrentSystems = [];
+        $locationTracker = new \map\controller\LocationTracker();
+        $characters = $locationTracker->getCharacterLocationsByAuthGroup($map->authgroupID);
         foreach ($characters as $systemID => $chars) {
             foreach ($chars as $id => $char) {
                 if ($char["isme"] > 0)
@@ -82,6 +81,7 @@ class Map
             }
         }
 
+        $wormholes = [];
         if ($results = \MySQL::getDB()->getRows("
                     SELECT  wh.id, wh.fullyscanned, s.solarsystemid, r.regionname, s.solarsystemname, wh.status,
                             wh.name AS solarsystemtitle, c2.homesystemname, k.name AS knownname, wh.permanent, wh.rally,
@@ -280,25 +280,5 @@ class Map
         }
 
         return $connections;
-    }
-
-    function getCharacterLocations()
-    {
-        $characters = [];
-        $cacheDirectory = \Cache::file()->getDirectory()."locations/";
-        foreach (\User::getUSER()->getAuthGroups() as $group) {
-            foreach (\Tools::getFilesFromDirectory($cacheDirectory.$group->id, false, false) as $file) {
-                $data = json_decode(file_get_contents($file));
-                if (isset($data->solarsystemID)) {
-                    $characters[$data->solarsystemID][$data->characterID] = [
-                        "id" 	=> $data->characterID,
-                        "name" 	=> $data->characterName,
-                        "isme"	=> (\User::getUSER()->id == $data->userID)?1:0
-                    ];
-                }
-            }
-        }
-
-        return $characters;
     }
 }
