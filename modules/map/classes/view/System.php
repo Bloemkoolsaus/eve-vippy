@@ -24,7 +24,6 @@ class System
                     $characters[$char["name"]] = $char;
             }
         }
-        ksort($characters);
         $tpl->assign("characters", $characters);
 
         return $tpl->fetch("map/system/solarsystem");
