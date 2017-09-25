@@ -16,12 +16,15 @@ class Location
         \AppRoot::doCliOutput("doLocations(".implode(",",$arguments).")");
 
         $crestLimit = (int)((\Config::getCONFIG()->get("crest_location_limit"))?:15);
-        $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:10);
+        $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:5);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (\AppRoot::getExecTime() < 60) {
-            \AppRoot::doCliOutput("Find characters");
+        while (\AppRoot::getExecTime() < 60)
+        {
             $i = 0;
+            \AppRoot::doCliOutput("Find characters");
+
+            // Online toons
             if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.solarsystemid, l.shiptypeid, 
                                                             l.lastdate as lastupdate, l.online
                                                     from    characters c
@@ -29,13 +32,14 @@ class Location
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ? and l.lastdate > ?
+                                                    order by l.lastdate asc
                                                     limit ".$crestLimit
                         , [ date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s")-$crestTimer,date("m"),date("d"),date("Y"))),
                             date("Y-m-d H:i:s", mktime(date("H"),date("i")-5,date("s"),date("m"),date("d"),date("Y")))]))
             {
                 foreach ($results as $result)
                 {
-                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"Online":"offline"));
+                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"ONline":"OFFline"));
 
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \crest\model\Character($result["id"]);
@@ -45,6 +49,7 @@ class Location
                 }
             }
 
+            // Einde loop.
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
         }

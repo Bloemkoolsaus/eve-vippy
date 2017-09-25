@@ -90,9 +90,13 @@ class Character extends \eve\model\Character
     function setLocation($solarsystemID=null, $shiptypeID=null, $online=true)
     {
         if (!$shiptypeID) {
-            $current = $this->getLocation();
-            if ($current)
-                $shiptypeID = $current->shiptypeID;
+            $fleet = \fleets\model\Member::findOne(["characterid" => $this->id]);
+            if ($fleet) {
+                // Alleen indien in fleet is. Anders is shiptype niet bekend!
+                $current = $this->getLocation();
+                if ($current)
+                    $shiptypeID = $current->shiptypeID;
+            }
         }
 
         $location = new \stdClass();

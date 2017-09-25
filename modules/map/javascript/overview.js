@@ -21,13 +21,13 @@ $(window).load(function() {
 var pageTimer = 0;
 function reloadPage()
 {
-    if (pageTimer >= 300000) {  // 5 minuten
+    if (pageTimer >= 600000) {  // 10 minuten
         if (allowMapRefresh()) {
             document.location = "/map/"+$("#mapName").val()+"/"+$("#mapSystem").val()+"?scroll="+$(document).scrollTop();
             return true;
         }
     }
-    //setTimeout(reloadPage, 5000);
+    setTimeout(reloadPage, 5000);
     pageTimer += 5000;
 }
 
@@ -37,7 +37,7 @@ function reloadSignatureMap(noCache)
 		loadSignatureMap();
 		loadSignatureList(noCache);
 	}
-    setTimeout(reloadSignatureMap, 1500);
+    setTimeout(reloadSignatureMap, 700);
 }
 
 function disableMapRefresh()
