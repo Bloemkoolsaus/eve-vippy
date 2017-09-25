@@ -147,8 +147,8 @@ class LocationTracker
             $characters[$data->characterName] = [
                 "id" 	=> $data->characterID,
                 "name" 	=> $data->characterName,
-                "system" => (isset($data->solarsystemID)) ? ["id" => $data->solarsystemID, "name" => ($data->solarsystemName)?:null] : null,
-                "ship" => (isset($data->shiptypeID)) ? ["id" => $data->shiptypeID, "name" => ($data->shiptypeName)?:null] : null,
+                "system" => (isset($data->solarsystemID)) ? ["id" => $data->solarsystemID, "name" => (isset($data->solarsystemName))?$data->solarsystemName:null] : null,
+                "ship" => (isset($data->shiptypeID)) ? ["id" => $data->shiptypeID, "name" => (isset($data->shiptypeName))?$data->shiptypeName:null] : null,
                 "isme"	=> (\User::getUSER()->id == $data->userID)?1:0,
                 "time" => date("Y-m-d H:i:s", $data->lastdate)
             ];
