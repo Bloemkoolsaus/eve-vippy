@@ -158,7 +158,7 @@ class Fleet
             foreach ($fleetMembers as $member) {
                 $memberQuery[] = "(".implode(", ", $member).")";
             }
-            \MySQL::getDB()->doQuery("insert into crest_fleet_member (fleetid, characterid, wingid, squadid, solarsystemid, shipid, takewarp)
+            \MySQL::getDB()->doQuery("insert into crest_fleet_member (fleetid, characterid, wingid, squadid, solarsystemid, shiptypeid, takewarp)
                                       values ".implode(", ", $memberQuery));
         }
 
