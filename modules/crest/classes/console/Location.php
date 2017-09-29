@@ -92,8 +92,6 @@ class Location
                         "name" => $character->name
                     ]
                 ];
-                $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
-                $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
                 if (!$userSession)
                     \User::unsetUser();
             } else {

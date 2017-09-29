@@ -849,12 +849,11 @@ Class Tools
     public static function getFilesFromDirectory($directory, $allowDirectory=false, $sort=true)
     {
         $directory = self::formatFilename(trim($directory,"/"),false);
-        $files = array();
-
         \AppRoot::debug("getFilesFromDirectory([string]".$directory."[/string])");
+
+        $files = [];
         if ($handle = @opendir($directory)) {
-            while (false !== ($file = readdir($handle)))
-            {
+            while (false !== ($file = readdir($handle))) {
                 if ($file == "." || $file == "..")
                     continue;
                 if (file_exists($directory."/".$file)) {
@@ -872,4 +871,3 @@ Class Tools
         return $files;
     }
 }
-?>

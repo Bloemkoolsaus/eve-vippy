@@ -112,13 +112,6 @@ class Fleet
                     if ($character->getToken())
                         $solarSystemID = (int)$fleetMember->solarSystem->id;
 
-                    // Log entry
-                    if ($character->getUser()) {
-                        \User::setUSER($character->getUser());
-                        $session = "crest-".(($character->getUser())?$character->getUser()->id:$character->id)."-".date("Ymd");
-                        $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
-                    }
-
                     // Location tracker
                     $locationTracker->setCharacterLocation($character, $solarSystemID, $fleetMember->ship->id);
                     \User::unsetUser();

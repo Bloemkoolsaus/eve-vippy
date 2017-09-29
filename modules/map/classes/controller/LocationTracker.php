@@ -37,7 +37,6 @@ class LocationTracker
                     foreach (\map\model\Map::findAll(["authgroupid" => $group->id]) as $map)
                     {
                         \AppRoot::debug("check map: " . $map->name);
-                        $map->setMapUpdateDate(false);
 
                         // In het geval van een pod geen nieuw wormhole toevoegen.
                         if ($shipTypeID && in_array($shipTypeID, [0, 670, 33328])) {
@@ -128,9 +127,31 @@ class LocationTracker
                                 $stat->store();
                             }
                         }
+
+                        // Trigger map update
+                        $map->setMapUpdateDate(false);
                     }
                 }
             }
+        }
+
+        // Log entry
+        if ($character->getUser()) {
+            $session = "crest-".$character->getUser()->id."-".date("Ymd");
+            $character->getUser()->addLog("ingame", $character->id, null, $character->id, $session);
+            $cache = \Cache::getCache("file")->get("userlog/".$session);
+            if ($cache) {
+                $cache = json_decode($cache);
+            } else {
+                $cache = new \stdClass();
+                $cache->userid = $character->getUser()->id;
+                $cache->pilotid = $character->id;
+                $cache->what = "ingame";
+                $cache->whatid = $character->id;
+                $cache->startdate = date("Y-m-d H:i:s");
+            }
+            $cache->lastdate = date("Y-m-d H:i:s");
+            \Cache::getCache("file")->set("userlog/".$session, $cache);
         }
 
         return true;
