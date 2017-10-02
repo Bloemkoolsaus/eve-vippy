@@ -14,9 +14,11 @@ class Character
     public $isAuthorized = null;
     public $authMessage = null;
 
-    private $corporation = null;
-    private $user = null;
-    private $_authgroups = null;
+    private $_user;
+    private $_corporation;
+    private $_authgroups;
+    private $_accesslists;
+    private $_maps;
 
     function __construct($id=false)
     {
@@ -160,6 +162,19 @@ class Character
         return $groups;
     }
 
+    /**
+     * Get access lists
+     * return \admin\Model\AccessList[]
+     */
+    function getAccessLists()
+    {
+        if ($this->_accesslists === null)
+            $this->_accesslists = \admin\model\AccessList::findByCharacter($this);
+
+        return $this->_accesslists;
+    }
+
+
     function isAuthorized($reset=false)
     {
         \AppRoot::debug("isAuthorized(".$this->name.",".$reset.")");
@@ -173,10 +188,10 @@ class Character
      */
     function getCorporation()
     {
-        if ($this->corporation == null)
-            $this->corporation = \eve\model\Corporation::getCorporationByID($this->corporationID);
+        if ($this->_corporation == null)
+            $this->_corporation = \eve\model\Corporation::getCorporationByID($this->corporationID);
 
-        return $this->corporation;
+        return $this->_corporation;
     }
 
     /**
@@ -185,10 +200,10 @@ class Character
      */
     function getUser()
     {
-        if ($this->user === null && $this->userID > 0)
-            $this->user = \users\model\User::findByID($this->userID);
+        if ($this->_user === null && $this->userID > 0)
+            $this->_user = \users\model\User::findByID($this->userID);
 
-        return $this->user;
+        return $this->_user;
     }
 
 

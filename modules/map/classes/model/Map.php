@@ -161,4 +161,46 @@ class Map extends \scanning\model\Chain
         }
         return $entities;
     }
+
+    /**
+     * Find by character
+     * @param \eve\model\Character $character
+     * @return \map\model\Map[]
+     */
+    public static function findByCharacter(\eve\model\Character $character)
+    {
+        $from = ["left join mapwormholechains_corporations c on c.chainid = m.id"];
+        $where = ["c.corpid = ".$character->corporationID];
+
+        if ($character->getCorporation() && $character->getCorporation()->allianceID) {
+            $from[] = "left join mapwormholechains_alliances a on a.chainid = m.id";
+            $where[] = "a.allianceid = ".$character->getCorporation()->allianceID;
+        }
+
+        if ($character->getAccessLists() && count($character->getAccessLists()) > 0) {
+            $listIDs = [];
+            foreach ($character->getAccessLists() as $list) {
+                $listIDs[] = $list->id;
+            }
+            $from[] = "left join mapwormholechains_accesslists l on l.chainid = m.id";
+            $where[] = "l.accesslistid in (".implode(",", $listIDs).")";
+        }
+
+        $maps = [];
+        if ($results = \MySQL::getDB()->getRows("SELECT  *
+                                                 FROM    mapwormholechains m
+                                                    INNER JOIN user_auth_groups ag ON ag.id = m.authgroupid
+                                                    LEFT JOIN " . implode(" left join ", $from) . "
+                                                 WHERE   m.deleted = 0 AND ag.deleted = 0
+                                                 AND    (" . implode(" or", $where) . ")
+                                                 GROUP BY m.id ORDER BY m.prio, m.name"))
+        {
+            foreach ($results as $result) {
+                $map = new \map\model\Map();
+                $map->load($result);
+                $maps[] = $map;
+            }
+        }
+        return $maps;
+    }
 }

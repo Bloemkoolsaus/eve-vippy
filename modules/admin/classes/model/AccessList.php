@@ -136,7 +136,7 @@ class AccessList extends \Model
                                                      from   users u
                                                         inner join user_accesslist_user a on a.userid = u.id
                                                      where  a.accesslistid = ?"
-                , [$this->id]))
+                                                , [$this->id]))
             {
                 foreach ($results as $result) {
                     $user = new \users\model\User();
@@ -306,5 +306,45 @@ class AccessList extends \Model
             if ($alliance->id == $allianceID)
                 unset($this->_alliances[$key]);
         }
+    }
+
+
+
+
+    /**
+     * Find accesslists by character
+     * @param \eve\model\Character $character
+     * @return \admin\model\AccessList[]
+     */
+    public static function findByCharacter(\eve\model\Character $character)
+    {
+        $from = ["user_accesslist a"];
+        $where = [];
+
+        $from[] = "user_accesslist_characters c on c.accesslistid = a.id";
+        $where[] = "c.characterid = ".$character->id;
+
+        $joins[] = "user_accesslist_corporation cc on cc.accesslistid = a.id";
+        $where[] = "cc.corporationid = ".$character->corporationID;
+
+        if ($character->getCorporation() && $character->getCorporation()->allianceID) {
+            $joins[] = "user_accesslist_alliance aa on aa.accesslistid = a.id";
+            $where[] = "aa.allianceid = ".$character->getCorporation()->allianceID;
+        }
+
+        $accessLists = [];
+        if ($results = \MySQL::getDB()->getRows("select a.*
+                                                 from   ".implode(" left join", $from)." 
+                                                 where  ".implode(" or", $where)."
+                                                 group by a.id"))
+        {
+            foreach ($results as $result) {
+                $list = new \admin\model\AccessList();
+                $list->load($result);
+                $accessLists[] = $list;
+            }
+        }
+
+        return $accessLists;
     }
 }
