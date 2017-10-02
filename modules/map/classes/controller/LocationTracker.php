@@ -33,7 +33,7 @@ class LocationTracker
             if ($previousLocationID != $locationID) {
                 // Check alle maps van deze toon
                 foreach (\map\model\Map::findByCharacter($character) as $map) {
-                    \AppRoot::debug("check map: " . $map->name);
+                    \AppRoot::doCliOutput("map: ".$map->name);
 
                     // In het geval van een pod geen nieuw wormhole toevoegen.
                     if ($shipTypeID && in_array($shipTypeID, [0, 670, 33328])) {

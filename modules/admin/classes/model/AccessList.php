@@ -324,18 +324,18 @@ class AccessList extends \Model
         $from[] = "user_accesslist_characters c on c.accesslistid = a.id";
         $where[] = "c.characterid = ".$character->id;
 
-        $joins[] = "user_accesslist_corporation cc on cc.accesslistid = a.id";
+        $from[] = "user_accesslist_corporation cc on cc.accesslistid = a.id";
         $where[] = "cc.corporationid = ".$character->corporationID;
 
         if ($character->getCorporation() && $character->getCorporation()->allianceID) {
-            $joins[] = "user_accesslist_alliance aa on aa.accesslistid = a.id";
+            $from[] = "user_accesslist_alliance aa on aa.accesslistid = a.id";
             $where[] = "aa.allianceid = ".$character->getCorporation()->allianceID;
         }
 
         $accessLists = [];
         if ($results = \MySQL::getDB()->getRows("select a.*
-                                                 from   ".implode(" left join", $from)." 
-                                                 where  ".implode(" or", $where)."
+                                                 from   ".implode(" left join ", $from)." 
+                                                 where  ".implode(" or ", $where)."
                                                  group by a.id"))
         {
             foreach ($results as $result) {
