@@ -7,25 +7,28 @@ class System
     {
         $wormhole = new \map\model\Wormhole(array_shift($arguments));
         $system = $wormhole->getSolarsystem();
+        $characters = [];
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("system", $system);
         $tpl->assign("wormhole", $wormhole);
 
-        if ($system && $system->isWSpace())
-            $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
+        if ($system)
+        {
+            if ($system->isWSpace())
+                $tpl->assign("whEffectsData", $this->getWHEffectsData($system));
 
-        // Character Locations
-        $characters = [];
-        $locationTracker = new \map\controller\LocationTracker();
-        foreach (\User::getUSER()->getAuthGroups() as $group) {
-            foreach ($locationTracker->getCharacterLocationsByAuthGroup($group->id) as $char) {
-                if ($char["system"] && $char["system"]["id"] == $system->id)
-                    $characters[$char["name"]] = $char;
+            // Character Locations
+            $locationTracker = new \map\controller\LocationTracker();
+            foreach (\User::getUSER()->getAuthGroups() as $group) {
+                foreach ($locationTracker->getCharacterLocationsByAuthGroup($group->id) as $char) {
+                    if ($char["system"] && $char["system"]["id"] == $system->id)
+                        $characters[$char["name"]] = $char;
+                }
             }
         }
-        $tpl->assign("characters", $characters);
 
+        $tpl->assign("characters", $characters);
         return $tpl->fetch("map/system/solarsystem");
     }
 

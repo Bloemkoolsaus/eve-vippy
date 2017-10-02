@@ -159,7 +159,7 @@ class LocationTracker
         $cacheDirectory = \Cache::file()->getDirectory()."locations/";
         foreach (\Tools::getFilesFromDirectory($cacheDirectory.$authGroupID, false, false) as $file) {
             $data = json_decode(file_get_contents($file));
-            if ($timelimit && $data->lastdate < strtotime("now")-$timelimit)
+            if ($timelimit && isset($data->lastdate) && $data->lastdate < strtotime("now")-$timelimit)
                 continue;
             $characters[$data->characterName] = [
                 "id" 	=> $data->characterID,
