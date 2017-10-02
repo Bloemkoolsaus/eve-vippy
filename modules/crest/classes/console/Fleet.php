@@ -37,6 +37,7 @@ class Fleet
                     $this->getFleetMembers($fleet);
                 }
             }
+            break;
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
@@ -93,7 +94,7 @@ class Fleet
                 foreach ($crest->getResult()->items as $fleetMember) {
                     $characterIDs[] = $fleetMember->character->id;
                 }
-                \MySQL::getDB()->doQuery("update map_character_locations set lastdate = ".date("Y-m-d H:i:s")." where characterid in (".implode(",", $characterIDs).")");
+                \MySQL::getDB()->doQuery("update map_character_locations set lastdate = '".date("Y-m-d H:i:s")."' where characterid in (".implode(",", $characterIDs).")");
 
                 foreach ($crest->getResult()->items as $fleetMember)
                 {
