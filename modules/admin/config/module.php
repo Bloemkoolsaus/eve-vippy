@@ -15,15 +15,7 @@ if (\User::getUSER() && !\Tools::REQUEST("ajax"))
         $config["submenu"][] = ["type" => "link", "name" => "Notifications", "url" => "notices/notes"];
         $config["submenu"][] = ["type" => "seperator"];
         $config["submenu"][] = ["type" => "link", "name" => "Access Lists", "url" => "admin/accesslist"];
-    }
-
-    if (count(\User::getUSER()->getAuthGroupsAdmins()) > 0)
-    {
-        $config["submenu"][] = [
-            "type" => "link",
-            "name" => "Access Control Group",
-            "url" => "admin/authgroup/edit/" . \User::getUSER()->getCurrentAuthGroupID()
-        ];
+        $config["submenu"][] = ["type" => "link", "name" => "Access Control Group", "url" => "admin/authgroup/"];
     }
 
     if (\User::getUSER()->hasRight("users", "manageusers") || \User::getUSER()->isAdmin())

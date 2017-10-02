@@ -5,11 +5,17 @@ class Authgroup
 {
     function getOverview($arguments=[])
     {
-        if (!\User::getUSER()->getIsSysAdmin())
-            \AppRoot::redirect("admin/authgroup/edit/".\User::getUSER()->getCurrentAuthGroupID());
+        $accessGroups = [];
+        if (\User::getUSER()->getIsSysAdmin())
+            $accessGroups = \admin\model\AuthGroup::getAuthGroups();
+        else
+            $accessGroups = \User::getUSER()->getAuthGroupsAdmins();
+
+        if (count($accessGroups) == 1)
+            \AppRoot::redirect("admin/authgroup/edit/".$accessGroups[0]->id);
 
         $tpl = \SmartyTools::getSmarty();
-        $tpl->assign("authgroups", \admin\model\AuthGroup::getAuthGroups());
+        $tpl->assign("authgroups", $accessGroups);
         return $tpl->fetch("admin/authgroups/overview");
     }
 

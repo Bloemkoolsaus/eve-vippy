@@ -8,7 +8,6 @@
 	<div>
 		{assign var=activeUsers value=0}
 		{assign var=totalUsers value=0}
-		<h2>Active Groups</h2>
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
@@ -20,42 +19,9 @@
 				<th style="width: 50px;"></th>
 			</tr>
 	{foreach from=$authgroups key=i item=group}
-		{if !$group->deleted}
 			{include "admin/authgroups/overview-row"}
 			{assign var=activeUsers value=$activeUsers+$group->getActiveUsers()|@count}
 			{assign var=totalUsers value=$totalUsers+$group->getAllowedUsers()|@count}
-		{/if}
-	{/foreach}
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<th style="text-align: center;">{$activeUsers}</th>
-				<th style="text-align: center;">{$totalUsers}</th>
-				<td></td>
-			</tr>
-		</table>
-	</div>
-	<div style="margin-top: 3em;">
-		{assign var=activeUsers value=0}
-		{assign var=totalUsers value=0}
-		<h2>In-Active Groups</h2>
-		<table class="sectionoverview">
-			<tr>
-				<th>Name</th>
-				<th style="width: 200px; text-align: center;">License</th>
-				<th style="width: 100px; text-align: center;">Balance</th>
-				<th style="width: 80px; text-align: center;">Active Users</th>
-				<th style="width: 80px; text-align: center;">Allowed Users</th>
-				<th style="width: 200px; text-align: center;">Last Active</th>
-				<th style="width: 50px;"></th>
-			</tr>
-	{foreach from=$authgroups key=i item=group}
-		{if $group->deleted}
-			{include "admin/authgroups/overview-row"}
-			{assign var=activeUsers value=$activeUsers+$group->getActiveUsers()|@count}
-			{assign var=totalUsers value=$totalUsers+$group->getAllowedUsers()|@count}
-		{/if}
 	{/foreach}
 			<tr>
 				<td></td>

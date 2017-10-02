@@ -1264,7 +1264,8 @@ class User
                     $queries[] = "select  c.*, c.prio+1000 as sort
                                   from    mapwormholechains c
                                       inner join mapwormholechains_accesslists al on al.chainid = c.id
-                                  where   al.accesslistid in (".implode(",",$accessListIDs).")";
+                                  where   al.accesslistid in (".implode(",",$accessListIDs).")
+                                  and     c.deleted = 0";
                 }
 
                 if ($results = \MySQL::getDB()->getRows("select * from (".implode(" union ", $queries).") map group by id order by sort,id")) {
@@ -1426,7 +1427,7 @@ class User
             // Heb ik directors in deze groep?
             foreach ($group->getAllowedCorporations() as $corp) {
                 if ($this->isAdmin($corp->id)) {
-                    $authGroups[] = $group;
+                    $authGroups[$group->id] = $group;
                     continue;
                 }
             }
