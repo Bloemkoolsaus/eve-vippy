@@ -37,7 +37,6 @@ class Fleet
                     $this->getFleetMembers($fleet);
                 }
             }
-            return;
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
