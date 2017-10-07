@@ -28,7 +28,7 @@ class Location
             if ($results = \MySQL::getDB()->getRows("select c.id, c.name, l.solarsystemid, l.shiptypeid, 
                                                             l.lastdate as lastupdate, l.online
                                                     from    characters c
-                                                        inner join users u on u.id = c.userid and u.isvalid > 0
+                                                        inner join users u on u.id = c.userid
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                     where   l.lastdate < ? and l.lastdate > ?
