@@ -5,39 +5,28 @@ class Fleet
 {
     function doDefault($arguments=[])
     {
-        $this->doFleets($arguments);
-    }
-
-    function doFleets($arguments=[])
-    {
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doFleet(".implode(",",$arguments).")");
 
-        // Oude fleets opruimen (ouder dan 6u)
-        \MySQL::getDB()->doQuery("delete from crest_fleet where active = 0 and (lastupdate < ? or lastupdate is null)"
-                    , [date("Y-m-d H:i:s", mktime(date("H")-6,date("i"),date("s"),date("m"),date("d"),date("Y")))]);
-
         // Als we tegen de timeout aanlopen, afbreken
-        while (\AppRoot::getExecTime() < 55)
+        while (\AppRoot::getExecTime() < 58)
         {
             \AppRoot::doCliOutput("Find fleets");
             if ($results = \MySQL::getDB()->getRows(" select  *
                                                       from    crest_fleet
                                                       where   active > 0
                                                       and     (lastupdate < ? or lastupdate is null)"
-                                   , [date("Y-m-d H:i:s", strtotime("now")-35)]))
+                                        , [date("Y-m-d H:i:s", strtotime("now")-5)]))
             {
                 \AppRoot::doCliOutput(count($results)." fleets found");
                 foreach ($results as $result)
                 {
                     \AppRoot::doCliOutput("fleet: ".$result["id"]);
-                    $fleet = new \fleets\model\Fleet();
-                    $fleet->load($result);
-                    $this->getFleetMembers($fleet);
+                    \MySQL::getDB()->doQuery("update crest_fleet set lastupdate = '".date("Y-m-d H:i:s")."' where id = ".$result["id"]);
+                    \AppRoot::runCron(["crest", "fleet", "fleet", $result["id"]]);
                 }
             }
-            break;
 
             \AppRoot::doCliOutput("Running for ".\AppRoot::getExecTime()." seconds");
             sleep(1);
@@ -45,7 +34,18 @@ class Fleet
         \AppRoot::doCliOutput("Finished run!");
     }
 
-    function getFleetMembers(\fleets\model\Fleet $fleet)
+    function doFleet($arguments=[])
+    {
+        $crest = new \crest\Api();
+        while (count($arguments) > 0) {
+            $fleet = \fleets\model\Fleet::findById(array_shift($arguments));
+            if ($fleet)
+                $this->getFleetMembers($fleet, $crest);
+        }
+        $crest->closeCurl();
+    }
+
+    function getFleetMembers(\fleets\model\Fleet $fleet, \crest\Api $crest=null)
     {
         \AppRoot::doCliOutput("getFleetMembers($fleet->id)");
         if (!$fleet->id) {
@@ -76,8 +76,11 @@ class Fleet
         $fleet->active = false;
         $fleet->statusMessage = null;
         $fleetMembers = [];
+        $userSession = (\User::getUSER())?true:false;
 
-        $crest = new \crest\Api();
+        if (!$crest)
+            $crest = new \crest\Api();
+
         $crest->setToken($fleet->getBoss()->getToken());
         $crest->get("fleets/".$fleet->id."/members/");
 
@@ -86,15 +89,29 @@ class Fleet
             \AppRoot::debug($crest->getResult());
             $locationTracker = new \map\controller\LocationTracker();
 
-            // Update datum bijwerken om dubbele execution te voorkomen
             if (isset($crest->getResult()->items))
             {
-                // Update datum bijwerken om dubbele execution te voorkomen
-                $characterIDs = [];
+                // Dubbele execution voorkomen
                 foreach ($crest->getResult()->items as $fleetMember) {
-                    $characterIDs[] = $fleetMember->character->id;
+                    $fleetMembers[] = [
+                        (int)$fleet->id,
+                        (int)$fleetMember->character->id,
+                        (int)$fleetMember->wingID,
+                        (int)$fleetMember->squadID,
+                        (int)$fleetMember->solarSystem->id,
+                        (int)$fleetMember->ship->id,
+                        (int)($fleetMember->takesFleetWarp)?1:0
+                    ];
                 }
-                \MySQL::getDB()->doQuery("update map_character_locations set lastdate = '".date("Y-m-d H:i:s")."' where characterid in (".implode(",", $characterIDs).")");
+                // Reset fleet members
+                \MySQL::getDB()->doQuery("delete from crest_fleet_member where fleetid = ?", [$fleet->id]);
+                if (count($fleetMembers) > 0) {
+                    $memberQuery = [];
+                    foreach ($fleetMembers as $member) {
+                        $memberQuery[] = "(".implode(", ", $member).")";
+                    }
+                    \MySQL::getDB()->doQuery("insert into crest_fleet_member (fleetid, characterid, wingid, squadid, solarsystemid, shiptypeid, takewarp) values ".implode(", ", $memberQuery));
+                }
 
                 foreach ($crest->getResult()->items as $fleetMember)
                 {
@@ -107,25 +124,13 @@ class Fleet
                         $character = new \crest\model\Character((int)$fleetMember->character->id);
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
-
-                    // Moeten we de locatie van deze character updaten?
-                    $solarSystemID = null;
-                    if ($character->getToken())
-                        $solarSystemID = (int)$fleetMember->solarSystem->id;
+                    if (!$userSession)
+                        \User::setUSER($character->getUser());
 
                     // Location tracker
-                    $locationTracker->setCharacterLocation($character, $solarSystemID, $fleetMember->ship->id);
-                    \User::unsetUser();
-
-                    $fleetMembers[] = [
-                        (int)$fleet->id,
-                        (int)$character->id,
-                        (int)$fleetMember->wingID,
-                        (int)$fleetMember->squadID,
-                        (int)$fleetMember->solarSystem->id,
-                        (int)$fleetMember->ship->id,
-                        (int)($fleetMember->takesFleetWarp)?1:0
-                    ];
+                    $locationTracker->setCharacterLocation($character, (int)$fleetMember->solarSystem->id, (int)$fleetMember->ship->id);
+                    if (!$userSession)
+                        \User::unsetUser();
                 }
 
                 $fleet->active = true;
@@ -150,17 +155,6 @@ class Fleet
                 $fleet->statusMessage = "Failed to call CREST for fleet info. ".$crest->httpStatus." returned!";
                 $fleet->store();
             }
-        }
-
-        // Reset fleet members
-        \MySQL::getDB()->doQuery("delete from crest_fleet_member where fleetid = ?", [$fleet->id]);
-        if (count($fleetMembers) > 0) {
-            $memberQuery = [];
-            foreach ($fleetMembers as $member) {
-                $memberQuery[] = "(".implode(", ", $member).")";
-            }
-            \MySQL::getDB()->doQuery("insert into crest_fleet_member (fleetid, characterid, wingid, squadid, solarsystemid, shiptypeid, takewarp)
-                                      values ".implode(", ", $memberQuery));
         }
 
         unset($crest);
