@@ -13,7 +13,7 @@ class Fleet
         while (\AppRoot::getExecTime() < 58)
         {
             \AppRoot::doCliOutput("Find fleets");
-            if ($results = \MySQL::getDB()->getRows(" select  *
+            if ($results = \MySQL::getDB()->getRows(" select  id
                                                       from    crest_fleet
                                                       where   active > 0
                                                       and     (lastupdate < ? or lastupdate is null)"

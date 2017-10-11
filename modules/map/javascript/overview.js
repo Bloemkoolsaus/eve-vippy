@@ -128,9 +128,7 @@ function editConnection(connectionID)
 {
 	$.ajax({
 		url: "/map/connection/edit/"+connectionID,
-        data: {
-            ajax: 1
-        },
+        data: { ajax: 1 },
 		success: function(data) {
 			showPopup("<div id='editConnectionPopup'>"+data+"</div>", 600, 400);
 		}
@@ -301,7 +299,10 @@ function editKnownSystems(systemName)
         url: "/map/"+$("#mapName").val()+"/knownwormhole/edit/"+systemName,
         data: { ajax: 1 },
         success: function(data) {
-            showPopup(data, 500, 250);
+            showPopup(data, 500, 250, null, null, function() {
+                $("input[known-system-title]").focus();
+                $("input[known-system-title]").select();
+            });
         }
     });
 }

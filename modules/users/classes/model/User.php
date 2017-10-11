@@ -171,25 +171,31 @@ class User
     public function setLoginStatus($loggedin=true, $setKeyCookie=false)
     {
         \AppRoot::debug("setLoginStatus(".$loggedin."): ".$this->id);
-        if ($loggedin) {
-            $this->resetCache();
-            $this->fetchIsAuthorized();
+        if ($loggedin)
+        {
             \User::setUSER($this);
 
-            if ($setKeyCookie)
-                \Tools::setCOOKIE("vippy", $this->createLoginKey());
+            if (!\AppRoot::isCommandline()) {
+                // Reset cache
+                $this->resetCache();
+                $this->fetchIsAuthorized();
+                if ($setKeyCookie)
+                    \Tools::setCOOKIE("vippy", $this->createLoginKey());
 
-            // Controleer main character
-            if ($this->getMainCharacter()) {
-                if (!$this->getMainCharacter()->isAuthorized())
-                    $this->resetMainCharacter();
-            }
+                // Controleer main character
+                if ($this->getMainCharacter()) {
+                    if (!$this->getMainCharacter()->isAuthorized())
+                        $this->resetMainCharacter();
+                }
 
-            // Toon locaties checken
-            \AppRoot::debug("Check character locations");
-            $crestLocation = new \crest\console\Location();
-            foreach (\crest\model\Character::findByUser(\User::getUSER()->id) as $char) {
-                $crestLocation->fetchCharacter($char->id);
+                // Toon locaties checken
+                $crestLocation = new \crest\console\Location();
+                $characterIDs = [];
+                foreach (\crest\model\Character::findByUser(\User::getUSER()->id) as $char) {
+                    $characterIDs[] = $char->id;
+                }
+                if (count($characterIDs) > 0)
+                    $crestLocation->fetchCharacters([$characterIDs]);
             }
         } else
             \User::unsetUser();

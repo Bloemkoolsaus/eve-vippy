@@ -3,12 +3,6 @@ namespace crest\console;
 
 class Location
 {
-    function fetchCharacter($characterID)
-    {
-        // Asynchroon uitvoeren
-        \AppRoot::runCron(["crest", "location", "character", $characterID]);
-    }
-
     function fetchCharacters($characterIDs)
     {
         // Asynchroon uitvoeren
