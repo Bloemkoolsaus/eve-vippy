@@ -169,11 +169,11 @@ class Map extends \scanning\model\Chain
      */
     public static function findByCharacter(\eve\model\Character $character)
     {
-        $from = ["left join mapwormholechains_corporations c on c.chainid = m.id"];
+        $from = ["mapwormholechains_corporations c on c.chainid = m.id"];
         $where = ["c.corpid = ".$character->corporationID];
 
         if ($character->getCorporation() && $character->getCorporation()->allianceID) {
-            $from[] = "left join mapwormholechains_alliances a on a.chainid = m.id";
+            $from[] = "mapwormholechains_alliances a on a.chainid = m.id";
             $where[] = "a.allianceid = ".$character->getCorporation()->allianceID;
         }
 
@@ -182,17 +182,17 @@ class Map extends \scanning\model\Chain
             foreach ($character->getAccessLists() as $list) {
                 $listIDs[] = $list->id;
             }
-            $from[] = "left join mapwormholechains_accesslists l on l.chainid = m.id";
+            $from[] = "mapwormholechains_accesslists l on l.chainid = m.id";
             $where[] = "l.accesslistid in (".implode(",", $listIDs).")";
         }
 
         $maps = [];
-        if ($results = \MySQL::getDB()->getRows("SELECT  *
+        if ($results = \MySQL::getDB()->getRows("SELECT  m.*
                                                  FROM    mapwormholechains m
                                                     INNER JOIN user_auth_groups ag ON ag.id = m.authgroupid
                                                     LEFT JOIN " . implode(" left join ", $from) . "
                                                  WHERE   m.deleted = 0 AND ag.deleted = 0
-                                                 AND    (" . implode(" or", $where) . ")
+                                                 AND    (" . implode(" or ", $where) . ")
                                                  GROUP BY m.id ORDER BY m.prio, m.name"))
         {
             foreach ($results as $result) {
