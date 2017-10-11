@@ -545,7 +545,7 @@ class AuthGroup
         if ($user == null)
             $user = \User::getUSER();
 
-        \AppRoot::debug($this->name."->getMayAdmin(".$user->displayname.")");
+        \AppRoot::debug($this->id.". ".$this->name."->getMayAdmin(".$user->displayname.")");
         if ($user->getIsSysAdmin())
             return true;
 
