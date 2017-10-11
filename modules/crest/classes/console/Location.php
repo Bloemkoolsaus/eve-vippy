@@ -39,11 +39,11 @@ class Location
                                                                     where   f.active > 0
                                                             ) f on f.characterid = c.id
                                                     where   f.fleetid is null
-                                                    and     l.lastdate < ? and l.lastdate > ?
+                                                    and     l.lastdate between ? and ?
                                                     order by l.online desc, l.lastdate asc
                                                     limit ".$crestLimit
-                                    , [ date("Y-m-d H:i:s", strtotime("now")-$crestTimer),
-                                        date("Y-m-d H:i:s", strtotime("now")-300)]))
+                                    , [ date("Y-m-d H:i:s", strtotime("now")-500),
+                                        date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
             {
                 $characterIDs = [];
                 foreach ($results as $result)
