@@ -11,8 +11,10 @@ class Authgroup
         else
             $accessGroups = \User::getUSER()->getAuthGroupsAdmins();
 
-        if (count($accessGroups) == 1)
-            \AppRoot::redirect("admin/authgroup/edit/".$accessGroups[0]->id);
+        if (count($accessGroups) == 1) {
+            $group = array_shift($accessGroups);
+            \AppRoot::redirect("admin/authgroup/edit/".$group->id);
+        }
 
         $tpl = \SmartyTools::getSmarty();
         $tpl->assign("authgroups", $accessGroups);
