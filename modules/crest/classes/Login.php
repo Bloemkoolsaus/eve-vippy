@@ -13,7 +13,13 @@ class Login extends \api\Client
 
     function get($url, $params = array())
     {
-        $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
+        //$this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
+
+        $hostname = trim(\Config::getCONFIG()->get("system_url"), "/");
+        $hostname = str_replace("https://", "", $hostname);
+        $hostname = str_replace("http://", "", $hostname);
+        $this->addHeader("Host: ".$hostname);
+
         return parent::get($url, $params);
     }
 
@@ -57,6 +63,7 @@ class Login extends \api\Client
             $this->addHeader("Content-Type: application/json");
             $this->addHeader("Authorization: Basic " . $this->getBasicAuthorizationCode());
             $this->post("token", ["grant_type" => "authorization_code", "code" => $code]);
+            $this->closeCurl();
 
             if ($this->success())
             {
@@ -69,9 +76,9 @@ class Login extends \api\Client
 
                     // Verify the token
                     $this->resetheader();
-                    $this->addHeader("Content-Type: application/json");
                     $this->addHeader("Authorization: Bearer ".$data->access_token);
                     $this->get("verify");
+                    $this->closeCurl();
                     if ($this->success())
                     {
                         $result = $this->getResult();

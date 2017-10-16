@@ -53,6 +53,7 @@ class Client
 
     function initCurl()
     {
+        \AppRoot::debug("Open new CURL connection");
         $this->_curl = curl_init();
         curl_setopt($this->_curl, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
@@ -76,7 +77,10 @@ class Client
 
     function closeCurl()
     {
-        curl_close($this->getCurl());
+        \AppRoot::debug("Close CURL connection");
+        if ($this->_curl)
+            curl_close($this->_curl);
+
         $this->_curl = null;
     }
 
@@ -120,6 +124,7 @@ class Client
         $result["requestURL"] = $requestURL;
         $result["requestData"] = $requestData;
         $result["requestHeaders"] = $requestHeaders;
+        \AppRoot::debug($result);
         $content = curl_exec($this->getCurl());
         $info = curl_getinfo($this->getCurl());
 
