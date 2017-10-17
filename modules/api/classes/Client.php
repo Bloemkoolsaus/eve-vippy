@@ -20,6 +20,7 @@ class Client
     private $connectionTimeout = 30;
     private $executionTimeout = 60;
     private $headers = array();
+    private $_contentType = "application/json";
     private $_curl = null;
 
     function __construct($baseURL="")
@@ -49,6 +50,11 @@ class Client
     function resetheader()
     {
         $this->headers = [];
+    }
+
+    function setContentType($type)
+    {
+        $this->_contentType = $type;
     }
 
     function initCurl()
@@ -110,7 +116,7 @@ class Client
 
         if (strtolower($requestType) == "post") {
             \AppRoot::debug($requestData);
-            $requestHeaders[] = "Content-Type: application/json";
+            $requestHeaders[] = "Content-Type: ".$this->_contentType;
             $requestHeaders[] = "Content-Length: ".strlen($requestData);
             curl_setopt($this->getCurl(), CURLOPT_POST, true);
             curl_setopt($this->getCurl(), CURLOPT_POSTFIELDS, $requestData);
@@ -137,8 +143,10 @@ class Client
             $result["error"] = "curl(".curl_errno($this->getCurl()).") ".curl_error($this->getCurl());
         }
 
-        if ($this->httpStatus != 200 && $this->httpStatus != 204)
+        if ($this->httpStatus != 200 && $this->httpStatus != 204) {
             $result["error"] = $this->httpStatus;
+            \AppRoot::debug($info);
+        }
 
         \AppRoot::debug("RESULT:<br />".$content);
 
