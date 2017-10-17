@@ -61,12 +61,6 @@ class Client
     {
         \AppRoot::debug("Open new CURL connection");
         $this->_curl = curl_init();
-        curl_setopt($this->_curl, CURLOPT_USERAGENT, $this->userAgent);
-        curl_setopt($this->_curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($this->_curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($this->_curl, CURLOPT_SSL_VERIFYPEER, $this->verifySSL);
-        curl_setopt($this->_curl, CURLOPT_CONNECTTIMEOUT ,$this->connectionTimeout);
-        curl_setopt($this->_curl, CURLOPT_TIMEOUT, $this->executionTimeout);
     }
 
     /**
@@ -113,6 +107,12 @@ class Client
         \AppRoot::debug("*** Start api call: ".strtoupper($requestType)." ".$requestURL);
 
         curl_setopt($this->getCurl(), CURLOPT_URL, $requestURL);
+        curl_setopt($this->getCurl(), CURLOPT_USERAGENT, $this->userAgent);
+        curl_setopt($this->getCurl(), CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->getCurl(), CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($this->getCurl(), CURLOPT_SSL_VERIFYPEER, $this->verifySSL);
+        curl_setopt($this->getCurl(), CURLOPT_CONNECTTIMEOUT, $this->connectionTimeout);
+        curl_setopt($this->getCurl(), CURLOPT_TIMEOUT, $this->executionTimeout);
 
         if (strtolower($requestType) == "post") {
             \AppRoot::debug($requestData);

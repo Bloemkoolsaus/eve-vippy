@@ -195,7 +195,7 @@ class User
                     $characterIDs[] = $char->id;
                 }
                 if (count($characterIDs) > 0)
-                    $crestLocation->fetchCharacters([$characterIDs]);
+                    $crestLocation->fetchCharacters($characterIDs);
             }
         } else
             \User::unsetUser();

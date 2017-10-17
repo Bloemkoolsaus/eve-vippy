@@ -14,15 +14,6 @@ class Login extends \api\Client
 
     function get($url, $params = array())
     {
-        //$this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
-
-        /*
-        $hostname = trim(\Config::getCONFIG()->get("system_url"), "/");
-        $hostname = str_replace("https://", "", $hostname);
-        $hostname = str_replace("http://", "", $hostname);
-        $this->addHeader("Host: ".$hostname);
-        */
-
         return parent::get($url, $params);
     }
 
@@ -63,9 +54,9 @@ class Login extends \api\Client
         if ($stateData && isset($stateData->url))
         {
             $this->resetheader();
-            $this->setContentType("application/x-www-form-urlencoded");
             $this->addHeader("Authorization: Basic " . $this->getBasicAuthorizationCode());
             $this->post("token", ["grant_type" => "authorization_code", "code" => $code]);
+            $this->closeCurl();
 
             if ($this->success())
             {
@@ -80,6 +71,8 @@ class Login extends \api\Client
                     $this->resetheader();
                     $this->addHeader("Authorization: Bearer ".$data->access_token);
                     $this->get("verify");
+                    $this->closeCurl();
+
                     if ($this->success())
                     {
                         $result = $this->getResult();
@@ -167,7 +160,6 @@ class Login extends \api\Client
         \AppRoot::doCliOutput("[CREST] Login->refreshToken($token->accessToken)");
 
         $this->resetheader();
-        $this->addHeader("Content-Type: application/json");
         $this->addHeader("Authorization: Basic " . $this->getBasicAuthorizationCode());
         $this->post("token", ["grant_type" => "refresh_token", "refresh_token" => $token->refreshToken]);
 
