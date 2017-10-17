@@ -8,6 +8,8 @@
 	<div>
 		{assign var=activeUsers value=0}
 		{assign var=totalUsers value=0}
+		{assign var=totalLicense value=0}
+		{assign var=totalBalance value=0}
 		<table class="sectionoverview">
 			<tr>
 				<th>Name</th>
@@ -22,11 +24,15 @@
 			{include "admin/authgroups/overview-row"}
 			{assign var=activeUsers value=$activeUsers+$group->getActiveUsers()|@count}
 			{assign var=totalUsers value=$totalUsers+$group->getAllowedUsers()|@count}
+			{assign var=totalBalance value=$totalBalance+$group->getBalance()}
+		{if $group->getSubscription()}
+			{assign var=totalLicense value=$totalLicense+$group->getSubscription()->getAmount()}
+		{/if}
 	{/foreach}
 			<tr>
 				<td></td>
-				<td></td>
-				<td></td>
+				<th style="text-align: right;">{$totalLicense/100000000}m &nbsp; p/month &nbsp;</th>
+				<th style="text-align: right; {if $totalBalance<0}color: #ff0000;{/if}">{$totalBalance/100000000}m &nbsp;</th>
 				<th style="text-align: center;">{$activeUsers}</th>
 				<th style="text-align: center;">{$totalUsers}</th>
 				<td></td>

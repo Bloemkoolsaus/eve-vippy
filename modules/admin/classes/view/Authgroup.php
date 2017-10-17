@@ -6,9 +6,12 @@ class Authgroup
     function getOverview($arguments=[])
     {
         $accessGroups = [];
-        if (\User::getUSER()->getIsSysAdmin())
-            $accessGroups = \admin\model\AuthGroup::getAuthGroups();
-        else
+        if (\User::getUSER()->getIsSysAdmin()) {
+            foreach (\admin\model\AuthGroup::getAuthGroups() as $group) {
+                if ($group->isActive())
+                    $accessGroups[] = $group;
+            }
+        } else
             $accessGroups = \User::getUSER()->getAuthGroupsAdmins();
 
         if (count($accessGroups) == 1) {

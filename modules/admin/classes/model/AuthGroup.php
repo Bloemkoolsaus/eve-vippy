@@ -341,14 +341,9 @@ class AuthGroup
 
     function isActive()
     {
-        if (count($this->getAllowedUsers()) == 0)
+        if (count($this->getActiveUsers()) == 0)
             return false;
-        /*
-        if (count($this->getActiveUsers(date("Y-m-d", mktime(0, 0, 0, date("m")-1, 1, date("Y"))))) == 0)
-            return false;
-        if (strtotime("now")-strtotime($this->getLastActiveDate()) > 5184000)   // 2 maanden
-            return false;
-        */
+
         return true;
     }
 
@@ -359,8 +354,7 @@ class AuthGroup
      */
     function hasModule($name)
     {
-        foreach ($this->getModules() as $module)
-        {
+        foreach ($this->getModules() as $module) {
             if ($module == $name)
                 return true;
         }
@@ -464,12 +458,31 @@ class AuthGroup
 
         if (!$date)
         {
+            $cache = \Cache::getCache("file")->get("authgroup/".$this->id."/active-users");
+            if ($cache) {
+                $cache = json_decode($cache);
+                if ($cache->timestamp > strtotime("now")-21600) { // 6 uur
+                    if (count($cache->users) > 0) {
+                        if ($results = \MySQL::getDB()->getRows("select * from users where id in (".implode(", ", $cache->users).")")) {
+                            foreach ($results as $result) {
+                                $user = new \users\model\User();
+                                $user->load($result);
+                                $users[] = $user;
+                            }
+                        }
+                    }
+                    return $users;
+                }
+            }
+
             // Huidige actieve users
             $ids = [];
             foreach ($this->getAllowedUsers() as $user) {
                 $ids[] = $user->id;
             }
             // Wie daarvan zijn ingelogd geweest?
+            $users = [];
+            $userIDs = [];
             if (count($ids) > 0) {
                 if ($results = \MySQL::getDB()->getRows("select u.*
                                                         from    users u
@@ -485,13 +498,16 @@ class AuthGroup
                         $user = new \users\model\User();
                         $user->load($result);
                         $users[] = $user;
+                        $userIDs[] = $user->id;
                     }
                 }
             }
+            \Cache::getCache("file")->set("authgroup/".$this->id."/active-users", ["timestamp" => strtotime("now"), "users" => $userIDs]);
         }
         else
         {
             // Actieve users in periode
+            $users = [];
             if ($results = \MySQL::getDB()->getRows("select u.*
                                                      from   users u
                                                         inner join stats_users s on u.id = s.userid
