@@ -8,6 +8,7 @@ class Fleet
         \AppRoot::setMaxExecTime(60);
         \AppRoot::setMaxMemory("2G");
         \AppRoot::doCliOutput("doFleet(".implode(",",$arguments).")");
+        $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:5);
 
         // Als we tegen de timeout aanlopen, afbreken
         while (\AppRoot::getExecTime() < 58)
@@ -16,7 +17,7 @@ class Fleet
             if ($results = \MySQL::getDB()->getRows("select id from crest_fleet 
                                                      where active > 0 
                                                      and (lastupdate < ? or lastupdate is null)"
-                                        , [date("Y-m-d H:i:s", strtotime("now")-5)]))
+                                        , [date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
             {
                 \AppRoot::doCliOutput(count($results)." fleets found");
                 foreach ($results as $result)
