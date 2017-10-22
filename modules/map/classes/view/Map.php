@@ -83,7 +83,6 @@ class Map
             if ($arg == "nocache")
                 $checkCache = false;
         }
-        $checkCache = false;
 
         $controller = new \map\controller\Map();
         $data = ["map" => "cached", "notifications" => []];
