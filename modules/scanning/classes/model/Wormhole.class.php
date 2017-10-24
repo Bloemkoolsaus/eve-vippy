@@ -52,7 +52,7 @@ namespace scanning\model
 				$this->chainID = $result["chainid"];
 				$this->signatureID = $result["signatureid"];
 				$this->solarSystemID = $result["solarsystemid"];
-                $this->permanent = ($result["permanent"]>0)?true:false;
+                $this->permanent = (strlen(trim($result["permanent"]))>0 && $result["permanent"]-0>0)?true:false;
                 $this->rally = ($result["rally"]>0)?true:false;
 				$this->name = $result["name"];
 				$this->x = $result["x"];
@@ -208,6 +208,9 @@ namespace scanning\model
 
         function isPermenant()
         {
+            if (!$this->solarSystemID)
+                return false;
+
             if ($this->permanent)
                 return true;
             if ($this->isHomeSystem())

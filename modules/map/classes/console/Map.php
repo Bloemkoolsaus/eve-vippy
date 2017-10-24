@@ -43,13 +43,18 @@ class Map
     {
         $cleanupDate = date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s"),date("m"),date("d")-2,date("Y")));
         \AppRoot::doCliOutput("Cleanup wormholes older then ".$cleanupDate);
+
+        \MySQL::getDB()->doQuery("delete from mapwormholes where chainid is null or chainid = 0");
+
         if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where adddate < ?", [$cleanupDate])) {
             \AppRoot::doCliOutput(" - ".count($results)." wormholes to clean up");
             foreach ($results as $result) {
                 $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
-                if (!$wormhole->isPermenant())
+                if (!$wormhole->isPermenant()) {
+                    \AppRoot::doCliOutput("   [".$wormhole->id."] ".$wormhole->addDate);
                     $wormhole->delete();
+                }
             }
         }
 
