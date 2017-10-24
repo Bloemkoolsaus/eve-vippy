@@ -46,15 +46,16 @@ class Map
 
         \MySQL::getDB()->doQuery("delete from mapwormholes where chainid is null or chainid = 0");
 
-        if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where adddate < ?", [$cleanupDate])) {
+        if ($results = \MySQL::getDB()->getRows("select * from mapwormholes where adddate < ? order by adddate asc", [$cleanupDate])) {
             \AppRoot::doCliOutput(" - ".count($results)." wormholes to clean up");
             foreach ($results as $result) {
                 $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
                 if (!$wormhole->isPermenant()) {
-                    \AppRoot::doCliOutput("   [".$wormhole->id."] ".$wormhole->addDate);
+                    \AppRoot::doCliOutput("   [".$wormhole->id."] REMOVE ".$wormhole->addDate);
                     $wormhole->delete();
-                }
+                } else
+                    \AppRoot::doCliOutput("   [".$wormhole->id."] PERMENANT ".$wormhole->addDate);
             }
         }
 
