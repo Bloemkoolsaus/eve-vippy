@@ -1,8 +1,14 @@
+<h3>October 22, 2017</h3>
+<b><u>VIPPY</u></b>
+ - Big performance update to tracking.
+
+
+
 <h3>September 19, 2017</h3>
 <b><u>MAP</u></b>
  - Done another round performance improvements.
  - Fixed a bug in adding/editing known systems when you have more then one access group.
- 
+
 
 
 <h3>September 13, 2017</h3>
