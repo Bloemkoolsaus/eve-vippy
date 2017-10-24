@@ -51,11 +51,16 @@ class Map
             foreach ($results as $result) {
                 $wormhole = new \map\model\Wormhole();
                 $wormhole->load($result);
-                if (!$wormhole->isPermenant()) {
-                    \AppRoot::doCliOutput("   [".$wormhole->id."] REMOVE ".$wormhole->addDate);
-                    $wormhole->delete();
-                } else
-                    \AppRoot::doCliOutput("   [".$wormhole->id."] PERMENANT ".$wormhole->addDate);
+                if ($wormhole->permanent) {
+                    \AppRoot::doCliOutput("   [" . $wormhole->id . "] PERMANENT " . $wormhole->addDate);
+                    continue;
+                }
+                if ($wormhole->isHomeSystem()) {
+                    \AppRoot::doCliOutput("   [" . $wormhole->id . "] HOMESYSTEM " . $wormhole->addDate);
+                    continue;
+                }
+                \AppRoot::doCliOutput("   [".$wormhole->id."] REMOVE ".$wormhole->addDate);
+                $wormhole->delete();
             }
         }
 
