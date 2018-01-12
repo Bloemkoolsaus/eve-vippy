@@ -209,6 +209,10 @@ class AppRoot
 		if (\Tools::GET("module") == "api")
 			return false;
 
+		// SSO
+		if (\Tools::GET("module") == "sso")
+			return false;
+
         // Cron
         if (\Tools::GET("module") == "system")
             return false;
@@ -663,9 +667,24 @@ class AppRoot
 		}
 	}
 
+    /**
+     * Get referer url
+     * @return string|null
+     */
+	public static function getRefererURL()
+    {
+        if (isset($_SERVER["HTTP_REFERER"]))
+            return $_SERVER["HTTP_REFERER"];
+
+        return null;
+    }
+
     public static function redidrectToReferer()
     {
-        \AppRoot::redirect($_SERVER["HTTP_REFERER"], false);
+        if (self::getRefererURL())
+            \AppRoot::redirect(self::getRefererURL(), false);
+
+        \AppRoot::redirect("/");
     }
 
 	public static function refresh()

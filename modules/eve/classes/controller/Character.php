@@ -11,43 +11,30 @@ class Character
     function importCharacter($characterID)
     {
         $character = new \crest\model\Character($characterID);
+        return $this->import($character);
+    }
+
+    /**
+     * Import Character data from CCP
+     * @param \eve\model\Character $character
+     * @return \eve\model\Character
+     */
+    function import(\eve\model\Character $character)
+    {
         \AppRoot::doCliOutput("Import Character " . $character->name);
 
-        // Refresh CREST token
-        /*
+        // Hebben we een token?
         $token = $character->getToken();
         if ($token)
-            $valid = $token->isValid(true);
-        */
+        {
+            // private call naar esi
 
-        try {
-            // Public info
-            $api = new \eve\controller\API();
-            $api->setCharacterID($characterID);
-            $result = $api->call("/eve/CharacterInfo.xml.aspx");
+        }
+        else
+        {
+            // public call naar esi
 
-            if ($errors = $api->getErrors())
-                return null;
-
-            \AppRoot::debug($result->result);
-            $character->id = (string)$result->result->characterID;
-            $character->name = (string)$result->result->characterName;
-            $character->corporationID = (string)$result->result->corporationID;
-            $character->store();
-
-            $corporation = new \eve\model\Corporation((string)$character->corporationID);
-            $corporation->id = (string)$result->result->corporationID;
-            $corporation->name = (string)$result->result->corporationName;
-            $corporation->allianceID = (int)$result->result->allianceID;
-            $corporation->store();
-
-            if ((int)$corporation->allianceID) {
-                $alliance = new \eve\model\Alliance((string)$corporation->allianceID);
-                $alliance->id = (string)$result->result->allianceID;
-                $alliance->name = (string)$result->result->alliance;
-                $alliance->store();
-            }
-        } catch (\Exception $e) { }
+        }
 
         // Reset user
         $user = $character->getUser();

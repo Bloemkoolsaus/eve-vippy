@@ -1,1 +1,0 @@
-insert into user_auth_group_config (authgroupid, var, val) select id, 'fleet_warning', 1 from user_auth_groups;

@@ -12,7 +12,7 @@
 				Login
 			</h1>
 		{if $noAccount}
-			<div class="standout" style="margin: 0; margin-bottom: 2em;">
+			<div class="standout" style="margin: 0 0 2em;">
 				<div style="text-align: left;">
 					<div style="font-size: 1.1em; color: #ffcc00;">
 						<b>No VIPPY account found for `{$noAccount->name}`</b>
@@ -36,17 +36,17 @@
 		{/if}
 			<div>
 				<div style="margin-bottom: 1em;">
-					<h3>Login using CREST</h3>
+					<h3>Please login</h3>
 					Login in to Vippy with the eve SSO!
 				</div>
 				<div style="text-align: right;">
-					<form method="post" action="/crest/login">
+					<form method="post" action="/sso/login">
 						<div style="margin-bottom: .5em;">
 							<input type="checkbox" id="remember" name="remember" checked />
 							<label for="remember">Remember me</label>
 						</div>
 						<input type="hidden" name="login" value="sso"/>
-						<button class="evelogin" title="Login With EVE Online">&nbsp;</button>
+						<button type="submit" class="evelogin" title="Login With EVE Online">&nbsp;</button>
 					</form>
 				</div>
 			</div>

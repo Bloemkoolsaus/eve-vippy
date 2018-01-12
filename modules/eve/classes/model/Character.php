@@ -18,7 +18,7 @@ class Character
     private $_corporation;
     private $_authgroups;
     private $_accesslists;
-    private $_maps;
+    private $_token;
 
     function __construct($id=false)
     {
@@ -205,6 +205,42 @@ class Character
 
         return $this->_user;
     }
+
+    /**
+     * Get CREST Token
+     * @return \crest\model\Token|null
+     */
+    function getToken()
+    {
+        if ($this->_token === null)
+            $this->_token = \crest\model\Token::findOne(["tokentype" => "character", "tokenid" => $this->id]);
+
+        return $this->_token;
+    }
+
+    /**
+     * Import data
+     */
+    function importData()
+    {
+        try {
+            /** Gebruikt reguliere xml api. Scheelt weer crest-requests, rate-limits enzo */
+            $charController = new \eve\controller\Character();
+            $character = $charController->importCharacter($this->id);
+
+            // Check corp
+            $corpController = new \eve\controller\Corporation();
+            $corpController->importCorporation($character->corporationID);
+        }
+        catch (\Exception $e)
+        {
+            echo "An error occured while importing data from the xml api..<br />".$e->getMessage();
+        }
+    }
+
+
+
+
 
 
     /**

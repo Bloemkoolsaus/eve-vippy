@@ -1,1 +1,0 @@
-insert into system_config (var, val) values ('crest_location_limit', '10');

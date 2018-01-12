@@ -6,7 +6,6 @@ class User
     public $id = 0;
     public $username;
     public $displayname;
-    public $password;
     public $loginkey;
     public $email;
     public $deleted = false;
@@ -102,7 +101,6 @@ class User
             $this->id = $resultset["id"];
             $this->username = $resultset["username"];
             $this->displayname = $resultset["displayname"];
-            $this->password = $resultset["password"];
             $this->loginkey = $resultset["loginkey"];
             $this->email = $resultset["email"];
             $this->mainCharId = $resultset["mainchar"];
@@ -261,7 +259,6 @@ class User
         $user = [
             "username" => $this->username,
             "displayname" => $this->getFullName(),
-            "password" => $this->password,
             "loginkey" => $this->loginkey,
             "email" => $this->email,
             "deleted" => ($this->deleted)?1:0,

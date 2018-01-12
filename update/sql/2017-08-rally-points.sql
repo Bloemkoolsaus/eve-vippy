@@ -1,1 +1,0 @@
-alter table mapwormholes add column rally tinyint(4) default null after permanent;

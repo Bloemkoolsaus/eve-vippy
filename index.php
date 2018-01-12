@@ -1,31 +1,15 @@
 <?php
 require_once("init.php");
 
-\AppRoot::debug("finished init");
 
-/* CREST callback */
+/* SSO callback */
 if (\Tools::GET("state") && \Tools::GET("code")) {
     \AppRoot::doCliOutput("CREST Callback");
-    \AppRoot::redirect("crest/login/login/".\Tools::GET("state")."/".\Tools::GET("code"));
+    $view = new \sso\view\Login();
+    $view->getLogin();
 }
 \AppRoot::title(\Config::getCONFIG()->get("system_title"));
 
-
-// Koningsdag
-if (date("Y-m-d") == date("Y")."-04-27")
-    \SmartyTools::setTemplate("kingsday");
-// Sinterklaas
-if (date("Y-m-d") == date("Y")."-12-05" || date("Y-m-d") == date("Y")."-12-06")
-	\SmartyTools::setTemplate("sinterklaas");
-// Kerst
-if (date("Y-m-d") == date("Y")."-12-24" || date("Y-m-d") == date("Y")."-12-25" || date("Y-m-d") == date("Y")."-12-26")
-	\SmartyTools::setTemplate("kerst");
-// Nieuw-jaar
-if (date("Y-m-d") == date("Y")."-01-01")
-    \SmartyTools::setTemplate("newyear");
-// Anniversary
-if (date("Y-m") == "2017-05")
-    \SmartyTools::setTemplate("anniversary");
 
 // Logout
 if (\Tools::GET("action") == "logout") {
@@ -33,6 +17,7 @@ if (\Tools::GET("action") == "logout") {
 		\User::getUSER()->logout();
 	\AppRoot::redirect("/");
 }
+
 
 // Een ajax verzoek hoeft geen javascript en css in te laden.
 if (!\Tools::REQUEST("ajax") || (\Tools::REQUEST("ajax") && \Tools::REQUEST("debug"))) {
@@ -90,16 +75,18 @@ if (!\User::getUSER() && \AppRoot::loginRequired()) {
 
 // Render templates
 $mainTPL = \SmartyTools::getSmarty();
-$mainTPL->assign("javascript", \AppRoot::$javascripts);
-$mainTPL->assign("stylesheet", \AppRoot::$stylesheets);
 if (!\Tools::REQUEST("ajax")) {
+    $mainTPL->assign("javascript", \AppRoot::$javascripts);
+    $mainTPL->assign("stylesheet", \AppRoot::$stylesheets);
 	$mainTPL->assign("pageTitle", \AppRoot::getTitle());
 	$mainTPL->assign("mainheader", \Modules::getHeader());
 }
-\AppRoot::debug("Finishing");
+\AppRoot::debug("Printing main-content");
 $mainTPL->assign("maincontent", $mainContent);
+\AppRoot::debug("Finishing");
 $mainTPL->assign("debug", \AppRoot::printDebug());
 $mainTPL->display((\Tools::REQUEST("ajax"))?"ajax":"index");
 
-if (\AppRoot::doDebug())
+if (\AppRoot::doDebug()) {
     \AppRoot::printDebug();
+}

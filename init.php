@@ -60,3 +60,4 @@ if ($handle = @opendir($directory)) {
 \AppRoot::$startTime = $startTime;
 \AppRoot::debug("Initializing");
 \AppRoot::parseRequestURL();
+\AppRoot::debug("finished init");
