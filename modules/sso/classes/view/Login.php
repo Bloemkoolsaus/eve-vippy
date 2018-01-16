@@ -23,10 +23,7 @@ class Login
         try {
             if ($state && $code) {
                 $sso = new \sso\Login();
-                $token = $sso->getToken($state, $code);
-                if ($token) {
-                    $sso->doVerify($token);
-                }
+                $sso->verify($state, $code);
             }
         } catch (\Exception $e) {
             \AppRoot::error($e->getMessage());

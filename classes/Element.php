@@ -569,20 +569,14 @@ namespace CorporationElement
 			if ($this->obligatory && strlen(trim($value)) == 0)
 				return false;
 
-			if (strlen(trim($value)) == 0)
-			{
+			if (strlen(trim($value)) == 0) {
 				$this->value = 0;
 				return true;
-			}
-			else
-			{
-				$controller = new \eve\controller\Corporation();
-				$corporation = $controller->getCorporationByName($value);
-
-				if ($corporation->id > 0)
-					return true;
-				else
-				{
+			} else {
+				$corporation = \eve\model\Corporation::findOne(["name" => $value]);
+				if ($corporation) {
+                    return true;
+                } else {
 					$this->errors[] = "Corporation `".$value."` not found.";
 					$this->value = 0;
 					return false;

@@ -10,7 +10,7 @@ class Characters
 
     function getAddnew($arguments=[])
     {
-        $crest = new \crest\Login();
+        $crest = new \sso\Login();
         $crest->loginSSO("profile/characters");
     }
 }

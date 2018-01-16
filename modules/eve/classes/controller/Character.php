@@ -10,29 +10,41 @@ class Character
      */
     function importCharacter($characterID)
     {
-        $character = new \crest\model\Character($characterID);
-        return $this->import($character);
-    }
-
-    /**
-     * Import Character data from CCP
-     * @param \eve\model\Character $character
-     * @return \eve\model\Character
-     */
-    function import(\eve\model\Character $character)
-    {
+        $corpController = new \eve\controller\Corporation();
+        $character = \eve\model\Character::findByID($characterID);
         \AppRoot::doCliOutput("Import Character " . $character->name);
+
+        // Import public info
+        $esi = new \esi\Api();
+        $esi->get("v4/characters/".$character->id."/");
+        if ($esi->success()) {
+            // Check of de corp gewijzigd is.
+            if ($character) {
+                if ($character->corporationID != $esi->getResult()->corporation_id) {
+                    $oldCorp = \eve\model\Corporation::findByID($character->corporationID);
+                    if ($oldCorp) {
+                        $corpController->importCorporation($oldCorp->id);
+                    }
+                }
+            } else {
+                $character = new \eve\model\Character();
+                $character->id = $characterID;
+            }
+
+            $character->name = $esi->getResult()->name;
+            $character->corporationID = $esi->getResult()->corporation_id;
+            $character->store();
+
+            // Corp updaten
+            $corpController->importCorporation($esi->getResult()->corporation_id);
+        }
+
 
         // Hebben we een token?
         $token = $character->getToken();
         if ($token)
         {
             // private call naar esi
-
-        }
-        else
-        {
-            // public call naar esi
 
         }
 

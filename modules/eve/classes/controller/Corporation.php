@@ -1,69 +1,59 @@
 <?php
-namespace eve\controller
+namespace eve\controller;
+
+class Corporation
 {
-	class Corporation
-	{
-		/**
-		 * Get corporation by name
-		 * @param string $name
-		 * @return \eve\model\Corporation
-		 */
-		function getCorporationByName($name)
-		{
-			$corporation = new \eve\model\Corporation();
-			if ($result = \MySQL::getDB()->getRow("SELECT * FROM corporations WHERE name = ?", array($name)))
-				$corporation->load($result);
+    /**
+     * Import Corporation
+     * @param $corporationID
+     * @return \eve\model\Corporation|null
+     */
+    function importCorporation($corporationID)
+    {
+        $corporation = new \eve\model\Corporation($corporationID);
+        \AppRoot::doCliOutput("Import Corporation ".$corporation->name);
 
-			return $corporation;
-		}
-
-        /**
-         * Import Corporation
-         * @param $corporationID
-         * @return \eve\model\Corporation|null
-         */
-		function importCorporation($corporationID)
-		{
-            $corporation = new \eve\model\Corporation($corporationID);
-            \AppRoot::doCliOutput("Import Corporation ".$corporation->name);
-
-            // Alleen udpaten indien ouder dan 20 uur
-            if (strtotime($corporation->updateDate) <= strtotime("now")-72000)
-            {
-                $api = new \eve\controller\API();
-                $api->setParam("corporationID", $corporationID);
-                $result = $api->call("/corp/CorporationSheet.xml.aspx");
-
-                if ($errors = $api->getErrors())
-                    return null;
-
-                $corporation->id = (string)$result->result->corporationID;
-                $corporation->name = (string)$result->result->corporationName;
-                $corporation->ticker = (string)$result->result->ticker;
-                $corporation->allianceID = (int)$result->result->allianceID;
-                $corporation->ceoID = (int)$result->result->ceoID;
+        // Alleen udpaten indien ouder dan een uur
+        if (strtotime($corporation->updateDate) <= strtotime("now")-3600)
+        {
+            $esi = new \esi\Api();
+            $esi->get("v4/corporations/".$corporation->id."/");
+            if ($esi->success()) {
+                $corporation->name = $esi->getResult()->name;
+                $corporation->ticker = $esi->getResult()->ticker;
+                $corporation->allianceID = (isset($esi->getResult()->alliance_id))?$esi->getResult()->alliance_id:null;
+                $corporation->ceoID = $esi->getResult()->ceo_id;
                 $corporation->store();
 
-                if ((int)$corporation->allianceID) {
-                    $alliance = new \eve\model\Alliance((string)$corporation->allianceID);
-                    $alliance->id = (string)$result->result->allianceID;
-                    $alliance->name = (string)$result->result->allianceName;
-                    $alliance->store();
+                if (isset($esi->getResult()->alliance_id)) {
+                    $alliance = \eve\model\Alliance::findById($esi->getResult()->alliance_id);
+                    if (!$alliance) {
+                        $esiAlliance = new \esi\Api();
+                        $esiAlliance->get("v3/alliances/".$corporation->allianceID."/");
+                        if ($esiAlliance->success()) {
+                            $alliance = new \eve\model\Alliance();
+                            $alliance->id = $corporation->allianceID;
+                            $alliance->name = $esiAlliance->getResult()->name;
+                            $alliance->ticker = $esiAlliance->getResult()->ticker;
+                            $alliance->store();
+                        }
+                    }
                 }
             }
+        }
 
-            return $corporation;
-		}
+        return $corporation;
+    }
 
-		function corporationExists($corporationID)
-		{
-			if ($result = \MySQL::getDB()->getRow("SELECT COUNT(id) AS nr FROM corporations WHERE id = ?", array($corporationID)))
-			{
-				if ($result["nr"] > 0)
-					return true;
-			}
-			return false;
-		}
-	}
+
+    /**
+     * @param $corporationID
+     * @return bool
+     * @deprecated
+     */
+    function corporationExists($corporationID)
+    {
+        $corp = \eve\model\Corporation::findByID($corporationID);
+        return ($corp)?true:false;
+    }
 }
-?>

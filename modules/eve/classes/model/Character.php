@@ -123,9 +123,9 @@ class Character
         {
             $this->isAuthorized = false;
 
-            // Heeft een geldige CREST token
-            /** @var \crest\model\Token $token */
-            $token = \crest\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
+            // Heeft een geldige SSO token
+            /** @var \sso\model\Token $token */
+            $token = \sso\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
             if ($token) {
                 \AppRoot::debug("We have an active CREST token for ".$this->name);
                 foreach ($this->getAuthGroups() as $group) {
@@ -134,7 +134,7 @@ class Character
                     break;
                 }
                 if (!$this->isAuthorized)
-                    $this->authMessage = "Not a member of an allowed Corporation or Alliance";
+                    $this->authMessage = "Not a member of an access group";
             } else
                 $this->authMessage = "No valid CREST authentication token";
 

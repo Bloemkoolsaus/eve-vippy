@@ -13,15 +13,10 @@ class Module extends \Module
      */
     function isAuthorized($arguments=[])
     {
-        if (!parent::isAuthorized($arguments)) {
-            if (count($arguments) > 0) {
-                if ($arguments[0] == "account")
-                    return true;
-                if ($arguments[0] == "accessgroup")
-                    return true;
-            }
-            return false;
+        if (\User::getUSER()) {
+            return true;
         }
-        return true;
+
+        return false;
     }
 }

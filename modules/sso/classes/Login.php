@@ -43,11 +43,11 @@ class Login extends \api\Client
     }
 
     /**
-     * Succesvolle SSO Login. Haal een accesstoken.
+     * Succesvolle SSO Login. Haal de ingelogde toon.
      * @param $state
      * @param $code
      */
-    function getToken($state, $code)
+    function verify($state, $code)
     {
         \AppRoot::doCliOutput("[SSO] Login->getToken($state, $code)");
         $stateData = $this->getState($state);
@@ -91,7 +91,7 @@ class Login extends \api\Client
                             }
                             $token = $character->getToken();
                             if (!$token)
-                                $token = new \crest\model\Token();
+                                $token = new \sso\model\Token();
 
                             // Token opslaan
                             $token->tokenid = $character->id;
@@ -111,7 +111,7 @@ class Login extends \api\Client
                             // Check voor een login sessie. Login als er nog geen sessie is.
                             if (!\User::getUSER()) {
                                 if ($character->getUser())
-                                    $character->getUser()->setLoginStatus(true, $state->remember);
+                                    $character->getUser()->setLoginStatus(true, $stateData->remember);
                             }
 
                             if (\User::getUSER()) {
@@ -126,7 +126,7 @@ class Login extends \api\Client
                                 $character->store();
                                 $character->importData();
 
-                                \AppRoot::redirect($stateData->url);
+                                \AppRoot::redirect($stateData->url, false);
                             } else {
                                 \AppRoot::doCliOutput("No user found");
                                 \AppRoot::redirect("users/login/no-account/" . $character->id);
@@ -223,53 +223,15 @@ class Login extends \api\Client
      */
     private function getScopes()
     {
-        // All possible scopes, for now just the location
-        $scopes = array(
-            // 				'characterAccountRead',   // Read your account subscription status.
-            // 				'characterAssetsRead',    // Read your asset list.
-            // 				'characterBookmarksRead', // List your bookmarks and their coordinates.
-            // 				'characterCalendarRead',  // Read your calendar events and attendees.
-            // 				'characterChatChannelsRead',  //: List chat channels you own or operate.
-            // 				'characterClonesRead', 		//: List your jump clones, implants, attributes, and jump fatigue timer.
-            // 				'characterContactsRead',	//: Allows access to reading your characters contacts.
-            // 				'characterContactsWrite', 	// Allows applications to add, modify, and delete contacts for your character.
-            // 				'characterContractsRead',	//: Read your contracts.
-            // 				'characterFactionalWarfareRead', //: Read your factional warfare statistics.
-            // 				'characterFittingsRead', 	//: Allows an application to view all of your character's saved fits.
-            // 				'characterFittingsWrite',	// Allows an application to create and delete the saved fits for your character.
-            // 				'characterIndustryJobsRead', //: List your industry jobs.
-            // 				'characterKillsRead', 		//: Read your kill mails.
-            'characterLocationRead', 	//: Allows an application to read your characters real time location in EVE.
-            // 				'characterLoyaltyPointsRead', //: List loyalty points your character has for the different corporations.
-            // 				'characterMailRead', 		//: Read your EVE Mail.
-            // 				'characterMarketOrdersRead', //: Read your market orders.
-            // 				'characterMedalsRead', 		//: List your public and private medals.
-            'characterNavigationWrite', //: Allows an application to set your ships autopilot destination.
-            // 				'characterNotificationsRead',	//: Receive in-game notifications.
-            // 				'characterOpportunitiesRead', //: List the opportunities your character has completed.
-            // 				'characterResearchRead', 		//: List your research agents working for you and research progress.
-            // 				'characterSkillsRead', 		//: Read your skills and skill queue.
-            // 				'characterStatsRead', 		//: Yearly aggregated stats about your character.
-            // 				'characterWalletRead', 		//: Read your wallet status, transaction, and journal history.
-            // 				'corporationAssetRead', 		//: Read your corporation's asset list.
-            // 				'corporationBookmarksRead', 		//: List your corporation's bookmarks and their coordinates.
-            // 				'corporationContractsRead', 		//: List your corporation's contracts.
-            // 				'corporationFactionalWarfareRead', 		//: Read your corporation's factional warfare statistics.
-            // 				'corporationIndustryJobsRead', 		//: List your corporation's industry jobs.
-            // 				'corporationKillsRead', 		//: Read your corporation's kill mails.
-            // 				'corporationMarketOrdersRead', 		//: List your corporation's market orders.
-            // 				'corporationMedalsRead', 		//: List your corporation's issued medals.
-            // 				'corporationMembersRead', 		//: List your corporation's members, their titles, and roles.
-            // 				'corporationShareholdersRead', 		//: List your corporation's shareholders and their shares.
-            // 				'corporationStructuresRead', 		//: List your corporation's structures, outposts, and starbases.
-            // 				'corporationWalletRead', 		//: Read your corporation's wallet status, transaction, and journal history.
-            'fleetRead', 		//: Allows real time reading of your fleet information (members, ship types, etc.) if you're the boss of the fleet.
-            // 				'fleetWrite', 		//: Allows the ability to invite, kick, and update fleet information if you're the boss of the fleet.
-            'publicData', 		//: Allows access to public data.
-            // 				'remoteClientUI',   //Allows applications to control the UI of your EVE Online client
-            // 				'structureVulnUpdate' 		//: Allows updating your structures' vulnerability timers.
-        );
-
+        $scopes = [
+            "esi-location.read_location.v1",
+            "esi-location.read_ship_type.v1",
+            "esi-fleets.read_fleet.v1",
+            "esi-fleets.write_fleet.v1",
+            "esi-ui.write_waypoint.v1",
+            "esi-characters.read_corporation_roles.v1",
+            "esi-location.read_online.v1"
+        ];
         return $scopes;
     }
 }

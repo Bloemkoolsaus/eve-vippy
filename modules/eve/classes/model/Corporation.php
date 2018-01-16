@@ -38,7 +38,7 @@ class Corporation
 
     function store()
     {
-        if ($this->id == 0)
+        if (!$this->id)
             return false;
         if (!$this->name)
             return false;
@@ -51,7 +51,7 @@ class Corporation
             "allianceid" => $this->allianceID,
             "updatedate" => date("Y-m-d H:i:s")
         ];
-        \MySQL::getDB()->updateinsert("corporations", $data, array("id" => $this->id));
+        \MySQL::getDB()->updateinsert("corporations", $data, ["id" => $this->id]);
 
         // Update CEO, maar alleen als de CEO toon ook echt nog in die corp zit!!
         \MySQL::getDB()->doQuery("update characters set isceo = 0 where corpid = ?", [$this->id]);
@@ -87,25 +87,69 @@ class Corporation
 
 
 
+    /**
+     * Find all
+     * @param array $conditions
+     * @return \eve\model\Corporation[]
+     */
+    public static function findAll($conditions=[])
+    {
+        $query = [];
+        $params = [];
+        foreach ($conditions as $var => $val) {
+            $query[] = $var." = ?";
+            $params[] = $val;
+        }
+
+        $corporations = [];
+        if ($results = \MySQL::getDB()->getRows("select * from corporations ".((count($query)>0)?"where ".implode(" and ", $query):"")." order by name", $params)) {
+            foreach ($results as $result) {
+                $corp = new static();
+                $corp->load($result);
+                $corporations[] = $corp;
+            }
+        }
+        return $corporations;
+    }
+
+    /**
+     * Find one
+     * @param array $conditions
+     * @return Corporation|null
+     */
+    public static function findOne($conditions=[])
+    {
+        $corporations = static::findAll($conditions);
+        if (count($corporations) > 0)
+            return $corporations[0];
+
+        return null;
+    }
+
+    /**
+     * Find character by ID
+     * @param $corporationID
+     * @return \eve\model\Corporation|null
+     */
+    public static function findByID($corporationID)
+    {
+        if ($result = \MySQL::getDB()->getRow("select * from corporations where id = ?", [$corporationID])) {
+            $corp = new static();
+            $corp->load($result);
+            return $corp;
+        }
+        return null;
+    }
 
     /**
      * Get corporation by id
      * @param integer $corporationID
      * @return \eve\model\Corporation|NULL
+     * @deprecated
      */
     public static function getCorporationByID($corporationID)
     {
-        $result = \Cache::memory()->get(["corporation", $corporationID]);
-        if (!$result) {
-            $result = \MySQL::getDB()->getRow("SELECT * FROM corporations WHERE id = ?", [$corporationID]);
-            \Cache::memory(600)->set(["corporation", $corporationID], $result);
-        }
-        if ($result) {
-            $corp = new \eve\model\Corporation();
-            $corp->load($result);
-            return $corp;
-        }
-        return null;
+        return self::findByID($corporationID);
     }
 
     /**
@@ -115,14 +159,6 @@ class Corporation
      */
     public static function getCorporationsByAlliance($allianceID)
     {
-        $corporations = [];
-        if ($results = \MySQL::getDB()->getRows("SELECT * FROM corporations WHERE allianceid = ? ORDER BY name", [$allianceID])) {
-            foreach ($results as $result) {
-                $corp = new \eve\model\Corporation();
-                $corp->load($result);
-                $corporations[] = $corp;
-            }
-        }
-        return $corporations;
+        return self::findAll(["allianceid" => $allianceID]);
     }
 }
