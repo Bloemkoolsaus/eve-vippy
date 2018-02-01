@@ -33,6 +33,7 @@ class Api extends \api\Client
 
     function get($url, $params=[])
     {
+        throw new \Exception("Do not use CREST");
         $this->resetheader();
         $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
 
@@ -50,6 +51,7 @@ class Api extends \api\Client
 
     function post($url, $params=[])
     {
+        throw new \Exception("Do not use CREST");
         $this->resetheader();
         $this->addHeader("Accept: ".\Config::getCONFIG()->get("crest_accept_version"));
 

@@ -28,10 +28,8 @@ class Api extends \api\Client
             $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
         }
 
-        $result = parent::get($url, $params);
-        if (!$this->success())
-            $this->log("get", $url, $params);
-        return $result;
+        parent::get($url, $params);
+        $this->log();
     }
 
     function post($url, $params=[])
@@ -44,10 +42,8 @@ class Api extends \api\Client
             $this->addHeader("Authorization: Bearer ".$this->token->accessToken);
         }
 
-        $result = parent::post($url, $params);
-        if (!$this->success())
-            $this->log("post", $url, $params);
-        return $result;
+        parent::post($url, $params);
+        $this->log();
     }
 
     function getResult()
@@ -59,23 +55,35 @@ class Api extends \api\Client
         return $result;
     }
 
-    function log($type, $url, $params)
+    function log()
     {
-        $content = ($params)?$params:null;
-        if (is_object($content) || is_array($content))
-            $content = json_encode($content);
+        $content = null;
+        if (isset($this->getRequest()->content)) {
+            $content = $this->getRequest()->content;
+            if (is_object($content) || is_array($content))
+                $content = json_encode($content);
+        }
 
-        $response = $this->getResult();
+        $response = [
+            "content" => $this->getResult(),
+            "headers" => $this->getResultHeaders()
+        ];
         if (is_object($response) || is_array($response))
             $response = json_encode($response);
 
+        $expires = "now";
+        if ($this->getResultHeader("Date") && $this->getResultHeader("Expires")) {
+            $expires = strtotime("now")+(strtotime($this->getResultHeader("Expires"))-strtotime($this->getResultHeader("Date")));
+        }
+
         \MySQL::getDB()->insert("esi_log", [
-            "requesttype" => strtolower($type),
-            "url" => $url,
+            "requesttype" => strtolower($this->getRequest()->type),
+            "url" => $this->getRequest()->url,
+            "requestdate" => date("Y-m-d H:i:s"),
+            "expiredate" => date("Y-m-d H:i:s", $expires),
             "httpstatus" => ($this->httpStatus)?$this->httpStatus:null,
             "content" => $content,
-            "response" => $response,
-            "requestdate" => date("Y-m-d H:i:s")
+            "response" => $response
         ]);
     }
 }

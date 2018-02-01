@@ -3,10 +3,10 @@ namespace eve\model;
 
 class Character
 {
-    public $id = 0;
-    public $userID = 0;
+    public $id;
+    public $userID;
     public $name;
-    public $corporationID = 0;
+    public $corporationID;
     public $isDirector = false;
     public $isCEO = false;
     public $titles = array();

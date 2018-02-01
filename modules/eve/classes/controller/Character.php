@@ -22,9 +22,8 @@ class Character
             if ($character) {
                 if ($character->corporationID != $esi->getResult()->corporation_id) {
                     $oldCorp = \eve\model\Corporation::findByID($character->corporationID);
-                    if ($oldCorp) {
+                    if ($oldCorp)
                         $corpController->importCorporation($oldCorp->id);
-                    }
                 }
             } else {
                 $character = new \eve\model\Character();
@@ -37,15 +36,6 @@ class Character
 
             // Corp updaten
             $corpController->importCorporation($esi->getResult()->corporation_id);
-        }
-
-
-        // Hebben we een token?
-        $token = $character->getToken();
-        if ($token)
-        {
-            // private call naar esi
-
         }
 
         // Reset user

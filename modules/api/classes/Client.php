@@ -10,8 +10,9 @@ class Client
     public $password = "";
     public $verifySSL = false;
 
-    public $result;
-    public $request;
+    private $request;
+    private $result;
+
     public $httpStatus = 0;
     public $curlStatus = 0;
     public $sendError = true;
@@ -91,98 +92,85 @@ class Client
         if ($this->connectionTimeout == 0)
             \AppRoot::error("API call zonder connection timeout: ".$url);
 
-        $result = array();
-        $requestURL = $this->baseURL.$url;
-        $requestData = json_encode($params);
-        $requestHeaders = $this->headers;
+        $this->request = new \stdClass();
+        $this->request->url = $this->baseURL.$url;
+        $this->request->type = strtoupper($requestType);
 
         if ($requestType == "get") {
             $queryString = "";
             foreach ($params as $var => $val) {
                 $queryString .= ((strlen(trim($queryString))==0)?"?":"&") . $var . "=" . $val;
             }
-            $requestURL = $requestURL.$queryString;
+            $this->request->url .= $queryString;
         }
 
-        \AppRoot::debug("*** Start api call: ".strtoupper($requestType)." ".$requestURL);
-
-        curl_setopt($this->getCurl(), CURLOPT_URL, $requestURL);
+        curl_setopt($this->getCurl(), CURLOPT_URL, $this->request->url);
         curl_setopt($this->getCurl(), CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($this->getCurl(), CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->getCurl(), CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($this->getCurl(), CURLOPT_SSL_VERIFYPEER, $this->verifySSL);
         curl_setopt($this->getCurl(), CURLOPT_CONNECTTIMEOUT, $this->connectionTimeout);
         curl_setopt($this->getCurl(), CURLOPT_TIMEOUT, $this->executionTimeout);
+        curl_setopt($this->getCurl(), CURLOPT_HEADER, true);
 
         if (strtolower($requestType) == "post") {
-            \AppRoot::debug($requestData);
-            $requestHeaders[] = "Content-Type: ".$this->_contentType;
-            $requestHeaders[] = "Content-Length: ".strlen($requestData);
+            $this->request->content = json_encode($params);
+            $this->addHeader("Content-Type: ".$this->_contentType);
+            $this->addHeader("Content-Length: ".strlen($this->request->content));
             curl_setopt($this->getCurl(), CURLOPT_POST, true);
-            curl_setopt($this->getCurl(), CURLOPT_POSTFIELDS, $requestData);
-        } else
-            curl_setopt($this->getCurl(), CURLOPT_HEADER, false);
+            curl_setopt($this->getCurl(), CURLOPT_POSTFIELDS, $this->request->content);
+        }
 
-        if (count($requestHeaders) > 0)
-            curl_setopt($this->getCurl(), CURLOPT_HTTPHEADER, $requestHeaders);
+        if (count($this->headers) > 0) {
+            $this->request->headers = $this->headers;
+            curl_setopt($this->getCurl(), CURLOPT_HTTPHEADER, $this->request->headers);
+        }
 
         // Request uitvoeren!
-        $result["requestURL"] = $requestURL;
-        $result["requestData"] = $requestData;
-        $result["requestHeaders"] = $requestHeaders;
-        \AppRoot::debug($result);
-        $content = curl_exec($this->getCurl());
-        $info = curl_getinfo($this->getCurl());
+        \AppRoot::debug("*** Start api call: ".$this->request->type." ".$this->request->url);
+        \AppRoot::debug($this->request);
 
-        $this->request = $info;
-        $this->curlStatus = 0;
-        $this->httpStatus = $info["http_code"];
+        $this->result = new \stdClass();
 
-        if (curl_errno($this->getCurl())) {
-            $this->curlStatus = curl_errno($this->getCurl());
-            $result["error"] = "curl(".curl_errno($this->getCurl()).") ".curl_error($this->getCurl());
-        }
+        $response = curl_exec($this->getCurl());
+        $this->result->info = curl_getinfo($this->getCurl());
+        $this->result->content = substr($response, $this->result->info["header_size"]);
 
-        if ($this->httpStatus != 200 && $this->httpStatus != 204) {
-            $result["error"] = $this->httpStatus;
-            \AppRoot::debug($info);
-        }
-
-        \AppRoot::debug("RESULT:<br />".$content);
-
-        // Probeer resultaat te parsen aan de hand van content-type.
-        $result["info"] = $info;
-        \AppRoot::debug("Parse RESULT");
-        foreach (explode(";",$info["content_type"]) as $type)
-        {
+        // Parse result body
+        foreach (explode(";", $this->result->info["content_type"]) as $type) {
             if (trim($type) == "application/json") {
                 \AppRoot::debug("Parse as json");
-                $result["result"] = json_decode($content, $this->asArray);
+                $this->result->content = json_decode($this->result->content, $this->asArray);
                 break;
             } else if (trim($type) == "application/xml") {
                 \AppRoot::debug("Parse as xml");
-                $result["result"] = new \SimpleXMLElement($content);
+                $this->result->content = new \SimpleXMLElement($this->result->content);
                 break;
             }
         }
 
-        // Kon niet parsen. Geef ongeparsed.
-        if (!isset($result["result"])) {
-            \AppRoot::debug("Unknown content-type. Return unparsed.");
-            $result["result"] = $content;
+        // Parse result headers
+        $this->result->headers = [];
+        foreach (explode("\n", substr($response, 0, $this->result->info["header_size"])) as $data) {
+            $data = explode(":", $data);
+            $header = str_replace("\n", "", array_shift($data));
+            $value = str_replace("\n", "", implode(":", $data));
+            if (strlen(trim($header)) > 0)
+                $this->result->headers[$header] = trim($value);
         }
 
-        $this->result = $result["result"];
-        \AppRoot::debug("Parsed Result:<pre>".print_r($this->result,true)."</pre>");
+        $this->curlStatus = null;
+        $this->httpStatus = $this->result->info["http_code"];
+        if (curl_errno($this->getCurl())) {
+            $this->curlStatus = curl_errno($this->getCurl());
+            $this->result->error = "curl(".curl_errno($this->getCurl()).") ".curl_error($this->getCurl());
+        }
 
-        // Loggen
-        \AppRoot::debug("*** HTTP: ".$this->httpStatus);
-        if (isset($result["error"]))
-            \AppRoot::error($this->result, null);
 
-        \AppRoot::debug("*** Finish api call: ".strtoupper($requestType)." ".$requestURL);
+        \AppRoot::debug("*** Finish api call: ".$this->request->type." ".$this->request->url);
+        \AppRoot::debug($this->result);
 
-        return $result;
+        return $this->result;
     }
 
     function get($url, $params=array())
@@ -225,8 +213,8 @@ class Client
         $timeoutCodes = array(0,403,404,408,410,503,504,522,524);
         if (in_array($this->httpStatus-0, $timeoutCodes))
             return true;
-        else
-            return false;
+
+        return false;
     }
 
     function getRequest()
@@ -236,6 +224,27 @@ class Client
 
     function getResult()
     {
-        return $this->result;
+        if (isset($this->result->content))
+            return $this->result->content;
+
+        return null;
+    }
+
+    function getResultHeaders()
+    {
+        if (isset($this->result->headers))
+            return $this->result->headers;
+
+        return null;
+    }
+
+    function getResultHeader($header)
+    {
+        if (isset($this->result->headers)) {
+            if (isset($this->result->headers[$header]))
+                return $this->result->headers[$header];
+        }
+
+        return null;
     }
 }
