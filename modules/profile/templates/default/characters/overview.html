@@ -5,7 +5,7 @@
 	</h2>
 	{assign var=i value=0}
 	{foreach from=$App->user->getCharacters() key=c item=character}
-		<div class="col6 {if $i%2==1}right last{/if}" style="margin-bottom: 2em;">
+		<div class="col4 last">
 			{include file="profile/characters/character" character=$character}
 		</div>
 		{assign var=i value=$i+1}

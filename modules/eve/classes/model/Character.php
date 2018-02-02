@@ -127,7 +127,7 @@ class Character
             /** @var \sso\model\Token $token */
             $token = \sso\model\Token::findAll(["tokentype" => "character", "tokenid" => $this->id]);
             if ($token) {
-                \AppRoot::debug("We have an active CREST token for ".$this->name);
+                \AppRoot::debug("We have an active SSO token for ".$this->name);
                 foreach ($this->getAuthGroups() as $group) {
                     \AppRoot::debug($group->name);
                     $this->isAuthorized = true;
@@ -136,7 +136,7 @@ class Character
                 if (!$this->isAuthorized)
                     $this->authMessage = "Not a member of an access group";
             } else
-                $this->authMessage = "No valid CREST authentication token";
+                $this->authMessage = "No valid SSO authentication token";
 
             $this->store();
         }
@@ -208,12 +208,12 @@ class Character
 
     /**
      * Get CREST Token
-     * @return \crest\model\Token|null
+     * @return \sso\model\Token|null
      */
     function getToken()
     {
         if ($this->_token === null)
-            $this->_token = \crest\model\Token::findOne(["tokentype" => "character", "tokenid" => $this->id]);
+            $this->_token = \sso\model\Token::findOne(["tokentype" => "character", "tokenid" => $this->id]);
 
         return $this->_token;
     }

@@ -94,6 +94,7 @@ class Login extends \api\Client
                                 $token = new \sso\model\Token();
 
                             // Token opslaan
+                            \AppRoot::doCliOutput("Store token: ".$accessToken);
                             $token->tokenid = $character->id;
                             $token->tokentype = strtolower($result->TokenType);
                             $token->ownerHash = $result->CharacterOwnerHash;

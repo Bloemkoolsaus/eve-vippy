@@ -1,8 +1,10 @@
-<div style="padding: .5em;">
-	<div style="float: left; width: 20%;">
+<div class="standout">
+
+	<h2 style="border: 0; margin: 0; margin-bottom: .2em;">{$character->name}</h2>
+	<div style="float: left; width: 18%;">
 		<img src="https://image.eveonline.com/Character/{$character->id}_200.jpg" style="width: 99%; margin: 1px; border-radius: 5px;">
 	</div>
-	<div style="float: left; width: 10%;">
+	<div style="float: left; width: 9%; margin-left: 1%; margin-bottom: 1%;">
 		<div>
 			<img src="https://image.eveonline.com/Corporation/{$character->getCorporation()->id}_128.png" style="width: 99%; margin: 1px; border-radius: 5px;">
 		</div>
@@ -12,16 +14,8 @@
 		</div>
 	{/if}
 	</div>
-	<div style="float: right; width: 68%;">
-		<h2 style="border: 0; margin: 0;">{$character->name}</h2>
-		<div style="font-size: .8em;">
-		{if $character->isCEO()}
-			CEO
-		{elseif ($character->isDirector())}
-			Director
-		{/if}&nbsp;
-		</div>
-		<div style="margin-top: .9em;">
+	<div style="float: right; width: 68%; white-space: nowrap; overflow: hidden;">
+		<div>
 			<strong>Corporation:</strong> &nbsp;
 			<i>{$character->getCorporation()->name}</i>
 		</div>
@@ -34,7 +28,7 @@
 		{/if}
 		</div>
 		<div style="margin-top: .9em;">
-			<strong>Access:</strong> &nbsp;
+			<strong>Auth:</strong> &nbsp;
 			<span style="color: {if $character->isAuthorized()}#55ff55{else}#ff5555{/if};">
 				<img src="/images/default/{if $character->isAuthorized()}apply.small.png{else}cross.small.png{/if}">
 				{$character->getAuthStatus()}
