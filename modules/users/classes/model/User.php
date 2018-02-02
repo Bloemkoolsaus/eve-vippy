@@ -226,7 +226,6 @@ class User
     public function createLoginKey()
     {
         $this->loginkey = sha1($this->username.$this->id);
-        $this->loginkey = sha1($this->loginkey.$this->password);
         $this->store();
         return $this->loginkey;
     }
