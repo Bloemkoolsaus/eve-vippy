@@ -39,7 +39,7 @@ class Login extends \api\Client
         ];
 
         $url = \Config::getCONFIG()->get("sso_login_url")."authorize?".http_build_query($params, '', '&', PHP_QUERY_RFC3986);
-        \AppRoot::redirect($url,false);
+        \AppRoot::redirect($url, false);
     }
 
     /**
@@ -106,8 +106,9 @@ class Login extends \api\Client
                             $token->store();
 
                             // Detect owner change
-                            if ($token->ownerHash && $token->ownerHash != $result->CharacterOwnerHash)
+                            if ($token->ownerHash && $token->ownerHash != $result->CharacterOwnerHash) {
                                 \AppRoot::doCliOutput('The known ownerhash is different then the verifydata hash. Character has a different owner!');
+                            }
 
                             // Check voor een login sessie. Login als er nog geen sessie is.
                             if (!\User::getUSER()) {
@@ -123,10 +124,13 @@ class Login extends \api\Client
                                     if ($character->getUser()->id != \User::getUSER()->id)
                                         \AppRoot::doCliOutput("USER MISMATCH!");
                                 }
+
+                                // Update character data
                                 $character->userID = \User::getUSER()->id;
                                 $character->store();
                                 $character->importData();
 
+                                // Redirect naar state
                                 \AppRoot::redirect($stateData->url, false);
                             } else {
                                 \AppRoot::doCliOutput("No user found");

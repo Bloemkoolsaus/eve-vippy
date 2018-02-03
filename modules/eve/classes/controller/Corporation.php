@@ -25,6 +25,7 @@ class Corporation
                 $corporation->ceoID = $esi->getResult()->ceo_id;
                 $corporation->store();
 
+                // Update alliance info
                 if (isset($esi->getResult()->alliance_id)) {
                     $alliance = \eve\model\Alliance::findById($esi->getResult()->alliance_id);
                     if (!$alliance) {

@@ -24,10 +24,8 @@ class Login
         if (count($arguments) > 0)
             $code = array_shift($arguments);
 
-        try
-        {
-            if ($state && $code)
-            {
+        try {
+            if ($state && $code) {
                 $crest = new \crest\Login();
                 $crest->getToken($state, $code);
             }

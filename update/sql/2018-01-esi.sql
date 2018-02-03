@@ -21,6 +21,7 @@ CREATE TABLE `sso_token` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `esi_log` (
+  `id` bigint(11) auto_increment,
   `requesttype` varchar(100) DEFAULT 'get',
   `url` varchar(500) NOT NULL,
   `requestdate` datetime NOT NULL,
@@ -28,6 +29,7 @@ CREATE TABLE `esi_log` (
   `httpstatus` int(11) DEFAULT NULL,
   `content` text,
   `response` text,
+  primary key (id),
   KEY `httpstatus` (`httpstatus`),
   KEY `requestdate` (`requestdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

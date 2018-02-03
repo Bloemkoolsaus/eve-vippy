@@ -30,14 +30,13 @@ class Character
 
     function load($result=false)
     {
-        if (!$result)
-        {
-            $cache = \Cache::file()->get("characters/" . $this->id);
+        if (!$result) {
+            $cache = \Cache::file()->get("characters/".$this->id);
             if ($cache) {
                 $result = json_decode($cache, true);
             } else {
-                $result = \MySQL::getDB()->getRow("SELECT * FROM characters WHERE id = ?", [$this->id]);
-                \Cache::file()->set("characters/" . $this->id, $result);
+                $result = \MySQL::getDB()->getRow("select * from characters where id = ?", [$this->id]);
+                \Cache::file()->set("characters/".$this->id, $result);
             }
         }
 
@@ -53,6 +52,11 @@ class Character
             $this->isAuthorized = ($result["authstatus"]>0)?true:false;
             $this->authMessage = $result["authmessage"];
         }
+    }
+
+    function clearCache()
+    {
+        \Cache::file()->remove("characters/".$this->id);
     }
 
     function store()
@@ -80,7 +84,6 @@ class Character
         ];
         \MySQL::getDB()->updateinsert("characters", $data, ["id" => $this->id]);
 
-        \Cache::file()->remove("characters/" . $this->id);
         if ($this->getUser() != null)
             $this->getUser()->resetCache();
 
@@ -224,17 +227,12 @@ class Character
     function importData()
     {
         try {
-            /** Gebruikt reguliere xml api. Scheelt weer crest-requests, rate-limits enzo */
             $charController = new \eve\controller\Character();
-            $character = $charController->importCharacter($this->id);
-
-            // Check corp
-            $corpController = new \eve\controller\Corporation();
-            $corpController->importCorporation($character->corporationID);
-        }
-        catch (\Exception $e)
-        {
-            echo "An error occured while importing data from the xml api..<br />".$e->getMessage();
+            $charController->importCharacter($this->id);
+            $this->clearCache();
+            $this->load();
+        } catch (\Exception $e) {
+            echo "An error occured while importing data..<br />".$e->getMessage();
         }
     }
 

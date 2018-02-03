@@ -21,6 +21,16 @@ class Api extends \api\Client
 
     function get($url, $params=[])
     {
+        // Check log/cache
+        $log = \esi\model\Log::findOne(["url" => $this->baseURL.$url, "requesttype" => "get", "httpstatus" => 200]);
+        if ($log) {
+            if (strtotime($log->expireDate) > strtotime("now")) {
+                $this->result = json_decode($log->response);
+                $this->httpStatus = $log->httpStatus;
+                return;
+            } else
+                $log->delete();
+        }
         $this->resetheader();
         if ($this->token) {
             if ($this->token->isExpired())
@@ -57,33 +67,25 @@ class Api extends \api\Client
 
     function log()
     {
-        $content = null;
-        if (isset($this->getRequest()->content)) {
-            $content = $this->getRequest()->content;
-            if (is_object($content) || is_array($content))
-                $content = json_encode($content);
-        }
+        $log = new \esi\model\Log();
+        $log->url = $this->getRequest()->url;
+        $log->requestType = strtolower($this->getRequest()->type);
+        $log->requestDate = date("Y-m-d H:i:s");
+        $log->response = json_encode($this->result);
+        $log->httpStatus = ($this->httpStatus)?$this->httpStatus:null;
 
-        $response = [
-            "content" => $this->getResult(),
-            "headers" => $this->getResultHeaders()
-        ];
-        if (is_object($response) || is_array($response))
-            $response = json_encode($response);
+        if (isset($this->getRequest()->content)) {
+            $log->content = $this->getRequest()->content;
+            if (is_object($log->content) || is_array($log->content))
+                $log->content = json_encode($log->content);
+        }
 
         $expires = "now";
         if ($this->getResultHeader("Date") && $this->getResultHeader("Expires")) {
             $expires = strtotime("now")+(strtotime($this->getResultHeader("Expires"))-strtotime($this->getResultHeader("Date")));
         }
+        $log->expireDate = date("Y-m-d H:i:s", $expires);
 
-        \MySQL::getDB()->insert("esi_log", [
-            "requesttype" => strtolower($this->getRequest()->type),
-            "url" => $this->getRequest()->url,
-            "requestdate" => date("Y-m-d H:i:s"),
-            "expiredate" => date("Y-m-d H:i:s", $expires),
-            "httpstatus" => ($this->httpStatus)?$this->httpStatus:null,
-            "content" => $content,
-            "response" => $response
-        ]);
+        $log->store();
     }
 }

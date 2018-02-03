@@ -10,8 +10,8 @@ class Client
     public $password = "";
     public $verifySSL = false;
 
-    private $request;
-    private $result;
+    protected $request;
+    protected $result;
 
     public $httpStatus = 0;
     public $curlStatus = 0;

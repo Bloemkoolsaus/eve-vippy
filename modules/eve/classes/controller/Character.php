@@ -36,6 +36,11 @@ class Character
 
             // Corp updaten
             $corpController->importCorporation($esi->getResult()->corporation_id);
+
+            // Check if character is (still) ceo
+            $character->isCEO = ($character->getCorporation()->ceoID == $character->id) ? true : false;
+            $character->isDirector = false;
+            $character->store();
         }
 
         // Reset user
