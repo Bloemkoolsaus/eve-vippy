@@ -21,7 +21,7 @@ class Module extends \Module
         // Oude fleets opruimen
         \AppRoot::doCliOutput("Clean up old fleets");
         $cleanupDate = date("Y-m-d H:i:s", mktime(date("H"),date("i"),date("s"),date("m"),date("d")-2,date("Y")));
-        \MySQL::getDB()->doQuery("delete from crest_fleet where active = 0 and (lastupdate < ? or lastupdate is null)", [$cleanupDate]);
+        \MySQL::getDB()->doQuery("delete from esi_fleet where active = 0 and (lastupdate < ? or lastupdate is null)", [$cleanupDate]);
 
         // Log opruimen
         \AppRoot::doCliOutput("Clean up CREST log");

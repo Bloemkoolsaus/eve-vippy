@@ -3,7 +3,7 @@ namespace fleets\model;
 
 class Fleet extends \Model
 {
-    protected $_table = "crest_fleet";
+    protected $_table = "esi_fleet";
 
     public $id;
     public $bossID;
@@ -28,12 +28,12 @@ class Fleet extends \Model
 
     /**
      * Get boss
-     * @return \crest\model\Character
+     * @return \eve\model\Character
      */
     function getBoss()
     {
         if ($this->_boss === null)
-            $this->_boss = new \crest\model\Character($this->bossID);
+            $this->_boss = new \eve\model\Character($this->bossID);
 
         return $this->_boss;
     }

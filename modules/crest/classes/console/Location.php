@@ -34,8 +34,8 @@ class Location
                                                         inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                         inner join map_character_locations l on l.characterid = c.id
                                                         left join ( select  m.*
-                                                                    from    crest_fleet f
-                                                                        inner join crest_fleet_member m on m.fleetid = f.id
+                                                                    from    esi_fleet f
+                                                                        inner join esi_fleet_member m on m.fleetid = f.id
                                                                     where   f.active > 0
                                                             ) f on f.characterid = c.id
                                                     where   f.fleetid is null
