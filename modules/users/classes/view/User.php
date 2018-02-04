@@ -139,7 +139,7 @@ class User
             $user = \User::getUSER();
 
         foreach ($user->getCharacters() as $char) {
-            $character  = new \crest\model\Character($char->id);
+            $character  = new \eve\model\Character($char->id);
             $character->importData();
         }
     }
@@ -181,7 +181,7 @@ class User
             $searchQueryParams = array();
             $searchQueryParams[] = "id IN (	SELECT	c.userid
                                             FROM 	characters c
-                                                INNER JOIN crest_token t ON t.tokentype = 'character' AND t.tokenid = c.id
+                                                INNER JOIN sso_token t ON t.tokentype = 'character' AND t.tokenid = c.id
                                                 INNER JOIN corporations corp ON corp.id = c.corpid
                                                 LEFT JOIN alliances ally ON ally.id = corp.allianceid
                                             WHERE 	corp.name LIKE '%".\Tools::POST("searchusers")."%'

@@ -1,5 +1,5 @@
 <?php
-namespace crest\model;
+namespace esi\model;
 
 class Character extends \eve\model\Character
 {
@@ -102,16 +102,21 @@ class Character extends \eve\model\Character
                                         lastdate = '".date("Y-m-d H:i:s")."'");
     }
 
+    function setOffline()
+    {
+        \MySQL::getDB()->update("map_character_locations", ["online" => 0], ["characterid" => $this->id]);
+    }
+
 
     /**
      * Find character by ID
      * @param $characterID
-     * @return \crest\model\Character|null
+     * @return \esi\model\Character|null
      */
     public static function findByID($characterID)
     {
         if ($result = \MySQL::getDB()->getRow("select * from characters where id = ?", [$characterID])) {
-            $char = new \crest\model\Character($characterID);
+            $char = new \esi\model\Character($characterID);
             $char->load($result);
             return $char;
         }
@@ -121,19 +126,19 @@ class Character extends \eve\model\Character
     /**
      * Find characters with a valid token by user
      * @param $userID
-     * @return \crest\model\Character[]
+     * @return \esi\model\Character[]
      */
     public static function findByUser($userID)
     {
         $characters = [];
         if ($results = \MySQL::getDB()->getRows("select c.* 
                                                 from    characters c
-                                                    inner join crest_token t on t.tokenid = c.id and t.tokentype = 'character'
+                                                    inner join sso_token t on t.tokenid = c.id and t.tokentype = 'character'
                                                 where   c.userid = ?"
                                         , [$userID]))
         {
             foreach ($results as $result) {
-                $char = new \crest\model\Character();
+                $char = new \esi\model\Character();
                 $char->load($result);
                 $characters[] = $char;
             }

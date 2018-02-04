@@ -5,12 +5,12 @@ class LocationTracker
 {
     /**
      * Set character location
-     * @param \crest\model\Character $character
+     * @param \esi\model\Character $character
      * @param $locationID
      * @param $shipTypeID
      * @return bool
      */
-    function setCharacterLocation(\crest\model\Character $character, $locationID, $shipTypeID=null)
+    function setCharacterLocation(\esi\model\Character $character, $locationID, $shipTypeID=null)
     {
         \AppRoot::doCliOutput("LocationTracker->setCharacterLocation($character->id, $locationID, $shipTypeID)");
 

@@ -14,7 +14,11 @@ class Api extends \api\Client
         parent::__construct($baseURL);
     }
 
-    function setToken(\crest\model\Token $token)
+    /**
+     * Set token
+     * @param \sso\model\Token $token
+     */
+    function setToken(\sso\model\Token $token)
     {
         $this->token = $token;
     }
@@ -80,7 +84,7 @@ class Api extends \api\Client
                 $log->content = json_encode($log->content);
         }
 
-        $expires = "now";
+        $expires = strtotime("now");
         if ($this->getResultHeader("Date") && $this->getResultHeader("Expires")) {
             $expires = strtotime("now")+(strtotime($this->getResultHeader("Expires"))-strtotime($this->getResultHeader("Date")));
         }

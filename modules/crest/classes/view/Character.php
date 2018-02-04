@@ -6,7 +6,7 @@ class Character
     function getLocation($arguments=[])
     {
         $errors = [];
-        $character = new \crest\model\Character(array_shift($arguments));
+        $character = new \esi\model\Character(array_shift($arguments));
 
         if ($character->getToken())
         {
@@ -42,14 +42,14 @@ class Character
     function getDestination($arguments=[])
     {
         $errors = [];
-        $character = new \crest\model\Character(array_shift($arguments));
+        $character = new \esi\model\Character(array_shift($arguments));
         $solarSystem = new \map\model\SolarSystem(array_shift($arguments));
 
         if ($solarSystem)
         {
             if ($character->getToken())
             {
-                $crest = new \crest\Api();
+                $crest = new \esi\Api();
                 $crest->setToken($character->getToken());
                 $crest->post("characters/".$character->id."/ui/autopilot/waypoints/", [
                     "clearOtherWaypoints" => true,

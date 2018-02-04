@@ -187,9 +187,9 @@ class User
                 }
 
                 // Toon locaties checken
-                $crestLocation = new \crest\console\Location();
+                $crestLocation = new \esi\console\Location();
                 $characterIDs = [];
-                foreach (\crest\model\Character::findByUser(\User::getUSER()->id) as $char) {
+                foreach (\esi\model\Character::findByUser(\User::getUSER()->id) as $char) {
                     $characterIDs[] = $char->id;
                 }
                 if (count($characterIDs) > 0)
@@ -1346,7 +1346,7 @@ class User
                                 select	if (uc.authgroupid is not null, uc.authgroupid, ua.authgroupid) AS authgroupid
                                 from    users u
                                     inner join characters c on c.userid = u.id
-                                    inner join crest_token t on t.tokentype = 'character' and t.tokenid = c.id
+                                    inner join sso_token t on t.tokentype = 'character' and t.tokenid = c.id
                                     inner join corporations corp on corp.id = c.corpid
                                     left join user_auth_groups_corporations uc on uc.corporationid = corp.id
                                     left join user_auth_groups_alliances ua on ua.allianceid = corp.allianceid
@@ -1697,7 +1697,7 @@ class User
         if ($results = \MySQL::getDB()->getRows("SELECT	u.*
                                                 FROM	users u
                                                     INNER JOIN characters c ON c.userid = u.id
-                                                    INNER JOIN crest_token t ON t.tokentype = 'character' AND t.tokenid = c.id
+                                                    INNER JOIN sso_token t ON t.tokentype = 'character' AND t.tokenid = c.id
                                                 WHERE	c.corpid = ?
                                                 GROUP BY u.id
                                                 ORDER BY u.displayname ASC"
