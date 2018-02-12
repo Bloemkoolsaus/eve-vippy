@@ -17,7 +17,7 @@
 #popup {
 	border: solid 3px #555555;
 	border-radius: 8px;
-	background-color: #222222;
+    background: rgba(20,20,20,.8);
 	width: 400px;
 	height: 150px;
 	display: none;
@@ -30,13 +30,11 @@
 
 #popupHeader {
 	width: 100%;
-	margin: 0px;
-	padding: 0px;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	text-align: right;
+	margin: 0;
+    padding: 2px 0px;
+    text-align: right;
 	background-color: #555555;
-	background-image: -moz-linear-gradient(center top , #888888 0%, #555555 100%) !important;	
+	background-image: -moz-linear-gradient(center top , #888888 0%, #555555 100%) !important;
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888',endColorstr='#555555',GradientType=0);
 }
 
@@ -63,7 +61,7 @@
 	background-color: #FFAA00;
 	background-image: url(../images/default/ui/button.hover.png);
 	background-image: -moz-linear-gradient(center top , #FF9A1E 0%, #EA8400 100%);
-   text-shadow: 0 1px 2px #FF7100;	
+   text-shadow: 0 1px 2px #FF7100;
 }
 
 #popup div.form {

@@ -1,0 +1,24 @@
+div.vippy-news {
+    text-align: left;
+    margin: 1em;
+}
+
+div.vippy-news-article {
+    margin-top: 1em;
+    border: solid 1px #555555;
+    border-radius: 5px;
+    padding: 1em;
+    background: rgba(80,80,80,.5);;
+}
+
+div.vippy-news h1,
+div.vippy-news h2 {
+    text-decoration: none !important;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+div.vippy-news strong {
+    color: #ffffff !important;
+}
