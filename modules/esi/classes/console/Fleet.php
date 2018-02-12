@@ -82,7 +82,7 @@ class Fleet
             $api = new \esi\Api();
 
         $api->setToken($fleet->getBoss()->getToken());
-        $api->get("fleets/".$fleet->id."/members/");
+        $api->get("v1/fleets/".$fleet->id."/members/");
 
         if ($api->success())
         {
@@ -165,48 +165,46 @@ class Fleet
      * get fleet
      * @param $url
      * @param $characterID
-     * @return \esi\model\Fleet|null
+     * @return \esi\model\Fleet
+     * @throws \Exception
      */
     function getFleetByURL($url, $characterID)
     {
-        $character = new \esi\model\Character($characterID);
-
-        $api = new \esi\Api();
-        $api->setToken($character->getToken());
-
         // ESI link?
+        $fleetID = null;
         if (strpos($url, "esi.tech.ccp") !== false) {
             $parts = explode("/", $url);
             while (count($parts) > 0) {
                 $part = array_shift($parts);
                 if ($part == "fleets") {
-                    $url = "fleets/".array_shift($parts)."/";
+                    $fleetID = array_shift($parts);
                     break;
                 }
             }
         }
+        if (!$fleetID)
+            throw new \Exception("Could not parse fleet link");
 
-        $url = str_replace($api->baseURL, "", $url);
-        $api->get($url);
+        $character = new \esi\model\Character($characterID);
+        if (!$character->getToken())
+            throw new \Exception($character->name." does not have a valid token");
 
-        if ($api->success())
-        {
-            $parts = explode("/",$url);
-            $id = $parts[1];
+        $api = new \esi\Api();
+        $api->setToken($character->getToken());
+        $api->get("v1/fleets/".$fleetID);
+        if (!$api->success())
+            throw new \Exception("Failed getting fleet information [http ".$api->httpStatus."]");
 
-            /** @var \esi\model\Fleet $fleet */
-            $fleet = \esi\model\Fleet::findOne(["id" => $id]);
-            if (!$fleet) {
-                $fleet = new \esi\model\Fleet();
-                $fleet->id = $id;
-            }
-            $fleet->bossID = $characterID;
-            $fleet->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
-            $fleet->active = 1;
-            $fleet->store();
-            return $fleet;
-        }
+        /** @var \esi\model\Fleet $fleet */
+        $fleet = \esi\model\Fleet::findOne(["id" => $fleetID]);
+        if (!$fleet)
+            $fleet = new \esi\model\Fleet();
 
-        return null;
+        $fleet->id = $fleetID;
+        $fleet->bossID = $characterID;
+        $fleet->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
+        $fleet->active = 1;
+        $fleet->store();
+        return $fleet;
     }
 }

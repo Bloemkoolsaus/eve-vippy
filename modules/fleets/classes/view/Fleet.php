@@ -26,15 +26,18 @@ class Fleet
 
             if (count($errors) == 0)
             {
-                $console = new \crest\console\Fleet();
-                $fleet = $console->getFleetByURL(\Tools::POST("fleet"), \Tools::POST("boss"));
-                if ($fleet) {
-                    $fleet = $console->getFleetMembers($fleet);
-                    if ($fleet->active)
-                        \AppRoot::redidrectToReferer();
-                    $errors[] = $fleet->statusMessage;
-                } else
-                    $errors[] = "Failed getting fleet info from CREST. Make sure you have a valid CREST login in Vippy.";
+                try {
+                    $console = new \esi\console\Fleet();
+                    $fleet = $console->getFleetByURL(\Tools::POST("fleet"), \Tools::POST("boss"));
+                    if ($fleet) {
+                        $fleet = $console->getFleetMembers($fleet);
+                        if ($fleet->active)
+                            \AppRoot::redidrectToReferer();
+                        $errors[] = $fleet->statusMessage;
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = $e->getMessage();
+                }
             }
         }
 

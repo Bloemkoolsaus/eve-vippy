@@ -37,6 +37,7 @@ CREATE TABLE `esi_log` (
 
 CREATE TABLE `esi_fleet` (
   `id` bigint(11) unsigned NOT NULL,
+  `url` varchar(500) default null,
   `bossid` int(11) unsigned NOT NULL,
   `authgroupid` int(11) unsigned NOT NULL,
   `active` tinyint(1) DEFAULT '0',

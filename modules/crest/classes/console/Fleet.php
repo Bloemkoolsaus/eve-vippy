@@ -165,7 +165,7 @@ class Fleet
      * get fleet
      * @param $url
      * @param $characterID
-     * @return \crest\model\Fleet|null
+     * @return \esi\model\Fleet|null
      */
     function getFleetByURL($url, $characterID)
     {

@@ -6,6 +6,7 @@ class Fleet extends \Model
     protected $_table = "esi_fleet";
 
     public $id;
+    public $url;
     public $bossID;
     public $authGroupID;
     public $active = false;
