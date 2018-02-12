@@ -128,7 +128,7 @@ class Map
         }
 
         $fleets = [];
-        foreach (\crest\model\Fleet::findAll(["authgroupid" => $map->authgroupID]) as $fleet) {
+        foreach (\esi\model\Fleet::findAll(["authgroupid" => $map->authgroupID]) as $fleet) {
             if ($fleet->active)
                 $fleets[] = $fleet;
         }
