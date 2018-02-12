@@ -120,8 +120,14 @@ class Location
                     $results["errors"][] = "No result from CREST. Is ".$character->name." logged in?";
                 }
             } else {
-                \AppRoot::doCliOutput("CREST call failed. Returned ".$crest->httpStatus);
-                $results["errors"][] = "CREST call failed. Returned ".$crest->httpStatus;
+                if ($crest->httpStatus == 401) {
+                    \AppRoot::doCliOutput("Unauthorized. Token invalidated?");
+                    $results["errors"][] = "CREST call failed. Returned ".$crest->httpStatus;
+                    $character->getToken()->delete();
+                } else {
+                    \AppRoot::doCliOutput("CREST call failed. Returned ".$crest->httpStatus);
+                    $results["errors"][] = "CREST call failed. Returned ".$crest->httpStatus;
+                }
             }
         }
 
