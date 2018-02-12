@@ -14,13 +14,18 @@ $config["submenu"][] = [
 ];
 $config["submenu"][] = [
     "type" => "link",
-    "name" => "Crest",
-    "url" => "help/crest"
+    "name" => "ESI",
+    "url" => "help/esi"
 ];
 $config["submenu"][] = [
     "type" => "link",
     "name" => "Subscription",
     "url" => "help/subscription"
+];
+$config["submenu"][] = [
+    "type" => "link",
+    "name" => "Contact",
+    "url" => "help/contact"
 ];
 
 // SET CONFIG
