@@ -53,10 +53,6 @@ class Fleet
             return $fleet;
         }
 
-        // Zet update date alvast, zodat we geen dubbele executies krijgen voor deze fleet.
-        $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+1);
-        $fleet->store();
-
         if (!$fleet->getBoss()) {
             $fleet->active = false;
             $fleet->statusMessage = "Fleet boss not found";
