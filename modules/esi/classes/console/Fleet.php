@@ -11,8 +11,7 @@ class Fleet
         $crestTimer = (int)((\Config::getCONFIG()->get("crest_location_timer"))?:5);
 
         // Als we tegen de timeout aanlopen, afbreken
-        while (\AppRoot::getExecTime() < 58)
-        {
+        while (\AppRoot::getExecTime() < 58) {
             \AppRoot::doCliOutput("Find fleets");
             if ($results = \MySQL::getDB()->getRows("select id from esi_fleet 
                                                      where active > 0 
@@ -20,8 +19,7 @@ class Fleet
                                         , [date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
             {
                 \AppRoot::doCliOutput(count($results)." fleets found");
-                foreach ($results as $result)
-                {
+                foreach ($results as $result) {
                     \AppRoot::doCliOutput("fleet: ".$result["id"]);
                     \MySQL::getDB()->doQuery("update esi_fleet set lastupdate = '".date("Y-m-d H:i:s")."' where id = ".$result["id"]);
                     \AppRoot::runCron(["crest", "fleet", "fleet", $result["id"]]);
@@ -82,7 +80,7 @@ class Fleet
             $api = new \esi\Api();
 
         $api->setToken($fleet->getBoss()->getToken());
-        $api->get("fleets/".$fleet->id."/members/");
+        $api->get("v1/fleets/".$fleet->id."/members/");
 
         if ($api->success())
         {
@@ -95,12 +93,12 @@ class Fleet
                 foreach ($api->getResult()->items as $fleetMember) {
                     $fleetMembers[] = [
                         (int)$fleet->id,
-                        (int)$fleetMember->character->id,
-                        (int)$fleetMember->wingID,
-                        (int)$fleetMember->squadID,
-                        (int)$fleetMember->solarSystem->id,
-                        (int)$fleetMember->ship->id,
-                        (int)($fleetMember->takesFleetWarp)?1:0
+                        (int)$fleetMember->character_id,
+                        (int)$fleetMember->wing_id,
+                        (int)$fleetMember->squad_id,
+                        (int)$fleetMember->solar_system_id,
+                        (int)$fleetMember->ship_type_id,
+                        (int)($fleetMember->takes_fleet_warp)?1:0
                     ];
                 }
                 // Reset fleet members

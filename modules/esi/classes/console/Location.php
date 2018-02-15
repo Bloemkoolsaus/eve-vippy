@@ -29,11 +29,11 @@ class Location
                                                                     where   f.active > 0
                                                             ) f on f.characterid = c.id
                                                     where   f.fleetid is null
-                                                    and     l.lastdate between ? and ?
+                                                    -- and     l.lastdate between ? and ?
                                                     order by l.online desc, l.lastdate asc
                                                     limit ".$crestLimit
-                , [ date("Y-m-d H:i:s", strtotime("now")-500),
-                    date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
+                        , [ date("Y-m-d H:i:s", strtotime("now")-300),
+                            date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
             {
                 $characterIDs = [];
                 foreach ($results as $result)
@@ -46,13 +46,13 @@ class Location
                     $characterIDs[] = $result["id"];
 
                     if (count($characterIDs) == 5) {
-                        $this->fetchCharacters($characterIDs);
+                        $this->doCharacter($characterIDs);
                         $characterIDs = [];
                     }
                 }
 
                 if (count($characterIDs) > 0)
-                    $this->fetchCharacters($characterIDs);
+                    $this->doCharacter($characterIDs);
             }
 
             // Einde loop.
@@ -62,27 +62,18 @@ class Location
         \AppRoot::doCliOutput("Finished run!");
     }
 
-    function fetchCharacters($characterIDs)
-    {
-        // Asynchroon uitvoeren
-        $arguments = ["esi", "location", "character"];
-        foreach ($characterIDs as $id) {
-            $arguments[] = $id;
-        }
-        \AppRoot::runCron($arguments);
-    }
-
     function doCharacter($arguments=[])
     {
+        \AppRoot::doCliOutput("Get character locations");
         $locationTracker = new \map\controller\LocationTracker();
 
         while (count($arguments) > 0)
         {
             $authGroups = [];
             $character = new \esi\model\Character(array_shift($arguments));
-            $userSession = (\User::getUSER())?true:false;
+            \AppRoot::doCliOutput("> ".$character->name);
 
-            \AppRoot::doCliOutput("Location->doCharacter($character->name)");
+            $userSession = (\User::getUSER())?true:false;
             if ($character->getUser())
                 $authGroups = $character->getUser()->getAuthGroups();
             if (count($authGroups) == 0) {
