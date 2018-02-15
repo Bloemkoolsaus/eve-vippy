@@ -48,7 +48,7 @@
 {if isset($newNewsItems) && $newNewsItems > 0}
 <script type="text/javascript">
 $(document).ready(function() {
-    showUnreadNews();
+    setTimeout(showUnreadNews, 2000);
 });
 </script>
 {/if}

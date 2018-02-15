@@ -1,12 +1,8 @@
 button {
-    background-color: #111111;
     background: #111111 linear-gradient(#555555, #111111);
     border: 1px solid #555555;
     border-radius: 5px;
-    padding-top: .2em;
-    padding-bottom: .3em;
-    padding-left: .7em;
-    padding-right: .7em;
+    padding: .2em .7em .3em;
     cursor: pointer;
     color: #FFFFFF;
     text-align: center;
@@ -21,7 +17,6 @@ h1 button {
 }
 button:hover {
     border-color: #DD8800;
-    background-color: #DD8800;
     background: #DD8800 linear-gradient(#FFAA00, #DD8800);
 }
 button.small {
@@ -40,9 +35,7 @@ button.img {
     padding-right: 0;
 }
 button.img img {
-    margin: 0;
-    margin-top: .2em;
-    margin-bottom: 2px;
+    margin: .2em 0 2px;
 }
 
 button.combobox {

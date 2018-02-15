@@ -8,7 +8,8 @@ div.vippy-news-article {
     border: solid 1px #555555;
     border-radius: 5px;
     padding: 1em;
-    background: rgba(80,80,80,.5);;
+    background: rgba(20,20,20,.9);
+    color: #dddddd;
 }
 
 div.vippy-news h1,
@@ -17,6 +18,11 @@ div.vippy-news h2 {
     border: none;
     margin: 0;
     padding: 0;
+}
+div.vippy-news h1 {
+    color: #ffffff;
+    text-shadow: 1px 1px #0098df;
+
 }
 
 div.vippy-news strong {
