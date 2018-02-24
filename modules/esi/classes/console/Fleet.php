@@ -22,7 +22,7 @@ class Fleet
                 foreach ($results as $result) {
                     \AppRoot::doCliOutput("fleet: ".$result["id"]);
                     \MySQL::getDB()->doQuery("update esi_fleet set lastupdate = '".date("Y-m-d H:i:s")."' where id = ".$result["id"]);
-                    \AppRoot::runCron(["crest", "fleet", "fleet", $result["id"]]);
+                    \AppRoot::runCron(["esi", "fleet", "fleet", $result["id"]]);
                 }
             }
 
