@@ -7,7 +7,7 @@ function refreshCharacterLocation(characterID)
         var icon = $("#bttnRefreshCharacterLocation>img").attr("src");
         setRefreshCharacterBttnIcon("/images/loading.gif");
         $.ajax({
-            url: "/crest/character/location/"+characterID,
+            url: "/esi/character/location/"+characterID,
             data: {
                 ajax: 1
             },
@@ -52,12 +52,9 @@ function setRefreshCharacterBttnIcon(icon)
 
 function openRefreshCharacterSelector()
 {
-    if ($("#characterRefreshSelector").is(":visible"))
-    {
+    if ($("#characterRefreshSelector").is(":visible")) {
         $("#characterRefreshSelector").hide();
-    }
-    else
-    {
+    } else {
         $("#characterRefreshSelector").show();
         $("#characterRefreshSelector").css("top", $("#bttnRefreshCharacterLocation").position().top + $("#bttnRefreshCharacterLocation").outerHeight());
         $("#characterRefreshSelector").css("left", $("#bttnRefreshCharacterLocation").position().left);
@@ -67,7 +64,7 @@ function openRefreshCharacterSelector()
 function switchToActiveSystem(characterID)
 {
     $.ajax({
-        url: "/crest/character/location/"+characterID,
+        url: "/esi/character/location/"+characterID,
         data: { ajax: 1 },
         success: function(data) {
             data = $.parseJSON(data);
@@ -83,7 +80,7 @@ function switchToActiveSystem(characterID)
 function setDestination(characterID, solarSystemID)
 {
     $.ajax({
-        url: "/crest/character/destination/"+characterID+"/"+solarSystemID,
+        url: "/esi/character/destination/"+characterID+"/"+solarSystemID,
         data: { ajax: 1 },
         success: function(data) {
             data = $.parseJSON(data);

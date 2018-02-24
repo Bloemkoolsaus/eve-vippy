@@ -63,7 +63,7 @@ class Api extends \api\Client
     function getResult()
     {
         $result = parent::getResult();
-        if (!is_object($result))
+        if (!is_object($result) && !is_array($result))
             $result = json_decode($result);
 
         return $result;

@@ -80,13 +80,14 @@ class Fleet
 
         if ($api->success())
         {
+            \AppRoot::debug("FLEET MEMBERS:");
             \AppRoot::debug($api->getResult());
             $locationTracker = new \map\controller\LocationTracker();
 
-            if (isset($api->getResult()->items))
+            if ($api->getResult())
             {
                 // Dubbele execution voorkomen
-                foreach ($api->getResult()->items as $fleetMember) {
+                foreach ($api->getResult() as $fleetMember) {
                     $fleetMembers[] = [
                         (int)$fleet->id,
                         (int)$fleetMember->character_id,
@@ -107,46 +108,46 @@ class Fleet
                     \MySQL::getDB()->doQuery("insert into esi_fleet_member (fleetid, characterid, wingid, squadid, solarsystemid, shiptypeid, takewarp) values ".implode(", ", $memberQuery));
                 }
 
-                foreach ($api->getResult()->items as $fleetMember)
+                foreach ($api->getResult() as $fleetMember)
                 {
                     // Check character exists
                     /** @var \eve\model\Character $character */
-                    $character = \esi\model\Character::findByID($fleetMember->character->id);
+                    $character = \esi\model\Character::findByID($fleetMember->character_id);
                     if (!$character) {
                         $controller = new \eve\controller\Character();
-                        $controller->importCharacter($fleetMember->character->id);
-                        $character = new \esi\model\Character((int)$fleetMember->character->id);
+                        $controller->importCharacter($fleetMember->character_id);
+                        $character = new \esi\model\Character((int)$fleetMember->character_id);
                     }
                     \AppRoot::doCliOutput(" - ".$character->name);
                     if (!$userSession)
                         \User::setUSER($character->getUser());
 
                     // Location tracker
-                    $locationTracker->setCharacterLocation($character, (int)$fleetMember->solarSystem->id, (int)$fleetMember->ship->id);
+                    $locationTracker->setCharacterLocation($character, (int)$fleetMember->solar_system_id, (int)$fleetMember->ship_type_id);
                     if (!$userSession)
                         \User::unsetUser();
                 }
 
                 $fleet->active = true;
-                $fleet->statusMessage = "Tracking ".count($api->getResult()->items)." fleet members.";
+                $fleet->statusMessage = "Tracking ".count($fleetMembers)." fleet members.";
                 $fleet->store();
             } else {
-                \AppRoot::doCliOutput("Could not parse result received from CREST. HELP....", "red");
+                \AppRoot::doCliOutput("Could not parse result received from ESI. HELP....", "red");
                 $fleet->active = false;
-                $fleet->statusMessage = "Could not parse result received from CREST. HELP....";
+                $fleet->statusMessage = "Could not parse result received from ESI. HELP....";
                 $fleet->store();
             }
         } else {
             if ($api->httpStatus >= 500 and $api->httpStatus < 600) {
-                \AppRoot::doCliOutput("CREST call failed, Is CREST down??  Retrying in 5 minutes.", "red");
+                \AppRoot::doCliOutput("CREST call failed, Is ESI down??  Retrying in 5 minutes.", "red");
                 $fleet->active = false;
-                $fleet->statusMessage = "CREST call failed, Is CREST down??  Retrying in 5 minutes.";
+                $fleet->statusMessage = "CREST call failed, Is ESI down??  Retrying in 5 minutes.";
                 $fleet->lastUpdate = date("Y-m-d H:i:s", strtotime("now")+(60*5));
                 $fleet->store();
             } else {
-                \AppRoot::doCliOutput("Failed to call CREST for fleet info. ".$api->httpStatus." returned!", "red");
+                \AppRoot::doCliOutput("Failed to call ESI for fleet info. ".$api->httpStatus." returned!", "red");
                 $fleet->active = false;
-                $fleet->statusMessage = "Failed to call CREST for fleet info. ".$api->httpStatus." returned!";
+                $fleet->statusMessage = "Failed to call ESI for fleet info. ".$api->httpStatus." returned!";
                 $fleet->store();
             }
         }
@@ -165,6 +166,7 @@ class Fleet
     function getFleetByURL($url, $characterID)
     {
         // ESI link?
+        // https://esi.tech.ccp.is/v1/fleets/1082711409055/?datasource=tranquility
         $fleetID = null;
         if (strpos($url, "esi.tech.ccp") !== false) {
             $parts = explode("/", $url);
@@ -185,7 +187,7 @@ class Fleet
 
         $api = new \esi\Api();
         $api->setToken($character->getToken());
-        $api->get("v1/fleets/".$fleetID);
+        $api->get("v1/fleets/".$fleetID."/");
         if (!$api->success())
             throw new \Exception("Failed getting fleet information [http ".$api->httpStatus."]");
 
@@ -195,6 +197,7 @@ class Fleet
             $fleet = new \esi\model\Fleet();
 
         $fleet->id = $fleetID;
+        $fleet->url = $url;
         $fleet->bossID = $characterID;
         $fleet->authGroupID = \User::getUSER()->getCurrentAuthGroupID();
         $fleet->active = 1;

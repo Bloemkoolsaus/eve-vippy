@@ -29,16 +29,16 @@ class Location
                                                                     where   f.active > 0
                                                             ) f on f.characterid = c.id
                                                     where   f.fleetid is null
-                                                    -- and     l.lastdate between ? and ?
+                                                    and     l.lastdate between ? and ?
                                                     order by l.online desc, l.lastdate asc
                                                     limit ".$crestLimit
-                        , [ date("Y-m-d H:i:s", strtotime("now")-300),
+                        , [ date("Y-m-d H:i:s", strtotime("now")-600),
                             date("Y-m-d H:i:s", strtotime("now")-$crestTimer)]))
             {
                 $characterIDs = [];
                 foreach ($results as $result)
                 {
-                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"ONline":"OFFline"));
+                    \AppRoot::doCliOutput("> [".$result["id"]."] ".$result["name"]. " ".(($result["online"])?"Online":"Offline"));
 
                     // Update datum bijwerken om dubbele execution te voorkomen
                     $character = new \esi\model\Character($result["id"]);
@@ -46,13 +46,16 @@ class Location
                     $characterIDs[] = $result["id"];
 
                     if (count($characterIDs) == 5) {
-                        $this->doCharacter($characterIDs);
+                        $args = array_merge(["esi", "location", "character"], $characterIDs);
+                        \AppRoot::runCron($args);
                         $characterIDs = [];
                     }
                 }
 
-                if (count($characterIDs) > 0)
-                    $this->doCharacter($characterIDs);
+                if (count($characterIDs) > 0) {
+                    $args = array_merge(["esi", "location", "character"], $characterIDs);
+                    \AppRoot::runCron($args);
+                }
             }
 
             // Einde loop.
