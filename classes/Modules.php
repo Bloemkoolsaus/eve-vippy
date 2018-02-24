@@ -190,9 +190,14 @@ class Modules
         $tpl->assign("today", \Tools::getDayOfTheWeek().", ".Tools::getWrittenMonth(date("m"))." ".date("d").", ".date("Y"));
 
 		if (\User::getUSER()) {
+		    // Check for patch notes
             $patchNoteController = new \system\controller\PatchNotes();
-            if ($patchNoteController->hasNewPatchNotes(\User::getUSER()))
+            if ($patchNoteController->hasNewPatchNotes(\User::getUSER())) {
                 $tpl->assign("newPatchNotes", 1);
+            }
+            // Check for news items
+            $newsItems = \vippy\model\News::findAllUnread();
+            $tpl->assign("newNewsItems", count($newsItems));
 		}
 
 		return $tpl->fetch("header");

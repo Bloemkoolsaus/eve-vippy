@@ -1,0 +1,116 @@
+<div class="content">
+	<h1 style="margin-bottom: 0;">
+		<img src="/images/default/ui/question.png" align="left">
+		Help ESI
+	</h1>
+</div>
+
+{include "help/menu"}
+
+<div class="content">
+	<div class="col6">
+		<div style="padding: .5em;">
+			<h3>SSO (Single Sign On) and Vippy</h3>
+		</div>
+		<div style="padding: .5em;">
+			You use your EVE account to log in to Vippy. By doing this, Vippy can confirm your identity with CCP.<br />
+			<span style="color: #ffffff;"><b>Under <u>no</u> circumstances is Vippy able to read or otherwise get your EVE account details.</b></span>
+		</div>
+		<div style="padding: .5em;">
+			The SSO server also returns a so called 'authentication token' that Vippy can use to access the ESI api.
+		</div>
+		<div style="padding: .5em;">
+			See this
+			<a href="https://community.eveonline.com/news/dev-blogs/eve-online-sso-and-what-you-need-to-know/" target="_blank">dev blog</a>
+			for more details on how the sso works and why it is secure.
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div class="col6 right last">
+		<div style="padding: .5em;">
+			<h3>ESI and Vippy</h3>
+		</div>
+		<div style="padding: .5em;">
+			Vippy relies on ESI for authentication and for tracking your current location.
+			Using ESI, Vippy can automatically track your location and lookup valuable intel to display on your map.
+		</div>
+		<div style="padding: .5em;">
+			Using ESI Vippy is also able to do things like set your ingame autopilot to a destination.
+		</div>
+		<div style="padding: .5em;">
+			You can see (and revoke) what applications can access ESI in your
+			<a href="https://community.eveonline.com/support/third-party-applications/" target="_blank">EVE acount page</a>.
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+</div>
+
+<div class="content" style="padding-top: 2em;">
+	<h2>
+		<img src="/images/default/ui/map.png" align="left">
+		ESI Tracking
+	</h2>
+	<div class="col6">
+		<div style="padding: .5em;">
+			<h3>ESI Fleet API</h3>
+		</div>
+		<div style="padding: .5em;">
+			Vippy's main method of tracking is via the ESI fleet api. This requires you to add your fleet to Vippy.
+			It is important to register your fleets, because for registered fleets, Vippy is able to track every
+			fleet member with a single api call.
+			This is more efficient then if Vippy has to track and call every character individually.
+		</div>
+		<div style="padding: .5em;">
+			<strong>Adding your fleet:</strong><br />
+			At the bottom of the map there is a button 'Add Fleet', use that to add your fleet.
+			You will need to enter the fleet boss and the ESI link for your fleet. You can find your link via the fleet window ingame.
+		</div>
+        <div style="padding: .5em; margin-top: 1em; text-align: center;">
+            <img src="/modules/help/images/fleet.png">
+        </div>
+		<div style="clear:both;"></div>
+	</div>
+	<div class="col6 right last">
+		<div style="padding: .5em;">
+			<h3>ESI Character Location API</h3>
+		</div>
+		<div style="padding: .5em;">
+			In order to track a characters location, Vippy needs to make 3 calls:<br />
+			<ul style="margin: 0;">
+				<li>Check if character is online</li>
+				<li>Request the characters current location</li>
+				<li>Request the characters current shiptype</li>
+			</ul>
+		</div>
+		<div style="padding: .5em;">
+			The fleet api can get this information, for <b>all</b> characters in fleet, in a single call.<br />
+			<strong>Because of this, it is important you register your fleets to Vippy!</strong>
+		</div>
+		<div style="padding: 1em .5em .5em;">
+			<h3>Tracking Lag</h3>
+		</div>
+		<div style="padding: .5em;">
+			Because it takes so many calls to request a characters location, Vippy may lag behind.
+			To overcome this, there is a 'refresh' button beneath the map.
+			With these buttons, you can trigger the character-location api manually and update your location <b>now</b>!
+			Use this when you have just jumped into a new hole and want to start scanning right away.
+		</div>
+		<div style="padding: .5em;">
+			In your <a href="/profile/account" target="_blank">account settings</a> you can select your dedicated scan-alt.
+			When selected, you can use the 'refresh location' button to refresh your scan-alts location.
+		</div>
+		<div style="padding: .5em;">
+			To refresh any of your other toons (that have <a href="/profile/account" target="_blank">ESI enabled</a> for Vippy),
+			click the arrow and select a toon to update it's location.
+		</div>
+		<div style="padding: .5em;">
+			<strong>To prevent abuse, these buttons are rate limited!! You can only refresh once every 15 seconds.</strong>
+		</div>
+		<div style="padding: .5em; margin-top: 1em; text-align: center;">
+			<img src="/modules/help/images/refresh-location.png">
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	<div style="clear:both;"></div>
+</div>

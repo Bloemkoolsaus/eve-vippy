@@ -44,3 +44,11 @@
     </div>
 {/foreach}
 {/if}
+
+{if isset($newNewsItems) && $newNewsItems > 0}
+<script type="text/javascript">
+$(document).ready(function() {
+    setTimeout(showUnreadNews, 2000);
+});
+</script>
+{/if}

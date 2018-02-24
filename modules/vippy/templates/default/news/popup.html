@@ -1,0 +1,22 @@
+<div class="vippy-news">
+	<h1>Vippy News</h1>
+	<div>
+	{foreach from=$news item=article}
+		<div class="vippy-news-article">
+			{include file=$article->getTemplate()}
+		</div>
+		<div style="clear: both;"></div>
+	{/foreach}
+	</div>
+	<div style="clear: both;"></div>
+	<div style="text-align: center; margin-top: 1em;">
+		<button type="button" onclick="destroyPopup()">
+			&nbsp; OK &nbsp;
+		</button>
+	</div>
+	<div style="text-align: right;">
+		* <i>More changes in the <a href="/system/patchnotes">patchnotes</a></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+<div style="clear: both;"></div>
