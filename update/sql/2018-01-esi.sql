@@ -1,6 +1,8 @@
 update system_config set var = 'sso_login_url' where var = 'crest_login_url';
 update system_config set var = 'sso_callback_url' where var = 'crest_callback_url';
 update system_config set var = 'sso_clientid' where var = 'crest_clientid';
+delete from system_config where var = 'crest_accept_version';
+
 insert into system_config (var, val) values ('esi_url', 'https://esi.tech.ccp.is/');
 alter table alliances add column ticker varchar(255) default null after name;
 alter table users drop column password;
@@ -64,3 +66,6 @@ drop table crest_fleet;
 drop table crest_fleet_member;
 drop table crest_log;
 drop table crest_token;
+
+delete from system_config where var = 'crest_location_limit';
+delete from system_config where var = 'crest_location_timer';

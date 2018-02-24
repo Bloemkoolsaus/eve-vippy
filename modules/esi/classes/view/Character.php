@@ -58,33 +58,26 @@ class Character
         {
             if ($character->getToken())
             {
-                $crest = new \esi\Api();
-                $crest->setToken($character->getToken());
-                $crest->post("characters/".$character->id."/ui/autopilot/waypoints/", [
-                    "clearOtherWaypoints" => true,
-                    "first" => true,
-                    "solarSystem" => [
-                        "id" => (int)$solarSystem->id,
-                        "href" => "https://crest-tq.eveonline.com/solarsystems/".$solarSystem->id."/"
-                    ]
+                $api = new \esi\Api();
+                $api->setToken($character->getToken());
+                $api->post("v2/ui/autopilot/waypoint/", [
+                    "clear_other_waypoints" => true,
+                    "add_to_beginning" => true,
+                    "destination_id" => (int)$solarSystem->id
                 ]);
 
-                if ($crest->success()) {
+                if ($api->success()) {
                     return json_encode(["destination" => [
                         "id" => $solarSystem->id,
                         "name" => $solarSystem->name
                     ]]);
-                }
-                else
-                {
-                    $errors[] = "CREST call failed. Returned ".$crest->httpStatus;
-                    if ($crest->getResult())
-                    {
-                        $extraMsg = [];
-                        if (isset($crest->getResult()->message))
-                            $errors[] = $crest->getResult()->message;
-                        if (isset($crest->getResult()->exceptionType)) {
-                            if ($crest->getResult()->exceptionType == "UnauthorizedError") {
+                } else {
+                    $errors[] = "ESI call failed. Returned ".$api->httpStatus;
+                    if ($api->getResult()) {
+                        if (isset($api->getResult()->message))
+                            $errors[] = $api->getResult()->message;
+                        if (isset($api->getResult()->exceptionType)) {
+                            if ($api->getResult()->exceptionType == "UnauthorizedError") {
                                 $errors[] = "<br />It seems your CREST token for ".$character->name." is no longer valid.";
                                 $errors[] = "Please refresh it by logging in the SSO from your profile page.";
                             }
