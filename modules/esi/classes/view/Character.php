@@ -54,8 +54,7 @@ class Character
         $character = new \esi\model\Character(array_shift($arguments));
         $solarSystem = new \map\model\SolarSystem(array_shift($arguments));
 
-        if ($solarSystem)
-        {
+        if ($solarSystem) {
             if ($character->getToken())
             {
                 $api = new \esi\Api();
@@ -66,7 +65,7 @@ class Character
                         "destination_id" => (int)$solarSystem->id
                     ]));
 
-                if ($api->success()) {
+                if ($api->httpStatus < 300) {
                     return json_encode(["destination" => [
                         "id" => $solarSystem->id,
                         "name" => $solarSystem->name
@@ -78,16 +77,18 @@ class Character
                             $errors[] = $api->getResult()->message;
                         if (isset($api->getResult()->exceptionType)) {
                             if ($api->getResult()->exceptionType == "UnauthorizedError") {
-                                $errors[] = "<br />It seems your CREST token for ".$character->name." is no longer valid.";
+                                $errors[] = "<br />It seems your SSO token for ".$character->name." is no longer valid.";
                                 $errors[] = "Please refresh it by logging in the SSO from your profile page.";
                             }
                         }
                     }
                 }
-            } else
+            } else {
                 $errors[] = "No (valid) CREST token found for ".$character->name;
-        } else
+            }
+        } else {
             $errors[] = "Solarsystem not found";
+        }
 
         return json_encode(["errors" => $errors]);
     }
