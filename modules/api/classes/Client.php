@@ -97,11 +97,8 @@ class Client
         $this->request->type = strtoupper($requestType);
 
         if ($requestType == "get") {
-            $queryString = "";
-            foreach ($params as $var => $val) {
-                $queryString .= ((strlen(trim($queryString))==0)?"?":"&") . $var . "=" . $val;
-            }
-            $this->request->url .= $queryString;
+            if (count($params) > 0)
+                $this->request->url .= "?".http_build_query($params);
         }
 
         curl_setopt($this->getCurl(), CURLOPT_URL, $this->request->url);
@@ -115,7 +112,6 @@ class Client
 
         if (strtolower($requestType) == "post") {
             $this->request->content = json_encode($params);
-            //$this->request->content = http_build_query($params);
             $this->addHeader("Content-Type: ".$this->_contentType);
             $this->addHeader("Content-Length: ".strlen($this->request->content));
             curl_setopt($this->getCurl(), CURLOPT_POST, true);

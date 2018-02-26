@@ -60,11 +60,11 @@ class Character
             {
                 $api = new \esi\Api();
                 $api->setToken($character->getToken());
-                $api->post("v2/ui/autopilot/waypoint/", [
-                    "clear_other_waypoints" => true,
-                    "add_to_beginning" => true,
-                    "destination_id" => (int)$solarSystem->id
-                ]);
+                $api->post("v2/ui/autopilot/waypoint/?".http_build_query([
+                        "clear_other_waypoints" => true,
+                        "add_to_beginning" => true,
+                        "destination_id" => (int)$solarSystem->id
+                    ]));
 
                 if ($api->success()) {
                     return json_encode(["destination" => [
