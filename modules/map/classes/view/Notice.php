@@ -71,11 +71,11 @@ class Notice
             $drifter->comments = (\Tools::POST("comments"))?:null;
             if ($drifter->nrDrifters == 0) {
                 $drifter->delete();
-                return "Deleted";
             } else {
                 $drifter->store();
-                return "Stored";
             }
+            $map->setMapUpdateDate();
+            return "Stored";
         }
 
         $tpl = \SmartyTools::getSmarty();
