@@ -69,19 +69,15 @@ namespace scanning\model
 
 		function store($positionModifier=null, $copyToOtherChains=true)
 		{
-			if ($this->addDate == null)
-				$this->addDate = date("Y-m-d H:i:s");
-
-			if ($this->mappedByUserID == 0)
-				$this->mappedByUserID = (\User::getUSER())?\User::getUSER()->id:null;
-
-			if ($this->mappedByCharacterID == 0) {
-				if (\eve\model\IGB::getIGB()->isIGB())
-					$this->mappedByCharacterID = \eve\model\IGB::getIGB()->getPilotID();
-			}
-
-            if (!$positionModifier)
-                $positionModifier = 20;
+			if ($this->addDate == null) {
+			    $this->addDate = date("Y-m-d H:i:s");
+            }
+			if ($this->mappedByUserID == 0) {
+			    $this->mappedByUserID = (\User::getUSER())?\User::getUSER()->id:null;
+            }
+            if (!$positionModifier) {
+			    $positionModifier = 20;
+            }
             $this->x = round($this->x/$positionModifier)*$positionModifier;
             $this->y = round($this->y/$positionModifier)*$positionModifier;
 
@@ -108,23 +104,16 @@ namespace scanning\model
             // New wormhole
 			if (!$this->id) {
                 $this->id = \MySQL::getDB()->insert("mapwormholes", $data);
-
                 // User log
                 if (\User::getUSER()) {
                     \User::getUSER()->addLog("add-wormhole", $this->solarSystemID, [
-                        "system" => [
-                            "id" => $this->solarSystemID,
-                            "name" => ($this->getSolarsystem() !== null) ? $this->getSolarsystem()->name : null
-                        ],
-                        "chain" => [
-                            "id" => $this->getChain()->id,
-                            "name" => $this->getChain()->name
-                        ]
+                        "system" => ["id" => $this->solarSystemID, "name" => ($this->getSolarsystem())?$this->getSolarsystem()->name:null],
+                        "chain" => ["id" => $this->getChain()->id, "name" => $this->getChain()->name]
                     ]);
                 }
-			} else
+			} else {
 			    \MySQL::getDB()->update("mapwormholes", $data, ["id" => $this->id]);
-
+            }
 
             // Check en update connections
             foreach ($this->getConnections() as $connection) {
@@ -139,8 +128,9 @@ namespace scanning\model
 
 		function delete($updateCacheTimer=true)
 		{
-            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete"))
-			    $this->getChain()->removeWormhole($this, $updateCacheTimer);
+            if (\AppRoot::isCommandline() || \User::getUSER()->isAllowedChainAction($this->getChain(), "delete")) {
+                $this->getChain()->removeWormhole($this, $updateCacheTimer);
+            }
 		}
 
 		function move($newX, $newY, $modifier=null)

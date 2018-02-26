@@ -77,8 +77,7 @@ class Wormhole
         }
 
         // Verbinding toevoegen
-        if ($originHole && $addingHole)
-        {
+        if ($originHole && $addingHole) {
             \AppRoot::doCliOutput("Verbinding toevoegen");
             $connection = \map\model\Connection::getConnectionByWormhole($originHole->id, $addingHole->id, $map->id);
             if ($connection == null) {
@@ -87,19 +86,17 @@ class Wormhole
                 $connection->toWormholeID = $addingHole->id;
                 $connection->chainID = $map->id;
                 $connection->store();
-            }
-            else
+            } else {
                 \AppRoot::doCliOutput("Connection already exists");
-        }
-        else
+            }
+        } else {
             \AppRoot::doCliOutput("Not both holes were added..");
+        }
 
         // Nieuw systeem is toegevoegd.
-        if ($addSystemID !== null)
-        {
+        if ($addSystemID !== null) {
             // Wat zou de naam moeten zijn?
-            if ($map->getSetting("wh-autoname-scheme") > 0)
-            {
+            if ($map->getSetting("wh-autoname-scheme") > 0) {
                 $reservation = null;
                 $wormholeName = $this->getNewName($map, $addingHole, true);
 
@@ -122,8 +119,7 @@ class Wormhole
 
                     // Verbinding op properties zetten.
                     $connection = \scanning\model\Connection::getConnectionByWormhole($reservation->id, $originHole->id, $map->id);
-                    if ($connection !== null)
-                    {
+                    if ($connection !== null) {
                         if (($reservation->getSolarsystem() !== null && $reservation->getSolarsystem()->isCapitalCapable()) &&
                             ($originHole->getSolarsystem() !== null && $originHole->getSolarsystem()->isCapitalCapable()))
                         {
