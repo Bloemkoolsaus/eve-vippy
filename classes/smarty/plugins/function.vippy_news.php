@@ -12,7 +12,7 @@ function smarty_function_vippy_news($params)
     // Zoek news article
     foreach (\vippy\model\News::findAll(["name" => $params["article"]]) as $article) {
         if (date("Ym", strtotime($article->newsdate)) == $params["month"]) {
-            return "<a href='#' onclick='showNewsArticle($article->id); return false;'>".$article->title."</a>";
+            return $article->title." (<a href='#' onclick='showNewsArticle($article->id); return false;'>more info</a>)";
         }
     }
 

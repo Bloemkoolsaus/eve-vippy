@@ -39,7 +39,7 @@ function popupStep2()
 	loadPopup();
 	setPopupPosition();
 	$(window).bind('scroll', function() { setPopupPosition(); });
-	$("#popup").slideDown(popupSpeed, popupPostLoadHandler);
+	$("#popup").fadeIn(popupSpeed, popupPostLoadHandler);
 }
 
 function loadPopup()
@@ -133,7 +133,7 @@ function destroyPopup(cancelCallback)
 	popupWidth = 0;
 	popupHeight = 0;
 	if (document.getElementById("popup"))
-		$("#popup").slideUp(popupSpeed*1.5, function() { $("#popup").remove(); });
+		$("#popup").fadeOut("fast", function() { $("#popup").remove(); });
 	if (document.getElementById("disabledPage"))
 		$("#disabledPage").fadeOut(popupSpeed*1.5, function() { $("#disabledPage").remove(); });
 

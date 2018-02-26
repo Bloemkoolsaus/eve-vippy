@@ -1,5 +1,11 @@
 <div class="vippy-news">
-	<h1>Vippy News</h1>
+	<h1>
+		<img src="/images/favicon-white.png" align="left">
+		Vippy News
+		<button class="small" style="float: right; width: 28px;" onclick="destroyPopup()">
+			<img src="/images/default/ui/cross.png" style="height: 16px;">
+		</button>
+	</h1>
 	<div>
 	{foreach from=$news item=article}
 		<div class="vippy-news-article">
@@ -9,11 +15,6 @@
 	{/foreach}
 	</div>
 	<div style="clear: both;"></div>
-	<div style="text-align: center; margin-top: 1em;">
-		<button type="button" onclick="destroyPopup()">
-			&nbsp; OK &nbsp;
-		</button>
-	</div>
 	<div style="text-align: right;">
 		* <i>More changes in the <a href="/system/patchnotes">patchnotes</a></i>
 	</div>

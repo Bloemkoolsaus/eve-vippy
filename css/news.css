@@ -22,8 +22,11 @@ div.vippy-news h2 {
 div.vippy-news h1 {
     color: #ffffff;
     text-shadow: 1px 1px #0098df;
-
 }
+div.vippy-news h2 {
+    font-size: 1.8em;
+}
+
 
 div.vippy-news strong {
     color: #ffffff !important;
