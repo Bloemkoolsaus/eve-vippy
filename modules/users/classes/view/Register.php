@@ -10,13 +10,11 @@ class Register
 
     function getRegister($arguments=[])
     {
-        $errors = [];
-
         if (\Tools::POST("character"))
         {
             $rememberLogin = (\Tools::COOKIE("remember-after-sso")) ? true : false;
 
-            $character = new \crest\model\Character(\Tools::POST("character"));
+            $character = new \esi\model\Character(\Tools::POST("character"));
             $user = $character->getUser();
             if (!$user)
             {

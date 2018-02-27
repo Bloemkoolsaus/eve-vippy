@@ -4,7 +4,7 @@ require_once("init.php");
 
 /* SSO callback */
 if (\Tools::GET("state") && \Tools::GET("code")) {
-    \AppRoot::doCliOutput("CREST Callback");
+    \AppRoot::doCliOutput("SSO Callback");
     $view = new \sso\view\Login();
     $view->getLogin();
 }
