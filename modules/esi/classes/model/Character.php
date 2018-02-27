@@ -104,7 +104,13 @@ class Character extends \eve\model\Character
 
     function setOffline()
     {
-        \MySQL::getDB()->update("map_character_locations", ["online" => 0], ["characterid" => $this->id]);
+        \MySQL::getDB()->update("map_character_locations", [
+            "online" => 0,
+            "solarsystemid" => 0,
+            "shiptypeid" => 0
+        ], [
+            "characterid" => $this->id
+        ]);
     }
 
 

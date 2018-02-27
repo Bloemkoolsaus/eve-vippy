@@ -108,8 +108,9 @@ class Location
             $api->get("v1/characters/".$character->id."/location/");
             if ($api->success()) {
                 if (isset($api->getResult()->solar_system_id) && $api->getResult()->solar_system_id) {
-                    if (!$userSession)
+                    if (!$userSession) {
                         \User::setUSER($character->getUser());
+                    }
 
                     $solarSystemID = (int)$api->getResult()->solar_system_id;
                     $api->get("v1/characters/".$character->id."/ship/");
@@ -120,8 +121,9 @@ class Location
                     }
 
                     $locationTracker->setCharacterLocation($character, $solarSystemID, $shipTypeID);
-                    if (!$userSession)
+                    if (!$userSession) {
                         \User::unsetUser();
+                    }
                 } else {
                     // Offline..?
                     $character->setLocation(null, null, false);
