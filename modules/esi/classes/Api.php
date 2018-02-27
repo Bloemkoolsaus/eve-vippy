@@ -25,6 +25,10 @@ class Api extends \api\Client
 
     function get($url, $params=[])
     {
+        if (!$this->isOnline()) {
+            return;
+        }
+
         // Check log/cache
         $log = \esi\model\Log::findOne(["url" => $this->baseURL.$url, "requesttype" => "get", "httpstatus" => 200]);
         if ($log) {
@@ -48,8 +52,11 @@ class Api extends \api\Client
 
     function post($url, $params=[])
     {
-        $this->resetheader();
+        if (!$this->isOnline()) {
+            return;
+        }
 
+        $this->resetheader();
         if ($this->token) {
             if ($this->token->isExpired())
                 $this->token->refresh();
@@ -89,7 +96,49 @@ class Api extends \api\Client
             $expires = strtotime("now")+(strtotime($this->getResultHeader("Expires"))-strtotime($this->getResultHeader("Date")));
         }
         $log->expireDate = date("Y-m-d H:i:s", $expires);
-
+        $log->errorRemain = $this->getResultHeader("X-Esi-Error-Limit-Remain");
+        $log->errorReset = $this->getResultHeader("X-Esi-Error-Limit-Reset");
         $log->store();
+
+        \MySQL::getDB()->doQuery("update esi_status
+                                  set   errorremain = ".$log->errorRemain.",
+                                        errorreset = ".$log->errorRemain.",
+                                        updatedate = '".date("Y-m-d H:i:s")."'");
+        // Check error limit
+        if ($log->errorRemain !== null) {
+            if ($log->errorRemain < 20) {
+                $this->disable();
+            }
+        }
+    }
+
+    function enable()
+    {
+        \MySQL::getDB()->doQuery("update esi_status set enabled = 1, updatedate = '".date("Y-m-d H:i:s")."'");
+    }
+
+    function disable()
+    {
+        \MySQL::getDB()->doQuery("update esi_status set enabled = 0, updatedate = '".date("Y-m-d H:i:s")."'");
+    }
+
+    /**
+     * Is the esi api online or otherwise enabled?
+     * @return bool
+     */
+    function isOnline()
+    {
+        // Check status
+        $status = \MySQL::getDB()->getRow("select * from esi_status");
+        if ($status) {
+            if ($status["enabled"] < 1) {
+                if (strtotime($status["updatedate"]) > strtotime("now")-60) {
+                    return false;
+                } else {
+                    $this->enable();
+                }
+            }
+        }
+        return true;
     }
 }
