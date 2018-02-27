@@ -15,17 +15,20 @@ class News extends \Model
 
     function markRead($userID=null)
     {
-        if (!$userID)
-            $userID = \User::getUSER()->id;
+        if (!$userID) {
+            $userID = (\User::getUSER()) ? \User::getUSER()->id : null;
+        }
 
-        \MySQL::getDB()->updateinsert("vippy_news_read", [
-            "userid" => $userID,
-            "newsid" => $this->id,
-            "readdate" => date("Y-m-d H:i:s")
-        ], [
-            "userid" => $userID,
-            "newsid" => $this->id,
-        ]);
+        if ($userID) {
+            \MySQL::getDB()->updateinsert("vippy_news_read", [
+                "userid" => $userID,
+                "newsid" => $this->id,
+                "readdate" => date("Y-m-d H:i:s")
+            ], [
+                "userid" => $userID,
+                "newsid" => $this->id,
+            ]);
+        }
     }
 
 

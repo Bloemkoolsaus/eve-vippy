@@ -159,16 +159,19 @@ class LocationTracker
         $cacheDirectory = \Cache::file()->getDirectory()."locations/";
         foreach (\Tools::getFilesFromDirectory($cacheDirectory.$authGroupID, false, false) as $file) {
             $data = json_decode(file_get_contents($file));
-            if ($timelimit && isset($data->lastdate) && $data->lastdate < strtotime("now")-$timelimit)
+            if ($timelimit && isset($data->lastdate) && $data->lastdate < strtotime("now")-$timelimit) {
                 continue;
-            $characters[$data->characterName] = [
-                "id" 	=> $data->characterID,
-                "name" 	=> $data->characterName,
-                "system" => (isset($data->solarsystemID)) ? ["id" => $data->solarsystemID, "name" => (isset($data->solarsystemName))?$data->solarsystemName:null] : null,
-                "ship" => (isset($data->shiptypeID)) ? ["id" => $data->shiptypeID, "name" => (isset($data->shiptypeName))?$data->shiptypeName:null] : null,
-                "isme" => (\User::getUSER()->id == $data->userID)?1:0,
-                "time" => date("Y-m-d H:i:s", $data->lastdate)
-            ];
+            }
+            if (isset($data->characterName)) {
+                $characters[$data->characterName] = [
+                    "id" 	=> $data->characterID,
+                    "name" 	=> $data->characterName,
+                    "system" => (isset($data->solarsystemID)) ? ["id" => $data->solarsystemID, "name" => (isset($data->solarsystemName))?$data->solarsystemName:null] : null,
+                    "ship" => (isset($data->shiptypeID)) ? ["id" => $data->shiptypeID, "name" => (isset($data->shiptypeName))?$data->shiptypeName:null] : null,
+                    "isme" => (\User::getUSER()->id == $data->userID)?1:0,
+                    "time" => date("Y-m-d H:i:s", $data->lastdate)
+                ];
+            }
         }
         ksort($characters);
         return $characters;

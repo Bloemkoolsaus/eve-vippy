@@ -1,7 +1,7 @@
 <div id="whInfo{$system->id}Content" class="whdetailspopup">
 
 {foreach from=$system->getNotifications($wormhole->getChain()) item=notice}
-	<div style="padding: 0; padding-right: 2em;">
+	<div style="padding: 0 2em 0 0;">
 		<div class="{$notice->getTypeName()}" style="margin: 0; text-align: left;">
 			<div><strong>{$notice->title}</strong></div>
 			<div>{$notice->body}</div>

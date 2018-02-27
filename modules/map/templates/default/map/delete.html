@@ -1,4 +1,5 @@
 <div style="padding: 1em;">
+{if $wormhole}
 	<form action="Javascript: deleteWormhole()">
 		<input type="hidden" name="remove-wormhole-id" value="{$wormhole->id}">
 		<input type="hidden" name="remove-wormhole-confirmed" value="1">
@@ -35,4 +36,9 @@
 			</button>
 		</div>
 	</form>
+{else}
+	<div>
+		Wormhole not found.
+	</div>
+{/if}
 </div>
