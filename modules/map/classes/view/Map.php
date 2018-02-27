@@ -144,6 +144,15 @@ class Map
                 ];
             }
         }
+        $esi = new \esi\Api();
+        if (!$esi->isOnline()) {
+            $data["notifications"][] = [
+                "id" => "esi-offline",
+                "type" => "error",
+                "title" => "!!! - There seems to be an issue with ESI - !!!",
+                "content" => "Vippy is experiencing problems connecting to ESI. Fleet and character tracking may not work properly."
+            ];
+        }
 
 
         /** Get map data. */
