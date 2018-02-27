@@ -102,7 +102,7 @@ class Api extends \api\Client
 
         \MySQL::getDB()->doQuery("update esi_status
                                   set   errorremain = ".$log->errorRemain.",
-                                        errorreset = ".$log->errorRemain.",
+                                        errorreset = ".$log->errorReset.",
                                         updatedate = '".date("Y-m-d H:i:s")."'");
         // Check error limit
         if ($log->errorRemain !== null) {
