@@ -548,8 +548,7 @@ Class Tools
 	{
 		\AppRoot::debug("DELETING DIR: ".$dir);
         \AppRoot::doCliCommand("rm -rf ".$dir);
-		if (file_exists($dir))
-		{
+		if (file_exists($dir)) {
             \AppRoot::debug("<span style='color:red;'>".$dir." still exists</span>");
 			self::emptyDir($dir);
 			rmdir($dir);
@@ -563,18 +562,17 @@ Class Tools
 	public static function emptyDir($dir)
 	{
 		\AppRoot::debug("EMPTY DIR: ".$dir);
-		if ($handle = @opendir($dir))
-		{
-			while (false !== ($file = readdir($handle)))
-			{
+		if ($handle = @opendir($dir)) {
+			while (false !== ($file = readdir($handle))) {
 				if ($file == "." || $file == "..")
 					continue;
 
 				$filename = str_replace("//","/",$dir."/".$file);
-				if (is_dir($filename))
-					self::deleteDir($filename);
-				else
-					self::deleteFile($filename);
+				if (is_dir($filename)) {
+				    self::deleteDir($filename);
+                } else {
+				    self::deleteFile($filename);
+                }
 			}
 			closedir($handle);
 		}
