@@ -19,13 +19,13 @@ class NumbersStatic extends \map\model\NamingScheme
 
             $startingName = $previousWormhole->name;
             \AppRoot::debug("Startingsystem: ".$startingName);
-            if ($wormhole->getChain()->getHomeSystem()->id == $previousSystem->id)
+            if ($wormhole->getChain()->getHomeSystem()->id == $previousSystem->id) {
                 $startingName = "";
+            }
 
             $wspaceStatics = [];
             $kspaceStatics = [];
-            if ($wormhole->getSolarsystem()->isWSpace())
-            {
+            if ($wormhole->getSolarsystem()->isWSpace()) {
                 // Ben ik de static?
                 foreach ($previousSystem->getStatics(false,false) as $static) {
                     \AppRoot::debug("static: ".$static["name"]);
@@ -44,9 +44,7 @@ class NumbersStatic extends \map\model\NamingScheme
                     }
                 } else
                     $index = 2;
-            }
-            else
-            {
+            } else {
                 $startingName .= ucfirst($classname[0]);
                 $index = 0;
             }
